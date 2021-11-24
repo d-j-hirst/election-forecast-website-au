@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+  Hi {{ user.username }}! You are authorised to edit forecasts. If you can see this and you aren't the administrator, please contact the administrator so they can fix it!
+  <p><a href="{% url 'forecast_display:index' %}">Forecasts</a></p>
+{% endblock %}
