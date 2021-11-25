@@ -4,12 +4,13 @@ import { useHistory } from 'react-router-dom';
 import { LOGIN_URL } from 'config/urls';
 import { useUserRequired } from 'utils/hooks';
 import { UserContext, Layout } from 'components';
-
-import welcomePandaGif from './assets/welcome-panda.gif';
 import { logout } from './sdk';
 import styles from './Home.module.css';
 
 const Home = () => {
+  // Putting this here instructs the frontend to only display this page
+  // if a valid user is logged in. As always, don't trust the client
+  // and protect on the backend as well!
   useUserRequired();
   const history = useHistory();
   const { user, setUser } = useContext(UserContext);
@@ -27,14 +28,15 @@ const Home = () => {
 
   return (
     <Layout className={styles.content}>
-      <img
-        src={welcomePandaGif}
-        alt="Welcome Panda"
-        className={styles.pandaImg}
-      />
-      <h1 className={styles.userEmail}>{user.email}</h1>
+      <h1 className={styles.pageHeader}>
+        You are successfully logged in to the Australian Election Forecasts
+        testing website!
+        <br/>
+        <br/>
+        You are logged in as <strong>{user.email}</strong>
+      </h1>
       <button className={styles.logoutBtn} onClick={handleLogout}>
-        LOGOUT
+        Logout
       </button>
     </Layout>
   );
