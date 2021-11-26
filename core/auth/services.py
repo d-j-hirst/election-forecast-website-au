@@ -68,6 +68,8 @@ def google_get_access_token(*, code: str, redirect_uri: str) -> str:
 
     access_token = response.json()['access_token']
 
+    print(f'Getting access token from Google  - {access_token}')
+
     return access_token
 
 

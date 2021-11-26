@@ -1,6 +1,7 @@
 import { notifyError } from 'utils/notifications';
 
-export const BASE_API_URL = `${process.env.REACT_APP_BASE_BACKEND_URL}/api/v1`;
+export const BASE_BACKEND_URL = `${process.env.REACT_APP_BASE_BACKEND_URL}`;
+export const BASE_API_URL = `${BASE_BACKEND_URL}/api/v1`;
 
 // creates a default configuration for all fetch commands
 // which includes headers that should always be included
@@ -24,7 +25,6 @@ const handle401 = resp => {
 // by convert text to parsed JSON if that's possible, and then passing
 // it on along with the status code and whether request was ok
 const serializeResponse = response => {
-  console.log(response)
   return response
     .text()
     .then(text => {
@@ -36,8 +36,16 @@ const serializeResponse = response => {
 // Generic function for using GET from a given (relative) url from the API.
 // additional fetch() options can be given using an object for the
 // "options" parameter
-export const get = (url, options) =>
+export const getApi = (url, options) =>
   fetch(`${BASE_API_URL}/${url}`, { ...getBaseConfig('get'), ...options })
+    .then(serializeResponse)
+    .then(handle401);
+
+// Generic function for using GET from a given (relative) url from the API.
+// additional fetch() options can be given using an object for the
+// "options" parameter
+export const get = (url, options) =>
+  fetch(`${BASE_BACKEND_URL}/${url}`, { ...getBaseConfig('get'), ...options })
     .then(serializeResponse)
     .then(handle401);
 

@@ -4,8 +4,6 @@ from django.core.management.utils import get_random_secret_key
 from django.utils.translation import ugettext_lazy as _
 
 
-
-
 class UserManager(BaseUserManager):
     use_in_migrations = True
 
@@ -53,6 +51,9 @@ class User(AbstractUser):
 
     class Meta:
         swappable = 'AUTH_USER_MODEL'
+        permissions = (
+            ("view_forecasts", ("View forecasts")),
+        )
 
     @property
     def name(self):

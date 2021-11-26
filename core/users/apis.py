@@ -15,6 +15,12 @@ class UserMeApi(ApiAuthMixin, ApiErrorsMixin, APIView):
         return Response(user_get_me(user=request.user))
 
 
+class GenericAuthApi(ApiAuthMixin, ApiErrorsMixin, APIView):
+    def get(self, request, *args, **kwargs):
+        print('Accessing generic auth API')
+        return Response()
+
+
 class UserInitApi(PublicApiMixin, ApiErrorsMixin, APIView):
     class InputSerializer(serializers.Serializer):
         email = serializers.EmailField()
