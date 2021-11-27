@@ -23,7 +23,7 @@ For production:
 
 Create the `.env` file as outlined above, but for `REACT_APP_BASE_BACKEND_URL` give the URL of your website (including the `https://`). Also create the jsconfig.json. Setup Google Cloud Platform Credentials as above, adding the following: `https://<YOUR_WEBSITE_DOMAIN>` to "Authorized JavaScript origins" and `https://<YOUR_WEBSITE_DOMAIN>/api/v1/auth/login/google/` to "Authorized redirect URIs".
 
-The build now needs to be produced and transferred to for backend to send. Run `npm run build` to create a build (this may take some time), then run `prepare_files.sh` which will sort various files into a "root" folder. See the backend readme for the final instructions on how to collect these static files.
+The build now needs to be produced and transferred to for backend to send. In order to build we first need `react-scripts` so run `npm install react-scripts` in folder `frontend`. Run `npm run build` to create a build (this may take some time), then run `prepare_files.sh` which will sort various files into a "root" folder. See the backend readme for the final instructions on how to collect these static files.
 
 ## Old Readme (keeping it around until all config stuff is sorted out)
 Old readme is here: https://github.com/HackSoftware/Django-React-GoogleOauth2-Example/blob/main/client/README.md
