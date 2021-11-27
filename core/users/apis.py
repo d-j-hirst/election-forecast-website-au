@@ -17,7 +17,6 @@ class UserMeApi(ApiAuthMixin, ApiErrorsMixin, APIView):
 
 class GenericAuthApi(ApiAuthMixin, ApiErrorsMixin, APIView):
     def get(self, request, *args, **kwargs):
-        print('Accessing generic auth API')
         return Response()
 
 
