@@ -1,9 +1,0 @@
-{% extends 'base.html' %}
-
-{% block title %}Home{% endblock %}
-
-{% block content %}
-  Hi {{ user.username }}! This is where you would view forecasts ... if any were uploaded :(
-  <p><a href="{% url 'forecast_display:editing-test' %}">Try editing</a></p>
-  <p><a href="{% url 'index' %}">Home Page</a></p>
-{% endblock %}
