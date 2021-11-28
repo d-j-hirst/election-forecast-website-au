@@ -2,10 +2,10 @@ import React, { useContext, useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { LOGIN_URL } from 'config/urls';
-import { useUserRequired, getMe } from 'utils/hooks';
+import { useUserRequired, getMeApi, isLoggedIn } from 'utils/hooks';
 import { UserContext, Layout } from 'components';
 import { logout } from './sdk';
-import { getApi, get } from 'utils/sdk';
+import { getDirect } from 'utils/sdk';
 import styles from './Home.module.css';
 import axios from 'axios'
 
@@ -31,19 +31,15 @@ const Home = () => {
   }
 
   const getUserInfo = () => {
-    return getMe().then(resp => {return resp.data;});
-  }
-
-  const getGenericAuth = () => {
-    return getApi('users/generic').then(resp => {return resp.data;});
+    return getMeApi().then(resp => {return resp.data;});
   }
 
   const getProtectedForecast = () => {
-    return get('forecasts/protected').then(resp => {return resp.data;});
+    return getDirect('forecasts/protected').then(resp => {return resp.data;});
   }
 
   const getRestrictedForecast = () => {
-    return get('forecasts/restricted').then(resp => {return resp.data;});
+    return getDirect('forecasts/restricted').then(resp => {return resp.data;});
   }
 
   const hitPublicEndpoint = async () => {
@@ -55,18 +51,21 @@ const Home = () => {
   const whoAmI = async () => {
     console.log("Getting current user")
     getUserInfo().then(data => {console.log('User request data'); console.log(data);});
-    console.log("Getting generic auth page")
-    getGenericAuth().then(data => {console.log('User request data'); console.log(data);});
+  };
+
+  const loginStatus = async () => {
+    console.log("Getting login status")
+    isLoggedIn().then(val => {console.log(val);})
   };
 
   const hitProtectedEndpoint = async () => {
     console.log("Find the protected page");
-    getProtectedForecast().then(data => {console.log('User request data'); console.log(data);});
+    getProtectedForecast().then(data => {console.log('Protected page check'); console.log(data);});
   };
 
   const hitRestrictedEndpoint = async () => {
     console.log("Find the restricted page");
-    getRestrictedForecast().then(data => {console.log('User request data'); console.log(data);});
+    getRestrictedForecast().then(data => {console.log('Restricted page check'); console.log(data);});
   };
 
   return (
@@ -90,6 +89,11 @@ const Home = () => {
       <br/>
       <button className={styles.otherBtn} onClick={whoAmI}>
         Who am I?
+      </button>
+      <br/>
+      <br/>
+      <button className={styles.otherBtn} onClick={loginStatus}>
+       Login status
       </button>
       <br/>
       <br/>

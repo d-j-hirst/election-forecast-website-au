@@ -1,9 +1,13 @@
 import { useContext, useEffect } from 'react';
 
-import { getApi } from 'utils/sdk';
+import { getChecked, getDirect } from 'utils/sdk';
 import { UserContext } from 'components';
 
-export const getMe = () => getApi('users/me');
+export const getMeApi = () => getDirect('api/v1/users/me');
+
+const getMe = () => getChecked('users/me');
+
+export const isLoggedIn = () => getDirect('api/v1/users/me').then(resp => {return resp.status === 200;});
 
 // Client-side hook to prevent components from being accessed
 // without a registered user. Remember, don't trust the client
@@ -13,7 +17,7 @@ export const useUserRequired = () => {
 
   useEffect(() => {
     if (!user) {
-      getMe().then(resp => {console.log(resp.data); setUser(resp.data);});
+      getMe().then(resp => {setUser(resp.data);});
     }
   }, [user, setUser]);
 };
