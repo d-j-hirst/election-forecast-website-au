@@ -2,7 +2,8 @@ import React, { useContext, useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { LOGIN_URL } from 'config/urls';
-import { useUserRequired, getMeApi, isLoggedIn } from 'utils/hooks';
+import { useUserRequired } from 'utils/hooks';
+import { getMeApi, isLoggedIn } from 'utils/user';
 import { UserContext, Layout } from 'components';
 import { logout } from './sdk';
 import { getDirect } from 'utils/sdk';
@@ -35,16 +36,16 @@ const Home = () => {
   }
 
   const getProtectedForecast = () => {
-    return getDirect('forecasts/protected').then(resp => {return resp.data;});
+    return getDirect('forecast-api/protected').then(resp => {return resp.data;});
   }
 
   const getRestrictedForecast = () => {
-    return getDirect('forecasts/restricted').then(resp => {return resp.data;});
+    return getDirect('forecast-api/restricted').then(resp => {return resp.data;});
   }
 
   const hitPublicEndpoint = async () => {
     console.log("Hitting the public endpoint")
-    const response = await axios.get(`${REACT_APP_BASE_BACKEND_URL}/forecasts/public`);
+    const response = await axios.get(`${REACT_APP_BASE_BACKEND_URL}/forecast-api/public`);
     console.log(response)
   };
 

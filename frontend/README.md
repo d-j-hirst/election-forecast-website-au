@@ -13,7 +13,7 @@ Make sure to load http://localhost:3000/login or you will see a blank screen.
 
 Make sure that you have Google Cloud Platform Credentials set up. Once you have registered your application, look under the navigation menu (hamburger button, top left) -> APIs & Services -> Credentials -> + Create Credentials -> OAuth client ID. Then follow the instructions, once you have a web application created fill in the following fields:
 *Authorized JavaScript origins: `http://localhost:3000`
-*Authorized redirect URIs: `http://localhost:8000/api/v1/auth/login/google/`
+*Authorized redirect URIs: `http://localhost:8000/auth-api/v1/auth/login/google/`
 Replace the domains as appropriate for you front/backend.
 You may also need to add users for testing under "OAuth consent screen" (left menu) then "Test Users".
 
@@ -21,7 +21,7 @@ Finally, for development, run `npm start` to actually run the frontend server.
 
 For production:
 
-Create the `.env` file as outlined above, but for `REACT_APP_BASE_BACKEND_URL` give the URL of your website (including the `https://`). Also create the jsconfig.json. Setup Google Cloud Platform Credentials as above, adding the following: `https://<YOUR_WEBSITE_DOMAIN>` to "Authorized JavaScript origins" and `https://<YOUR_WEBSITE_DOMAIN>/api/v1/auth/login/google/` to "Authorized redirect URIs".
+Create the `.env` file as outlined above, but for `REACT_APP_BASE_BACKEND_URL` give the URL of your website (including the `https://`). Also create the jsconfig.json. Setup Google Cloud Platform Credentials as above, adding the following: `https://<YOUR_WEBSITE_DOMAIN>` to "Authorized JavaScript origins" and `https://<YOUR_WEBSITE_DOMAIN>/auth-api/v1/auth/login/google/` to "Authorized redirect URIs".
 
 The build now needs to be produced and transferred to for backend to send. In order to build we first need `react-scripts` so run `npm install react-scripts` in folder `frontend`. Run `npm run build` to create a build (this may take some time), then run `prepare_files.sh` which will sort various files into a "root" folder. See the backend readme for the final instructions on how to collect these static files.
 

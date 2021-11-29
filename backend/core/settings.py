@@ -16,8 +16,7 @@ import datetime
 import environ
 import os
 
-from pathlib import Path
-from django.core.management.utils import get_random_secret_key
+from typing import List
 
 env = environ.Env(
     DEBUG=(int, 0)
@@ -35,10 +34,10 @@ FRONTEND_DIR = BASE_DIR.parent / 'frontend'
 SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env.bool('DEBUG', default=True)
+DEBUG: bool = bool(env.bool('DEBUG', default=True))
 
-BASE_BACKEND_URL = env.str('DJANGO_BASE_BACKEND_URL', default='http://localhost:8000')
-BASE_FRONTEND_URL = env.str('DJANGO_BASE_FRONTEND_URL', default='http://localhost:3000')
+BASE_BACKEND_URL: str = str(env.str('DJANGO_BASE_BACKEND_URL', default='http://localhost:8000'))
+BASE_FRONTEND_URL: str = str(env.str('DJANGO_BASE_FRONTEND_URL', default='http://localhost:3000'))
 
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
@@ -47,14 +46,16 @@ SECURE_HSTS_SECONDS = 1
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
 
-SECURE_SSL_REDIRECT = os.environ['DEBUG'] == '0'
+SECURE_SSL_REDIRECT: bool = os.environ['DEBUG'] == '0'
 
-ALLOWED_HOSTS = env.list('DJANGO_ALLOWED_HOSTS', default=["dendrite.pythonanywhere.com", "localhost", "127.0.0.1"])
+ALLOWED_HOSTS: List[str] = env.list('DJANGO_ALLOWED_HOSTS', default=[   # type: ignore
+    "dendrite.pythonanywhere.com", "localhost", "127.0.0.1"]
+)
 
 # Application definition
 
 INSTALLED_APPS = [
-    'forecast_display.apps.ForecastDisplayConfig',
+    'forecast_api.apps.ForecastApiConfig',
     'corsheaders',
     'accounts.apps.AccountsConfig',
     'whitenoise.runserver_nostatic',
@@ -170,7 +171,7 @@ WHITENOISE_ROOT = FRONTEND_DIR / 'build' / 'root'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = 'index'
-LOGOUT_REDIRECT_URL = 'index'
+LOGOUT_REDIRECT_URL = 'admin/login'
 
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 ACCOUNT_EMAIL_REQUIRED = True
@@ -179,12 +180,12 @@ ACCOUNT_AUTHENTICATION_METHOD = 'email'
 
 AUTH_USER_MODEL = 'users.User'
 
-PRODUCTION_SETTINGS = env.bool('DJANGO_PRODUCTION_SETTINGS', default=False)
+PRODUCTION_SETTINGS: bool = bool(env.bool('DJANGO_PRODUCTION_SETTINGS', default=False))
 
 JWT_EXPIRATION_DELTA_DEFAULT = 2.628e+6
 JWT_AUTH = {
     'JWT_EXPIRATION_DELTA': datetime.timedelta(
-        seconds=env.int(
+        seconds=env.int(  # type: ignore
             'DJANGO_JWT_EXPIRATION_DELTA',
             default=JWT_EXPIRATION_DELTA_DEFAULT
         )
@@ -197,11 +198,11 @@ JWT_AUTH = {
 }
 
 CORS_ALLOW_CREDENTIALS = True
-CORS_ORIGIN_WHITELIST = env.list(
+CORS_ORIGIN_WHITELIST: List[str] = env.list(  # type: ignore
     'DJANGO_CORS_ORIGIN_WHITELIST',
     default=[BASE_FRONTEND_URL]
 )
 
 # Google OAuth2 settings
-GOOGLE_OAUTH2_CLIENT_ID = env.str('GOOGLE_OAUTH_ID')
-GOOGLE_OAUTH2_CLIENT_SECRET = env.str('GOOGLE_OAUTH_SECRET')
+GOOGLE_OAUTH2_CLIENT_ID: str = str(env.str('GOOGLE_OAUTH_ID'))
+GOOGLE_OAUTH2_CLIENT_SECRET: str = str(env.str('GOOGLE_OAUTH_SECRET'))

@@ -3,7 +3,7 @@ from users.models import User
 
 def user_get_me(*, user: User):
     return {
-        'id': user.id,
+        'id': user.id,  # type: ignore
         'name': user.name,
         'email': user.email
     }

@@ -13,7 +13,7 @@ const Login = () => {
   // Defines the procedure when the user clicks on the Google Login button
   const openGoogleLoginPage = useCallback(() => {
     const googleAuthUrl = 'https://accounts.google.com/o/oauth2/v2/auth';
-    const redirectUri = 'api/v1/auth/login/google/';
+    const redirectUri = 'auth-api/v1/auth/login/google/';
 
     // We don't really need to know anything other than the email
     // address, so don't ask for it

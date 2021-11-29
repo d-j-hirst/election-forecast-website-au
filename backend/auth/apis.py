@@ -9,17 +9,19 @@ from django.urls import reverse
 from django.conf import settings
 from django.shortcuts import redirect
 
-from api.mixins import ApiErrorsMixin, PublicApiMixin, ApiAuthMixin
+from auth_api.mixins import ApiErrorsMixin, PublicApiMixin, ApiAuthMixin
 
 from users.services import user_record_login, user_change_secret_key, user_get_or_create
 
 from auth.services import jwt_login, google_get_access_token, google_get_user_info
 
+from typing import Any
+
 
 class LoginApi(ApiErrorsMixin, ObtainJSONWebTokenView):
-    def post(self, request, *args, **kwargs):
+    def post(self, request: Any, *args: Any, **kwargs: Any):
         # Reference: https://github.com/Styria-Digital/django-rest-framework-jwt/blob/master/src/rest_framework_jwt/views.py#L44
-        serializer = self.get_serializer(data=request.data)
+        serializer: Any = self.get_serializer(data=request.data)
 
         serializer.is_valid(raise_exception=True)
 
@@ -34,7 +36,7 @@ class GoogleLoginApi(PublicApiMixin, ApiErrorsMixin, APIView):
         code = serializers.CharField(required=False)
         error = serializers.CharField(required=False)
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request: Any, *args: Any, **kwargs: Any):
         input_serializer = self.InputSerializer(data=request.GET)
         input_serializer.is_valid(raise_exception=True)
 
@@ -50,7 +52,7 @@ class GoogleLoginApi(PublicApiMixin, ApiErrorsMixin, APIView):
             return redirect(f'{login_url}?{params}')
 
         domain = settings.BASE_BACKEND_URL
-        api_uri = reverse('api:v1:auth:login-with-google')
+        api_uri = reverse('auth-api:v1:auth:login-with-google')
         redirect_uri = f'{domain}{api_uri}'
 
         access_token = google_get_access_token(code=code, redirect_uri=redirect_uri)
@@ -74,7 +76,7 @@ class GoogleLoginApi(PublicApiMixin, ApiErrorsMixin, APIView):
 
 
 class LogoutApi(ApiAuthMixin, ApiErrorsMixin, APIView):
-    def post(self, request):
+    def post(self, request: Any):
         """
         Logs out user by removing JWT cookie header.
         """

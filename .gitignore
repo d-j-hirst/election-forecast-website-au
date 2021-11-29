@@ -31,3 +31,6 @@ yarn-error.log*
 jsconfig.json
 
 /static
+backend/static/
+frontend/build/
+.vscode/

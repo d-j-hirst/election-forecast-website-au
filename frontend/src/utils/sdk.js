@@ -4,7 +4,7 @@ import { LOGIN_URL } from 'config/urls';
 import { notifyError } from 'utils/notifications';
 
 export const BASE_BACKEND_URL = `${process.env.REACT_APP_BASE_BACKEND_URL}`;
-export const BASE_API_URL = `${BASE_BACKEND_URL}/api/v1`;
+export const BASE_API_URL = `${BASE_BACKEND_URL}/auth-api/v1`;
 
 // creates a default configuration for all fetch commands
 // which includes headers that should always be included

@@ -14,17 +14,14 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.conf import settings
-from django.urls import include, path, re_path
-from django.views.generic.base import TemplateView
-from django.conf.urls.static import serve
-from forecast_display import views
+from django.urls import include, path
+from forecast_api import views
 
 from . import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include(('api.urls', 'api'))),
-    path('forecasts/', include(('forecast_display.urls', 'forecasts'))),
+    path('auth-api/', include(('auth_api.urls', 'auth-api'))),
+    path('forecast-api/', include(('forecast_api.urls', 'forecast-api'))),
     path('', views.catchall),
 ]

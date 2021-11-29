@@ -35,6 +35,6 @@ class ApiErrorsMixin:
             drf_exception_class = self.expected_exceptions[exc.__class__]
             drf_exception = drf_exception_class(get_error_message(exc))
 
-            return super().handle_exception(drf_exception)
+            return super().handle_exception(drf_exception)  # type: ignore
 
-        return super().handle_exception(exc)
+        return super().handle_exception(exc)  # type: ignore

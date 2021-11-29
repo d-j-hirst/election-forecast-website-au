@@ -2,7 +2,7 @@ from rest_framework import serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from api.mixins import ApiErrorsMixin, ApiAuthMixin, PublicApiMixin
+from auth_api.mixins import ApiErrorsMixin, ApiAuthMixin, PublicApiMixin
 
 from auth.services import jwt_login, google_validate_id_token
 
