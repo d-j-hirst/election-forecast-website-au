@@ -1,5 +1,6 @@
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.views import generic
+from django.http.request import HttpRequest
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import BasePermission, IsAuthenticated
@@ -19,6 +20,13 @@ class EditingTestView(PermissionRequiredMixin, generic.TemplateView):
 class ApiTestResponse(PublicApiMixin, ApiErrorsMixin, APIView):
     def get(self, request):
         message = "Here is a message from the backend server! Changed it a bit."
+        return Response(message)
+
+
+class ApiPostResponse(PublicApiMixin, ApiErrorsMixin, APIView):
+    def post(self, request: HttpRequest):
+        print(request.body.decode())
+        message = "Here is a message from the backend server for a POST request!"
         return Response(message)
 
 
