@@ -53,6 +53,7 @@ class User(AbstractUser):
         swappable = 'AUTH_USER_MODEL'
         permissions = (
             ("view_forecasts", ("View forecasts")),
+            ("submit_forecasts", ("Submit forecasts")),
         )
 
     @property

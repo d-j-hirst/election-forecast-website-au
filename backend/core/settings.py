@@ -39,8 +39,8 @@ DEBUG: bool = bool(env.bool('DEBUG', default=True))
 BASE_BACKEND_URL: str = str(env.str('DJANGO_BASE_BACKEND_URL', default='http://localhost:8000'))
 BASE_FRONTEND_URL: str = str(env.str('DJANGO_BASE_FRONTEND_URL', default='http://localhost:3000'))
 
-CSRF_COOKIE_SECURE = True
-SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = not DEBUG
+SESSION_COOKIE_SECURE = not DEBUG
 SECURE_SSL_REDIRECT = True
 SECURE_HSTS_SECONDS = 1
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
@@ -104,6 +104,17 @@ TEMPLATES = [
         },
     },
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ),
+}
 
 WSGI_APPLICATION = 'core.wsgi.application'
 

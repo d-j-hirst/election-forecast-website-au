@@ -1,5 +1,19 @@
-
 from django.db import models
 
+
+class Election(models.Model):
+    # Shorthand code for the election
+    # This will be used for querying and the URL
+    code = models.CharField(max_length=10, unique=True)
+
+    # Descriptive name of the election
+    name = models.CharField(max_length=100)
+
+    
 class Forecast(models.Model):
-    pass
+    # Election that this is forecasting
+    election = models.ForeignKey(Election, on_delete=models.CASCADE, null=True)
+
+    # Brief description of what new data is in this forecast
+    # Only include the one or two most important features
+    description = models.CharField(max_length=100, default='')
