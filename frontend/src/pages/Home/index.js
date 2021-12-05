@@ -1,4 +1,4 @@
-import React, { useContext, useCallback } from 'react';
+import React, { useContext, useCallback, useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { LOGIN_URL } from 'config/urls';
@@ -19,17 +19,7 @@ const Home = () => {
   useUserRequired();
   const history = useHistory();
   const { user, setUser } = useContext(UserContext);
-
-  const handleLogout = useCallback(() => {
-    logout().then(() => {
-      setUser(null);
-      history.push(LOGIN_URL);
-    });
-  }, [setUser, history]);
-
-  if (!user) {
-    return null;
-  }
+  const [ electionName, setElectionName ] = useState('')
 
   const getUserInfo = () => {
     return getMeApi().then(resp => {return resp.data;});
@@ -41,6 +31,41 @@ const Home = () => {
 
   const getRestrictedForecast = () => {
     return getDirect('forecast-api/restricted').then(resp => {return resp.data;});
+  }
+
+  const getElectionSummary = () => {
+    return getDirect('forecast-api/election-summary/2022fed').then(
+      resp => {
+        if (!resp.ok) throw Error("Couldn't find election data");
+        return resp.data;
+      }
+    );
+  }
+
+  useEffect(() => {
+    const fetchData = () => {
+      getElectionSummary().then(
+        data => {
+          setElectionName(data);
+        }
+      ).catch(
+        e => {
+          console.log(e);
+        }
+      );
+    }
+    fetchData();
+  }, []);
+
+  const handleLogout = useCallback(() => {
+    logout().then(() => {
+      setUser(null);
+      history.push(LOGIN_URL);
+    });
+  }, [setUser, history]);
+
+  if (!user) {
+    return null;
   }
 
   const hitPublicEndpoint = async () => {
@@ -72,11 +97,14 @@ const Home = () => {
   return (
     <Layout className={styles.content}>
       <h1 className={styles.pageHeader}>
-        You are successfully logged in to the Australian Election Forecasts
+        You are successfully logged in to the Australian&nbsp;Election&nbsp;Forecasts
         testing website!
         <br/>
         <br/>
         You are logged in as <strong>{user.email}</strong>
+        <br/>
+        <br/>
+        Test election name: <strong>{electionName}</strong>
       </h1>
       <button className={styles.logoutBtn} onClick={handleLogout}>
         Logout

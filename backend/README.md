@@ -4,7 +4,7 @@
  - python3 venv -m env
  - source env/bin/activate
  - pip install -r requirements.txt
-* Go into the first /core folder (this should have a second /core folder inside it, don't go into that). Copy the .env.example file to a new file called .env and fill out the fields according to your local setup.
+* Go into the /backend folder. Copy the .env.example file to a new file called .env and fill out the fields according to your local setup.
  - DJANGO_SECRET_KEY - a secret key for the Django server. Can be generated from django.core.management.utils.get_random_secret_key(). Keep this secret!
  - GOOGLE_OAUTH_ID - the complete Google client id for your application registered in the Google Cloud Platform. (Find it under top left menu -> APIs and Services -> Credentials -> Create Credentials (if not already done for the frontend) / OAuth 2.0 Client IDs, and select your web client)
  - GOOGLE_OAUTH_SECRET - The OAuth Client Secret, found in the same place. Keep this secret!
