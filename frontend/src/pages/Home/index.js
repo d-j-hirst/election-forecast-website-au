@@ -1,16 +1,16 @@
 import React, { useContext, useCallback, useState, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, Link } from 'react-router-dom';
 
 import { LOGIN_URL } from 'config/urls';
 import { useUserRequired } from 'utils/hooks';
-import { getMeApi, isLoggedIn } from 'utils/user';
+// import { getMeApi, isLoggedIn } from 'utils/user';
 import { UserContext, Layout } from 'components';
 import { logout } from './sdk';
 import { getDirect } from 'utils/sdk';
 import styles from './Home.module.css';
-import axios from 'axios'
+// import axios from 'axios'
 
-const { REACT_APP_BASE_BACKEND_URL } = process.env;
+// const { REACT_APP_BASE_BACKEND_URL } = process.env;
 
 const Home = () => {
   // Putting this here instructs the frontend to only display this page
@@ -19,34 +19,35 @@ const Home = () => {
   useUserRequired();
   const history = useHistory();
   const { user, setUser } = useContext(UserContext);
-  const [ electionName, setElectionName ] = useState('')
+  const [ electionList, setElectionList ] = useState([])
 
-  const getUserInfo = () => {
-    return getMeApi().then(resp => {return resp.data;});
-  }
+  // const getUserInfo = () => {
+  //   return getMeApi().then(resp => {return resp.data;});
+  // }
 
-  const getProtectedForecast = () => {
-    return getDirect('forecast-api/protected').then(resp => {return resp.data;});
-  }
+  // const getProtectedForecast = () => {
+  //   return getDirect('forecast-api/protected').then(resp => {return resp.data;});
+  // }
 
-  const getRestrictedForecast = () => {
-    return getDirect('forecast-api/restricted').then(resp => {return resp.data;});
-  }
+  // const getRestrictedForecast = () => {
+  //   return getDirect('forecast-api/restricted').then(resp => {return resp.data;});
+  // }
 
-  const getElectionSummary = () => {
-    return getDirect('forecast-api/election-summary/2022fed').then(
+  const getElectionList = () => {
+    return getDirect('forecast-api/election-list').then(
       resp => {
-        if (!resp.ok) throw Error("Couldn't find election data");
+        if (!resp.ok) throw Error("Couldn't find election list");
         return resp.data;
       }
     );
   }
 
   useEffect(() => {
-    const fetchData = () => {
-      getElectionSummary().then(
+    const fetchElectionList = () => {
+      getElectionList().then(
         data => {
-          setElectionName(data);
+          console.log(data)
+          setElectionList(data);
         }
       ).catch(
         e => {
@@ -54,7 +55,7 @@ const Home = () => {
         }
       );
     }
-    fetchData();
+    fetchElectionList();
   }, []);
 
   const handleLogout = useCallback(() => {
@@ -68,31 +69,33 @@ const Home = () => {
     return null;
   }
 
-  const hitPublicEndpoint = async () => {
-    console.log("Hitting the public endpoint")
-    const response = await axios.get(`${REACT_APP_BASE_BACKEND_URL}/forecast-api/public`);
-    console.log(response)
-  };
+  // const hitPublicEndpoint = async () => {
+  //   console.log("Hitting the public endpoint")
+  //   const response = await axios.get(`${REACT_APP_BASE_BACKEND_URL}/forecast-api/public`);
+  //   console.log(response)
+  // };
 
-  const whoAmI = async () => {
-    console.log("Getting current user")
-    getUserInfo().then(data => {console.log('User request data'); console.log(data);});
-  };
+  // const whoAmI = async () => {
+  //   console.log("Getting current user")
+  //   getUserInfo().then(data => {console.log('User request data'); console.log(data);});
+  // };
 
-  const loginStatus = async () => {
-    console.log("Getting login status")
-    isLoggedIn().then(val => {console.log(val);})
-  };
+  // const loginStatus = async () => {
+  //   console.log("Getting login status")
+  //   isLoggedIn().then(val => {console.log(val);})
+  // };
 
-  const hitProtectedEndpoint = async () => {
-    console.log("Find the protected page");
-    getProtectedForecast().then(data => {console.log('Protected page check'); console.log(data);});
-  };
+  // const hitProtectedEndpoint = async () => {
+  //   console.log("Find the protected page");
+  //   getProtectedForecast().then(data => {console.log('Protected page check'); console.log(data);});
+  // };
 
-  const hitRestrictedEndpoint = async () => {
-    console.log("Find the restricted page");
-    getRestrictedForecast().then(data => {console.log('Restricted page check'); console.log(data);});
-  };
+  // const hitRestrictedEndpoint = async () => {
+  //   console.log("Find the restricted page");
+  //   getRestrictedForecast().then(data => {console.log('Restricted page check'); console.log(data);});
+  // };
+
+  const listItems = electionList.map(d => <Link to={`/forecast/${d[0]}`}><button className={styles.otherBtn} >{d[1]}</button></Link>)
 
   return (
     <Layout className={styles.content}>
@@ -104,11 +107,15 @@ const Home = () => {
         You are logged in as <strong>{user.email}</strong>
         <br/>
         <br/>
-        Test election name: <strong>{electionName}</strong>
+        Elections:
+        <br/>
+        <br/>
+        {listItems}
       </h1>
       <button className={styles.logoutBtn} onClick={handleLogout}>
         Logout
       </button>
+      {/*
       <br/>
       <br/>
       <button className={styles.otherBtn} onClick={hitPublicEndpoint}>
@@ -134,6 +141,7 @@ const Home = () => {
       <button className={styles.otherBtn} onClick={hitRestrictedEndpoint}>
         Restricted endpoint
       </button>
+      */}
     </Layout>
   );
 };

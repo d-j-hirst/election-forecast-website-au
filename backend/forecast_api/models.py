@@ -1,5 +1,5 @@
 from django.db import models
-
+from datetime import datetime
 
 class Election(models.Model):
     # Shorthand code for the election
@@ -13,6 +13,8 @@ class Election(models.Model):
 class Forecast(models.Model):
     # Election that this is forecasting
     election = models.ForeignKey(Election, on_delete=models.CASCADE, null=True)
+
+    date = models.DateTimeField()
 
     # Brief description of what new data is in this forecast
     # Only include the one or two most important features
