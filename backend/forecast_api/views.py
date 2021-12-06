@@ -50,7 +50,6 @@ class SubmitReportResponse(ApiAuthMixin, ApiErrorsMixin, APIView):
         code = data[0]
         name = data[1]
         date = make_aware(datetime.fromisoformat(data[3]))
-        desc = data[2]
         mode = (Forecast.Mode.NOWCAST
                 if data[4] == "NC"
                 else (
@@ -62,8 +61,13 @@ class SubmitReportResponse(ApiAuthMixin, ApiErrorsMixin, APIView):
         if len(name) > 0:  # should only replace the name if explicitly given
             election.name = name
         election.save()
-        forecast, _ = Forecast.objects.get_or_create(election=election, date=date, mode=mode)
-        forecast.description = desc
+        forecast, _ = Forecast.objects.get_or_create(election=election,
+                                                     date=date,
+                                                     mode=mode)
+        forecast.description = data[2]
+        forecast.alp_overall_win_pc = float(data[5])
+        forecast.lnp_overall_win_pc = float(data[6])
+        forecast.oth_overall_win_pc = float(data[7])
         forecast.save()
         message = "Forecast report successfully submitted."
         return Response(message)
@@ -96,6 +100,9 @@ class ElectionSummaryResponse(ApiAuthMixin, ApiErrorsMixin, APIView):
                          .first())
         info['date'] = str(forecast.date).replace(' ', 'T')
         info['description'] = forecast.description
+        info['alp_overall_win_pc'] = forecast.alp_overall_win_pc
+        info['lnp_overall_win_pc'] = forecast.lnp_overall_win_pc
+        info['oth_overall_win_pc'] = forecast.oth_overall_win_pc
         return Response(info)
 
 

@@ -17,6 +17,7 @@ const Forecast = () => {
   const [ electionName, setElectionName ] = useState('')
   const [ reportDate, setReportDate ] = useState('')
   const [ reportDesc, setReportDesc ] = useState('')
+  const [ overallWinPc, setOverallWinPc ] = useState([50, 50, 0])
 
   const getElectionSummary = () => {
     return getDirect('forecast-api/election-summary/2022fed').then(
@@ -44,6 +45,9 @@ const Forecast = () => {
           setElectionName(data.name);
           setReportDate(parseDateData(data.date));
           setReportDesc(data.description);
+          setOverallWinPc([data.alp_overall_win_pc,
+            data.lnp_overall_win_pc,
+            data.oth_overall_win_pc]);
         }
       ).catch(
         e => {
@@ -67,6 +71,15 @@ const Forecast = () => {
         <br/>
         <br/>
         Report description: <strong>{reportDesc}</strong>
+        <br/>
+        <br/>
+        ALP overall win rate: <strong>{(overallWinPc[0]).toFixed(1)}%</strong>
+        <br/>
+        <br/>
+        LNP overall win rate: <strong>{(overallWinPc[1]).toFixed(1)}%</strong>
+        <br/>
+        <br/>
+        Other parties overall win rate: <strong>{(overallWinPc[2]).toFixed(1)}%</strong>
       </h1>
       <Link to='/'>
         <button className={styles.otherBtn}>
