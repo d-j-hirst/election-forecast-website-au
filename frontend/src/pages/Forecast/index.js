@@ -8,7 +8,7 @@ import { getDirect } from 'utils/sdk';
 import styles from './Forecast.module.css';
 
 const Forecast = () => {
-  const { code } = useParams();
+  const { code, mode } = useParams();
   // Putting this here instructs the frontend to only display this page
   // if a valid user is logged in. As always, don't trust the client
   // and protect on the backend as well!
@@ -31,7 +31,7 @@ const Forecast = () => {
   useEffect(() => {
 
     const getElectionSummary = () => {
-      return getDirect(`forecast-api/election-summary/${code}`).then(
+      return getDirect(`forecast-api/election-summary/${code}/${mode}`).then(
         resp => {
           if (!resp.ok) throw Error("Couldn't find election data");
           return resp.data;
@@ -58,7 +58,7 @@ const Forecast = () => {
     }
 
     fetchElectionSummary();
-  }, [code]);
+  }, [code, mode]);
 
   return (
     <Layout className={styles.content}>
@@ -67,6 +67,9 @@ const Forecast = () => {
         <br/>
         <br/>
         Viewing election: <strong>{electionName}</strong>
+        <br/>
+        <br/>
+        Election mode: <strong>{mode === "nowcast" ? "Nowcast" : "Regular Forecast"}</strong>
         <br/>
         <br/>
         Report date: <strong>{reportDate}</strong>
@@ -83,6 +86,13 @@ const Forecast = () => {
         <br/>
         Other parties overall win rate: <strong>{(overallWinPc[2]).toFixed(1)}%</strong>
       </h1>
+      <Link to={`/forecast/${code}/${mode === "nowcast" ? "regular" : "nowcast"}`}>
+        <button className={styles.otherBtn}>
+          Change to {mode === "nowcast" ? "Regular Forecast" : "Nowcast"}
+        </button>
+      </Link>
+      <br/>
+      <br/>
       <Link to='/'>
         <button className={styles.otherBtn}>
           Return to Home Page

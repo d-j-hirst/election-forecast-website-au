@@ -95,7 +95,7 @@ const Home = () => {
   //   getRestrictedForecast().then(data => {console.log('Restricted page check'); console.log(data);});
   // };
 
-  const listItems = electionList.map(d => <><Link to={`/forecast/${d[0]}`}><button className={styles.otherBtn} >{d[1]}</button></Link><br /><br /></>)
+  const listItems = electionList.map(d => <><Link to={`/forecast/${d[0]}/regular`}><button className={styles.otherBtn} >{d[1]}</button></Link><br /><br /></>)
 
   return (
     <Layout className={styles.content}>

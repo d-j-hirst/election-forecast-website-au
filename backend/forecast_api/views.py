@@ -1,4 +1,5 @@
 from django.http.request import HttpRequest
+from django.http import HttpResponseNotFound, Http404
 from django.shortcuts import get_list_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -89,13 +90,21 @@ class RestrictedTestResponse(ApiAuthMixin, ApiErrorsMixin, APIView):
 
 class ElectionSummaryResponse(ApiAuthMixin, ApiErrorsMixin, APIView):
     permission_classes = [IsAuthenticated&ViewForecastPermission]
-    def get(self, request, code):
+    def get(self, request, code, mode):
+        modes = {
+            'regular': Forecast.Mode.REGULAR_FORECAST,
+            'live': Forecast.Mode.LIVE_FORECAST,
+            'nowcast': Forecast.Mode.NOWCAST,
+        }
+        if mode not in modes:
+            raise Http404
         info = {}
+        mode_val = modes[mode]
         election: Any = Election.objects.get(code=code)
         info['name'] = election.name
         forecast: Any = (election
                          .forecast_set
-                         .filter(mode=Forecast.Mode.REGULAR_FORECAST)
+                         .filter(mode=mode_val)
                          .order_by('-date')
                          .first())
         info['date'] = str(forecast.date).replace(' ', 'T')
