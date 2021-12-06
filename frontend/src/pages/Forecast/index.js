@@ -33,7 +33,8 @@ const Forecast = () => {
         data => {
           console.log(data);
           setElectionName(data.name);
-          setReportDate(data.date);
+          const date = Date(data.date);
+          setReportDate(date.toString());
           setReportDesc(data.description);
         }
       ).catch(
