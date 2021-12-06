@@ -50,11 +50,11 @@ class SubmitReportResponse(ApiAuthMixin, ApiErrorsMixin, APIView):
         name = data[1]
         date = datetime.fromisoformat(data[3])
         desc = data[2]
-        election, created = Election.objects.get_or_create(defaults={'code': code})
+        election, _ = Election.objects.get_or_create(code=code)
         if len(name) > 0:  # should only replace the name if explicitly given
             election.name = name
         election.save()
-        forecast, created = Forecast.objects.get_or_create(defaults={'election': election, 'date': date})
+        forecast, _ = Forecast.objects.get_or_create(election=election, date=date)
         forecast.description = desc
         forecast.save()
         message = "Forecast report successfully submitted."
