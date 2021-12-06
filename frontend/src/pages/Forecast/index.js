@@ -27,14 +27,22 @@ const Forecast = () => {
     );
   }
 
+  const parseDateData = raw => {
+    const datetime = new Date(Date.parse(raw)).toLocaleString('en-AU');
+    const parts = datetime.split(',');
+    const dateParts = parts[0].split('/');
+    const newDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}, ${parts[1]}`;
+    console.log(newDate);
+    return newDate;
+  }
+
   useEffect(() => {
     const fetchElectionSummary = () => {
       getElectionSummary().then(
         data => {
           console.log(data);
           setElectionName(data.name);
-          const date = Date(data.date);
-          setReportDate(date.toString());
+          setReportDate(parseDateData(data.date));
           setReportDesc(data.description);
         }
       ).catch(

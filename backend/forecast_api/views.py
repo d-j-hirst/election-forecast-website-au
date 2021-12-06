@@ -1,9 +1,10 @@
-from django.http import JsonResponse
 from django.http.request import HttpRequest
 from django.shortcuts import get_list_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import BasePermission, IsAuthenticated
+from django.utils.timezone import make_aware
+
 
 from typing import Any
 
@@ -48,13 +49,20 @@ class SubmitReportResponse(ApiAuthMixin, ApiErrorsMixin, APIView):
         data = request.body.decode().split('\n')
         code = data[0]
         name = data[1]
-        date = datetime.fromisoformat(data[3])
+        date = make_aware(datetime.fromisoformat(data[3]))
         desc = data[2]
+        mode = (Forecast.Mode.NOWCAST
+                if data[4] == "NC"
+                else (
+                    Forecast.Mode.LIVE_FORECAST
+                    if data[4] == "LF"
+                    else Forecast.Mode.REGULAR_FORECAST
+                ))
         election, _ = Election.objects.get_or_create(code=code)
         if len(name) > 0:  # should only replace the name if explicitly given
             election.name = name
         election.save()
-        forecast, _ = Forecast.objects.get_or_create(election=election, date=date)
+        forecast, _ = Forecast.objects.get_or_create(election=election, date=date, mode=mode)
         forecast.description = desc
         forecast.save()
         message = "Forecast report successfully submitted."
@@ -81,10 +89,13 @@ class ElectionSummaryResponse(ApiAuthMixin, ApiErrorsMixin, APIView):
         info = {}
         election: Any = Election.objects.get(code=code)
         info['name'] = election.name
-        forecast: Any = election.forecast_set.order_by('-date').first()
-        info['date'] = str(forecast.date)
+        forecast: Any = (election
+                         .forecast_set
+                         .filter(mode=Forecast.Mode.REGULAR_FORECAST)
+                         .order_by('-date')
+                         .first())
+        info['date'] = str(forecast.date).replace(' ', 'T')
         info['description'] = forecast.description
-        print(info)
         return Response(info)
 
 

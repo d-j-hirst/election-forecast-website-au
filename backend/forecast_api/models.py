@@ -1,5 +1,6 @@
 from django.db import models
 from datetime import datetime
+from django.utils.translation import gettext_lazy as _
 
 class Election(models.Model):
     # Shorthand code for the election
@@ -15,6 +16,20 @@ class Forecast(models.Model):
     election = models.ForeignKey(Election, on_delete=models.CASCADE, null=True)
 
     date = models.DateTimeField()
+
+    class Mode(models.TextChoices):
+        REGULAR_FORECAST = 'FC', _('Regular Forecast')
+        NOWCAST = 'NC', _('Nowcast')
+        LIVE_FORECAST = 'LF', _('Live Forecast')
+
+    mode = models.CharField(
+        max_length=2,
+        choices=Mode.choices,
+        default=Mode.REGULAR_FORECAST
+    )
+
+    def get_mode(self) -> Mode:
+        return Forecast.Mode[self.mode]
 
     # Brief description of what new data is in this forecast
     # Only include the one or two most important features
