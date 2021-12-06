@@ -19,15 +19,6 @@ const Forecast = () => {
   const [ reportDesc, setReportDesc ] = useState('')
   const [ overallWinPc, setOverallWinPc ] = useState([50, 50, 0])
 
-  const getElectionSummary = () => {
-    return getDirect('forecast-api/election-summary/2022fed').then(
-      resp => {
-        if (!resp.ok) throw Error("Couldn't find election data");
-        return resp.data;
-      }
-    );
-  }
-
   const parseDateData = raw => {
     const datetime = new Date(Date.parse(raw)).toLocaleString('en-AU');
     const parts = datetime.split(',');
@@ -38,6 +29,16 @@ const Forecast = () => {
   }
 
   useEffect(() => {
+
+    const getElectionSummary = () => {
+      return getDirect(`forecast-api/election-summary/${code}`).then(
+        resp => {
+          if (!resp.ok) throw Error("Couldn't find election data");
+          return resp.data;
+        }
+      );
+    }
+
     const fetchElectionSummary = () => {
       getElectionSummary().then(
         data => {
@@ -55,8 +56,9 @@ const Forecast = () => {
         }
       );
     }
+
     fetchElectionSummary();
-  }, []);
+  }, [code]);
 
   return (
     <Layout className={styles.content}>
