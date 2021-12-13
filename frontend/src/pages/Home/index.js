@@ -115,33 +115,6 @@ const Home = () => {
       <button className={styles.logoutBtn} onClick={handleLogout}>
         Logout
       </button>
-      {/*
-      <br/>
-      <br/>
-      <button className={styles.otherBtn} onClick={hitPublicEndpoint}>
-        Public endpoint
-      </button>
-      <br/>
-      <br/>
-      <button className={styles.otherBtn} onClick={whoAmI}>
-        Who am I?
-      </button>
-      <br/>
-      <br/>
-      <button className={styles.otherBtn} onClick={loginStatus}>
-       Login status
-      </button>
-      <br/>
-      <br/>
-      <button className={styles.otherBtn} onClick={hitProtectedEndpoint}>
-        Protected endpoint
-      </button>
-      <br/>
-      <br/>
-      <button className={styles.otherBtn} onClick={hitRestrictedEndpoint}>
-        Restricted endpoint
-      </button>
-      */}
     </Layout>
   );
 };
