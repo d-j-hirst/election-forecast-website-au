@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
-//import { LOGIN_URL } from 'config/urls';
 import { useUserRequired } from 'utils/hooks';
-import { Layout } from 'components';
+import { Header, ForecastsNav, ForecastSummary } from 'components';
 import { getDirect } from 'utils/sdk';
-import styles from './Forecast.module.css';
+import './Forecast.module.css';
 
 const Forecast = () => {
   const { code, mode } = useParams();
@@ -13,11 +12,7 @@ const Forecast = () => {
   // if a valid user is logged in. As always, don't trust the client
   // and protect on the backend as well!
   useUserRequired();
-  //const history = useHistory();
-  const [ electionName, setElectionName ] = useState('')
-  const [ reportDate, setReportDate ] = useState('')
-  const [ reportDesc, setReportDesc ] = useState('')
-  const [ overallWinPc, setOverallWinPc ] = useState([50, 50, 0])
+  const [ forecast, setForecast] = useState({})
 
   const parseDateData = raw => {
     const datetime = new Date(Date.parse(raw)).toLocaleString('en-AU');
@@ -42,13 +37,15 @@ const Forecast = () => {
     const fetchElectionSummary = () => {
       getElectionSummary().then(
         data => {
-          console.log(data);
-          setElectionName(data.name);
-          setReportDate(parseDateData(data.date));
-          setReportDesc(data.description);
-          setOverallWinPc([data.alp_overall_win_pc,
-            data.lnp_overall_win_pc,
-            data.oth_overall_win_pc]);
+          const forecast = {
+            name: data.name,
+            date: parseDateData(data.date),
+            description: data.description,
+            overallWinPercent: {alp: data.alp_overall_win_pc,
+                                lnp: data.lnp_overall_win_pc,
+                                oth: data.oth_overall_win_pc}
+          };
+          setForecast(forecast);
         }
       ).catch(
         e => {
@@ -61,44 +58,11 @@ const Forecast = () => {
   }, [code, mode]);
 
   return (
-    <Layout className={styles.content}>
-      <h1 className={styles.pageHeader}>
-        Election code: <strong>{code}</strong>
-        <br/>
-        <br/>
-        Viewing election: <strong>{electionName}</strong>
-        <br/>
-        <br/>
-        Election mode: <strong>{mode === "nowcast" ? "Nowcast" : "Regular Forecast"}</strong>
-        <br/>
-        <br/>
-        Report date: <strong>{reportDate}</strong>
-        <br/>
-        <br/>
-        Report description: <strong>{reportDesc}</strong>
-        <br/>
-        <br/>
-        ALP overall win rate: <strong>{(overallWinPc[0]).toFixed(1)}%</strong>
-        <br/>
-        <br/>
-        LNP overall win rate: <strong>{(overallWinPc[1]).toFixed(1)}%</strong>
-        <br/>
-        <br/>
-        Other parties overall win rate: <strong>{(overallWinPc[2]).toFixed(1)}%</strong>
-      </h1>
-      <Link to={`/forecast/${code}/${mode === "nowcast" ? "regular" : "nowcast"}`}>
-        <button className={styles.otherBtn}>
-          Change to {mode === "nowcast" ? "Regular Forecast" : "Nowcast"}
-        </button>
-      </Link>
-      <br/>
-      <br/>
-      <Link to='/'>
-        <button className={styles.otherBtn}>
-          Return to Home Page
-        </button>
-      </Link>
-    </Layout>
+    <>
+      <Header />
+      <ForecastsNav election={code} mode={mode} />
+      <ForecastSummary election={code} mode={mode} forecast={forecast} />
+    </>
   );
 };
 
