@@ -1,8 +1,38 @@
 .summary {
-    color: red;
     text-align: center;
+    width: 600px;
+    margin: auto;
+    border-radius: 20px !important;
 }
 
-.hidden {
-    display: none;
+.formationOfGovernmentTitle {
+    font-size: 20px;
+    background-color: #CCCCCC !important;
+    border-radius: 20px 20px 0px 0px !important;
+}
+
+.formationOfGovernmentBody {
+    padding: 0px !important;
+}
+
+.formationOfGovernmentTopList {
+    border-color: #CCCCCC !important;
+}
+
+.formationOfGovernmentTopItem {
+    border-color: #CCCCCC !important;
+}
+
+.forecastTitle {
+    font-size: 22px;
+    text-align: center;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background-color: #DDDDDD;
+}
+
+.forecastUpdateInfo {
+    font-size: 11px;
+    text-align: center;
+    background-color: white;
 }

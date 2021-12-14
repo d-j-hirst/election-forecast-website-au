@@ -4,7 +4,8 @@ import { useParams } from 'react-router-dom';
 import { useUserRequired } from 'utils/hooks';
 import { Header, ForecastsNav, ForecastSummary } from 'components';
 import { getDirect } from 'utils/sdk';
-import './Forecast.module.css';
+
+import styles from './Forecast.module.css';
 
 const Forecast = () => {
   const { code, mode } = useParams();
@@ -61,7 +62,9 @@ const Forecast = () => {
     <>
       <Header />
       <ForecastsNav election={code} mode={mode} />
-      <ForecastSummary election={code} mode={mode} forecast={forecast} />
+      <div className={styles.content}>
+        <ForecastSummary election={code} mode={mode} forecast={forecast} />
+      </div>
     </>
   );
 };

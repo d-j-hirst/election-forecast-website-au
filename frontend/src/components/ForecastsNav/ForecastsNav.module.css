@@ -9,3 +9,7 @@
 .navitem {
   font-size: 18px;
 }
+
+.navbar {
+  border-bottom: 10;
+}
