@@ -1,28 +1,36 @@
 import React from 'react';
+
+import Spinner from 'react-bootstrap/Spinner';
+
+import TooltipPercentage from '../TooltipPercentage'
+
 import styles from './ForecastSummary.module.css';
 
-const ForecastSummaryVisible = props => (
-    // This makes sure the component does not display until a forecast is actually loaded
-   props.forecast.overallWinPercent !== undefined &&
-   <div className={styles.summary}>
-       {props.forecast.name}
-       <br/>
-       Last updated: {props.forecast.date}
-       <br/>
-       Updated because of: {props.forecast.description}
-       <br/>
-       ALP win percent: {props.forecast.overallWinPercent === undefined ? '' : Number((props.forecast.overallWinPercent.alp)).toFixed(1)}
-       <br/>
-       LNP win percent: {props.forecast.overallWinPercent === undefined ? '' : Number((props.forecast.overallWinPercent.lnp)).toFixed(1)}
-       <br/>
-       OTH win percent: {props.forecast.overallWinPercent === undefined ? '' : Number((props.forecast.overallWinPercent.oth)).toFixed(1)}
-   </div>
-);
+const ForecastSummaryVisible = props => {
+    return (
+        <div className={styles.summary}>
+            {props.forecast.name}
+            <br/>
+            Last updated: {props.forecast.date}
+            <br/>
+            Updated because of: {props.forecast.description}
+            <br/>
+            ALP win percent: <TooltipPercentage value={props.forecast.overallWinPercent.alp} />
+            <br/>
+            LNP win percent: <TooltipPercentage value={props.forecast.overallWinPercent.lnp} />
+            <br/>
+            OTH win percent: <TooltipPercentage value={props.forecast.overallWinPercent.oth} />
+        </div>
+    );
+}
 
 const ForecastSummaryLoading = () => (
-   <div className={styles.summary}>
-       Loading forecast
-   </div>
+    <div className={styles.summary}>
+        <Spinner animation="border" role="status" size="sm">
+            <span className="visually-hidden">Loading...</span>
+        </Spinner>
+        Loading forecast
+    </div>
 )
 
 const ForecastSummary = props => {
