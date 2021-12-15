@@ -27,7 +27,7 @@ const TooltipText = props => (
             overlay={renderTooltip}
             placement="bottom"
         >
-        <span>
+        <span role="button">
             {props.mainText}
         </span>
         </OverlayTrigger>
