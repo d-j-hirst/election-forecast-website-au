@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import include, path
+from django.urls import include, path, re_path
 from forecast_api import views
 
 from . import views
@@ -23,6 +23,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('auth-api/', include(('auth_api.urls', 'auth-api'))),
     path('forecast-api/', include(('forecast_api.urls', 'forecast-api'))),
+    re_path(r'^(?P<path>.*)/$', views.catchall),
     path('', views.catchall),
-    path('*', views.catchall),
 ]
