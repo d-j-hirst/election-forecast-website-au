@@ -9,7 +9,7 @@
  - GOOGLE_OAUTH_ID - the complete Google client id for your application registered in the Google Cloud Platform. (Find it under top left menu -> APIs and Services -> Credentials -> Create Credentials (if not already done for the frontend) / OAuth 2.0 Client IDs, and select your web client)
  - GOOGLE_OAUTH_SECRET - The OAuth Client Secret, found in the same place. Keep this secret!
  - DEBUG - should normally be 1 for development and 0 for production
- - DJANGO_JWT_EXPIRATION_DELTA - How long before the JWT runs out.
+ - DJANGO_JWT_EXPIRATION_DELTA - How long (in seconds) before the JWT runs out.
  - DJANGO_BASE_BACKEND_URL - Base backend URL. For development, should be something like http://localhost:8000 while for production should be something like https://my.domain.name - note no trailing slash
  - DJANGO_BASE_FRONTEND_URL - Base frontend URL. For development, should be something like http://localhost:8000 while for production should be the same as DJANGO_BASE_BACKEND_URL something like https://my.domain.name - note no trailing slash
 * Migrations need to be completed. The default commands for this do not find all migrations, in particular user accounts are not automatically created. Use `python3 manage.py makemigrations users` to solve this, then `python3 manage.py makemigrations` to make any others and then `python3 manage.py migrate` to actually complete the migration. (Some OSs might need to use `python` command instead of `python3` for each of these.)
@@ -21,4 +21,4 @@
 
 ### For production:
 
-* The exact procedure for initiating the server will depend on the hosting platform, but in all cases we'll need to collect static files. Make sure to do this after the frontend server has been built and its files sorted using `prepare_files.sh` (see the frontend readme). To collect the static files just run `python3 manage.py collectstatic`.
+* The exact procedure for initiating the server will depend on the hosting platform, but in all cases we'll need to collect static files. Make sure to do this after the frontend server has been built and its files sorted using `prepare_files.sh` (see the frontend readme). To collect the static files just run `python3 manage.py collectstatic` and type `yes` when prompted.

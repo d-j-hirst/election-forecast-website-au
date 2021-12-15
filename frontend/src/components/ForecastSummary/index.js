@@ -10,8 +10,6 @@ import TooltipPercentage from '../TooltipPercentage'
 import styles from './ForecastSummary.module.css';
 
 const ForecastSummaryVisible = props => {
-    console.log(props.mode);
-
     return (
         <>
             <div className={styles.forecastTitle}>
@@ -48,13 +46,11 @@ const ForecastSummaryVisible = props => {
 }
 
 const ForecastSummaryLoading = () => (
-    <div className="row d-flex justify-content-center section">
-        <div className={styles.summary}>
-            <Spinner animation="border" role="status" size="sm">
-                <span className="visually-hidden">Loading...</span>
-            </Spinner>
-            Loading forecast
-        </div>
+    <div className={styles.summary}>
+        <Spinner animation="border" role="status" size="sm">
+            <span className="visually-hidden">Loading...</span>
+        </Spinner>
+        Loading forecast
     </div>
 )
 
