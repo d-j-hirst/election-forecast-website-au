@@ -24,4 +24,5 @@ urlpatterns = [
     path('auth-api/', include(('auth_api.urls', 'auth-api'))),
     path('forecast-api/', include(('forecast_api.urls', 'forecast-api'))),
     path('', views.catchall),
+    path('*', views.catchall),
 ]
