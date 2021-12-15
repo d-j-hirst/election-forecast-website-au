@@ -56,7 +56,7 @@ const ForecastSummaryLoading = () => (
 
 const ForecastSummary = props => {
      // This makes sure the component does not display until a forecast is actually loaded
-    if (props.forecast.overallWinPercent !== undefined) {
+    if (props.forecastValid) {
         return <ForecastSummaryVisible forecast={props.forecast} mode={props.mode}  />
     } else {
         return <ForecastSummaryLoading />

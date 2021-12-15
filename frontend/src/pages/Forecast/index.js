@@ -13,7 +13,8 @@ const Forecast = () => {
   // if a valid user is logged in. As always, don't trust the client
   // and protect on the backend as well!
   useUserRequired();
-  const [ forecast, setForecast] = useState({})
+  const [ forecast, setForecast] = useState({});
+  const [ forecastValid, setForecastValid] = useState(false);
 
   const parseDateData = raw => {
     const datetime = new Date(Date.parse(raw)).toLocaleString('en-AU');
@@ -25,6 +26,7 @@ const Forecast = () => {
   }
 
   useEffect(() => {
+    setForecastValid(false);
 
     const getElectionSummary = () => {
       return getDirect(`forecast-api/election-summary/${code}/${mode}`).then(
@@ -47,6 +49,7 @@ const Forecast = () => {
                                 oth: data.oth_overall_win_pc}
           };
           setForecast(forecast);
+          setForecastValid(true);
         }
       ).catch(
         e => {
@@ -63,7 +66,7 @@ const Forecast = () => {
       <Header />
       <ForecastsNav election={code} mode={mode} />
       <div className={styles.content}>
-        <ForecastSummary election={code} mode={mode} forecast={forecast} />
+        <ForecastSummary election={code} mode={mode} forecast={forecast} forecastValid={forecastValid} />
       </div>
     </>
   );
