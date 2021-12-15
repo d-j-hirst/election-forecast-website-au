@@ -1,7 +1,7 @@
 
 ## New Readme (if restarting from the current repository) for the frontend server
 
-For local development:
+### For local development:
 
 Make sure you are using a compatible version of node.js; the most recent version does not work as of 24-11-2021. Version 16.13.0 should work fine. NVM (Node Version Manager) is recommended to make sure you run the correct versions. Run `npm install` in the `frontend` folder to install the packages.
 
@@ -17,11 +17,8 @@ You may also need to add users for testing under "OAuth consent screen" (left me
 
 Finally, for development, run `npm start` to actually run the frontend server.
 
-For production:
+### For production:
 
 Create the `.env` file as outlined above, but for `REACT_APP_BASE_BACKEND_URL` give the URL of your website (including the `https://`). Also create the jsconfig.json. Setup Google Cloud Platform Credentials as above, adding the following: `https://<YOUR_WEBSITE_DOMAIN>` to "Authorized JavaScript origins" and `https://<YOUR_WEBSITE_DOMAIN>/auth-api/v1/auth/login/google/` to "Authorized redirect URIs".
 
 The build now needs to be produced and transferred to for backend to send. In order to build we first need `react-scripts` so run `npm install react-scripts` in folder `frontend`. After first installing any other new packages with `npm install`, run `npm run build` to create a build (this may take some time), then run `prepare_files.sh` which will sort various files into a "root" folder. See the backend readme for the final instructions on how to collect these static files.
-
-## Old Readme (keeping it around until all config stuff is sorted out)
-Old readme is here: https://github.com/HackSoftware/Django-React-GoogleOauth2-Example/blob/main/client/README.md
