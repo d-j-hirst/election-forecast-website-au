@@ -36,7 +36,7 @@ const ForecastSummaryVisible = props => {
                         <TooltipPercentage value={props.forecast.overallWinPercent.lnp} />
                     </ListGroup.Item>
                     <ListGroup.Item className={styles.formationOfGovernmentTopItem}>
-                        <Badge bg="secondary">OTH</Badge> forms government:&nbsp;<TooltipPercentage value={props.forecast.overallWinPercent.oth} />
+                        Any other party forms government:&nbsp;<TooltipPercentage value={props.forecast.overallWinPercent.oth} />
                     </ListGroup.Item>
                 </ListGroup>
                 </Card.Body>
