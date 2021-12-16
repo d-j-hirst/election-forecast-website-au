@@ -28,7 +28,6 @@ def find_mapped(mapped_list, val):
     return first(mapped_list, lambda x: x[0] == val)[1]
 
 
-
 def submit_report(request: HttpRequest):
     data_json = request.body.decode()
     data = json.loads(data_json)
@@ -49,11 +48,6 @@ def submit_report(request: HttpRequest):
     forecast, _ = Forecast.objects.get_or_create(election=election,
                                                  date=date,
                                                  mode=mode)
-    forecast.description = data['reportLabel']
-    mapped = find_mapped(data['overallWinPc'], 0)
-    forecast.alp_overall_win_pc = float(find_mapped(data['overallWinPc'], 0))
-    forecast.lnp_overall_win_pc = float(find_mapped(data['overallWinPc'], 1))
-    forecast.oth_overall_win_pc = float(find_mapped(data['overallWinPc'], -1))
     forecast.report = data
     forecast.save()
     return Response("Forecast report successfully submitted.")

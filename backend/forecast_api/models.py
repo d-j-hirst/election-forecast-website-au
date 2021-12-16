@@ -32,11 +32,3 @@ class Forecast(models.Model):
         return Forecast.Mode[self.mode]
 
     report = models.JSONField(default=str)
-
-    # Brief description of what new data is in this forecast
-    # Only include the one or two most important features
-    description = models.CharField(max_length=100, default='')
-
-    alp_overall_win_pc = models.FloatField(default=50)
-    lnp_overall_win_pc = models.FloatField(default=50)
-    oth_overall_win_pc = models.FloatField(default=0)

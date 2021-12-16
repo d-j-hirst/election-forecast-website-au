@@ -19,6 +19,16 @@ class ViewForecastPermission(BasePermission):
         return False
 
 
+def first(iterable, condition = lambda x: True):
+    return next(x for x in iterable if condition(x))
+
+
+# Assuming mapped_list is a list of two-element list items, returns the value
+# of the second element for the first item whose first element matches "val".
+def find_mapped(mapped_list, val):
+    return first(mapped_list, lambda x: x[0] == val)[1]
+
+
 def serve_forecast(code, mode):
     modes = {
         'regular': Forecast.Mode.REGULAR_FORECAST,
@@ -37,10 +47,10 @@ def serve_forecast(code, mode):
                         .order_by('-date')
                         .first())
     info['date'] = str(forecast.date).replace(' ', 'T')
-    info['description'] = forecast.description
-    info['alp_overall_win_pc'] = forecast.alp_overall_win_pc
-    info['lnp_overall_win_pc'] = forecast.lnp_overall_win_pc
-    info['oth_overall_win_pc'] = forecast.oth_overall_win_pc
+    info['description'] = forecast.report['reportLabel']
+    info['alp_overall_win_pc'] = find_mapped(forecast.report['overallWinPc'], 0)
+    info['lnp_overall_win_pc'] = find_mapped(forecast.report['overallWinPc'], 1)
+    info['oth_overall_win_pc'] = find_mapped(forecast.report['overallWinPc'], -1)
     return Response(info)
 
 
