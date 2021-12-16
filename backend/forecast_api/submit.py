@@ -54,5 +54,6 @@ def submit_report(request: HttpRequest):
     forecast.alp_overall_win_pc = float(find_mapped(data['overallWinPc'], 0))
     forecast.lnp_overall_win_pc = float(find_mapped(data['overallWinPc'], 1))
     forecast.oth_overall_win_pc = float(find_mapped(data['overallWinPc'], -1))
+    forecast.report = data
     forecast.save()
     return Response("Forecast report successfully submitted.")

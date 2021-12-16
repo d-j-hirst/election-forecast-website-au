@@ -31,6 +31,8 @@ class Forecast(models.Model):
     def get_mode(self) -> Mode:
         return Forecast.Mode[self.mode]
 
+    report = models.JSONField(default=str)
+
     # Brief description of what new data is in this forecast
     # Only include the one or two most important features
     description = models.CharField(max_length=100, default='')
