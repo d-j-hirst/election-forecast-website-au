@@ -4,6 +4,7 @@ from datetime import datetime
 from forecast_api.models import Election, Forecast
 from rest_framework.response import Response
 from rest_framework.permissions import BasePermission
+import json
 
 
 class SubmitForecastPermission(BasePermission):
@@ -16,16 +17,29 @@ class SubmitForecastPermission(BasePermission):
         
         return False
 
+
+def first(iterable, condition = lambda x: True):
+    return next(x for x in iterable if condition(x))
+
+
+# Assuming mapped_list is a list of two-element list items, returns the value
+# of the second element for the first item whose first element matches "val".
+def find_mapped(mapped_list, val):
+    return first(mapped_list, lambda x: x[0] == val)[1]
+
+
+
 def submit_report(request: HttpRequest):
-    data = request.body.decode().split('\n')
-    code = data[0]
-    name = data[1]
-    date = make_aware(datetime.fromisoformat(data[3]))
+    data_json = request.body.decode()
+    data = json.loads(data_json)
+    code = data['termCode']
+    name = data['electionName']
+    date = make_aware(datetime.fromisoformat(data['reportDate']))
     mode = (Forecast.Mode.NOWCAST
-            if data[4] == "NC"
+            if data['reportMode'] == "NC"
             else (
                 Forecast.Mode.LIVE_FORECAST
-                if data[4] == "LF"
+                if data['reportMode'] == "LF"
                 else Forecast.Mode.REGULAR_FORECAST
             ))
     election, _ = Election.objects.get_or_create(code=code)
@@ -33,12 +47,12 @@ def submit_report(request: HttpRequest):
         election.name = name
     election.save()
     forecast, _ = Forecast.objects.get_or_create(election=election,
-                                                    date=date,
-                                                    mode=mode)
-    forecast.description = data[2]
-    forecast.alp_overall_win_pc = float(data[5])
-    forecast.lnp_overall_win_pc = float(data[6])
-    forecast.oth_overall_win_pc = float(data[7])
+                                                 date=date,
+                                                 mode=mode)
+    forecast.description = data['reportLabel']
+    mapped = find_mapped(data['overallWinPc'], 0)
+    forecast.alp_overall_win_pc = float(find_mapped(data['overallWinPc'], 0))
+    forecast.lnp_overall_win_pc = float(find_mapped(data['overallWinPc'], 1))
+    forecast.oth_overall_win_pc = float(find_mapped(data['overallWinPc'], -1))
     forecast.save()
-    message = "Forecast report successfully submitted."
-    return Response(message)
+    return Response("Forecast report successfully submitted.")
