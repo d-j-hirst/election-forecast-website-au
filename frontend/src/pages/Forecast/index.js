@@ -16,15 +16,6 @@ const Forecast = () => {
   const [ forecast, setForecast] = useState({});
   const [ forecastValid, setForecastValid] = useState(false);
 
-  const parseDateData = raw => {
-    const datetime = new Date(Date.parse(raw)).toLocaleString('en-AU');
-    const parts = datetime.split(',');
-    const dateParts = parts[0].split('/');
-    const newDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}, ${parts[1]}`;
-    console.log(newDate);
-    return newDate;
-  }
-
   useEffect(() => {
     setForecastValid(false);
 
@@ -40,15 +31,7 @@ const Forecast = () => {
     const fetchElectionSummary = () => {
       getElectionSummary().then(
         data => {
-          const forecast = {
-            name: data.name,
-            date: parseDateData(data.date),
-            description: data.description,
-            overallWinPercent: {alp: data.alp_overall_win_pc,
-                                lnp: data.lnp_overall_win_pc,
-                                oth: data.oth_overall_win_pc}
-          };
-          setForecast(forecast);
+          setForecast(data);
           setForecastValid(true);
         }
       ).catch(

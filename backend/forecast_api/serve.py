@@ -39,19 +39,14 @@ def serve_forecast(code, mode):
         raise Http404
     info = {}
     mode_val = modes[mode]
-    election: Any = Election.objects.get(code=code)
+    election = Election.objects.get(code=code)
     info['name'] = election.name
-    forecast: Any = (election
-                        .forecast_set
-                        .filter(mode=mode_val)
-                        .order_by('-date')
-                        .first())
-    info['date'] = str(forecast.date).replace(' ', 'T')
-    info['description'] = forecast.report['reportLabel']
-    info['alp_overall_win_pc'] = find_mapped(forecast.report['overallWinPc'], 0)
-    info['lnp_overall_win_pc'] = find_mapped(forecast.report['overallWinPc'], 1)
-    info['oth_overall_win_pc'] = find_mapped(forecast.report['overallWinPc'], -1)
-    return Response(info)
+    forecast = (election
+                .forecast_set
+                .filter(mode=mode_val)
+                .order_by('-date')
+                .first())
+    return Response(forecast.report)
 
 
 def serve_forecast_list():
