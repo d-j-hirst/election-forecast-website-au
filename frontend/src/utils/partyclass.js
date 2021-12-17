@@ -5,7 +5,6 @@ const isKnownParty = party => {
 };
 
 export const standardiseParty = (party, forecast) => {
-    console.log(party);
     if (typeof party !== 'string') party = intMap(forecast.partyAbbr, party);
     if (party.toLowerCase() === 'lib') party = 'lnp';
     if (!isKnownParty(party)) party = 'oth';
@@ -35,4 +34,9 @@ export const xLightBgClass = (party, forecast) => {
 export const xxLightBgClass = (party, forecast) => {
     party = standardiseParty(party, forecast);
     return party.toLowerCase() + '-bg-xxlight';
+};
+
+export const xxxLightBgClass = (party, forecast) => {
+    party = standardiseParty(party, forecast);
+    return party.toLowerCase() + '-bg-xxxlight';
 };

@@ -17,36 +17,43 @@ code {
   --alp-light: #f5a3ab;
   --alp-xlight: #f7c0c5;
   --alp-xxlight: #fadde0;
+  --alp-xxxlight: #fdedef;
   --lnp: #1467CC;
   --lnp-mid: #5792da;
   --lnp-light: #87b2e7;
   --lnp-xlight: #abcaf0;
   --lnp-xxlight: #d6e6fa;
+  --lnp-xxxlight: #ecf5ff;
   --grn: #68a800;
   --grn-mid: #8dc237;
   --grn-light: #b2d875;
   --grn-xlight: #cfe6ab;
   --grn-xxlight: #e9f5d6;
+  --grn-xxxlight: #f9ffef;
   --oth: #838383;
   --oth-mid: #a5a5a5;
   --oth-light: #cacaca;
   --oth-xlight: #dddddd;
   --oth-xxlight: #f1f1f1;
+  --oth-xxxlight: #f7f7f7;
   --uap: #c2b615;
   --uap-mid: #ebdf43;
   --uap-light: #f0e87c;
   --uap-xlight: #fcf7b1;
   --uap-xxlight: #fcf9d7;
+  --uap-xxxlight: #fcf9e1;
   --onp: #ff7f00;
   --onp-mid: #ffab58;
   --onp-light: #ffc388;
   --onp-xlight: #ffd5aa;
   --onp-xxlight: #fde6ce;
+  --onp-xxxlight: #faeee0;
   --kap: #9a593a;
   --kap-mid: #be8c75;
   --kap-light: #cfab9a;
   --kap-xlight: #dfc3b6;
   --kap-xxlight: #eedfd8;
+  --kap-xxxlight: #f7eeea;
 }
 
 .alp-bg-mid {
@@ -186,5 +193,40 @@ code {
 
 .uap-bg-xxlight {
   background-color: var(--uap-xxlight) !important;
+  color: #212529 !important;
+}
+
+.alp-bg-xxxlight {
+  background-color: var(--alp-xxxlight) !important;
+  color: #212529 !important;
+}
+
+.grn-bg-xxxlight {
+  background-color: var(--grn-xxxlight) !important;
+  color: #212529 !important;
+}
+
+.kap-bg-xxxlight {
+  background-color: var(--kap-xxxlight) !important;
+  color: #212529 !important;
+}
+
+.lnp-bg-xxxlight {
+  background-color: var(--lnp-xxxlight) !important;
+  color: #212529 !important;
+}
+
+.onp-bg-xxxlight {
+  background-color: var(--onp-xxxlight) !important;
+  color: #212529 !important;
+}
+
+.oth-bg-xxxlight {
+  background-color: var(--oth-xxxlight) !important;
+  color: #212529 !important;
+}
+
+.uap-bg-xxxlight {
+  background-color: var(--uap-xxxlight) !important;
   color: #212529 !important;
 }

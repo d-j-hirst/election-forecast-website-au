@@ -3,6 +3,5 @@ export const parseDateData = raw => {
     const parts = datetime.split(',');
     const dateParts = parts[0].split('/');
     const newDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}, ${parts[1]}`;
-    console.log(newDate);
     return newDate;
 };
