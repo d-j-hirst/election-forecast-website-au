@@ -12,4 +12,179 @@ code {
 :root {
   --grey: #707070;
   --softblue: #4c92cacb;
+  --alp: #dc3545;
+  --alp-mid: #ec7480;
+  --alp-light: #f5a3ab;
+  --alp-xlight: #f7c0c5;
+  --alp-xxlight: #fadde0;
+  --lnp: #1467CC;
+  --lnp-mid: #5792da;
+  --lnp-light: #87b2e7;
+  --lnp-xlight: #abcaf0;
+  --lnp-xxlight: #d6e6fa;
+  --grn: #68a800;
+  --grn-mid: #8dc237;
+  --grn-light: #b2d875;
+  --grn-xlight: #cfe6ab;
+  --grn-xxlight: #e9f5d6;
+  --oth: #838383;
+  --oth-mid: #a5a5a5;
+  --oth-light: #cacaca;
+  --oth-xlight: #dddddd;
+  --oth-xxlight: #f1f1f1;
+  --uap: #c2b615;
+  --uap-mid: #ebdf43;
+  --uap-light: #f0e87c;
+  --uap-xlight: #fcf7b1;
+  --uap-xxlight: #fcf9d7;
+  --onp: #ff7f00;
+  --onp-mid: #ffab58;
+  --onp-light: #ffc388;
+  --onp-xlight: #ffd5aa;
+  --onp-xxlight: #fde6ce;
+  --kap: #9a593a;
+  --kap-mid: #be8c75;
+  --kap-light: #cfab9a;
+  --kap-xlight: #dfc3b6;
+  --kap-xxlight: #eedfd8;
+}
+
+.alp-bg-mid {
+  background-color: var(--alp-mid) !important;
+  color: #212529 !important;
+}
+
+.grn-bg-mid {
+  background-color: var(--grn-mid) !important;
+  color: #212529 !important;
+}
+
+.kap-bg-mid {
+  background-color: var(--kap-mid) !important;
+  color: #212529 !important;
+}
+
+.lnp-bg-mid {
+  background-color: var(--lnp-mid) !important;
+  color: #212529 !important;
+}
+
+.onp-bg-mid {
+  background-color: var(--onp-mid) !important;
+  color: #212529 !important;
+}
+
+.oth-bg-mid {
+  background-color: var(--oth-mid) !important;
+  color: #212529 !important;
+}
+
+.uap-bg-mid {
+  background-color: var(--uap-mid) !important;
+  color: #212529 !important;
+}
+
+.alp-bg-light {
+  background-color: var(--alp-light) !important;
+  color: #212529 !important;
+}
+
+.grn-bg-light {
+  background-color: var(--grn-light) !important;
+  color: #212529 !important;
+}
+
+.kap-bg-light {
+  background-color: var(--kap-light) !important;
+  color: #212529 !important;
+}
+
+.lnp-bg-light {
+  background-color: var(--lnp-light) !important;
+  color: #212529 !important;
+}
+
+.onp-bg-light {
+  background-color: var(--onp-light) !important;
+  color: #212529 !important;
+}
+
+.oth-bg-light {
+  background-color: var(--oth-light) !important;
+  color: #212529 !important;
+}
+
+.uap-bg-light {
+  background-color: var(--uap-light) !important;
+  color: #212529 !important;
+}
+
+.alp-bg-xlight {
+  background-color: var(--alp-xlight) !important;
+  color: #212529 !important;
+}
+
+.grn-bg-xlight {
+  background-color: var(--grn-xlight) !important;
+  color: #212529 !important;
+}
+
+.kap-bg-xlight {
+  background-color: var(--kap-xlight) !important;
+  color: #212529 !important;
+}
+
+.lnp-bg-xlight {
+  background-color: var(--lnp-xlight) !important;
+  color: #212529 !important;
+}
+
+.onp-bg-xlight {
+  background-color: var(--onp-xlight) !important;
+  color: #212529 !important;
+}
+
+.oth-bg-xlight {
+  background-color: var(--oth-xlight) !important;
+  color: #212529 !important;
+}
+
+.uap-bg-xlight {
+  background-color: var(--uap-xlight) !important;
+  color: #212529 !important;
+}
+
+.alp-bg-xxlight {
+  background-color: var(--alp-xxlight) !important;
+  color: #212529 !important;
+}
+
+.grn-bg-xxlight {
+  background-color: var(--grn-xxlight) !important;
+  color: #212529 !important;
+}
+
+.kap-bg-xxlight {
+  background-color: var(--kap-xxlight) !important;
+  color: #212529 !important;
+}
+
+.lnp-bg-xxlight {
+  background-color: var(--lnp-xxlight) !important;
+  color: #212529 !important;
+}
+
+.onp-bg-xxlight {
+  background-color: var(--onp-xxlight) !important;
+  color: #212529 !important;
+}
+
+.oth-bg-xxlight {
+  background-color: var(--oth-xxlight) !important;
+  color: #212529 !important;
+}
+
+.uap-bg-xxlight {
+  background-color: var(--uap-xxlight) !important;
+  color: #212529 !important;
 }

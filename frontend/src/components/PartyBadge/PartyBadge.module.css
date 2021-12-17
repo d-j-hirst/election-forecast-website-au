@@ -1,0 +1,41 @@
+.party-badge {
+    border-radius: 5px;
+    padding: 2px 4px 3px 4px;
+    font-weight: 550;
+  }
+  
+  .alp-badge {
+    background-color: var(--alp);
+    color: white;
+  }
+  
+  .grn-badge {
+    background-color: var(--grn);
+    color: black;
+  }
+  
+  .kap-badge {
+    background-color: var(--kap);
+    color: white;
+  }
+  
+  .lnp-badge {
+    background-color: var(--lnp);
+    color: white;
+  }
+  
+  .onp-badge {
+    background-color: var(--onp);
+    color: black;
+  }
+  
+  .oth-badge {
+    background-color: var(--oth);
+    color: white;
+  }
+  
+  .uap-badge {
+    background-color: var(--uap);
+    color: black;
+  }
+  

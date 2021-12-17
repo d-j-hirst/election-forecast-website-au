@@ -1,19 +1,33 @@
 import React from 'react';
 
 import Card from 'react-bootstrap/Card';
-import Badge from 'react-bootstrap/Badge';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Spinner from 'react-bootstrap/Spinner';
 
 import TooltipPercentage from '../TooltipPercentage'
+import { SmartBadge } from '../PartyBadge'
 
 import { parseDateData } from '../../utils/date.js'
 import { intMap } from '../../utils/intmap.js'
+import { lightBgClass, standardiseParty } from '../../utils/partyclass.js'
 
 import styles from './ForecastSummary.module.css';
 
+const OverallWinGovernmentRow = props => {
+    const party = parseInt(props.partyIndex)
+    const partyAbbr = standardiseParty(party, props.forecast);
+    const text = props.text !== undefined && party < 0 ? props.text : undefined;
+    const bgClasses = `${styles['formationOfGovernmentTopItem']} ${lightBgClass(partyAbbr)}`;
+    return (
+        <ListGroup.Item className={bgClasses}>
+            <SmartBadge party={partyAbbr} text={text} /> forms government:&nbsp;
+            <strong><TooltipPercentage value={intMap(props.forecast.overallWinPc, party)} /></strong>
+        </ListGroup.Item>
+    )
+}
+
 const ForecastSummaryVisible = props => {
-    console.log(props.forecast.overallWinPc);
+    console.log(props.forecast.partyAbbr);
     return (
         <>
             <div className={styles.forecastTitle}>
@@ -31,17 +45,9 @@ const ForecastSummaryVisible = props => {
                 </Card.Header>
                 <Card.Body className={styles.formationOfGovernmentBody}>
                 <ListGroup className={styles.formationOfGovernmentTopList}>
-                    <ListGroup.Item className={styles.formationOfGovernmentTopItem}>
-                        <Badge bg="danger">ALP</Badge> forms government:&nbsp;
-                        <TooltipPercentage value={intMap(props.forecast.overallWinPc, 0)} />
-                    </ListGroup.Item>
-                    <ListGroup.Item className={styles.formationOfGovernmentTopItem}>
-                        <Badge bg="primary">LNP</Badge> forms government:&nbsp;
-                        <TooltipPercentage value={intMap(props.forecast.overallWinPc, 1)} />
-                    </ListGroup.Item>
-                    <ListGroup.Item className={styles.formationOfGovernmentTopItem}>
-                        Any other party forms government:&nbsp;<TooltipPercentage value={intMap(props.forecast.overallWinPc, -1)} />
-                    </ListGroup.Item>
+                    <OverallWinGovernmentRow partyIndex="0" forecast={props.forecast} />
+                    <OverallWinGovernmentRow partyIndex="1" forecast={props.forecast} />
+                    <OverallWinGovernmentRow partyIndex="-1" forecast={props.forecast} text="Any other party" />
                 </ListGroup>
                 </Card.Body>
             </Card>

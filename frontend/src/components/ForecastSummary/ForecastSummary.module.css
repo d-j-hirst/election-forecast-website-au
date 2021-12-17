@@ -3,7 +3,8 @@
     width: 600px;
     max-width: 100%;
     margin: auto;
-    border-radius: 20px !important;
+    border-color: #777777;
+    border-radius: 20px 20px 2px 2px !important;
 }
 
 .formationOfGovernmentTitle {
@@ -17,11 +18,11 @@
 }
 
 .formationOfGovernmentTopList {
-    border-color: #CCCCCC !important;
+    border-color: #777777;
 }
 
 .formationOfGovernmentTopItem {
-    border-color: #CCCCCC !important;
+    border-color: #777777;
 }
 
 .forecastTitle {
