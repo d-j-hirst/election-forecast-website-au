@@ -3,7 +3,7 @@
     width: 600px;
     max-width: 100%;
     margin: auto;
-    border-color: #777777;
+    border-color: #CCCCCC;
     border-radius: 20px 20px 2px 2px !important;
 }
 
@@ -15,21 +15,41 @@
 
 .formationOfGovernmentBody {
     padding: 0px !important;
+    background-color: #CCCCCC !important;
     text-align: left;
 }
 
 .formationOfGovernmentTopList {
-    border-color: #777777;
+    border-color: #CCCCCC !important;
 }
 
 .formationOfGovernmentTopItem {
-    border-color: #777777;
+    border-color: #CCCCCC;
 }
 
 .formationOfGovernmentSubItem {
-    border-color: #777777;
+    border-color: #CCCCCC;
     padding: 6px 20px !important;
     font-size: 14px;
+}
+
+.formationOfGovernmentDescription {
+    padding: 0px 0px;
+}
+
+.formationOfGovernmentExpand {
+    padding: 0px 0px !important;
+    cursor: pointer;
+    font-size: 14px !important;
+    color: black !important;
+    border-style: none !important;
+    background-color: transparent !important;
+}
+
+.majorRowArranger {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }
 
 .forecastTitle {
@@ -44,4 +64,8 @@
     font-size: 11px;
     text-align: center;
     background-color: white;
+}
+
+.dropdown-toggle::after {
+    display:none !important;
 }
