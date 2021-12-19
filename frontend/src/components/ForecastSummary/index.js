@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import ListGroup from 'react-bootstrap/ListGroup';
-import Spinner from 'react-bootstrap/Spinner';
 
 import ProbStatement from '../ProbStatement'
 import GovernmentFormationChart from '../GovernmentFormationChart'
@@ -184,7 +183,7 @@ const OthersCollapsibleRows = props => {
     </>)
 };
 
-const ForecastSummaryVisible = props => {
+const ForecastSummary = props => {
     return (
         <>
             <div className={styles.forecastTitle}>
@@ -211,24 +210,6 @@ const ForecastSummaryVisible = props => {
             </Card>
         </>
     );
-}
-
-const ForecastSummaryLoading = () => (
-    <div className={styles.summary}>
-        <Spinner animation="border" role="status" size="sm">
-            <span className="visually-hidden">Loading...</span>
-        </Spinner>
-        Loading forecast
-    </div>
-)
-
-const ForecastSummary = props => {
-     // This makes sure the component does not display until a forecast is actually loaded
-    if (props.forecastValid) {
-        return <ForecastSummaryVisible forecast={props.forecast} mode={props.mode}  />
-    } else {
-        return <ForecastSummaryLoading />
-    }
 }
 
 export default ForecastSummary;

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { useUserRequired } from 'utils/hooks';
-import { Header, ForecastsNav, ForecastSummary } from 'components';
+import { Header, ForecastsNav, ForecastSummary, LoadingMarker } from 'components';
 import { getDirect } from 'utils/sdk';
 
 import styles from './Forecast.module.css';
@@ -49,7 +49,12 @@ const Forecast = () => {
       <Header />
       <ForecastsNav election={code} mode={mode} />
       <div className={styles.content}>
-        <ForecastSummary election={code} mode={mode} forecast={forecast} forecastValid={forecastValid} />
+        {forecastValid &&
+          <ForecastSummary election={code} mode={mode} forecast={forecast} forecastValid={forecastValid} />
+        }
+        {!forecastValid &&
+          <LoadingMarker />
+        }
       </div>
     </>
   );
