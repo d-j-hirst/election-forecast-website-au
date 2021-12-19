@@ -5,9 +5,7 @@ import Card from 'react-bootstrap/Card';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Spinner from 'react-bootstrap/Spinner';
 
-import TooltipPercentage from '../TooltipPercentage'
-import TooltipText from '../TooltipText'
-import { SmartBadge } from '../PartyBadge'
+import ProbStatement from '../ProbStatement'
 
 import { parseDateData } from '../../utils/date.js'
 import { intMap } from '../../utils/intmap.js'
@@ -15,17 +13,14 @@ import { lightBgClass, xLightBgClass, xxLightBgClass, xxxLightBgClass, standardi
 
 import styles from './ForecastSummary.module.css';
 
-const interpretOth = (code, text) => code === undefined || code.toLowerCase() === 'OTH' ? text : code;
-
 const MajorityWinGovernmentRow = props => {
     const party = parseInt(props.partyIndex)
     const partyAbbr = standardiseParty(party, props.forecast);
-    const text = props.text !== undefined && party < 0 ? props.text : undefined;
+    const prob = intMap(props.forecast.majorityWinPc, party);
     const bgClasses = `${styles['formationOfGovernmentSubItem']} ${xLightBgClass(partyAbbr)}`;
     return (
         <ListGroup.Item className={bgClasses}>
-            &nbsp;&bull;&nbsp;<SmartBadge party={partyAbbr} text={interpretOth(text, 'Emerging party')} /> has a majority:&nbsp;
-            <strong><TooltipPercentage value={intMap(props.forecast.majorityWinPc, party)} /></strong>
+            &nbsp;&bull;&nbsp;<ProbStatement forecast={props.forecast} party={party} prob={prob} text={props.text} outcome={"to have a majority"} />
         </ListGroup.Item>
     )
 };
@@ -33,7 +28,7 @@ const MajorityWinGovernmentRow = props => {
 const MinorityWinGovernmentRow = props => {
     const party = parseInt(props.partyIndex)
     const partyAbbr = standardiseParty(party, props.forecast);
-    const text = props.text !== undefined && party < 0 ? props.text : undefined;
+    const prob = intMap(props.forecast.minorityWinPc, party);
     const bgClasses = `${styles['formationOfGovernmentSubItem']} ${xxLightBgClass(partyAbbr)}`;
     const minorityTooltipText = "Parties expected to support this major party in a minority government. " + 
         "The Greens are expected to support the ALP; One Nation, United Australia Party and Katter's Australian Party " +
@@ -41,9 +36,7 @@ const MinorityWinGovernmentRow = props => {
         "major party by default.";
     return (
         <ListGroup.Item className={bgClasses}>
-            &nbsp;&bull;&nbsp;<SmartBadge party={partyAbbr} text={text} /> can form a&nbsp;<wbr />
-            <TooltipText mainText="minority&nbsp;government" tooltipText={minorityTooltipText}/>:&nbsp;
-            <strong><TooltipPercentage value={intMap(props.forecast.minorityWinPc, party)} /></strong>
+            &nbsp;&bull;&nbsp;<ProbStatement forecast={props.forecast} party={party} prob={prob} text={props.text} outcome={"to have a clear path to minority government"} tooltipText={minorityTooltipText} />
         </ListGroup.Item>
     )
 };
@@ -51,7 +44,7 @@ const MinorityWinGovernmentRow = props => {
 const MostSeatsRow = props => {
     const party = parseInt(props.partyIndex)
     const partyAbbr = standardiseParty(party, props.forecast);
-    const text = props.text !== undefined && party < 0 ? props.text : undefined;
+    const prob = intMap(props.forecast.mostSeatsWinPc, party);
     const bgClasses = `${styles['formationOfGovernmentSubItem']} ${xxxLightBgClass(partyAbbr)}`;
     const hungTooltipText = "While the term hung parliament is often used to indicate any parliament where no " +
         "party can form a majority, here it is used in a narrower sense to count only those situations where " +
@@ -59,24 +52,21 @@ const MostSeatsRow = props => {
         "aligned with it.";
     return (
         <ListGroup.Item className={bgClasses}>
-            &nbsp;&bull;&nbsp;<SmartBadge party={partyAbbr} text={interpretOth(text, 'Emerging party')} /> has most seats in a&nbsp;<wbr />
-            <TooltipText mainText="hung&nbsp;parliament" tooltipText={hungTooltipText}/>:&nbsp;
-            <strong><TooltipPercentage value={intMap(props.forecast.mostSeatsWinPc, party)} /></strong>
+        &nbsp;&bull;&nbsp;<ProbStatement forecast={props.forecast} party={party} prob={prob} text={props.text} outcome={"to have most seats in a hung parliament"} tooltipText={hungTooltipText} />
         </ListGroup.Item>
     )
 };
 
 const OverallWinGovernmentRow = props => {
     const party = parseInt(props.partyIndex)
+    const prob = intMap(props.forecast.overallWinPc, party);
     const partyAbbr = standardiseParty(party, props.forecast);
-    const text = props.text !== undefined && party < 0 ? props.text : undefined;
     const bgClasses = `${styles['formationOfGovernmentTopItem']} ${lightBgClass(partyAbbr)}`;
     return (
         <ListGroup.Item className={bgClasses}>
             <div className={styles.majorRowArranger}>
                 <div className={styles.formationOfGovernmentDescription}>
-                    <SmartBadge party={partyAbbr} text={text} /> forms government:&nbsp;
-                    <strong><TooltipPercentage value={intMap(props.forecast.overallWinPc, party)} /></strong>
+                    <ProbStatement forecast={props.forecast} party={party} prob={prob} text={props.text} outcome={"to form government"} />
                 </div>
                 {
                     props.detailHandler !== undefined &&
