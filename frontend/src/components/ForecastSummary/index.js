@@ -7,6 +7,9 @@ import Spinner from 'react-bootstrap/Spinner';
 
 import ProbStatement from '../ProbStatement'
 import GovernmentFormationChart from '../GovernmentFormationChart'
+import TooltipPercentage from '../TooltipPercentage'
+import TooltipText from '../TooltipText'
+import { SmartBadge } from '../PartyBadge'
 
 import { parseDateData } from '../../utils/date.js'
 import { intMap } from '../../utils/intmap.js'
@@ -76,6 +79,27 @@ const MostSeatsRow = props => {
     )
 };
 
+const AllocatedTiesRow = props => {
+    const party = parseInt(props.partyIndex)
+    const partyAbbr = standardiseParty(party, props.forecast);
+    const prob = intMap(props.forecast.overallWinPc, party) -
+                 intMap(props.forecast.majorityWinPc, party) -
+                 intMap(props.forecast.minorityWinPc, party) -
+                 intMap(props.forecast.mostSeatsWinPc, party);
+    const bgClasses = `${styles['formationOfGovernmentAllocatedTies']} ${xxxLightBgClass(partyAbbr)}`;
+    const tiesTooltipText = "Exact ties between the two major parties are split 50-50 " +
+        "for the purpose of determining their chances of forming government.";
+    return (
+        <ListGroup.Item className={bgClasses}>
+            Additionally{" "}
+            <SmartBadge party={partyAbbr} />
+            {' has '}
+            <strong><TooltipPercentage value={prob} /></strong>
+            <TooltipText mainText={" allocated from exact ties "} tooltipText={tiesTooltipText}/>
+        </ListGroup.Item>
+    )
+};
+
 const OverallWinGovernmentRow = props => {
     const party = parseInt(props.partyIndex)
     const prob = intMap(props.forecast.overallWinPc, party);
@@ -115,6 +139,7 @@ const MajorPartyCollapsibleRows = props => {
                 <MajorityWinGovernmentRow partyIndex={props.partyIndex} forecast={props.forecast} />
                 <MinorityWinGovernmentRow partyIndex={props.partyIndex} forecast={props.forecast} />
                 <MostSeatsRow partyIndex={props.partyIndex} forecast={props.forecast} />
+                <AllocatedTiesRow partyIndex={props.partyIndex} forecast={props.forecast} />
             </>
         }
     </>
