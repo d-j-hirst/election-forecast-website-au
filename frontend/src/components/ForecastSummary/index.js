@@ -6,6 +6,7 @@ import ListGroup from 'react-bootstrap/ListGroup';
 import Spinner from 'react-bootstrap/Spinner';
 
 import ProbStatement from '../ProbStatement'
+import GovernmentFormationChart from '../GovernmentFormationChart'
 
 import { parseDateData } from '../../utils/date.js'
 import { intMap } from '../../utils/intmap.js'
@@ -20,7 +21,13 @@ const MajorityWinGovernmentRow = props => {
     const bgClasses = `${styles['formationOfGovernmentSubItem']} ${xLightBgClass(partyAbbr)}`;
     return (
         <ListGroup.Item className={bgClasses}>
-            &nbsp;&bull;&nbsp;<ProbStatement forecast={props.forecast} party={party} prob={prob} text={props.text} outcome={"to have a majority"} />
+            &nbsp;&bull;&nbsp;
+            <ProbStatement forecast={props.forecast}
+                                     party={party}
+                                     prob={prob}
+                                     text={props.text}
+                                     outcome={"to have a majority"}
+            />
         </ListGroup.Item>
     )
 };
@@ -36,7 +43,13 @@ const MinorityWinGovernmentRow = props => {
         "major party by default.";
     return (
         <ListGroup.Item className={bgClasses}>
-            &nbsp;&bull;&nbsp;<ProbStatement forecast={props.forecast} party={party} prob={prob} text={props.text} outcome={"to have a clear path to minority government"} tooltipText={minorityTooltipText} />
+            &nbsp;&bull;&nbsp;
+            <ProbStatement forecast={props.forecast}
+                           party={party}
+                           prob={prob}
+                           text={props.text}
+                           outcome={"to have a clear path to minority government"}
+                           tooltipText={minorityTooltipText} />
         </ListGroup.Item>
     )
 };
@@ -52,7 +65,13 @@ const MostSeatsRow = props => {
         "aligned with it.";
     return (
         <ListGroup.Item className={bgClasses}>
-        &nbsp;&bull;&nbsp;<ProbStatement forecast={props.forecast} party={party} prob={prob} text={props.text} outcome={"to have most seats in a hung parliament"} tooltipText={hungTooltipText} />
+            &nbsp;&bull;&nbsp;
+            <ProbStatement forecast={props.forecast}
+                           party={party}
+                           prob={prob}
+                           text={props.text}
+                           outcome={"to have most seats in a hung parliament"}
+                           tooltipText={hungTooltipText} />
         </ListGroup.Item>
     )
 };
@@ -71,7 +90,7 @@ const OverallWinGovernmentRow = props => {
                 {
                     props.detailHandler !== undefined &&
                     <Button onClick={props.detailHandler} className={styles.formationOfGovernmentExpand}>
-                        {props.expanded ? "Hide detail" : "Show detail"}
+                        {props.expanded ? " Hide detail" : " Show detail"}
                         <small>
                             {props.expanded ? " ▲" : " ▼"}
                         </small>
@@ -157,11 +176,12 @@ const ForecastSummaryVisible = props => {
                     <strong>Formation Of Government</strong>
                 </Card.Header>
                 <Card.Body className={styles.formationOfGovernmentBody}>
-                <ListGroup className={styles.formationOfGovernmentTopList}>
-                    <MajorPartyCollapsibleRows partyIndex="0" forecast={props.forecast} />
-                    <MajorPartyCollapsibleRows partyIndex="1" forecast={props.forecast} />
-                    <OthersCollapsibleRows forecast={props.forecast} />
-                </ListGroup>
+                    <ListGroup className={styles.formationOfGovernmentTopList}>
+                        <MajorPartyCollapsibleRows partyIndex="0" forecast={props.forecast} />
+                        <MajorPartyCollapsibleRows partyIndex="1" forecast={props.forecast} />
+                        <OthersCollapsibleRows forecast={props.forecast} />
+                    </ListGroup>
+                    <GovernmentFormationChart forecast={props.forecast} />
                 </Card.Body>
             </Card>
         </>
