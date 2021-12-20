@@ -13,7 +13,7 @@ import { SmartBadge } from '../PartyBadge'
 import { intMap } from '../../utils/intmap.js'
 import { lightBgClass, xLightBgClass, xxLightBgClass, xxxLightBgClass, standardiseParty } from '../../utils/partyclass.js'
 
-import styles from './ForecastSummary.module.css';
+import styles from './FormationOfGovernment.module.css';
 
 const MajorityWinGovernmentRow = props => {
     const party = parseInt(props.partyIndex)
