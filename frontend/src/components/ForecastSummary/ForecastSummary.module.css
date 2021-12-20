@@ -69,20 +69,6 @@ svg > g > g:last-child { pointer-events: none }
     justify-content: space-between;
 }
 
-.forecastTitle {
-    font-size: 22px;
-    text-align: center;
-    padding: 2px 8px;
-    border-radius: 10px;
-    background-color: #DDDDDD;
-}
-
-.forecastUpdateInfo {
-    font-size: 11px;
-    text-align: center;
-    background-color: white;
-}
-
 .dropdown-toggle::after {
     display:none !important;
 }

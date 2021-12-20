@@ -10,7 +10,6 @@ import TooltipPercentage from '../TooltipPercentage'
 import TooltipText from '../TooltipText'
 import { SmartBadge } from '../PartyBadge'
 
-import { parseDateData } from '../../utils/date.js'
 import { intMap } from '../../utils/intmap.js'
 import { lightBgClass, xLightBgClass, xxLightBgClass, xxxLightBgClass, standardiseParty } from '../../utils/partyclass.js'
 
@@ -185,30 +184,19 @@ const OthersCollapsibleRows = props => {
 
 const ForecastSummary = props => {
     return (
-        <>
-            <div className={styles.forecastTitle}>
-                {props.forecast.electionName} - {props.mode === "nowcast" ? "Nowcast" : "Regular Forecast"}
-            </div>
-            <div className={styles.forecastUpdateInfo}>
-                Last updated at&nbsp;
-                {parseDateData(props.forecast.reportDate)}
-                &nbsp;because of:&nbsp;
-                {props.forecast.reportLabel}
-            </div>
-            <Card className={styles.summary}>
-                <Card.Header className={styles.formationOfGovernmentTitle}>
-                    <strong>Formation Of Government</strong>
-                </Card.Header>
-                <Card.Body className={styles.formationOfGovernmentBody}>
-                    <ListGroup className={styles.formationOfGovernmentTopList}>
-                        <MajorPartyCollapsibleRows partyIndex="0" forecast={props.forecast} />
-                        <MajorPartyCollapsibleRows partyIndex="1" forecast={props.forecast} />
-                        <OthersCollapsibleRows forecast={props.forecast} />
-                    </ListGroup>
-                    <GovernmentFormationChart forecast={props.forecast} />
-                </Card.Body>
-            </Card>
-        </>
+        <Card className={styles.summary}>
+            <Card.Header className={styles.formationOfGovernmentTitle}>
+                <strong>Formation Of Government</strong>
+            </Card.Header>
+            <Card.Body className={styles.formationOfGovernmentBody}>
+                <ListGroup className={styles.formationOfGovernmentTopList}>
+                    <MajorPartyCollapsibleRows partyIndex="0" forecast={props.forecast} />
+                    <MajorPartyCollapsibleRows partyIndex="1" forecast={props.forecast} />
+                    <OthersCollapsibleRows forecast={props.forecast} />
+                </ListGroup>
+                <GovernmentFormationChart forecast={props.forecast} />
+            </Card.Body>
+        </Card>
     );
 }
 
