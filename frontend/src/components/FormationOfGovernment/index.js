@@ -182,7 +182,7 @@ const OthersCollapsibleRows = props => {
     </>)
 };
 
-const ForecastSummary = props => {
+const FormationOfGovernment = props => {
     return (
         <Card className={styles.summary}>
             <Card.Header className={styles.formationOfGovernmentTitle}>
@@ -200,4 +200,4 @@ const ForecastSummary = props => {
     );
 }
 
-export default ForecastSummary;
+export default FormationOfGovernment;

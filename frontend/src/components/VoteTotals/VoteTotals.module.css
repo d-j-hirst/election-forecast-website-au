@@ -1,0 +1,53 @@
+.summary {
+    text-align: center;
+    max-width: 100%;
+    margin: auto;
+    border-color: #CCCCCC;
+    border-radius: 20px 20px 2px 2px !important;
+}
+
+.voteTotalsTitle {
+    font-size: 20px;
+    background-color: #CCCCCC !important;
+    border-radius: 20px 20px 0px 0px !important;
+}
+
+.voteTotalsBody {
+    padding: 0px !important;
+    background-color: #CCCCCC !important;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.voteTotalsSubHeading {
+    font-size: 18px;
+    font-weight: bold;
+    background-color: #CCCCCC !important;
+    width: 100%;
+}
+
+.voteTotalsHorz {
+    display: flex;
+    flex-flow: row wrap;
+    width: 100%;
+}
+
+.voteTotalsList {
+    border-color: #CCCCCC !important;
+}
+
+.voteTotalsItem {
+    border-color: #CCCCCC;
+}
+
+.formationOfGovernmentDescription {
+    padding: 0px 0px;
+}
+
+.majorRowArranger {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
