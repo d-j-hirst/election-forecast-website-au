@@ -56,6 +56,41 @@ code {
   --kap-xxxlight: #f7eeea;
 }
 
+.alp-bg {
+  background-color: var(--alp) !important;
+  color: #212529 !important;
+}
+
+.grn-bg {
+  background-color: var(--grn) !important;
+  color: #212529 !important;
+}
+
+.kap-bg {
+  background-color: var(--kap) !important;
+  color: #212529 !important;
+}
+
+.lnp-bg {
+  background-color: var(--lnp) !important;
+  color: #212529 !important;
+}
+
+.onp-bg {
+  background-color: var(--onp) !important;
+  color: #212529 !important;
+}
+
+.oth-bg {
+  background-color: var(--oth) !important;
+  color: #212529 !important;
+}
+
+.uap-bg {
+  background-color: var(--uap) !important;
+  color: #212529 !important;
+}
+
 .alp-bg-mid {
   background-color: var(--alp-mid) !important;
   color: #212529 !important;

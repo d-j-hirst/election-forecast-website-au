@@ -22,15 +22,10 @@
 }
 
 .voteTotalsSubHeading {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: bold;
     background-color: #CCCCCC !important;
-    width: 100%;
-}
-
-.voteTotalsHorz {
-    display: flex;
-    flex-flow: row wrap;
+    text-align: center;
     width: 100%;
 }
 
@@ -40,6 +35,11 @@
 
 .voteTotalsItem {
     border-color: #CCCCCC;
+    display: flex !important;
+    flex-wrap: wrap;
+    align-items: center;
+    height: '100%';
+    justify-content: space-between;
 }
 
 .formationOfGovernmentDescription {
