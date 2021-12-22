@@ -23,6 +23,7 @@ const FpRow = props => {
                          thresholds={thresholds}
                          partyAbbr={partyAbbr}
                          maxVoteTotal={props.maxVoteTotal}
+                         thresholdLevels={props.forecast.voteTotalThresholds}
             />
         </ListGroup.Item>
     );

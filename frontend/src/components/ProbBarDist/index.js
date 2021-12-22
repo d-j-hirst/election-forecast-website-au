@@ -21,6 +21,7 @@ const ProbBarDist = props => {
                                 partyAbbr={props.partyAbbr}
                                 scalingFactor={scalingFactor}
                                 midThreshold={midThreshold}
+                                thresholdLevels={props.thresholdLevels}
                     />
             })}
         </div>

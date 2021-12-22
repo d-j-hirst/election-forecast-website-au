@@ -10,6 +10,11 @@ code {
     monospace;
 }
 
+/* Tooltips sometimes need to be properly formatted with newlines, this allows them to be so */
+.tooltip {
+  white-space: pre-wrap !important;
+}
+
 :root {
   --grey: #707070;
   --softblue: #4c92cacb;

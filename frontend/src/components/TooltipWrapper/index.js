@@ -25,7 +25,7 @@ const TooltipWrapper = props => (
             delay={{ hide: 0, show: 250 }}
             popperConfig={{tooltipText: props.tooltipText}}
             overlay={renderTooltip}
-            placement="bottom"
+            placement={props.placement === undefined ? "top" : props.placement}
         >
         <span role="button">
             {props.children}
