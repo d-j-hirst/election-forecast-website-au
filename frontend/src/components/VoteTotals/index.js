@@ -1,15 +1,14 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import Card from 'react-bootstrap/Card';
 import ListGroup from 'react-bootstrap/ListGroup';
 
-import GovernmentFormationChart from '../GovernmentFormationChart'
 import TooltipPercentage from '../TooltipPercentage'
-import TooltipText from '../TooltipText'
+// import TooltipText from '../TooltipText'
 import { SmartBadge } from '../PartyBadge'
 
 import { intMap } from '../../utils/intmap.js'
-import { bgClass, midBgClass, lightBgClass, xLightBgClass, xxLightBgClass, xxxLightBgClass, standardiseParty } from '../../utils/partyclass.js'
+import { bgClass, midBgClass, lightBgClass, xLightBgClass, xxLightBgClass, xxxLightBgClass } from '../../utils/partyclass.js'
 
 import styles from './VoteTotals.module.css';
 

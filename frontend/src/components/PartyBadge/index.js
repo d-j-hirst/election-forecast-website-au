@@ -39,11 +39,12 @@ export const UapBadge = props => {
 };
 
 export const SmartBadge = props => {
-    if (props.party.toLowerCase() === "alp") return <AlpBadge/>
-    if (props.party.toLowerCase() === "grn") return <GrnBadge/>
-    if (props.party.toLowerCase() === "kap") return <KapBadge/>
-    if (props.party.toLowerCase() === "lnp") return <LnpBadge/>
-    if (props.party.toLowerCase() === "onp") return <OnpBadge/>
-    if (props.party.toLowerCase() === "uap") return <UapBadge/>
+    const partyName = props.party.toLowerCase();
+    if (partyName === "alp") return <AlpBadge/>
+    if (partyName === "grn") return <GrnBadge/>
+    if (partyName === "kap") return <KapBadge/>
+    if (partyName === "lnp" || partyName === "lib") return <LnpBadge/>
+    if (partyName === "onp") return <OnpBadge/>
+    if (partyName === "uap") return <UapBadge/>
     return <OthBadge text={props.text}/>
 }
