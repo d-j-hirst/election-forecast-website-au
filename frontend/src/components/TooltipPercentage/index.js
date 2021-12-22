@@ -1,12 +1,11 @@
 import React from 'react';
 
-import TooltipText from '../TooltipText'
+import TooltipWrapper from '../TooltipWrapper'
 
 const TooltipPercentage = props => (
-    <TooltipText 
-        mainText={Number((props.value)).toFixed(1) + '%'}
-        tooltipText={Number((props.value)).toFixed(3) + '%'}
-    />
+    <TooltipWrapper tooltipText={Number((props.value)).toFixed(3) + '%'}>
+        {Number((props.value)).toFixed(1) + '%'}
+    </TooltipWrapper>
 );
 
 export default TooltipPercentage;

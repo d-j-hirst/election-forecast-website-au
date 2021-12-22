@@ -1,7 +1,6 @@
 import React from 'react';
 
 import ProbBar from '../ProbBar';
-import { intMap } from '../../utils/intmap.js'
 
 const ProbBarDist = props => {
     const midThreshold = Math.floor(props.thresholds.length / 2);

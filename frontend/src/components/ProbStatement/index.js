@@ -1,7 +1,7 @@
 import React from 'react';
 
 import TooltipPercentage from '../TooltipPercentage'
-import TooltipText from '../TooltipText'
+import TooltipWrapper from '../TooltipWrapper'
 import { getIsPhrase, getProbPhrase } from '../../utils/phrases.js'
 import { SmartBadge } from '../PartyBadge'
 import { standardiseParty } from '../../utils/partyclass.js'
@@ -26,7 +26,9 @@ const ProbStatement = props => {
             <strong>{struc ? "" : probPhrase[0]}</strong>
             {props.tooltipText === undefined && " " + props.outcome} 
             {props.tooltipText !== undefined && 
-                <TooltipText mainText={" " + props.outcome} tooltipText={props.tooltipText}/>
+                <TooltipWrapper tooltipText={props.tooltipText}>
+                    {" " + props.outcome}
+                </TooltipWrapper>
             }
             {" "}
             (

@@ -7,7 +7,7 @@ import ListGroup from 'react-bootstrap/ListGroup';
 import ProbStatement from '../ProbStatement'
 import GovernmentFormationChart from '../GovernmentFormationChart'
 import TooltipPercentage from '../TooltipPercentage'
-import TooltipText from '../TooltipText'
+import TooltipWrapper from '../TooltipWrapper'
 import { SmartBadge } from '../PartyBadge'
 
 import { intMap } from '../../utils/intmap.js'
@@ -93,7 +93,9 @@ const AllocatedTiesRow = props => {
             <SmartBadge party={partyAbbr} />
             {' has '}
             <strong><TooltipPercentage value={prob} /></strong>
-            <TooltipText mainText={" allocated from exact ties "} tooltipText={tiesTooltipText}/>
+            <TooltipWrapper tooltipText={tiesTooltipText}>
+                allocated from exact ties
+            </TooltipWrapper>
         </ListGroup.Item>
     )
 };

@@ -19,7 +19,7 @@ function renderTooltip(props) {
     );
 }
 
-const TooltipText = props => (
+const TooltipWrapper = props => (
     <>
         <OverlayTrigger
             delay={{ hide: 0, show: 250 }}
@@ -28,10 +28,10 @@ const TooltipText = props => (
             placement="bottom"
         >
         <span role="button">
-            {props.mainText}
+            {props.children}
         </span>
         </OverlayTrigger>
     </>
 );
 
-export default TooltipText;
+export default TooltipWrapper;
