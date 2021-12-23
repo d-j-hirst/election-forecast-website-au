@@ -11,7 +11,7 @@ import { intMap } from '../../utils/intmap.js'
 
 import styles from './VoteTotals.module.css';
 
-const FpRow = props => {
+const VoteShareRow = props => {
     let partyAbbr = intMap(props.forecast.partyAbbr, props.freqSet[0]);
     const thresholds = [[0,1,0],[1,4,1],[4,6,2],[6,8,3],[8,10,4],[10,13,5],[13,14,6]];
     return (
@@ -22,6 +22,7 @@ const FpRow = props => {
             <ProbBarDist freqSet={props.freqSet}
                          thresholds={thresholds}
                          partyAbbr={partyAbbr}
+                         minVoteTotal={props.minVoteTotal}
                          maxVoteTotal={props.maxVoteTotal}
                          thresholdLevels={props.forecast.voteTotalThresholds}
             />
@@ -40,7 +41,30 @@ const FpRowSet = props => {
                 First preference votes
             </ListGroup.Item>
             {freqs.map(freqSet => 
-            <FpRow forecast={props.forecast} freqSet={freqSet} maxVoteTotal={maxVoteTotal} />)}
+            <VoteShareRow forecast={props.forecast} freqSet={freqSet} maxVoteTotal={maxVoteTotal} minVoteTotal={0} />)}
+        </ListGroup>
+    )
+}
+
+const TppRowSet = props => {
+    const partyFreqs = [[0, props.forecast.tppFrequencies]];
+    partyFreqs.push([1, partyFreqs[0][1].map(freq => 100 - freq).reverse()]);
+    const maxVoteTotal = Math.max(Math.max(...partyFreqs[0][1]), Math.max(...partyFreqs[1][1]));
+    const minVoteTotal = Math.min(Math.min(...partyFreqs[0][1]), Math.min(...partyFreqs[1][1]));
+    const firstHigher = partyFreqs[0][1][7] > partyFreqs[1][1][7];
+    return (
+        <ListGroup className={styles.voteTotalsTopList}>
+            <ListGroup.Item className={styles.voteTotalsSubHeading}>
+                Two-party-preferred votes
+            </ListGroup.Item>
+            <VoteShareRow forecast={props.forecast}
+                          freqSet={partyFreqs[firstHigher ? 0 : 1]}
+                          maxVoteTotal={maxVoteTotal}
+                          minVoteTotal={minVoteTotal} />
+            <VoteShareRow forecast={props.forecast}
+                          freqSet={partyFreqs[firstHigher ? 1 : 0]}
+                          maxVoteTotal={maxVoteTotal}
+                          minVoteTotal={minVoteTotal} />
         </ListGroup>
     )
 }
@@ -52,6 +76,7 @@ const VoteTotals = props => {
                 <strong>Vote Totals</strong>
             </Card.Header>
             <Card.Body className={styles.voteTotalsBody}>
+                <TppRowSet forecast={props.forecast} />
                 <FpRowSet forecast={props.forecast} />
             </Card.Body>
         </Card>

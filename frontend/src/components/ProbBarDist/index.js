@@ -5,7 +5,8 @@ import ProbBar from '../ProbBar';
 const ProbBarDist = props => {
     const midThreshold = Math.floor(props.thresholds.length / 2);
     const chartWidth = 300;
-    const scalingFactor = chartWidth / (props.maxVoteTotal);
+    const scalingFactor = chartWidth / (props.maxVoteTotal - props.minVoteTotal);
+    const visualOffset = props.minVoteTotal;
     const voteDistStyle = {
         width: chartWidth.toString() + 'px',
         position: 'relative',
@@ -20,6 +21,7 @@ const ProbBarDist = props => {
                                 freqSet={props.freqSet}
                                 partyAbbr={props.partyAbbr}
                                 scalingFactor={scalingFactor}
+                                visualOffset={visualOffset}
                                 midThreshold={midThreshold}
                                 thresholdLevels={props.thresholdLevels}
                     />

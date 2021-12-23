@@ -23,7 +23,7 @@ const ProbBar = props => {
                      [3, xLightBgClass(props.partyAbbr)],
                      [4, xxLightBgClass(props.partyAbbr)],
                      [5, xxxLightBgClass(props.partyAbbr)]];
-    const leftVal = Math.floor(freq[lt] * props.scalingFactor).toString() + 'px';
+    const leftVal = Math.floor((freq[lt] - props.visualOffset) * props.scalingFactor).toString() + 'px';
     const widthVal = Math.floor((freq[rt] - freq[lt]) * props.scalingFactor + 1).toString() + 'px';
     const thisStyle = {
         height: '10px',
