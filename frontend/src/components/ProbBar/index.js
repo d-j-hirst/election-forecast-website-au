@@ -42,23 +42,34 @@ const ProbBar = props => {
     }
     const offsetFromMid = pos - props.midThreshold;
     const barClass = intMap(classes, Math.abs(offsetFromMid));
-    let tooltipText = Number((freq[lt])).toFixed(1) + "% - " +
-                        Number((freq[rt])).toFixed(1) + "%\nPercentile " + 
-                        formatWholeOrFixed(props.thresholdLevels[lt]) + " - " +
-                        formatWholeOrFixed(props.thresholdLevels[rt]) + "\n";
+
+    let tooltipText = "";
+    if (props.valType === undefined || props.valType === "percentage") {
+        tooltipText = Number((freq[lt])).toFixed(1) + "% - " +
+            Number((freq[rt])).toFixed(1) + "%\nPercentile " + 
+            formatWholeOrFixed(props.thresholdLevels[lt]) + " - " +
+            formatWholeOrFixed(props.thresholdLevels[rt]) + "\n";
+    }
+    else if (props.valType === "integer") {
+        tooltipText = freq[lt] + " - " +
+            freq[rt] + "\nPercentile " + 
+            formatWholeOrFixed(props.thresholdLevels[lt]) + " - " +
+            formatWholeOrFixed(props.thresholdLevels[rt]) + "\n";
+    }
+
     if (offsetFromMid === 0) {
-        tooltipText += "This range covers the vote totals that are most expected given the current situation.";
+        tooltipText += "This range covers the " + props.pluralNoun + " that are most expected given the current situation.";
     }
     else if (Math.abs(offsetFromMid) === 1) {
-        tooltipText += "This range covers vote totals that are somewhat " +
+        tooltipText += "This range covers " + props.pluralNoun + " that are somewhat " +
             (offsetFromMid > 0 ? "higher" : "lower") + " than expected, but not unusually so given the current situation.";
     }
     else if (Math.abs(offsetFromMid) === 2) {
-        tooltipText += "This range covers vote totals that are unusually " +
+        tooltipText += "This range covers " + props.pluralNoun + " that are unusually " +
             (offsetFromMid > 0 ? "high" : "low") + " given the current situation.";
     }
     else if (Math.abs(offsetFromMid) >= 3) {
-        tooltipText += "This range covers vote totals that are exceptionally " +
+        tooltipText += "This range covers " + props.pluralNoun + " that are exceptionally " +
             (offsetFromMid > 0 ? "high" : "low") + ", and should only happen rarely given the current situation.";
     }
 

@@ -11,7 +11,8 @@ const ProbBarDist = props => {
         width: chartWidth.toString() + 'px',
         position: 'relative',
         height: '10px',
-        padding: '8px 0px'
+        padding: '0px',
+        margin: '0px 0px 0px 8px'
     };
 
     return (
@@ -23,6 +24,8 @@ const ProbBarDist = props => {
                                 scalingFactor={scalingFactor}
                                 visualOffset={visualOffset}
                                 midThreshold={midThreshold}
+                                pluralNoun={props.pluralNoun}
+                                valType={props.valType}
                                 thresholdLevels={props.thresholdLevels}
                     />
             })}
