@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { useUserRequired } from 'utils/hooks';
-import { Header, ForecastsNav, ForecastHeader, FormationOfGovernment, LoadingMarker, VoteTotals, SeatTotals } from 'components';
+import { Header, ForecastsNav, ForecastHeader, FormationOfGovernment, LoadingMarker, VoteTotals, SeatTotals, NowcastAlert } from 'components';
 import { getDirect } from 'utils/sdk';
 
 import styles from './Forecast.module.css';
@@ -44,6 +44,8 @@ const Forecast = () => {
     fetchElectionSummary();
   }, [code, mode]);
 
+  console.log("mode" + mode);
+
   return (
     <>
       <Header />
@@ -52,6 +54,10 @@ const Forecast = () => {
         {forecastValid &&
           <>
             <ForecastHeader mode={mode} forecast={forecast} />
+            {
+              mode === "nowcast" &&
+              <NowcastAlert />
+            }
             <FormationOfGovernment election={code} mode={mode} forecast={forecast} />
             <VoteTotals election={code} mode={mode} forecast={forecast} />
             <SeatTotals election={code} mode={mode} forecast={forecast} />
