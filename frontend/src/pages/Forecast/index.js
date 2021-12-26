@@ -44,8 +44,6 @@ const Forecast = () => {
     fetchElectionSummary();
   }, [code, mode]);
 
-  console.log("mode" + mode);
-
   return (
     <>
       <Header />

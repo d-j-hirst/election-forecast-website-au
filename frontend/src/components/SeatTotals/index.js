@@ -18,7 +18,7 @@ const SeatsRow = props => {
     if (partyName === "Independent") partyDesc = "Established Independent - Independents who are either incumbents, gained significant vote previously or otherwise known to have a high profile";
     if (partyName === "Emerging Ind") partyDesc = "Emerging Independent - Independents who are not yet known to have a high profile";
     if (partyName === "Emerging Party") partyDesc = "Emerging Parties - Represents possible votes and wins by parties that may emerge, but are not yet getting significant results in polls";
-    const thresholds = [[0,1,0],[1,4,1],[4,6,2],[6,8,3],[8,10,4],[10,13,5],[13,14,6]];
+    const thresholds = [[0,2,0],[2,4,1],[4,6,2],[6,8,3],[8,10,4],[10,12,5],[12,14,6]];
     return (
         <ListGroup.Item className={styles.seatTotalsItem}>
             <SmartBadge party={partyAbbr} tooltipText={partyDesc} /> - {props.freqSet[1][4]}
@@ -32,6 +32,7 @@ const SeatsRow = props => {
                          thresholdLevels={props.forecast.voteTotalThresholds}
                          pluralNoun="seat totals"
                          valType="integer"
+                         adjust={true}
             />
         </ListGroup.Item>
     );
@@ -47,8 +48,13 @@ const SeatsRowSet = props => {
             <ListGroup.Item className={styles.voteTotalsSubHeading}>
                 First preference votes
             </ListGroup.Item>
-            {freqs.map(freqSet => 
-            <SeatsRow forecast={props.forecast} freqSet={freqSet} maxVoteTotal={maxVoteTotal} minVoteTotal={0} />)}
+            {freqs.map((freqSet, index) => 
+                <SeatsRow forecast={props.forecast}
+                          freqSet={freqSet}
+                          maxVoteTotal={maxVoteTotal}
+                          minVoteTotal={0}
+                          key={index}
+                />)}
         </ListGroup>
     )
 }

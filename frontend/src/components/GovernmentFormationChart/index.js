@@ -26,7 +26,6 @@ const GovernmentFormationChart = props => {
     chartData.push([partyTwoName + ' has more seats', partyTwoVals[3]])
     chartData.push([partyTwoName + ' minority', partyTwoVals[2]])
     chartData.push([partyTwoName + ' majority', partyTwoVals[1]])
-    console.log(chartData);
     const sliceFormat = [{color: '#dc3545'},
                          {color: '#ec7480', textStyle: {color: 'black'}},
                          {color: '#f5a3ab', textStyle: {color: 'black'}},

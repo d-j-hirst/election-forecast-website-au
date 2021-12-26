@@ -171,11 +171,9 @@ const OthersCollapsibleRows = props => {
             [...minorParties].map(el => {
                 let rows = [];
                 if (intMap(props.forecast.majorityWinPc, el, undefined) !== undefined) {
-                    console.log(intMap(props.forecast.majorityWinPc, el, undefined));
                     rows.push(<MajorityWinGovernmentRow partyIndex={el} forecast={props.forecast} />)
                 }
                 if (intMap(props.forecast.mostSeatsWinPc, el, undefined) !== undefined) {
-                    console.log(intMap(props.forecast.mostSeatsWinPc, el, undefined));
                     rows.push(<MostSeatsRow partyIndex={el} forecast={props.forecast} />)
                 }
                 return rows;

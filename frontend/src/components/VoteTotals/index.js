@@ -13,7 +13,7 @@ import styles from './VoteTotals.module.css';
 
 const VoteShareRow = props => {
     let partyAbbr = intMap(props.forecast.partyAbbr, props.freqSet[0]);
-    const thresholds = [[0,1,0],[1,4,1],[4,6,2],[6,8,3],[8,10,4],[10,13,5],[13,14,6]];
+    const thresholds = [[0,2,0],[2,4,1],[4,6,2],[6,8,3],[8,10,4],[10,12,5],[12,14,6]];
     return (
         <ListGroup.Item className={styles.voteTotalsItem}>
             <SmartBadge party={partyAbbr} /> - <TooltipPercentage value={props.freqSet[1][4]} />
@@ -42,8 +42,13 @@ const FpRowSet = props => {
             <ListGroup.Item className={styles.voteTotalsSubHeading}>
                 First preference votes
             </ListGroup.Item>
-            {freqs.map(freqSet => 
-            <VoteShareRow forecast={props.forecast} freqSet={freqSet} maxVoteTotal={maxVoteTotal} minVoteTotal={0} />)}
+            {freqs.map((freqSet, index) => 
+                <VoteShareRow forecast={props.forecast}
+                              freqSet={freqSet}
+                              maxVoteTotal={maxVoteTotal}
+                              minVoteTotal={0}
+                              key={index}
+                />)}
         </ListGroup>
     )
 }

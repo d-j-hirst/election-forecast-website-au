@@ -9,9 +9,7 @@ import { standardiseParty } from '../../utils/partyclass.js'
 const interpretOth = (code, text) => code === undefined || code.toLowerCase() === 'oth' ? text : code;
 
 const ProbStatement = props => {
-    console.log(props.party)
     const partyAbbr = standardiseParty(props.party, props.forecast);
-    console.log(partyAbbr)
     let text = props.text !== undefined && props.party < 0 ? props.text : undefined;
     const probPhrase = getProbPhrase(props.prob);
     const struc = probPhrase[1];

@@ -46,7 +46,6 @@ const Home = () => {
     const fetchElectionList = () => {
       getElectionList().then(
         data => {
-          console.log(data)
           setElectionList(data);
         }
       ).catch(
@@ -68,32 +67,6 @@ const Home = () => {
   if (!user) {
     return null;
   }
-
-  // const hitPublicEndpoint = async () => {
-  //   console.log("Hitting the public endpoint")
-  //   const response = await axios.get(`${REACT_APP_BASE_BACKEND_URL}/forecast-api/public`);
-  //   console.log(response)
-  // };
-
-  // const whoAmI = async () => {
-  //   console.log("Getting current user")
-  //   getUserInfo().then(data => {console.log('User request data'); console.log(data);});
-  // };
-
-  // const loginStatus = async () => {
-  //   console.log("Getting login status")
-  //   isLoggedIn().then(val => {console.log(val);})
-  // };
-
-  // const hitProtectedEndpoint = async () => {
-  //   console.log("Find the protected page");
-  //   getProtectedForecast().then(data => {console.log('Protected page check'); console.log(data);});
-  // };
-
-  // const hitRestrictedEndpoint = async () => {
-  //   console.log("Find the restricted page");
-  //   getRestrictedForecast().then(data => {console.log('Restricted page check'); console.log(data);});
-  // };
 
   const listItems = electionList.map(d => <><Link to={`/forecast/${d[0]}/regular`}><button className={styles.otherBtn} >{d[1]}</button></Link><br /><br /></>)
 

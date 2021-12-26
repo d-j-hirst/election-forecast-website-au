@@ -7,24 +7,26 @@ import { intMap } from '../../utils/intmap.js'
 
 const formatWholeOrFixed = num => {
     let formatted = Number(num).toFixed(1);
-    console.log(formatted);
     if (formatted.slice(-2) === ".0") formatted = formatted.slice(0, -2);
     return formatted;
 }
 
 const ProbBar = props => {
-    const lt = props.thresholds[0];
-    const rt = props.thresholds[1];
-    const pos = props.thresholds[2];
-    const freq = props.freqSet[1];
+    const lt = props.bar.tLow;
+    const rt = props.bar.tHigh;
+    const pos = props.bar.tPos;
+    const lf = props.bar.fLow;
+    const rf = props.bar.fHigh;
+    const lv = props.bar.vLow;
+    const rv = props.bar.vHigh;
     const classes = [[0, bgClass(props.partyAbbr)],
                      [1, midBgClass(props.partyAbbr)],
                      [2, lightBgClass(props.partyAbbr)],
                      [3, xLightBgClass(props.partyAbbr)],
                      [4, xxLightBgClass(props.partyAbbr)],
                      [5, xxxLightBgClass(props.partyAbbr)]];
-    const leftVal = Math.floor((freq[lt] - props.visualOffset) * props.scalingFactor).toString() + 'px';
-    const widthVal = Math.floor((freq[rt] - freq[lt]) * props.scalingFactor + 1).toString() + 'px';
+    const leftVal = Math.floor((lv - props.visualOffset) * props.scalingFactor).toString() + 'px';
+    const widthVal = Math.floor((rv - lv) * props.scalingFactor + 1).toString() + 'px';
     const thisStyle = {
         height: '10px',
         width: widthVal,
@@ -45,14 +47,14 @@ const ProbBar = props => {
 
     let tooltipText = "";
     if (props.valType === undefined || props.valType === "percentage") {
-        tooltipText = Number((freq[lt])).toFixed(1) + "% - " +
-            Number((freq[rt])).toFixed(1) + "%\nPercentile " + 
+        tooltipText = Number((lf)).toFixed(1) + "% - " +
+            Number((rf)).toFixed(1) + "%\nPercentile " + 
             formatWholeOrFixed(props.thresholdLevels[lt]) + " - " +
             formatWholeOrFixed(props.thresholdLevels[rt]) + "\n";
     }
     else if (props.valType === "integer") {
-        tooltipText = freq[lt] + " - " +
-            freq[rt] + "\nPercentile " + 
+        tooltipText = lf + " - " +
+            rf + "\nPercentile " + 
             formatWholeOrFixed(props.thresholdLevels[lt]) + " - " +
             formatWholeOrFixed(props.thresholdLevels[rt]) + "\n";
     }
