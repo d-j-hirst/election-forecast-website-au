@@ -39,7 +39,7 @@ const SeatsRow = props => {
 }
 
 const SeatsRowSet = props => {
-    const freqs = props.forecast.seatFrequencies.sort((el1, el2) => {
+    const freqs = props.forecast.seatCountFrequencies.sort((el1, el2) => {
         return el2[1][7] - el1[1][7];
     });
     const maxVoteTotal = Math.max(...freqs.map(el => Math.max(...el[1])));

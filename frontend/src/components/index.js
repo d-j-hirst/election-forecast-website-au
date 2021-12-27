@@ -6,6 +6,7 @@ export { default as ForecastHeader } from './ForecastHeader';
 export { default as FormationOfGovernment } from './FormationOfGovernment';
 export { default as VoteTotals } from './VoteTotals';
 export { default as SeatTotals } from './SeatTotals';
+export { default as Seats } from './Seats';
 export { default as TooltipWrapper } from './TooltipWrapper';
 export { default as LoadingMarker } from './LoadingMarker';
 export { default as NowcastAlert } from './NowcastAlert';

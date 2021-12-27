@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { useUserRequired } from 'utils/hooks';
-import { Header, ForecastsNav, ForecastHeader, FormationOfGovernment, LoadingMarker, VoteTotals, SeatTotals, NowcastAlert } from 'components';
+import { Header, ForecastsNav, ForecastHeader, FormationOfGovernment,
+  LoadingMarker, VoteTotals, SeatTotals, NowcastAlert, Seats } from 'components';
 import { getDirect } from 'utils/sdk';
 
 import styles from './Forecast.module.css';
@@ -59,6 +60,7 @@ const Forecast = () => {
             <FormationOfGovernment election={code} mode={mode} forecast={forecast} />
             <VoteTotals election={code} mode={mode} forecast={forecast} />
             <SeatTotals election={code} mode={mode} forecast={forecast} />
+            <Seats election={code} mode={mode} forecast={forecast} />
           </>
         }
         {!forecastValid &&
