@@ -7,6 +7,7 @@ const isKnownParty = party => {
 export const standardiseParty = (party, forecast) => {
     if (typeof party !== 'string') party = intMap(forecast.partyAbbr, party);
     if (party.toLowerCase() === 'lib') party = 'lnp';
+    if (party.toLowerCase() === 'ca') party = 'onp';
     if (!isKnownParty(party)) party = 'oth';
     return party;
 }
