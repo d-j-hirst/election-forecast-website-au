@@ -168,13 +168,13 @@ const OthersCollapsibleRows = props => {
         <OverallWinGovernmentRow partyIndex="-1" forecast={props.forecast} detailHandler={detailHandler} expanded={showDetail} text="Any other party" />
         {
             showDetail && 
-            [...minorParties].map(el => {
+            [...minorParties].map((el, index) => {
                 let rows = [];
                 if (intMap(props.forecast.majorityWinPc, el, undefined) !== undefined) {
-                    rows.push(<MajorityWinGovernmentRow partyIndex={el} forecast={props.forecast} />)
+                    rows.push(<MajorityWinGovernmentRow partyIndex={el} forecast={props.forecast} key={index} />)
                 }
                 if (intMap(props.forecast.mostSeatsWinPc, el, undefined) !== undefined) {
-                    rows.push(<MostSeatsRow partyIndex={el} forecast={props.forecast} />)
+                    rows.push(<MostSeatsRow partyIndex={el} forecast={props.forecast} key={index+1000} />)
                 }
                 return rows;
             })

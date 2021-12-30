@@ -8,13 +8,13 @@ const GovernmentFormationChart = props => {
                      intMap(props.forecast.majorityWinPc, 0),
                      intMap(props.forecast.minorityWinPc, 0),
                      intMap(props.forecast.mostSeatsWinPc, 0)];
-    partyOneVals.push(partyOneVals[0] - partyOneVals[1] - partyOneVals[2] - partyOneVals[3]);
+    partyOneVals.push(Math.max(0, partyOneVals[0] - partyOneVals[1] - partyOneVals[2] - partyOneVals[3]));
     const partyTwoName = intMap(props.forecast.partyAbbr, 1);
     const partyTwoVals = [intMap(props.forecast.overallWinPc, 1),
                      intMap(props.forecast.majorityWinPc, 1),
                      intMap(props.forecast.minorityWinPc, 1),
                      intMap(props.forecast.mostSeatsWinPc, 1)];
-    partyTwoVals.push(partyTwoVals[0] - partyTwoVals[1] - partyTwoVals[2] - partyTwoVals[3]);
+    partyTwoVals.push(Math.max(0, partyTwoVals[0] - partyTwoVals[1] - partyTwoVals[2] - partyTwoVals[3]));
     let chartData = [];
     chartData.push(['Result', 'Probability']);
     chartData.push([partyOneName + ' majority', partyOneVals[1]])

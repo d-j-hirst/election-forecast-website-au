@@ -29,7 +29,7 @@ const SeatRow = props => {
     const incumbentAbbr = intMap(props.forecast.partyAbbr, incumbentIndex);
     const margin = Math.abs(props.forecast.seatMargins[props.index]);
 
-    const freqs = props.forecast.seatPartyWinFrequencies[props.index];
+    const freqs = JSON.parse(JSON.stringify(props.forecast.seatPartyWinFrequencies[props.index]));
     freqs.sort((a, b) => {
         const aName = intMap(props.forecast.partyAbbr, a[0]);
         const bName = intMap(props.forecast.partyAbbr, b[0]);
@@ -46,13 +46,19 @@ const SeatRow = props => {
                 </small>
             </div>
             <WinnerBarDist forecast={props.forecast}
-                           freqSet={props.forecast.seatPartyWinFrequencies[props.index]}
+                           freqSet={freqs}
             />
         </ListGroup.Item>
     );
 }
 
 const Seats = props => {
+    const indexedSeats = props.forecast.seatPartyWinFrequencies.map((a, index) => [index, a]);
+    const findMax = pair => pair[1].reduce((p, c) => p > c[1] ? p : c[1], 0);
+    const indexedCompetitiveness = indexedSeats.map(a => [a[0], findMax(a)]);
+    indexedCompetitiveness.sort((a, b) => a[1] - b[1]);
+    const sortedIndices = indexedCompetitiveness.map(a => a[0]);
+
     return (
         <Card className={styles.summary}>
             <Card.Header className={styles.seatsTitle}>
@@ -60,7 +66,7 @@ const Seats = props => {
             </Card.Header>
             <Card.Body className={styles.seatTotalsBody}>
                 {
-                    props.forecast.seatNames.map((_, index) =>
+                    sortedIndices.map(index =>
                         <SeatRow forecast={props.forecast} index={index} key={index} />
                     )
                 }
