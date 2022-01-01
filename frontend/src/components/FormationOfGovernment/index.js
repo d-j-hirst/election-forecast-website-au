@@ -27,7 +27,7 @@ const MajorityWinGovernmentRow = props => {
                                      party={party}
                                      prob={prob}
                                      text={props.text}
-                                     outcome={"to have a majority"}
+                                     outcome={"have a majority"}
             />
         </ListGroup.Item>
     )
@@ -49,7 +49,7 @@ const MinorityWinGovernmentRow = props => {
                            party={party}
                            prob={prob}
                            text={props.text}
-                           outcome={"to have a clear path to minority government"}
+                           outcome={"have a clear path to minority government"}
                            tooltipText={minorityTooltipText} />
         </ListGroup.Item>
     )
@@ -71,7 +71,7 @@ const MostSeatsRow = props => {
                            party={party}
                            prob={prob}
                            text={props.text}
-                           outcome={"to have most seats in a hung parliament"}
+                           outcome={"have most seats in a hung parliament"}
                            tooltipText={hungTooltipText} />
         </ListGroup.Item>
     )
@@ -109,7 +109,7 @@ const OverallWinGovernmentRow = props => {
         <ListGroup.Item className={bgClasses}>
             <div className={styles.majorRowArranger}>
                 <div className={styles.formationOfGovernmentDescription}>
-                    <ProbStatement forecast={props.forecast} party={party} prob={prob} text={props.text} outcome={"to form government"} />
+                    <ProbStatement forecast={props.forecast} party={party} prob={prob} text={props.text} outcome={"form government"} />
                 </div>
                 {
                     props.detailHandler !== undefined &&

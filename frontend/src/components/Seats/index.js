@@ -104,7 +104,7 @@ const SeatMore = props => {
                                                 party={a[0]}
                                                 prob={a[1]}
                                                 text={text}
-                                                outcome={"to win " + seatName}
+                                                outcome={"win " + seatName}
                                     />
                                 </div>
                             </>

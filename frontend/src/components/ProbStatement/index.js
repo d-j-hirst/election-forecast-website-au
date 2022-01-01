@@ -2,7 +2,7 @@ import React from 'react';
 
 import TooltipPercentage from '../TooltipPercentage'
 import TooltipWrapper from '../TooltipWrapper'
-import { getIsPhrase, getProbPhrase } from '../../utils/phrases.js'
+import { getIsPhrase, getWillPhrase, getProbPhrase } from '../../utils/phrases.js'
 import { SmartBadge } from '../PartyBadge'
 import { standardiseParty } from '../../utils/partyclass.js'
 
@@ -17,12 +17,14 @@ const ProbStatement = props => {
     if (struc && text !== undefined) text = text.toLowerCase();
     return (
         <>
-            {struc ? "It " + getIsPhrase(props.forecast) + " " : ""}
+            {struc ? "It is " : ""}
             <strong>{struc ? probPhrase[0] : ""}</strong>
-            {struc ? " for " : ""}
+            {struc ? " that " : ""}
             <SmartBadge party={partyAbbr} text={text} tooltipText={text} />
             {struc ? "" : " " + getIsPhrase(props.forecast) + " "}
             <strong>{struc ? "" : probPhrase[0]}</strong>
+            {struc ? "" : " to"}
+            {struc ? " " + getWillPhrase(props.forecast) : ""}
             {props.tooltipText === undefined && " " + props.outcome} 
             {props.tooltipText !== undefined && 
                 <TooltipWrapper tooltipText={props.tooltipText}>
