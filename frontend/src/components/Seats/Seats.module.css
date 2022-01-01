@@ -42,3 +42,22 @@
     height: '100%';
     justify-content: space-between;
 }
+
+.seatsTopLeft {
+    width: 200px;
+}
+
+.seatsLink {
+    cursor: pointer;
+}
+
+.seatsMore {
+    white-space: normal;
+    display: flex !important;
+    flex-direction: column;
+    font-size: 14px;
+}
+
+.seatsWinStatement {
+    padding: 2px 0px;
+}

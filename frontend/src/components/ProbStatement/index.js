@@ -6,20 +6,21 @@ import { getIsPhrase, getProbPhrase } from '../../utils/phrases.js'
 import { SmartBadge } from '../PartyBadge'
 import { standardiseParty } from '../../utils/partyclass.js'
 
-const interpretOth = (code, text) => code === undefined || code.toLowerCase() === 'oth' ? text : code;
+const interpretOth = (code, text) => code === undefined || code.toLowerCase() === 'oth' || code.toLowerCase() === 'ind' ? text : code;
 
 const ProbStatement = props => {
     const partyAbbr = standardiseParty(props.party, props.forecast);
-    let text = props.text !== undefined && props.party < 0 ? props.text : undefined;
+    let text = props.text !== undefined && partyAbbr === "oth" ? props.text : undefined;
     const probPhrase = getProbPhrase(props.prob);
     const struc = probPhrase[1];
+    text = interpretOth(text, 'An emerging party');
     if (struc && text !== undefined) text = text.toLowerCase();
     return (
         <>
             {struc ? "It " + getIsPhrase(props.forecast) + " " : ""}
             <strong>{struc ? probPhrase[0] : ""}</strong>
             {struc ? " for " : ""}
-            <SmartBadge party={partyAbbr} text={interpretOth(text, 'An emerging party')} />
+            <SmartBadge party={partyAbbr} text={text} tooltipText={text} />
             {struc ? "" : " " + getIsPhrase(props.forecast) + " "}
             <strong>{struc ? "" : probPhrase[0]}</strong>
             {props.tooltipText === undefined && " " + props.outcome} 

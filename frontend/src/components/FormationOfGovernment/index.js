@@ -92,7 +92,7 @@ const AllocatedTiesRow = props => {
             Additionally{" "}
             <SmartBadge party={partyAbbr} />
             {' has '}
-            <strong><TooltipPercentage value={prob} /></strong>
+            <strong><TooltipPercentage value={prob} /></strong>{" "}
             <TooltipWrapper tooltipText={tiesTooltipText}>
                 allocated from exact ties
             </TooltipWrapper>

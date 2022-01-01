@@ -93,7 +93,7 @@ export const SmartBadge = props => {
     const partyName = props.party.toLowerCase();
     if (partyName === "alp") return <AlpBadge/>
     if (partyName === "grn") return <GrnBadge/>
-    if (partyName === "ind") return <IndBadge tooltipText={props.tooltipText} />
+    if (partyName === "ind") return <IndBadge text={props.text} tooltipText={props.tooltipText} />
     if (partyName === "kap") return <KapBadge/>
     if (partyName === "ca") return <CaBadge/>
     if (partyName === "lnp" || partyName === "lib") return <LnpBadge/>
