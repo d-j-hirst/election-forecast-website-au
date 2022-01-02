@@ -76,7 +76,7 @@ const SeatRow = props => {
     );
 }
 
-const SeatFpRow = props => {
+const SeaTcpRow = props => {
     let partyAbbr = intMap(props.forecast.partyAbbr, props.freqSet[0]);
     const thresholds = [[0,2,0],[2,4,1],[4,6,2],[6,8,3],[8,10,4],[10,12,5],[12,14,6]];
     console.log(props.freqSet);
@@ -98,18 +98,66 @@ const SeatFpRow = props => {
     );
 }
 
+const SeatFpRow = props => {
+    const partyAbbr = intMap(props.forecast.partyAbbr, props.freqSet[0]);
+    const thresholds = [[0,2,0],[2,4,1],[4,6,2],[6,8,3],[8,10,4],[10,12,5],[12,14,6]];
+    return (
+        <ListGroup.Item className={styles.seatsItem}>
+            <SmartBadge party={partyAbbr} /> - <TooltipPercentage value={props.freqSet[1][4]} />
+            {" - "}{<strong><TooltipPercentage value={props.freqSet[1][7]} /></strong>}
+            {" - "}{<TooltipPercentage value={props.freqSet[1][10]} />}
+            <ProbBarDist freqSet={props.freqSet}
+                         thresholds={thresholds}
+                         partyAbbr={partyAbbr}
+                         minVoteTotal={props.minVoteTotal}
+                         maxVoteTotal={props.maxVoteTotal}
+                         thresholdLevels={props.forecast.voteTotalThresholds}
+                         pluralNoun="vote totals"
+                         valType="percentage"
+            />
+        </ListGroup.Item>
+    );
+}
+
+const SeatTcpRows = props => {
+    console.log(props.freqSet);
+    const freqSet0 = [props.freqSet[0][0], props.freqSet[1]];
+    const freqSet1 = [props.freqSet[0][1], props.freqSet[1].map(a => 100 - a).reverse()];
+    const maxVoteTotal = Math.max(Math.max(...freqSet0[1]), Math.max(...freqSet1[1]));
+    const minVoteTotal = Math.min(Math.min(...freqSet0[1]), Math.min(...freqSet1[1]));
+
+    return (
+        <>
+            <SeatFpRow forecast={props.forecast}
+                    freqSet={freqSet0}
+                    minVoteTotal={minVoteTotal}
+                    maxVoteTotal={maxVoteTotal}
+            />
+            <SeatFpRow forecast={props.forecast}
+                    freqSet={freqSet1}
+                    minVoteTotal={minVoteTotal}
+                    maxVoteTotal={maxVoteTotal}
+            />
+        </>
+    );
+}
+
 const SeatMore = props => {
     const seatName = props.forecast.seatNames[props.index];
     
     const freqs = JSON.parse(JSON.stringify(props.forecast.seatPartyWinFrequencies[props.index]));
-    freqs.sort((a, b) => {
-        return b[1] - a[1];
-    });
+    freqs.sort((a, b) => b[1] - a[1]);
 
-    const fpFreqs = props.forecast.seatFpBands[props.index].sort((el1, el2) => {
-        return el2[1][7] - el1[1][7];
-    });
+    const fpFreqs = JSON.parse(JSON.stringify(props.forecast.seatFpBands[props.index]));
+    fpFreqs.sort((el1, el2) => el2[1][7] - el1[1][7]);
     const maxFpTotal = Math.max(...fpFreqs.map(el => Math.max(...el[1])));
+
+    console.log(props.forecast.seatTcpBands);
+    const tempTcpFreqs = JSON.parse(JSON.stringify(props.forecast.seatTcpBands[props.index]));
+    const tcpFreqs = tempTcpFreqs
+        .map((e, i) => e.concat(props.forecast.seatTcpScenarios[props.index][i][1]))
+        .filter(e => e[2] > 0.1)
+        .sort((e1, e2) => e2[2] - e1[2]);
 
     // Before release:
     //  - unlikely parties (<1.0% chance and not a major) should be grouped together under "any other party"
@@ -117,22 +165,23 @@ const SeatMore = props => {
     //  - Need primary vote prob-bar and more frequent tcp prob-bar (most frequent + anything above ~20%)
     return (
         <>
-            <ListGroup.Item className={styles.seatsMore}>
+            <ListGroup.Item className={styles.seatsMore} key={props.index}>
                 {
                     freqs.map(
-                        a => {
+                        (a, index) => {
                             let text = "Independent";
                             const party = a[0];
                             if (party === -3) text = "An emerging party";
                             if (party === -2) text = "An emerging independent";
                             return (
                                 <>
-                                    <div className={styles.seatsWinStatement}>
+                                    <div className={styles.seatsWinStatement} key={index}>
                                         <ProbStatement forecast={props.forecast}
-                                                    party={a[0]}
-                                                    prob={a[1]}
-                                                    text={text}
-                                                    outcome={"win " + seatName}
+                                                       party={a[0]}
+                                                       prob={a[1]}
+                                                       text={text}
+                                                       outcome={"win " + seatName}
+                                                       key={index}
                                         />
                                     </div>
                                 </>
@@ -148,6 +197,14 @@ const SeatMore = props => {
                                 maxVoteTotal={maxFpTotal}
                                 minVoteTotal={0}
                                 key={index}
+                    />
+                )
+            }
+            {
+                tcpFreqs.map((freqSet, index) => 
+                    <SeatTcpRows forecast={props.forecast}
+                                 freqSet={freqSet}
+                                 key={index}
                     />
                 )
             }
