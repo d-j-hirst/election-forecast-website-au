@@ -1,11 +1,11 @@
 import React, { useState }  from 'react';
 
 import Card from 'react-bootstrap/Card';
-import Link from 'react-bootstrap/Card';
 import ListGroup from 'react-bootstrap/ListGroup';
 
-// import TooltipPercentage from '../TooltipPercentage';
-import ProbStatement from '../ProbStatement'
+import TooltipPercentage from '../TooltipPercentage';
+import ProbStatement from '../ProbStatement';
+import ProbBarDist from '../ProbBarDist';
 import WinnerBarDist from '../WinnerBarDist';
 import { SmartBadge } from '../PartyBadge'
 
@@ -76,6 +76,28 @@ const SeatRow = props => {
     );
 }
 
+const SeatFpRow = props => {
+    let partyAbbr = intMap(props.forecast.partyAbbr, props.freqSet[0]);
+    const thresholds = [[0,2,0],[2,4,1],[4,6,2],[6,8,3],[8,10,4],[10,12,5],[12,14,6]];
+    console.log(props.freqSet);
+    return (
+        <ListGroup.Item className={styles.seatsItem}>
+            <SmartBadge party={partyAbbr} /> - <TooltipPercentage value={props.freqSet[1][4]} />
+            {" - "}{<strong><TooltipPercentage value={props.freqSet[1][7]} /></strong>}
+            {" - "}{<TooltipPercentage value={props.freqSet[1][10]} />}
+            <ProbBarDist freqSet={props.freqSet}
+                         thresholds={thresholds}
+                         partyAbbr={partyAbbr}
+                         minVoteTotal={props.minVoteTotal}
+                         maxVoteTotal={props.maxVoteTotal}
+                         thresholdLevels={props.forecast.voteTotalThresholds}
+                         pluralNoun="vote totals"
+                         valType="percentage"
+            />
+        </ListGroup.Item>
+    );
+}
+
 const SeatMore = props => {
     const seatName = props.forecast.seatNames[props.index];
     
@@ -84,35 +106,52 @@ const SeatMore = props => {
         return b[1] - a[1];
     });
 
+    const fpFreqs = props.forecast.seatFpBands[props.index].sort((el1, el2) => {
+        return el2[1][7] - el1[1][7];
+    });
+    const maxFpTotal = Math.max(...fpFreqs.map(el => Math.max(...el[1])));
+
     // Before release:
     //  - unlikely parties (<1.0% chance and not a major) should be grouped together under "any other party"
     //    and their individual results moved to the full detail screen
     //  - Need primary vote prob-bar and more frequent tcp prob-bar (most frequent + anything above ~20%)
     return (
-        <ListGroup.Item className={styles.seatsMore}>
+        <>
+            <ListGroup.Item className={styles.seatsMore}>
+                {
+                    freqs.map(
+                        a => {
+                            let text = "Independent";
+                            const party = a[0];
+                            if (party === -3) text = "An emerging party";
+                            if (party === -2) text = "An emerging independent";
+                            return (
+                                <>
+                                    <div className={styles.seatsWinStatement}>
+                                        <ProbStatement forecast={props.forecast}
+                                                    party={a[0]}
+                                                    prob={a[1]}
+                                                    text={text}
+                                                    outcome={"win " + seatName}
+                                        />
+                                    </div>
+                                </>
+                            )
+                        }
+                    )
+                }
+            </ListGroup.Item>
             {
-                freqs.map(
-                    a => {
-                        let text = "Independent";
-                        const party = a[0];
-                        if (party === -3) text = "An emerging party";
-                        if (party === -2) text = "An emerging independent";
-                        return (
-                            <>
-                                <div className={styles.seatsWinStatement}>
-                                    <ProbStatement forecast={props.forecast}
-                                                party={a[0]}
-                                                prob={a[1]}
-                                                text={text}
-                                                outcome={"win " + seatName}
-                                    />
-                                </div>
-                            </>
-                        )
-                    }
+                fpFreqs.map((freqSet, index) => 
+                    <SeatFpRow forecast={props.forecast}
+                                freqSet={freqSet}
+                                maxVoteTotal={maxFpTotal}
+                                minVoteTotal={0}
+                                key={index}
+                    />
                 )
             }
-        </ListGroup.Item>
+        </>
     )
 }
 
