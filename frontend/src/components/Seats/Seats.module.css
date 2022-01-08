@@ -8,6 +8,7 @@
 
 .seatsTitle {
     font-size: 20px;
+    font-weight: bold;
     background-color: #CCCCCC !important;
     border-radius: 20px 20px 0px 0px !important;
 }
@@ -21,14 +22,6 @@
     align-items: center;
 }
 
-.seatsSubHeading {
-    font-size: 16px;
-    font-weight: bold;
-    background-color: #CCCCCC !important;
-    text-align: center;
-    width: 100%;
-}
-
 .seatsList {
     border-color: #CCCCCC !important;
 }
@@ -40,7 +33,32 @@
     flex-wrap: wrap;
     align-items: center;
     height: '100%';
+    background-color: #E3E3E3 !important;
     justify-content: space-between;
+}
+
+.seatsSubitem {
+    white-space: pre;
+    border-color: #CCCCCC;
+    display: flex !important;
+    flex-wrap: wrap;
+    align-items: center;
+    height: '100%';
+    background-color: #FFFFFF !important;
+    justify-content: space-between;
+}
+
+.seatsSubheading {
+    padding: 2px !important;
+    font-size: 17px;
+    font-weight: bold;
+    background-color: #E3E3E3 !important;
+}
+
+.seatsTcpScenarioHeading {
+    padding: 2px !important;
+    font-size: 16px;
+    background-color: #EEEEEE !important;
 }
 
 .seatsTopLeft {
@@ -52,6 +70,7 @@
 }
 
 .seatsMore {
+    background-color: #FFFFFF !important;
     white-space: normal;
     display: flex !important;
     flex-direction: column;
