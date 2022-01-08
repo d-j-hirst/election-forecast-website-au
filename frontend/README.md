@@ -7,7 +7,7 @@ Make sure you are using a compatible version of node.js; the most recent version
 
 The `.env` file needs to be created (use the `.env.example` file as a temple). At least the Google Client ID needs to be filled in under `REACT_APP_GOOGLE_CLIENT_ID`. `CHOKIDAR_USEPOLLING` is required for automatic restarts under WSL2, if you are not using that then you may not need it. `REACT_APP_BASE_BACKEND_URL` should be the URL of whatever backend you are using; Django's development server defaults to `http://localhost:8000`.
 
-Similarly, copy the `jsconfig.json.example` file to `jsconfig.jscon`. It shouldn't need any further edits.
+Similarly, copy the `jsconfig.json.example` file to `jsconfig.json`. It shouldn't need any further edits.
 
 Make sure that you have Google Cloud Platform Credentials set up. Once you have registered your application, look under the navigation menu (hamburger button, top left) -> APIs & Services -> Credentials -> + Create Credentials -> OAuth client ID. Then follow the instructions, once you have a web application created fill in the following fields:
 *Authorized JavaScript origins: `http://localhost:3000`
