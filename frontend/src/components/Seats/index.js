@@ -130,23 +130,29 @@ const SeatFpRow = props => {
 }
 
 const SeatTcpSection = props => {
-    const tempTcpFreqs = JSON.parse(JSON.stringify(props.forecast.seatTcpBands[props.index]));
-    const tcpFreqs = tempTcpFreqs
+    const tcpFreqs = JSON.parse(JSON.stringify(props.forecast.seatTcpBands[props.index]));
+    const sortedTcpFreqs = tcpFreqs
         .map((e, i) => e.concat(props.forecast.seatTcpScenarios[props.index][i][1]))
         .filter(e => e[2] > 0.1)
         .sort((e1, e2) => e2[2] - e1[2]);
+    const someExcluded = sortedTcpFreqs.length < tcpFreqs.length;
     return (
         <>
             <ListGroup.Item className={styles.seatsSubheading} key={props.index}>
                 Two-candidate preferred scenarios
             </ListGroup.Item>
             {
-                tcpFreqs.map((freqSet, index) =>
+                sortedTcpFreqs.map((freqSet, index) =>
                     <SeatTcpRowPair forecast={props.forecast}
                                     freqSet={freqSet}
                                     key={index}
                     />
                 )
+            }
+            {someExcluded &&
+                <ListGroup.Item className={styles.seatsNote} key={props.index}>
+                    Some scenarios projected to occur rarely not shown
+                </ListGroup.Item>
             }
         </>
     )
