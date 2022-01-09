@@ -55,6 +55,12 @@
     background-color: #E3E3E3 !important;
 }
 
+.seatsNote {
+    padding: 2px !important;
+    font-size: 13px;
+    background-color: #FFFFFF !important;
+}
+
 .seatsTcpScenarioHeading {
     padding: 2px !important;
     font-size: 16px;

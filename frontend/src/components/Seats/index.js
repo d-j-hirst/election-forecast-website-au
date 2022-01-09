@@ -77,16 +77,20 @@ const SeatRow = props => {
 }
 
 const SeatFpSection = props => {
+    // create deep copy of the fp probability bands
     const fpFreqs = JSON.parse(JSON.stringify(props.forecast.seatFpBands[props.index]));
-    fpFreqs.sort((el1, el2) => el2[1][7] - el1[1][7]);
-    const maxFpTotal = Math.max(...fpFreqs.map(el => Math.max(...el[1])));
+    const sortedFreqs = fpFreqs
+        .filter(e => e[1][7] >= 1 || e[1][10] >= 20 || e[1][12] >= 30)
+        .sort((el1, el2) => el2[1][7] - el1[1][7]);
+    const maxFpTotal = Math.max(...sortedFreqs.map(el => Math.max(...el[1])));
+    const someExcluded = sortedFreqs.length < fpFreqs.length;
     return (
         <>
             <ListGroup.Item className={styles.seatsSubheading} key={props.index}>
                 First preference projection
             </ListGroup.Item>
             {
-                fpFreqs.map((freqSet, index) =>
+                sortedFreqs.map((freqSet, index) =>
                     <SeatFpRow forecast={props.forecast}
                                 freqSet={freqSet}
                                 maxVoteTotal={maxFpTotal}
@@ -94,6 +98,11 @@ const SeatFpSection = props => {
                                 key={index}
                     />
                 )
+            }
+            {someExcluded &&
+                <ListGroup.Item className={styles.seatsNote} key={props.index}>
+                    Some parties with low projected first preferences not shown
+                </ListGroup.Item>
             }
         </>
     )
