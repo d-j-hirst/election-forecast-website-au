@@ -1,4 +1,5 @@
 import React, { useState }  from 'react';
+import { Link } from 'react-router-dom';
 
 import Card from 'react-bootstrap/Card';
 import ListGroup from 'react-bootstrap/ListGroup';
@@ -10,6 +11,7 @@ import WinnerBarDist from '../WinnerBarDist';
 import { SmartBadge } from '../PartyBadge'
 
 import { intMap } from '../../utils/intmap.js'
+import { getSeatUrl } from '../../utils/seaturls.js'
 
 import styles from './Seats.module.css';
 import { standardiseParty } from 'utils/partyclass';
@@ -41,6 +43,10 @@ const SeatRow = props => {
         const bName = intMap(props.forecast.partyAbbr, b[0]);
         return partyCategory(aName) - partyCategory(bName);
     });
+    const detailsLink = "/seat/"
+                        + props.election + "/"
+                        + props.mode + "/"
+                        + getSeatUrl(seatName);
 
     // const thresholds = [[0,2,0],[2,4,1],[4,6,2],[6,8,3],[8,10,4],[10,12,5],[12,14,6]];
     return (
@@ -62,7 +68,11 @@ const SeatRow = props => {
                         </>
                     }
                 </span>{"  |  "}
-                <span className={styles.seatsLink}><strong>&#11177;</strong>full detail</span>
+                <Link to={detailsLink}>
+                    <span className={styles.seatsLink}>
+                        <strong>&#11177;</strong>full detail
+                    </span>
+                </Link>
             </div>
             <WinnerBarDist forecast={props.forecast}
                            freqSet={freqs}
@@ -77,6 +87,7 @@ const SeatRow = props => {
 }
 
 const SeatFpSection = props => {
+    const seatName = props.forecast.seatNames[props.index];
     // create deep copy of the fp probability bands
     const fpFreqs = JSON.parse(JSON.stringify(props.forecast.seatFpBands[props.index]));
     const sortedFreqs = fpFreqs
@@ -87,7 +98,8 @@ const SeatFpSection = props => {
     return (
         <>
             <ListGroup.Item className={styles.seatsSubheading} key={props.index}>
-                First preference projection
+
+                <strong>First preference projection</strong> for {seatName}
             </ListGroup.Item>
             {
                 sortedFreqs.map((freqSet, index) =>
@@ -130,6 +142,7 @@ const SeatFpRow = props => {
 }
 
 const SeatTcpSection = props => {
+    const seatName = props.forecast.seatNames[props.index];
     const tcpFreqs = JSON.parse(JSON.stringify(props.forecast.seatTcpBands[props.index]));
     const sortedTcpFreqs = tcpFreqs
         .map((e, i) => e.concat(props.forecast.seatTcpScenarios[props.index][i][1]))
@@ -139,7 +152,7 @@ const SeatTcpSection = props => {
     return (
         <>
             <ListGroup.Item className={styles.seatsSubheading} key={props.index}>
-                Two-candidate preferred scenarios
+                <strong>Two-candidate preferred scenarios</strong> for {seatName}
             </ListGroup.Item>
             {
                 sortedTcpFreqs.map((freqSet, index) =>
@@ -189,26 +202,22 @@ const SeatTcpRowPair = props => {
     );
 }
 
-const SeatMore = props => {
+const SeatWinsSection = props => {
     const seatName = props.forecast.seatNames[props.index];
 
     const freqs = JSON.parse(JSON.stringify(props.forecast.seatPartyWinFrequencies[props.index]));
-    freqs.sort((a, b) => b[1] - a[1]);
-
-    console.log(props.forecast.seatTcpBands);
-
-    // Before release:
-    //  - unlikely parties (<1.0% chance and not a major) should be grouped together under "any other party"
-    //    and their individual results moved to the full detail screen
-    //  - Need primary vote prob-bar and more frequent tcp prob-bar (most frequent + anything above ~20%)
+    const sortedFreqs = freqs
+        .filter(a => a[1] >= 1 || a[0] === 0 || a[0] === 1)
+        .sort((a, b) => b[1] - a[1]);
+    const anyOtherWinPc = sortedFreqs.reduce((p, c) => p - c[1], 100);
     return (
         <>
             <ListGroup.Item className={styles.seatsSubheading} key={props.index}>
-                Win Probabilities
+                <strong>Win Probabilities</strong> for {seatName}
             </ListGroup.Item>
             <ListGroup.Item className={styles.seatsMore} key={props.index+1000}>
                 {
-                    freqs.map(
+                    sortedFreqs.map(
                         (a, index) => {
                             let text = "Independent";
                             const party = a[0];
@@ -218,11 +227,11 @@ const SeatMore = props => {
                                 <>
                                     <div className={styles.seatsWinStatement} key={index}>
                                         <ProbStatement forecast={props.forecast}
-                                                       party={a[0]}
-                                                       prob={a[1]}
-                                                       text={text}
-                                                       outcome={"win " + seatName}
-                                                       key={index}
+                                                    party={a[0]}
+                                                    prob={a[1]}
+                                                    text={text}
+                                                    outcome={"win " + seatName}
+                                                    key={index}
                                         />
                                     </div>
                                 </>
@@ -230,7 +239,25 @@ const SeatMore = props => {
                         }
                     )
                 }
+                {anyOtherWinPc > 0 &&
+                    <div className={styles.seatsWinStatement}>
+                        <ProbStatement forecast={props.forecast}
+                                    party={"oth"}
+                                    prob={anyOtherWinPc}
+                                    text={"Any other candidate"}
+                                    outcome={"win " + seatName}
+                        />
+                    </div>
+                }
             </ListGroup.Item>
+        </>
+    )
+}
+
+const SeatMore = props => {
+    return (
+        <>
+            <SeatWinsSection forecast={props.forecast} index={props.index} key={props.index} />
             <SeatFpSection forecast={props.forecast} index={props.index} key={props.index} />
             <SeatTcpSection forecast={props.forecast} index={props.index} key={props.index} />
         </>
@@ -252,7 +279,11 @@ const Seats = props => {
             <Card.Body className={styles.seatTotalsBody}>
                 {
                     sortedIndices.map(index =>
-                        <SeatRow forecast={props.forecast} index={index} key={index} />
+                        <SeatRow forecast={props.forecast}
+                                 election={props.election}
+                                 mode={props.mode}
+                                 index={index}
+                                 key={index} />
                     )
                 }
             </Card.Body>

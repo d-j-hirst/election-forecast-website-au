@@ -3,9 +3,9 @@ import { React} from 'react';
 import { createBrowserHistory } from 'history';
 import { Router, Route, Switch, Redirect } from 'react-router-dom';
 
-import { LOGIN_URL, HOME_URL, FORECAST_URL } from 'config/urls';
+import { LOGIN_URL, HOME_URL, FORECAST_URL, SEAT_DETAILS_URL } from 'config/urls';
 
-import { Login, Home, Forecast } from 'pages';
+import { Login, Home, Forecast, SeatDetails } from 'pages';
 
 export const history = createBrowserHistory();
 
@@ -18,6 +18,7 @@ const Routes = () => {
       <Switch>
         <Route path={LOGIN_URL} component={Login} />
         <Route path={FORECAST_URL} component={Forecast} />
+        <Route path={SEAT_DETAILS_URL} component={SeatDetails} />
         {/* Keep this last so that other pages don't get replaced by it */}
         <Route path={HOME_URL} component={Home} />
         {/* Redirect to home page if nothing else works */}

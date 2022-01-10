@@ -25,8 +25,8 @@ const ProbStatement = props => {
             <strong>{struc ? "" : probPhrase[0]}</strong>
             {struc ? "" : " to"}
             {struc ? " " + getWillPhrase(props.forecast) : ""}
-            {props.tooltipText === undefined && " " + props.outcome} 
-            {props.tooltipText !== undefined && 
+            {props.tooltipText === undefined && " " + props.outcome}
+            {props.tooltipText !== undefined &&
                 <TooltipWrapper tooltipText={props.tooltipText}>
                     {" " + props.outcome}
                 </TooltipWrapper>
