@@ -3,11 +3,13 @@ import { useParams } from 'react-router-dom';
 
 import { useUserRequired } from 'utils/hooks';
 import { Header, ForecastsNav, ForecastHeader,
-  LoadingMarker, NowcastAlert} from 'components';
+  LoadingMarker, NowcastAlert, SeatDetailBody } from 'components';
+
 import { getDirect } from 'utils/sdk';
-import { getIndexFromSeatUrl } from 'utils/seaturls'
+import { getIndexFromSeatUrl } from 'utils/seaturls';
 
 import styles from './SeatDetails.module.css';
+
 
 const SeatDetails = () => {
   const { code, mode, seat } = useParams();
@@ -63,9 +65,11 @@ const SeatDetails = () => {
           </>
         }
         {forecastValid && seatIndex >= 0 &&
-          <>
-            Seat data for {forecast.seatNames[seatIndex]} goes here.
-          </>
+          <SeatDetailBody forecast={forecast}
+                          election={code}
+                          mode={mode}
+                          index={seatIndex}
+          />
         }
         {forecastValid && seatIndex === -1 &&
           <>

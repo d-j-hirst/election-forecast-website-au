@@ -8,10 +8,10 @@ import TooltipPercentage from '../TooltipPercentage';
 import ProbStatement from '../ProbStatement';
 import ProbBarDist from '../ProbBarDist';
 import WinnerBarDist from '../WinnerBarDist';
-import { SmartBadge } from '../PartyBadge'
+import { SmartBadge } from '../PartyBadge';
 
-import { intMap } from '../../utils/intmap.js'
-import { getSeatUrl } from '../../utils/seaturls.js'
+import { intMap } from '../../utils/intmap.js';
+import { getSeatUrl } from '../../utils/seaturls.js';
 
 import styles from './Seats.module.css';
 import { standardiseParty } from 'utils/partyclass';

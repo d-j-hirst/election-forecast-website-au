@@ -1,0 +1,87 @@
+.summary {
+    text-align: center;
+    max-width: 100%;
+    margin: auto;
+    border-color: #CCCCCC;
+    border-radius: 20px 20px 2px 2px !important;
+}
+
+.seatsTitle {
+    font-size: 20px;
+    font-weight: bold;
+    background-color: #CCCCCC !important;
+    border-radius: 20px 20px 0px 0px !important;
+}
+
+.seatsBody {
+    padding: 0px !important;
+    background-color: #CCCCCC !important;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.seatsList {
+    border-color: #CCCCCC !important;
+}
+
+.seatsItem {
+    white-space: pre;
+    border-color: #CCCCCC;
+    display: flex !important;
+    flex-wrap: wrap;
+    align-items: center;
+    height: '100%';
+    background-color: #E3E3E3 !important;
+    justify-content: space-between;
+}
+
+.seatsSubitem {
+    white-space: pre;
+    border-color: #CCCCCC;
+    display: flex !important;
+    flex-wrap: wrap;
+    align-items: center;
+    height: '100%';
+    background-color: #FFFFFF !important;
+    justify-content: space-between;
+}
+
+.seatsSubheading {
+    padding: 2px !important;
+    font-size: 17px;
+    background-color: #E3E3E3 !important;
+}
+
+.seatsNote {
+    padding: 2px !important;
+    font-size: 13px;
+    background-color: #FFFFFF !important;
+}
+
+.seatsTcpScenarioHeading {
+    padding: 2px !important;
+    font-size: 16px;
+    background-color: #EEEEEE !important;
+}
+
+.seatsTopLeft {
+    width: 200px;
+}
+
+.seatsLink {
+    cursor: pointer;
+}
+
+.seatsMore {
+    background-color: #FFFFFF !important;
+    white-space: normal;
+    display: flex !important;
+    flex-direction: column;
+    font-size: 14px;
+}
+
+.seatsWinStatement {
+    padding: 2px 0px;
+}
