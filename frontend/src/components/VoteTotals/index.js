@@ -5,6 +5,7 @@ import ListGroup from 'react-bootstrap/ListGroup';
 
 import TooltipPercentage from '../TooltipPercentage';
 import ProbBarDist from '../ProbBarDist';
+import VoteTrendChart from '../VoteTrendChart';
 import { SmartBadge } from '../PartyBadge'
 
 import { intMap } from '../../utils/intmap.js'
@@ -85,6 +86,7 @@ const VoteTotals = props => {
             <Card.Body className={styles.voteTotalsBody}>
                 <TppRowSet forecast={props.forecast} />
                 <FpRowSet forecast={props.forecast} />
+                <VoteTrendChart forecast={props.forecast} />
             </Card.Body>
         </Card>
     );
