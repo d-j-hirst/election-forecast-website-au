@@ -77,6 +77,15 @@ const TppRowSet = props => {
     )
 }
 
+const VoteTrendChartSet = props => {
+    return (<>
+        <ListGroup.Item className={styles.voteTotalsSubHeading}>
+            Estimated past voting trend
+        </ListGroup.Item>
+        <VoteTrendChart forecast={props.forecast} />
+    </>)
+}
+
 const VoteTotals = props => {
     return (
         <Card className={styles.summary}>
@@ -86,7 +95,7 @@ const VoteTotals = props => {
             <Card.Body className={styles.voteTotalsBody}>
                 <TppRowSet forecast={props.forecast} />
                 <FpRowSet forecast={props.forecast} />
-                <VoteTrendChart forecast={props.forecast} />
+                <VoteTrendChartSet forecast={props.forecast} />
             </Card.Body>
         </Card>
     );
