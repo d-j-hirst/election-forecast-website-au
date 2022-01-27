@@ -5,6 +5,8 @@ import { deepCopy } from '../../utils/deepcopy.js'
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
 
+import styles from './VoteTrendChart.module.css';
+
 const round1 = num => num === null ? null : Math.round(num * 10) / 10;
 const round2 = num => Math.round(num * 100) / 100;
 
@@ -25,6 +27,43 @@ const colours = [["ALP", ["#FF0000", "#FF4444", "#FFAAAA", "#FFCCCC"]],
                  ["ONP", ["#AA6600", "#FF7F00", "#FFAB58", "#FFC388"]],
                  ["UAP", ["#886600", "#C2B615", "#EBDF43", "#F0E87C"]],
                  ["OTH", ["#777777", "#999999", "#C5C5C5", "#E0E0E0"]]];
+
+const VoteTrendTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+        return (
+        <div className={styles.customTooltip}>
+            <p>
+                {payload[0].payload.date}
+            </p>
+            <p className={styles.smallTooltipText}>
+                Vote total percentiles (
+                <span className={styles.outerProbsText}>5%</span>
+                <span className={styles.innerProbsText}>-25%</span>
+                -<strong>median</strong>-
+                <span className={styles.innerProbsText}>75%-</span>
+                <span className={styles.outerProbsText}>95%</span>)
+            </p>
+            <p>
+                <span className={styles.outerProbsText}>{payload[1].value[0]}</span>
+                <span className={styles.innerProbsText}>{` - ${payload[2].value[0]} - `}</span>
+                <strong>{payload[3].value}</strong>
+                <span className={styles.innerProbsText}>{` - ${payload[2].value[1]} - `}</span>
+                <span className={styles.outerProbsText}>{payload[1].value[1]}</span>
+            </p>
+            {
+                payload[0].payload.pollDesc !== undefined &&
+                <p className={styles.smallTooltipText}>
+                    Polls:
+                </p>
+            }
+            {payload[0].payload.pollDesc !== undefined &&
+                payload[0].payload.pollDesc.split(";").map(poll => <p>{poll.split(",")[0]}: <strong>{round1(poll.split(",")[1])}</strong></p>)}
+        </div>
+        );
+    }
+
+    return null;
+};
 
 const VoteTrendChart = props => {
     const [ isFp, setIsFp ] = useState(false);
@@ -83,17 +122,25 @@ const VoteTrendChart = props => {
         let trendIndex = Math.floor((poll.day - period / 2) / period) + 1;
         if (poll.day >= finalDay) trendIndex = trendData.length - 1;
         let pollVal = poll[pollType];
-        if (isNaN(pollVal)) pollVal = null;
-        if (trendData[trendIndex].hasOwnProperty("poll2")) {
-            trendData[trendIndex]["pollster3"] = poll.pollster;
+        if (pollVal === null) continue;
+        // not the most elegant way of doing this, but it'll work for now.
+        // Add more lines if needed to handle more polls in a single time period.
+        if (trendData[trendIndex].hasOwnProperty("poll5")) {
+            trendData[trendIndex]["poll6"] = round1(pollVal);
+        } else if (trendData[trendIndex].hasOwnProperty("poll4")) {
+            trendData[trendIndex]["poll5"] = round1(pollVal);
+        } else if (trendData[trendIndex].hasOwnProperty("poll3")) {
+            trendData[trendIndex]["poll4"] = round1(pollVal);
+        } else if (trendData[trendIndex].hasOwnProperty("poll2")) {
             trendData[trendIndex]["poll3"] = round1(pollVal);
         } else if (trendData[trendIndex].hasOwnProperty("poll")) {
-            trendData[trendIndex]["pollster2"] = poll.pollster;
             trendData[trendIndex]["poll2"] = round1(pollVal);
         } else {
-            trendData[trendIndex]["pollster"] = poll.pollster;
             trendData[trendIndex]["poll"] = round1(pollVal);
         }
+        if (!trendData[trendIndex].hasOwnProperty("pollDesc")) trendData[trendIndex]["pollDesc"] = "";
+        else trendData[trendIndex]["pollDesc"] += ";";
+        trendData[trendIndex]["pollDesc"] += `${poll.pollster}, ${round1(pollVal)}`;
     }
 
 
@@ -173,10 +220,10 @@ const VoteTrendChart = props => {
                 <XAxis dataKey="date"/>
                 <ZAxis range={[12, 12]}/>
                 <YAxis type="number" domain={[minVal, maxVal]} ticks={ticks}/>
-                <Area dataKey="1-99" type="number" stroke="none" isAnimationActive={false} fill={currentColours[3]} />
-                <Area dataKey="5-95" type="number" stroke="none" isAnimationActive={false} fill={currentColours[2]} />
-                <Area dataKey="25-75" type="number" stroke="none" isAnimationActive={false} fill={currentColours[1]} />
-                <Line dataKey="median" type="number" dot={false} isAnimationActive={false} stroke={currentColours[0]} fill="none" />
+                <Area dataKey="1-99" type="number" stroke="none" activeDot={false} isAnimationActive={false} fill={currentColours[3]} />
+                <Area dataKey="5-95" type="number" stroke="none" activeDot={false} isAnimationActive={false} fill={currentColours[2]} />
+                <Area dataKey="25-75" type="number" stroke="none" activeDot={false} isAnimationActive={false} fill={currentColours[1]} />
+                <Line dataKey="median" type="number" dot={false} activeDot={false} isAnimationActive={false} stroke={currentColours[0]} fill="none" />
                 { party !== "OTH" && // don't show polls for OTH as different polls have different original OTH values
                     <>
                     <Scatter dataKey="pollster" type="number" dot={false} isAnimationActive={false} stroke={currentColours[0]} fill="none" />
@@ -187,7 +234,7 @@ const VoteTrendChart = props => {
                     <Scatter dataKey="poll3" type="number" dot={true} shape={"circle"} isAnimationActive={false} stroke={currentColours[0]} fill={currentColours[0]} />
                     </>
                 }
-                <Tooltip isAnimationActive={false} throttleDelay={1} allowEscapeViewBox={{ x: true, y: false }} />
+                <Tooltip content={<VoteTrendTooltip />}isAnimationActive={false} throttleDelay={1} />
             </ComposedChart>
         </ResponsiveContainer>
         </>
