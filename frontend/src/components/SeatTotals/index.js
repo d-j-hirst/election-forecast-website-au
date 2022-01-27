@@ -45,9 +45,6 @@ const SeatsRowSet = props => {
     const maxVoteTotal = Math.max(...freqs.map(el => Math.max(...el[1])));
     return (
         <ListGroup className={styles.voteTotalsTopList}>
-            <ListGroup.Item className={styles.voteTotalsSubHeading}>
-                First preference votes
-            </ListGroup.Item>
             {freqs.map((freqSet, index) => 
                 <SeatsRow forecast={props.forecast}
                           freqSet={freqSet}
