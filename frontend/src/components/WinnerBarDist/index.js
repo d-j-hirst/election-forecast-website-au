@@ -2,7 +2,7 @@ import React from 'react';
 
 import WinnerBar from '../WinnerBar';
 
-import { intMap } from '../../utils/intmap.js'
+import { jsonMap } from '../../utils/jsonmap.js'
 
 const WinnerBarDist = props => {
     const chartWidth = 300;
@@ -23,8 +23,8 @@ const WinnerBarDist = props => {
         return {
             xLow: left,
             xHigh: left + width,
-            partyAbbr: intMap(props.forecast.partyAbbr, freq[0]),
-            partyName: intMap(props.forecast.partyName, freq[0]),
+            partyAbbr: jsonMap(props.forecast.partyAbbr, freq[0]),
+            partyName: jsonMap(props.forecast.partyName, freq[0]),
             winPercent: freq[1]
         }
     })

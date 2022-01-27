@@ -8,12 +8,12 @@ import ProbBarDist from '../ProbBarDist';
 import VoteTrendChart from '../VoteTrendChart';
 import { SmartBadge } from '../PartyBadge'
 
-import { intMap } from '../../utils/intmap.js'
+import { jsonMap } from '../../utils/jsonmap.js'
 
 import styles from './VoteTotals.module.css';
 
 const VoteShareRow = props => {
-    let partyAbbr = intMap(props.forecast.partyAbbr, props.freqSet[0]);
+    let partyAbbr = jsonMap(props.forecast.partyAbbr, props.freqSet[0]);
     const thresholds = [[0,2,0],[2,4,1],[4,6,2],[6,8,3],[8,10,4],[10,12,5],[12,14,6]];
     return (
         <ListGroup.Item className={styles.voteTotalsItem}>

@@ -10,7 +10,7 @@ import TooltipPercentage from '../TooltipPercentage'
 import TooltipWrapper from '../TooltipWrapper'
 import { SmartBadge } from '../PartyBadge'
 
-import { intMap } from '../../utils/intmap.js'
+import { jsonMap } from '../../utils/jsonmap.js'
 import { lightBgClass, xLightBgClass, xxLightBgClass, xxxLightBgClass, standardiseParty } from '../../utils/partyclass.js'
 
 import styles from './FormationOfGovernment.module.css';
@@ -18,7 +18,7 @@ import styles from './FormationOfGovernment.module.css';
 const MajorityWinGovernmentRow = props => {
     const party = parseInt(props.partyIndex)
     const partyAbbr = standardiseParty(party, props.forecast);
-    const prob = intMap(props.forecast.majorityWinPc, party);
+    const prob = jsonMap(props.forecast.majorityWinPc, party);
     const bgClasses = `${styles['formationOfGovernmentSubItem']} ${xLightBgClass(partyAbbr)}`;
     return (
         <ListGroup.Item className={bgClasses}>
@@ -36,7 +36,7 @@ const MajorityWinGovernmentRow = props => {
 const MinorityWinGovernmentRow = props => {
     const party = parseInt(props.partyIndex)
     const partyAbbr = standardiseParty(party, props.forecast);
-    const prob = intMap(props.forecast.minorityWinPc, party);
+    const prob = jsonMap(props.forecast.minorityWinPc, party);
     const bgClasses = `${styles['formationOfGovernmentSubItem']} ${xxLightBgClass(partyAbbr)}`;
     const minorityTooltipText = "Parties expected to support this major party in a minority government. " + 
         "The Greens are expected to support the ALP; One Nation, United Australia Party and Katter's Australian Party " +
@@ -58,7 +58,7 @@ const MinorityWinGovernmentRow = props => {
 const MostSeatsRow = props => {
     const party = parseInt(props.partyIndex)
     const partyAbbr = standardiseParty(party, props.forecast);
-    const prob = intMap(props.forecast.mostSeatsWinPc, party);
+    const prob = jsonMap(props.forecast.mostSeatsWinPc, party);
     const bgClasses = `${styles['formationOfGovernmentSubItem']} ${xxxLightBgClass(partyAbbr)}`;
     const hungTooltipText = "While the term hung parliament is often used to indicate any parliament where no " +
         "party can form a majority, here it is used in a narrower sense to count only those situations where " +
@@ -80,10 +80,10 @@ const MostSeatsRow = props => {
 const AllocatedTiesRow = props => {
     const party = parseInt(props.partyIndex)
     const partyAbbr = standardiseParty(party, props.forecast);
-    const prob = intMap(props.forecast.overallWinPc, party) -
-                 intMap(props.forecast.majorityWinPc, party) -
-                 intMap(props.forecast.minorityWinPc, party) -
-                 intMap(props.forecast.mostSeatsWinPc, party);
+    const prob = jsonMap(props.forecast.overallWinPc, party) -
+                 jsonMap(props.forecast.majorityWinPc, party) -
+                 jsonMap(props.forecast.minorityWinPc, party) -
+                 jsonMap(props.forecast.mostSeatsWinPc, party);
     const bgClasses = `${styles['formationOfGovernmentAllocatedTies']} ${xxxLightBgClass(partyAbbr)}`;
     const tiesTooltipText = "Exact ties between the two major parties are split 50-50 " +
         "for the purpose of determining their chances of forming government.";
@@ -102,7 +102,7 @@ const AllocatedTiesRow = props => {
 
 const OverallWinGovernmentRow = props => {
     const party = parseInt(props.partyIndex)
-    const prob = intMap(props.forecast.overallWinPc, party);
+    const prob = jsonMap(props.forecast.overallWinPc, party);
     const partyAbbr = standardiseParty(party, props.forecast);
     const bgClasses = `${styles['formationOfGovernmentTopItem']} ${lightBgClass(partyAbbr)}`;
     return (
@@ -170,10 +170,10 @@ const OthersCollapsibleRows = props => {
             showDetail && 
             [...minorParties].map((el, index) => {
                 let rows = [];
-                if (intMap(props.forecast.majorityWinPc, el, undefined) !== undefined) {
+                if (jsonMap(props.forecast.majorityWinPc, el, undefined) !== undefined) {
                     rows.push(<MajorityWinGovernmentRow partyIndex={el} forecast={props.forecast} key={index} />)
                 }
-                if (intMap(props.forecast.mostSeatsWinPc, el, undefined) !== undefined) {
+                if (jsonMap(props.forecast.mostSeatsWinPc, el, undefined) !== undefined) {
                     rows.push(<MostSeatsRow partyIndex={el} forecast={props.forecast} key={index+1000} />)
                 }
                 return rows;

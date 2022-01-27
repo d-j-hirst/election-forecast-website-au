@@ -1,11 +1,11 @@
-import {intMap} from './intmap.js'
+import {jsonMap} from './jsonmap.js'
 
 const isKnownParty = party => {
     return ['alp', 'grn', 'kap', 'lnp', 'onp', 'oth', 'uap', 'ca'].some(el => el === party.toLowerCase());
 };
 
 export const standardiseParty = (party, forecast) => {
-    if (typeof party !== 'string') party = intMap(forecast.partyAbbr, party);
+    if (typeof party !== 'string') party = jsonMap(forecast.partyAbbr, party);
     if (party.toLowerCase() === 'lib') party = 'lnp';
     if (!isKnownParty(party)) party = 'oth';
     return party.toLowerCase();

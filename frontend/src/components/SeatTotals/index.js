@@ -7,13 +7,13 @@ import ListGroup from 'react-bootstrap/ListGroup';
 import ProbBarDist from '../ProbBarDist';
 import { SmartBadge } from '../PartyBadge'
 
-import { intMap } from '../../utils/intmap.js'
+import { jsonMap } from '../../utils/jsonmap.js'
 
 import styles from './SeatTotals.module.css';
 
 const SeatsRow = props => {
-    const partyAbbr = intMap(props.forecast.partyAbbr, props.freqSet[0]);
-    const partyName = intMap(props.forecast.partyName, props.freqSet[0]);
+    const partyAbbr = jsonMap(props.forecast.partyAbbr, props.freqSet[0]);
+    const partyName = jsonMap(props.forecast.partyName, props.freqSet[0]);
     let partyDesc = "";
     if (partyName === "Independent") partyDesc = "Established Independent - Independents who are either incumbents, gained significant vote previously or otherwise known to have a high profile";
     if (partyName === "Emerging Ind") partyDesc = "Emerging Independent - Independents who are not yet known to have a high profile";

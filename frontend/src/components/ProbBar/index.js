@@ -3,7 +3,7 @@ import React from 'react';
 import TooltipWrapper from '../TooltipWrapper'
 import { bgClass, midBgClass, lightBgClass, xLightBgClass, xxLightBgClass, xxxLightBgClass } from '../../utils/partyclass.js'
 
-import { intMap } from '../../utils/intmap.js'
+import { jsonMap } from '../../utils/jsonmap.js'
 
 const formatWholeOrFixed = num => {
     let formatted = Number(num).toFixed(1);
@@ -43,7 +43,7 @@ const ProbBar = props => {
         height: "100%"
     }
     const offsetFromMid = pos - props.midThreshold;
-    const barClass = intMap(classes, Math.abs(offsetFromMid));
+    const barClass = jsonMap(classes, Math.abs(offsetFromMid));
 
     let tooltipText = "";
     if (props.valType === undefined || props.valType === "percentage") {

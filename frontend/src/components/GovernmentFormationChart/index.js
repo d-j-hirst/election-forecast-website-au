@@ -1,19 +1,19 @@
 import React from 'react';
 import Chart from "react-google-charts";
-import { intMap } from '../../utils/intmap.js'
+import { jsonMap } from '../../utils/jsonmap.js'
 
 const GovernmentFormationChart = props => {
-    const partyOneName = intMap(props.forecast.partyAbbr, 0);
-    const partyOneVals = [intMap(props.forecast.overallWinPc, 0),
-                     intMap(props.forecast.majorityWinPc, 0),
-                     intMap(props.forecast.minorityWinPc, 0),
-                     intMap(props.forecast.mostSeatsWinPc, 0)];
+    const partyOneName = jsonMap(props.forecast.partyAbbr, 0);
+    const partyOneVals = [jsonMap(props.forecast.overallWinPc, 0),
+                     jsonMap(props.forecast.majorityWinPc, 0),
+                     jsonMap(props.forecast.minorityWinPc, 0),
+                     jsonMap(props.forecast.mostSeatsWinPc, 0)];
     partyOneVals.push(Math.max(0, partyOneVals[0] - partyOneVals[1] - partyOneVals[2] - partyOneVals[3]));
-    const partyTwoName = intMap(props.forecast.partyAbbr, 1);
-    const partyTwoVals = [intMap(props.forecast.overallWinPc, 1),
-                     intMap(props.forecast.majorityWinPc, 1),
-                     intMap(props.forecast.minorityWinPc, 1),
-                     intMap(props.forecast.mostSeatsWinPc, 1)];
+    const partyTwoName = jsonMap(props.forecast.partyAbbr, 1);
+    const partyTwoVals = [jsonMap(props.forecast.overallWinPc, 1),
+                     jsonMap(props.forecast.majorityWinPc, 1),
+                     jsonMap(props.forecast.minorityWinPc, 1),
+                     jsonMap(props.forecast.mostSeatsWinPc, 1)];
     partyTwoVals.push(Math.max(0, partyTwoVals[0] - partyTwoVals[1] - partyTwoVals[2] - partyTwoVals[3]));
     let chartData = [];
     chartData.push(['Result', 'Probability']);
@@ -21,7 +21,7 @@ const GovernmentFormationChart = props => {
     chartData.push([partyOneName + ' minority', partyOneVals[2]])
     chartData.push([partyOneName + ' has more seats', partyOneVals[3]])
     chartData.push([partyOneName + ' allocated ties', partyOneVals[4]])
-    chartData.push(['Others', intMap(props.forecast.overallWinPc, -1)])
+    chartData.push(['Others', jsonMap(props.forecast.overallWinPc, -1)])
     chartData.push([partyTwoName + ' allocated ties', partyTwoVals[4]])
     chartData.push([partyTwoName + ' has more seats', partyTwoVals[3]])
     chartData.push([partyTwoName + ' minority', partyTwoVals[2]])

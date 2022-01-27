@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { ComposedChart, Line, XAxis, YAxis, Area, Tooltip, ResponsiveContainer } from 'recharts';
-import { intMap, intMapReverse } from '../../utils/intmap.js'
+import { ComposedChart, Line, XAxis, YAxis, ZAxis, Area, Scatter, Tooltip, ResponsiveContainer } from 'recharts';
+import { jsonMap, jsonMapReverse } from '../../utils/jsonmap.js'
+import { deepCopy } from '../../utils/deepcopy.js'
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
 
-const round = num => Math.round(num * 100) / 100;
+const round1 = num => Math.round(num * 10) / 10;
+const round2 = num => Math.round(num * 100) / 100;
 
 const addDays = (date, days) => {
     let result = new Date(date);
@@ -26,43 +28,72 @@ const colours = [["ALP", ["#FF0000", "#FF4444", "#FFAAAA", "#FFCCCC"]],
 
 const VoteTrendChart = props => {
     const [ isFp, setIsFp ] = useState(false);
-    const [ party, setParty ] = useState("LNP");
+    const [ party, setParty ] = useState("ALP");
 
-    const getPartyIndexFromAbbr = abbr => intMapReverse(props.forecast.partyAbbr, abbr, undefined, a => a >= -1);
+    const getPartyIndexFromAbbr = abbr => jsonMapReverse(props.forecast.partyAbbr, abbr, undefined, a => a >= -1);
 
     const partyHasFpTrend = abbr => {
         return props.forecast.fpTrend.find(a => a[0] === getPartyIndexFromAbbr(abbr)) !== undefined;
     }
     
     const getTrendFromAbbr = abbr => {
-        return intMap(props.forecast.fpTrend, getPartyIndexFromAbbr(abbr));
+        return jsonMap(props.forecast.fpTrend, getPartyIndexFromAbbr(abbr));
+    }
+
+    const invertPoll = poll => {
+        poll.adjusted = 100 - poll.adjusted;
+        poll.base = 100 - poll.base;
+        poll.adjusted = 100 - poll.adjusted;
+        return poll;
     }
 
     let thisTrend = undefined;
+    let thisPolls = undefined;
     if (!isFp) {
-        thisTrend = props.forecast.tppTrend;
+        thisTrend = deepCopy(props.forecast.tppTrend);
+        thisPolls = deepCopy(props.forecast.polls["@TPP"]);
     }
     else {
-        thisTrend = getTrendFromAbbr(party);
+        thisTrend = deepCopy(getTrendFromAbbr(party));
+        thisPolls = deepCopy(props.forecast.polls[party]);
     }
     const period = props.forecast.trendPeriod;
     const finalDay = props.forecast.finalTrendValue;
     const dateParts = props.forecast.trendStartDate.split("-");
     const date = new Date(parseInt(dateParts[0]), parseInt(dateParts[1]) - 1, parseInt(dateParts[2]));
-    let chartData = undefined;
     if (!isFp && party === "LNP") {
         thisTrend = thisTrend.map(spread => [...spread].reverse().map(a => 100 - a));
+        thisPolls = thisPolls.map(invertPoll);
     }
-    chartData = thisTrend.map((spread, index) => {
+    let trendData = undefined;
+    trendData = thisTrend.map((spread, index) => {
         return {
-            "day": dateToStr(addDays(date, index * period)),
-            "median": [round(spread[3])],
-            "25-75": [round(spread[2]), round(spread[4])],
-            "5-95": [round(spread[1]), round(spread[5])],
-            "1-99": [round(spread[0]), round(spread[6])]
+            "date": dateToStr(addDays(date, index * period)),
+            "day": index * period,
+            "median": [round2(spread[3])],
+            "25-75": [round2(spread[2]), round2(spread[4])],
+            "5-95": [round2(spread[1]), round2(spread[5])],
+            "1-99": [round2(spread[0]), round2(spread[6])]
         };
     });
-    chartData.at(-1).day = dateToStr(addDays(date, finalDay));
+    trendData.at(-1).date = dateToStr(addDays(date, finalDay));
+    trendData.at(-1).day = finalDay;
+    for (let poll of thisPolls) {
+        let trendIndex = Math.floor((poll.day - period / 2) / period) + 1;
+        if (poll.day >= finalDay) trendIndex = trendData.length - 1;
+        if (trendData[trendIndex].hasOwnProperty("poll2")) {
+            trendData[trendIndex]["pollster3"] = poll.pollster;
+            trendData[trendIndex]["poll3"] = round1(poll.base);
+        } else if (trendData[trendIndex].hasOwnProperty("poll")) {
+            trendData[trendIndex]["pollster2"] = poll.pollster;
+            trendData[trendIndex]["poll2"] = round1(poll.base);
+        } else {
+            trendData[trendIndex]["pollster"] = poll.pollster;
+            trendData[trendIndex]["poll"] = round1(poll.base);
+        }
+    }
+
+
     const maxVal = thisTrend.reduce((prev, spread) => {
         return Math.max(prev, spread.at(-1));
     }, 0);
@@ -73,7 +104,7 @@ const VoteTrendChart = props => {
     const minTick = Math.floor(minVal / tickDistance) * tickDistance;
     const numTicks = Math.floor((maxVal - minTick) / tickDistance) + 1;
     let ticks = [...Array(Math.abs(numTicks)).keys()].map(n => n * tickDistance + minTick);
-    const currentColours = intMap(colours, party);
+    const currentColours = jsonMap(colours, party);
 
 
     const setAlpTpp = () => {setIsFp(false); setParty("ALP");};
@@ -105,22 +136,36 @@ const VoteTrendChart = props => {
                 }
                 <Dropdown.Item as="button" onClick={setOthFp}>OTH first preferences</Dropdown.Item>
             </DropdownButton>
+            {party === "OTH" && // don't show polls for OTH as different polls have different original OTH values
+                <div>Polls not shown for Others</div>
+            }
             <ResponsiveContainer width="100%" height={400}>
                 <ComposedChart
                     width={730}
                     height={250}
-                    data={chartData}
+                    data={trendData}
                     margin={{
                     top: 20, right: 20, bottom: 20, left: 20,
                     }}
                 >
-                    <XAxis dataKey="day" />
+                    <XAxis dataKey="date"/>
+                    <ZAxis range={[12, 12]}/>
                     <YAxis type="number" domain={[minVal, maxVal]} ticks={ticks}/>
                     <Area dataKey="1-99" type="number" stroke="none" isAnimationActive={false} fill={currentColours[3]} />
                     <Area dataKey="5-95" type="number" stroke="none" isAnimationActive={false} fill={currentColours[2]} />
                     <Area dataKey="25-75" type="number" stroke="none" isAnimationActive={false} fill={currentColours[1]} />
                     <Line dataKey="median" type="number" dot={false} isAnimationActive={false} stroke={currentColours[0]} fill="none" />
-                    <Tooltip />
+                    { party !== "OTH" && // don't show polls for OTH as different polls have different original OTH values
+                        <>
+                        <Scatter dataKey="pollster" type="number" dot={false} isAnimationActive={false} stroke={currentColours[0]} fill="none" />
+                        <Scatter dataKey="poll" type="number" dot={true} shape={"circle"} isAnimationActive={false} stroke={currentColours[0]} fill={currentColours[0]} />
+                        <Scatter dataKey="pollster2" type="number" dot={false} isAnimationActive={false} stroke={currentColours[0]} fill="none" />
+                        <Scatter dataKey="poll2" type="number" dot={true} shape={"circle"} isAnimationActive={false} stroke={currentColours[0]} fill={currentColours[0]} />
+                        <Scatter dataKey="pollster3" type="number" dot={false} isAnimationActive={false} stroke={currentColours[0]} fill="none" />
+                        <Scatter dataKey="poll3" type="number" dot={true} shape={"circle"} isAnimationActive={false} stroke={currentColours[0]} fill={currentColours[0]} />
+                        </>
+                    }
+                    <Tooltip isAnimationActive={false} throttleDelay={1} allowEscapeViewBox={{ x: true, y: false }} />
                 </ComposedChart>
             </ResponsiveContainer>
         </>

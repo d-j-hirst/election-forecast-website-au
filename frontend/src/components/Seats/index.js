@@ -10,7 +10,8 @@ import ProbBarDist from '../ProbBarDist';
 import WinnerBarDist from '../WinnerBarDist';
 import { SmartBadge } from '../PartyBadge';
 
-import { intMap } from '../../utils/intmap.js';
+import { jsonMap } from '../../utils/jsonmap.js';
+import { deepCopy } from '../../utils/deepcopy.js';
 import { getSeatUrl } from '../../utils/seaturls.js';
 
 import styles from './Seats.module.css';
@@ -34,13 +35,13 @@ const SeatRow = props => {
 
     const seatName = props.forecast.seatNames[props.index];
     const incumbentIndex = props.forecast.seatIncumbents[props.index];
-    const incumbentAbbr = intMap(props.forecast.partyAbbr, incumbentIndex);
+    const incumbentAbbr = jsonMap(props.forecast.partyAbbr, incumbentIndex);
     const margin = props.forecast.seatMargins[props.index];
 
-    const freqs = JSON.parse(JSON.stringify(props.forecast.seatPartyWinFrequencies[props.index]));
+    const freqs = deepCopy(props.forecast.seatPartyWinFrequencies[props.index]);
     freqs.sort((a, b) => {
-        const aName = intMap(props.forecast.partyAbbr, a[0]);
-        const bName = intMap(props.forecast.partyAbbr, b[0]);
+        const aName = jsonMap(props.forecast.partyAbbr, a[0]);
+        const bName = jsonMap(props.forecast.partyAbbr, b[0]);
         return partyCategory(aName) - partyCategory(bName);
     });
     const detailsLink = "/seat/"
@@ -89,7 +90,7 @@ const SeatRow = props => {
 const SeatFpSection = props => {
     const seatName = props.forecast.seatNames[props.index];
     // create deep copy of the fp probability bands
-    const fpFreqs = JSON.parse(JSON.stringify(props.forecast.seatFpBands[props.index]));
+    const fpFreqs = deepCopy(props.forecast.seatFpBands[props.index]);
     const sortedFreqs = fpFreqs
         .filter(e => e[1][7] >= 1 || e[1][10] >= 20 || e[1][12] >= 30)
         .sort((el1, el2) => el2[1][7] - el1[1][7]);
@@ -121,7 +122,7 @@ const SeatFpSection = props => {
 }
 
 const SeatFpRow = props => {
-    const partyAbbr = intMap(props.forecast.partyAbbr, props.freqSet[0]);
+    const partyAbbr = jsonMap(props.forecast.partyAbbr, props.freqSet[0]);
     const thresholds = [[0,2,0],[2,4,1],[4,6,2],[6,8,3],[8,10,4],[10,12,5],[12,14,6]];
     return (
         <ListGroup.Item className={styles.seatsSubitem}>
@@ -143,7 +144,7 @@ const SeatFpRow = props => {
 
 const SeatTcpSection = props => {
     const seatName = props.forecast.seatNames[props.index];
-    const tcpFreqs = JSON.parse(JSON.stringify(props.forecast.seatTcpBands[props.index]));
+    const tcpFreqs = deepCopy(props.forecast.seatTcpBands[props.index]);
     const sortedTcpFreqs = tcpFreqs
         .map((e, i) => e.concat(props.forecast.seatTcpScenarios[props.index][i][1]))
         .filter(e => e[2] > 0.1)
@@ -177,8 +178,8 @@ const SeatTcpRowPair = props => {
     const maxVoteTotal = Math.max(Math.max(...freqSet0[1]), Math.max(...freqSet1[1]));
     const minVoteTotal = Math.min(Math.min(...freqSet0[1]), Math.min(...freqSet1[1]));
 
-    const partyAbbr0 = intMap(props.forecast.partyAbbr, freqSet0[0]);
-    const partyAbbr1 = intMap(props.forecast.partyAbbr, freqSet1[0]);
+    const partyAbbr0 = jsonMap(props.forecast.partyAbbr, freqSet0[0]);
+    const partyAbbr1 = jsonMap(props.forecast.partyAbbr, freqSet1[0]);
     return (
         <>
             <ListGroup.Item className={styles.seatsTcpScenarioHeading} key={props.index}>
@@ -205,7 +206,7 @@ const SeatTcpRowPair = props => {
 const SeatWinsSection = props => {
     const seatName = props.forecast.seatNames[props.index];
 
-    const freqs = JSON.parse(JSON.stringify(props.forecast.seatPartyWinFrequencies[props.index]));
+    const freqs = deepCopy(props.forecast.seatPartyWinFrequencies[props.index]);
     const sortedFreqs = freqs
         .filter(a => a[1] >= 1 || a[0] === 0 || a[0] === 1)
         .sort((a, b) => b[1] - a[1]);
