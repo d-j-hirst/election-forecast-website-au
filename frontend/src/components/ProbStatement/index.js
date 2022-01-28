@@ -9,22 +9,36 @@ import { standardiseParty } from '../../utils/partyclass.js'
 const interpretOth = (code, text) => code === undefined || code.toLowerCase() === 'oth' || code.toLowerCase() === 'ind' ? text : code;
 
 const ProbStatement = props => {
-    const partyAbbr = standardiseParty(props.party, props.forecast);
-    let text = props.text !== undefined && partyAbbr === "oth" ? props.text : undefined;
     const probPhrase = getProbPhrase(props.prob);
     const struc = probPhrase[1];
-    text = interpretOth(text, 'An emerging party');
-    if (struc && text !== undefined) text = text.toLowerCase();
+    const noParty = props.party === null;
+    let text = "";
+    let partyAbbr = "";
+    if (!noParty) {
+        partyAbbr = standardiseParty(props.party, props.forecast);
+        text = props.text !== undefined && partyAbbr === "oth" ? props.text : undefined;
+        text = interpretOth(text, 'An emerging party');
+        if (struc && text !== undefined) text = text.toLowerCase();
+    }
+    
+    // const partyAbbr = standardiseParty(props.party, props.forecast);
+    // let text = props.text !== undefined && partyAbbr === "oth" ? props.text : undefined;
+    // const probPhrase = getProbPhrase(props.prob);
+    // const struc = probPhrase[1];
+    // text = interpretOth(text, 'An emerging party');
+    // if (struc && text !== undefined) text = text.toLowerCase();
     return (
         <>
-            {struc ? "It is " : ""}
-            <strong>{struc ? probPhrase[0] : ""}</strong>
-            {struc ? " that " : ""}
-            <SmartBadge party={partyAbbr} text={text} tooltipText={text} />
-            {struc ? "" : " " + getIsPhrase(props.forecast) + " "}
-            <strong>{struc ? "" : probPhrase[0]}</strong>
-            {struc ? "" : " to"}
-            {struc ? " " + getWillPhrase(props.forecast) : ""}
+            {struc || noParty ? "It is " : ""}
+            <strong>{struc || noParty ? probPhrase[0] : ""}</strong>
+            {struc || noParty ? " that " : ""}
+            {noParty ? "there " : ""}
+            {!noParty && <SmartBadge party={partyAbbr} text={text} tooltipText={text} />}
+            {struc || noParty ? "" : " " + getIsPhrase(props.forecast) + " "}
+            <strong>{struc || noParty ? "" : probPhrase[0]}</strong>
+            {struc || noParty ? "" : " to"}
+            {struc || noParty ? " " + getWillPhrase(props.forecast) : ""}
+            {noParty ? " be " : ""}
             {props.tooltipText === undefined && " " + props.outcome}
             {props.tooltipText !== undefined &&
                 <TooltipWrapper tooltipText={props.tooltipText}>

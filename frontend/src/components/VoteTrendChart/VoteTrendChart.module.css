@@ -30,4 +30,5 @@
     width: 100%;
     display: flex !important;
     justify-content: space-evenly;
+    flex-wrap: wrap;
 }

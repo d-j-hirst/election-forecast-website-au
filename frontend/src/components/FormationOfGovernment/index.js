@@ -6,9 +6,6 @@ import ListGroup from 'react-bootstrap/ListGroup';
 
 import ProbStatement from '../ProbStatement'
 import GovernmentFormationChart from '../GovernmentFormationChart'
-import TooltipPercentage from '../TooltipPercentage'
-import TooltipWrapper from '../TooltipWrapper'
-import { SmartBadge } from '../PartyBadge'
 
 import { jsonMap } from '../../utils/jsonmap.js'
 import { lightBgClass, xLightBgClass, xxLightBgClass, xxxLightBgClass, standardiseParty } from '../../utils/partyclass.js'
@@ -77,39 +74,45 @@ const MostSeatsRow = props => {
     )
 };
 
-const AllocatedTiesRow = props => {
-    const party = parseInt(props.partyIndex)
-    const partyAbbr = standardiseParty(party, props.forecast);
-    const prob = jsonMap(props.forecast.overallWinPc, party) -
-                 jsonMap(props.forecast.majorityWinPc, party) -
-                 jsonMap(props.forecast.minorityWinPc, party) -
-                 jsonMap(props.forecast.mostSeatsWinPc, party);
-    const bgClasses = `${styles['formationOfGovernmentAllocatedTies']} ${xxxLightBgClass(partyAbbr)}`;
-    const tiesTooltipText = "Exact ties between the two major parties are split 50-50 " +
-        "for the purpose of determining their chances of forming government.";
+const TiesRow = props => {
+    let prob = 100;
+    for (const el of props.forecast.majorityWinPc) {
+        prob -= el[1];
+    }
+    for (const el of props.forecast.minorityWinPc) {
+        prob -= el[1];
+    }
+    for (const el of props.forecast.mostSeatsWinPc) {
+        prob -= el[1];
+    }
+    const bgClasses = `${styles['formationOfGovernmentSubItem']} ${xxxLightBgClass("OTH")}`;
     return (
         <ListGroup.Item className={bgClasses}>
-            Additionally{" "}
-            <SmartBadge party={partyAbbr} />
-            {' has '}
-            <strong><TooltipPercentage value={prob} /></strong>{" "}
-            <TooltipWrapper tooltipText={tiesTooltipText}>
-                allocated from exact ties
-            </TooltipWrapper>
+            &nbsp;&bull;&nbsp;
+            <ProbStatement forecast={props.forecast} party={null} prob={prob} outcome={"leading parties with the same number of seats"} />
         </ListGroup.Item>
     )
 };
 
 const OverallWinGovernmentRow = props => {
     const party = parseInt(props.partyIndex)
-    const prob = jsonMap(props.forecast.overallWinPc, party);
+    const probMajority = jsonMap(props.forecast.majorityWinPc, party);
+    const probMinority = jsonMap(props.forecast.minorityWinPc, party);
+    let prob = probMajority + probMinority;
+    if (party === -1) {
+        prob = 0;
+        for (const el of props.forecast.majorityWinPc) {
+            if (el[0] === 0 || el[0] === 1) continue;
+            prob += el[1];
+        }
+    }
     const partyAbbr = standardiseParty(party, props.forecast);
     const bgClasses = `${styles['formationOfGovernmentTopItem']} ${lightBgClass(partyAbbr)}`;
     return (
         <ListGroup.Item className={bgClasses}>
             <div className={styles.majorRowArranger}>
                 <div className={styles.formationOfGovernmentDescription}>
-                    <ProbStatement forecast={props.forecast} party={party} prob={prob} text={props.text} outcome={"form government"} />
+                    <ProbStatement forecast={props.forecast} party={party} prob={prob} text={props.text} outcome={"have a clear path to government"} />
                 </div>
                 {
                     props.detailHandler !== undefined &&
@@ -138,9 +141,69 @@ const MajorPartyCollapsibleRows = props => {
             <>
                 <MajorityWinGovernmentRow partyIndex={props.partyIndex} forecast={props.forecast} />
                 <MinorityWinGovernmentRow partyIndex={props.partyIndex} forecast={props.forecast} />
-                <MostSeatsRow partyIndex={props.partyIndex} forecast={props.forecast} />
-                <AllocatedTiesRow partyIndex={props.partyIndex} forecast={props.forecast} />
             </>
+        }
+    </>
+    )
+};
+
+const HungParliamentMainRow = props => {
+    let prob = 100;
+    for (const el of props.forecast.majorityWinPc) {
+        prob -= el[1];
+    }
+    for (const el of props.forecast.minorityWinPc) {
+        prob -= el[1];
+    }
+    const bgClasses = `${styles['formationOfGovernmentTopItem']} ${lightBgClass("OTH")}`;
+    return (
+        <ListGroup.Item className={bgClasses}>
+            <div className={styles.majorRowArranger}>
+                <div className={styles.formationOfGovernmentDescription}>
+                    <ProbStatement forecast={props.forecast} party={null} prob={prob} text={props.text} outcome={"no clear winner in the parliament"} />
+                </div>
+                {
+                    props.detailHandler !== undefined &&
+                    <Button onClick={props.detailHandler} className={styles.formationOfGovernmentExpand}>
+                        {props.expanded ? " Hide detail" : " Show detail"}
+                        <small>
+                            {props.expanded ? " ▲" : " ▼"}
+                        </small>
+                    </Button>
+                }
+            </div>
+        </ListGroup.Item>
+    )
+};
+
+const HungParliamentCollapsibleRows = props => {
+    const [ showDetail, setShowDetail] = useState(false);
+
+    const detailHandler = () => setShowDetail(!showDetail);
+
+    const parties = [];
+    for (const el of props.forecast.mostSeatsWinPc) {
+        parties.push(el[0]);
+    }
+
+    parties.sort((a, b) => jsonMap(props.forecast.mostSeatsWinPc, b) - jsonMap(props.forecast.mostSeatsWinPc, a));
+
+    return (
+    <>
+        <HungParliamentMainRow forecast={props.forecast} detailHandler={detailHandler} expanded={showDetail} />
+        {
+            showDetail && 
+            [...parties].map((el, index) => {
+                let rows = [];
+                if (jsonMap(props.forecast.majorityWinPc, el, undefined) !== undefined) {
+                    rows.push(<MostSeatsRow partyIndex={el} forecast={props.forecast} key={index} />)
+                }
+                return rows;
+            })
+        }
+        {
+            showDetail && 
+            <TiesRow forecast={props.forecast} detailHandler={detailHandler} expanded={showDetail} />
         }
     </>
     )
@@ -149,32 +212,29 @@ const MajorPartyCollapsibleRows = props => {
 const OthersCollapsibleRows = props => {
     const [ showDetail, setShowDetail] = useState(false);
 
-    const minorParties = new Set();
+    const minorParties = [];
     for (const el of props.forecast.majorityWinPc) {
         if (el[0] === 0 || el[0] === 1) continue;
-        minorParties.add(el[0]);
+        minorParties.push(el[0]);
     }
-    for (const el of props.forecast.mostSeatsWinPc) {
-        if (el[0] === 0 || el[0] === 1) continue;
-        minorParties.add(el[0]);
-    }
+
+    minorParties.sort((a, b) => jsonMap(props.forecast.majorityWinPc, b) - jsonMap(props.forecast.majorityWinPc, a));
 
     let detailHandler = () => setShowDetail(!showDetail);
 
     // Signal that no expansion should be allowed if there are no detail rows to show
-    if (!minorParties.size) detailHandler = undefined;
+    if (!minorParties.length) detailHandler = undefined;
+
+    console.log(detailHandler);
 
     return (<>
         <OverallWinGovernmentRow partyIndex="-1" forecast={props.forecast} detailHandler={detailHandler} expanded={showDetail} text="Any other party" />
         {
             showDetail && 
-            [...minorParties].map((el, index) => {
+            minorParties.map((el, index) => {
                 let rows = [];
                 if (jsonMap(props.forecast.majorityWinPc, el, undefined) !== undefined) {
                     rows.push(<MajorityWinGovernmentRow partyIndex={el} forecast={props.forecast} key={index} />)
-                }
-                if (jsonMap(props.forecast.mostSeatsWinPc, el, undefined) !== undefined) {
-                    rows.push(<MostSeatsRow partyIndex={el} forecast={props.forecast} key={index+1000} />)
                 }
                 return rows;
             })
@@ -193,6 +253,7 @@ const FormationOfGovernment = props => {
                     <MajorPartyCollapsibleRows partyIndex="0" forecast={props.forecast} />
                     <MajorPartyCollapsibleRows partyIndex="1" forecast={props.forecast} />
                     <OthersCollapsibleRows forecast={props.forecast} />
+                    <HungParliamentCollapsibleRows forecast={props.forecast} />
                 </ListGroup>
                 <GovernmentFormationChart forecast={props.forecast} />
             </Card.Body>
