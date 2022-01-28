@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
-import { ComposedChart, Line, XAxis, YAxis, ZAxis, Area, Scatter, Tooltip, ResponsiveContainer } from 'recharts';
+
+import { ComposedChart, Line, XAxis, YAxis, ZAxis, ReferenceLine, Area, Scatter, Tooltip, ResponsiveContainer } from 'recharts';
+
 import { jsonMap, jsonMapReverse } from '../../utils/jsonmap.js'
 import { deepCopy } from '../../utils/deepcopy.js'
+
 import DropdownButton from 'react-bootstrap/DropdownButton';
+import ListGroup from 'react-bootstrap/ListGroup';
 import Dropdown from 'react-bootstrap/Dropdown';
 
 import styles from './VoteTrendChart.module.css';
@@ -140,7 +144,8 @@ const VoteTrendChart = props => {
         }
         if (!trendData[trendIndex].hasOwnProperty("pollDesc")) trendData[trendIndex]["pollDesc"] = "";
         else trendData[trendIndex]["pollDesc"] += ";";
-        trendData[trendIndex]["pollDesc"] += `${poll.pollster}, ${round1(pollVal)}`;
+        const pollster = poll.pollster.replace("Newspoll2", "Newspoll");
+        trendData[trendIndex]["pollDesc"] += `${pollster}, ${round1(pollVal)}`;
     }
 
 
@@ -171,40 +176,44 @@ const VoteTrendChart = props => {
     const setOthFp = () => {setGenericFp("OTH");};
 
     const pollTypeDesc = pollType => {
-        if (pollType === "reported") return "Reported TPP";
-        else if (pollType === "base") return isFp ? "Reported party vote" : "Calculated TPP";
-        else if (pollType === "adjusted") return "House effect adjusted";
+        if (pollType === "reported") return "Polls: Reported TPP";
+        else if (pollType === "base") return isFp ? "Polls: Reported party vote" : "Polls: Calculated TPP";
+        else if (pollType === "adjusted") return "Polls: House effect adjusted";
     }
     const currentPollTypeDesc = () => pollTypeDesc(pollType);
 
-    const dropdownTitle = party + (isFp ? " first preferences" : " two-party vote");
+    const dropdownTitle = "Party: " + party + (isFp ? " first preferences" : " two-party vote");
 
     return (
         <>
-        <DropdownButton id="party-dropdown" title={dropdownTitle} variant="secondary">
-            <Dropdown.Item as="button" onClick={setAlpTpp}>ALP two-party vote</Dropdown.Item>
-            <Dropdown.Item as="button" onClick={setLnpTpp}>LNP two-party vote</Dropdown.Item>
-            <Dropdown.Item as="button" onClick={setAlpFp}>ALP first preferences</Dropdown.Item>
-            <Dropdown.Item as="button" onClick={setLnpFp}>LNP first preferences</Dropdown.Item>
-            <Dropdown.Item as="button" onClick={setGrnFp}>GRN first preferences</Dropdown.Item>
-            {
-                partyHasFpTrend("ONP") &&
-                <Dropdown.Item as="button" onClick={setOnpFp}>ONP first preferences</Dropdown.Item>
+        <ListGroup.Item className={styles.voteChartOptions}>
+            <DropdownButton id="party-dropdown" title={dropdownTitle} variant="secondary">
+                <Dropdown.Item as="button" onClick={setAlpTpp}>Party: ALP two-party vote</Dropdown.Item>
+                <Dropdown.Item as="button" onClick={setLnpTpp}>Party: LNP two-party vote</Dropdown.Item>
+                <Dropdown.Item as="button" onClick={setAlpFp}>Party: ALP first preferences</Dropdown.Item>
+                <Dropdown.Item as="button" onClick={setLnpFp}>Party: LNP first preferences</Dropdown.Item>
+                <Dropdown.Item as="button" onClick={setGrnFp}>Party: GRN first preferences</Dropdown.Item>
+                {
+                    partyHasFpTrend("ONP") &&
+                    <Dropdown.Item as="button" onClick={setOnpFp}>Party: ONP first preferences</Dropdown.Item>
+                }
+                {
+                    partyHasFpTrend("UAP") &&
+                    <Dropdown.Item as="button" onClick={setUapFp}>Party: UAP first preferences</Dropdown.Item>
+                }
+                <Dropdown.Item as="button" onClick={setOthFp}>Party: OTH first preferences</Dropdown.Item>
+            </DropdownButton>
+            {party !== "OTH" &&
+                <DropdownButton id="poll-dropdown" title={currentPollTypeDesc()} variant="secondary">
+                    <Dropdown.Item as="button" onClick={setPollsBase}>{pollTypeDesc("base")}</Dropdown.Item>
+                    <Dropdown.Item as="button" onClick={setPollsAdjusted}>{pollTypeDesc("adjusted")}</Dropdown.Item>
+                    {
+                        !isFp &&
+                        <Dropdown.Item as="button" onClick={setPollsOriginal}>{pollTypeDesc("reported")}</Dropdown.Item>
+                    }
+                </DropdownButton>
             }
-            {
-                partyHasFpTrend("UAP") &&
-                <Dropdown.Item as="button" onClick={setUapFp}>UAP first preferences</Dropdown.Item>
-            }
-            <Dropdown.Item as="button" onClick={setOthFp}>OTH first preferences</Dropdown.Item>
-        </DropdownButton>
-        <DropdownButton id="poll-dropdown" title={currentPollTypeDesc()} variant="secondary">
-            <Dropdown.Item as="button" onClick={setPollsBase}>{pollTypeDesc("base")}</Dropdown.Item>
-            <Dropdown.Item as="button" onClick={setPollsAdjusted}>{pollTypeDesc("adjusted")}</Dropdown.Item>
-            {
-                !isFp &&
-                <Dropdown.Item as="button" onClick={setPollsOriginal}>{pollTypeDesc("reported")}</Dropdown.Item>
-            }
-        </DropdownButton>
+        </ListGroup.Item>
         {party === "OTH" && // don't show polls for OTH as different polls have different original OTH values
             <div>Polls not shown for Others</div>
         }
@@ -218,11 +227,12 @@ const VoteTrendChart = props => {
                 }}
             >
                 <XAxis dataKey="date"/>
-                <ZAxis range={[12, 12]}/>
+                <ZAxis range={[12, 12]} width={200}/>
                 <YAxis type="number" domain={[minVal, maxVal]} ticks={ticks}/>
                 <Area dataKey="1-99" type="number" stroke="none" activeDot={false} isAnimationActive={false} fill={currentColours[3]} />
                 <Area dataKey="5-95" type="number" stroke="none" activeDot={false} isAnimationActive={false} fill={currentColours[2]} />
                 <Area dataKey="25-75" type="number" stroke="none" activeDot={false} isAnimationActive={false} fill={currentColours[1]} />
+                {!isFp && <ReferenceLine y={50} stroke="black" />}
                 <Line dataKey="median" type="number" dot={false} activeDot={false} isAnimationActive={false} stroke={currentColours[0]} fill="none" />
                 { party !== "OTH" && // don't show polls for OTH as different polls have different original OTH values
                     <>
