@@ -60,6 +60,12 @@ code {
   --kap-xlight: #dfc3b6;
   --kap-xxlight: #eedfd8;
   --kap-xxxlight: #f7eeea;
+  --ind: #837083;
+  --ind-mid: #a594a5;
+  --ind-light: #b8aab8;
+  --ind-xlight: #cec2ce;
+  --ind-xxlight: #ddd3dd;
+  --ind-xxxlight: #eee7ee;
 }
 
 .alp-bg {
@@ -94,6 +100,11 @@ code {
 
 .uap-bg {
   background-color: var(--uap) !important;
+  color: #212529 !important;
+}
+
+.ind-bg {
+  background-color: var(--ind) !important;
   color: #212529 !important;
 }
 
@@ -132,6 +143,11 @@ code {
   color: #212529 !important;
 }
 
+.ind-bg-mid {
+  background-color: var(--ind-mid) !important;
+  color: #212529 !important;
+}
+
 .alp-bg-light {
   background-color: var(--alp-light) !important;
   color: #212529 !important;
@@ -167,6 +183,11 @@ code {
   color: #212529 !important;
 }
 
+.ind-bg-light {
+  background-color: var(--ind-light) !important;
+  color: #212529 !important;
+}
+
 .alp-bg-xlight {
   background-color: var(--alp-xlight) !important;
   color: #212529 !important;
@@ -194,6 +215,11 @@ code {
 
 .oth-bg-xlight {
   background-color: var(--oth-xlight) !important;
+  color: #212529 !important;
+}
+
+.ind-bg-xlight {
+  background-color: var(--ind-xlight) !important;
   color: #212529 !important;
 }
 
@@ -237,6 +263,11 @@ code {
   color: #212529 !important;
 }
 
+.ind-bg-xxlight {
+  background-color: var(--ind-xxlight) !important;
+  color: #212529 !important;
+}
+
 .alp-bg-xxxlight {
   background-color: var(--alp-xxxlight) !important;
   color: #212529 !important;
@@ -269,5 +300,10 @@ code {
 
 .uap-bg-xxxlight {
   background-color: var(--uap-xxxlight) !important;
+  color: #212529 !important;
+}
+
+.ind-bg-xxxlight {
+  background-color: var(--ind-xxxlight) !important;
   color: #212529 !important;
 }

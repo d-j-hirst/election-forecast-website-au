@@ -6,7 +6,11 @@ import { getIsPhrase, getWillPhrase, getProbPhrase } from '../../utils/phrases.j
 import { SmartBadge } from '../PartyBadge'
 import { standardiseParty } from '../../utils/partyclass.js'
 
-const interpretOth = (code, text) => code === undefined || code.toLowerCase() === 'oth' || code.toLowerCase() === 'ind' ? text : code;
+const interpretOth = (code, text) => code === undefined ||
+                                     code.toLowerCase() === 'oth' ||
+                                     code.toLowerCase() === 'ind' ||
+                                     code.toLowerCase() === 'indx' ||
+                                     code.toLowerCase() === 'eoth' ? text : code;
 
 const ProbStatement = props => {
     const probPhrase = getProbPhrase(props.prob);
@@ -16,8 +20,11 @@ const ProbStatement = props => {
     let partyAbbr = "";
     if (!noParty) {
         partyAbbr = standardiseParty(props.party, props.forecast);
-        text = props.text !== undefined && partyAbbr === "oth" ? props.text : undefined;
-        text = interpretOth(text, 'An emerging party');
+        if (props.party === -2) partyAbbr = "indx";
+        if (props.party === -3) partyAbbr = "eoth";
+        console.log(partyAbbr);
+        text = interpretOth(props.text, 'An emerging party');
+        console.log(text);
         if (struc && text !== undefined) text = text.toLowerCase();
     }
     
@@ -33,7 +40,7 @@ const ProbStatement = props => {
             <strong>{struc || noParty ? probPhrase[0] : ""}</strong>
             {struc || noParty ? " that " : ""}
             {noParty ? "there " : ""}
-            {!noParty && <SmartBadge party={partyAbbr} text={text} tooltipText={text} />}
+            {!noParty && <SmartBadge party={partyAbbr} text={text} />}
             {struc || noParty ? "" : " " + getIsPhrase(props.forecast) + " "}
             <strong>{struc || noParty ? "" : probPhrase[0]}</strong>
             {struc || noParty ? "" : " to"}

@@ -12,16 +12,18 @@ import { jsonMap } from '../../utils/jsonmap.js'
 import styles from './SeatTotals.module.css';
 
 const SeatsRow = props => {
-    const partyAbbr = jsonMap(props.forecast.partyAbbr, props.freqSet[0]);
+    let partyAbbr = jsonMap(props.forecast.partyAbbr, props.freqSet[0]);
     const partyName = jsonMap(props.forecast.partyName, props.freqSet[0]);
-    let partyDesc = "";
-    if (partyName === "Independent") partyDesc = "Established Independent - Independents who are either incumbents, gained significant vote previously or otherwise known to have a high profile";
-    if (partyName === "Emerging Ind") partyDesc = "Emerging Independent - Independents who are not yet known to have a high profile";
-    if (partyName === "Emerging Party") partyDesc = "Emerging Parties - Represents possible votes and wins by parties that may emerge, but are not yet getting significant results in polls";
+    if (partyName === "Emerging Ind") {
+        partyAbbr = "IndX";
+    }
+    if (partyName === "Emerging Party") {
+        partyAbbr = "EOth";
+    }
     const thresholds = [[0,2,0],[2,4,1],[4,6,2],[6,8,3],[8,10,4],[10,12,5],[12,14,6]];
     return (
         <ListGroup.Item className={styles.seatTotalsItem}>
-            <SmartBadge party={partyAbbr} tooltipText={partyDesc} /> - {props.freqSet[1][4]}
+            <SmartBadge party={partyAbbr} /> - {props.freqSet[1][4]}
             {" - "}{<strong>{props.freqSet[1][7]}</strong>}
             {" - "}{props.freqSet[1][10]}
             <ProbBarDist freqSet={props.freqSet}
@@ -39,9 +41,11 @@ const SeatsRow = props => {
 }
 
 const SeatsRowSet = props => {
-    const freqs = props.forecast.seatCountFrequencies.sort((el1, el2) => {
+    let freqs = props.forecast.seatCountFrequencies.sort((el1, el2) => {
         return el2[1][7] - el1[1][7];
     });
+    freqs = freqs.filter(a => a[1][a[1].length-1] > 0);
+    console.log(freqs);
     const maxVoteTotal = Math.max(...freqs.map(el => Math.max(...el[1])));
     return (
         <ListGroup className={styles.voteTotalsTopList}>

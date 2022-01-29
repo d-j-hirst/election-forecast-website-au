@@ -178,8 +178,12 @@ const SeatTcpRowPair = props => {
     const maxVoteTotal = Math.max(Math.max(...freqSet0[1]), Math.max(...freqSet1[1]));
     const minVoteTotal = Math.min(Math.min(...freqSet0[1]), Math.min(...freqSet1[1]));
 
-    const partyAbbr0 = jsonMap(props.forecast.partyAbbr, freqSet0[0]);
-    const partyAbbr1 = jsonMap(props.forecast.partyAbbr, freqSet1[0]);
+    let partyAbbr0 = jsonMap(props.forecast.partyAbbr, freqSet0[0]);
+    if (freqSet0[0] === -2) partyAbbr0 = "IndX";
+    if (freqSet0[0] === -3) partyAbbr0 = "EOth";
+    let partyAbbr1 = jsonMap(props.forecast.partyAbbr, freqSet1[0]);
+    if (freqSet1[0] === -2) partyAbbr1 = "IndX";
+    if (freqSet1[0] === -3) partyAbbr1 = "EOth";
     return (
         <>
             <ListGroup.Item className={styles.seatsTcpScenarioHeading} key={props.index}>

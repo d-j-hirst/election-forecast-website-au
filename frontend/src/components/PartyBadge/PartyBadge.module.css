@@ -14,6 +14,11 @@
     color: black;
   }
   
+  .ind-badge {
+    background-color: var(--ind);
+    color: white;
+  }
+  
   .kap-badge {
     background-color: var(--kap);
     color: white;
