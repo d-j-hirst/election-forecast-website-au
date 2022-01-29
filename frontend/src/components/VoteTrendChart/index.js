@@ -87,7 +87,7 @@ const VoteTrendChart = props => {
     const invertPoll = poll => {
         poll.adjusted = 100 - poll.adjusted;
         poll.base = 100 - poll.base;
-        poll.adjusted = 100 - poll.adjusted;
+        if (poll.reported !== null) poll.reported = 100 - poll.reported;
         return poll;
     }
 
@@ -176,13 +176,13 @@ const VoteTrendChart = props => {
     const setOthFp = () => {setGenericFp("OTH");};
 
     const pollTypeDesc = pollType => {
-        if (pollType === "reported") return "Polls: Reported TPP";
-        else if (pollType === "base") return isFp ? "Polls: Reported party vote" : "Polls: Calculated TPP";
+        if (pollType === "reported") return "Polls: Reported two-party";
+        else if (pollType === "base") return isFp ? "Polls: Reported party vote" : "Polls: Calculated two-party";
         else if (pollType === "adjusted") return "Polls: House effect adjusted";
     }
     const currentPollTypeDesc = () => pollTypeDesc(pollType);
 
-    const dropdownTitle = "Party: " + party + (isFp ? " first preferences" : " two-party vote");
+    const dropdownTitle = "Party: " + party + (isFp ? " first preferences" : " two-party preferred");
 
     return (
         <>
