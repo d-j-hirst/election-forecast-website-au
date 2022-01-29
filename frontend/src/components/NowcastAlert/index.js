@@ -12,7 +12,7 @@ const NowcastAlert = props => {
             <Alert variant="warning" className={styles.nowcastAlert}>
                 <img className={styles.warningIcon} src={warning} alt='Warning symbol'/>
                 This a <strong>nowcast</strong>, not a forecast.
-                It is an estimate of what an election is most likely to be if it were held today.
+                It is an estimate of what an election is most likely to be <strong>if it were held today</strong>.
                 The election result may be quite different when it is actually held.
                 See this FAQ answer for more information.
             </Alert>
