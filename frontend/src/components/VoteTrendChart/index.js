@@ -244,7 +244,7 @@ const VoteTrendChart = props => {
                     <Scatter dataKey="poll3" type="number" dot={true} shape={"circle"} isAnimationActive={false} stroke={currentColours[0]} fill={currentColours[0]} />
                     </>
                 }
-                <Tooltip content={<VoteTrendTooltip />}isAnimationActive={false} throttleDelay={1} />
+                <Tooltip content={<VoteTrendTooltip />}isAnimationActive={false} />
             </ComposedChart>
         </ResponsiveContainer>
         </>
