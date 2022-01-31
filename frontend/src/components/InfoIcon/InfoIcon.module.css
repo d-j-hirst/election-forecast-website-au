@@ -1,0 +1,11 @@
+
+.infoIconBack {
+    border: none;
+    background: none;
+    padding: 1px;
+}
+
+.infoIcon {
+    width: 22px;
+    height: 22px;
+}

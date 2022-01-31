@@ -22,9 +22,7 @@ const ProbStatement = props => {
         partyAbbr = standardiseParty(props.party, props.forecast);
         if (props.party === -2) partyAbbr = "indx";
         if (props.party === -3) partyAbbr = "eoth";
-        console.log(partyAbbr);
         text = interpretOth(props.text, 'An emerging party');
-        console.log(text);
         if (struc && text !== undefined) text = text.toLowerCase();
     }
     

@@ -1,6 +1,7 @@
 .summary {
     text-align: center;
-    max-width: 100%;
+    max-width: 800px;
+    width: 100%;
     margin: auto;
     border-color: #CCCCCC;
     border-radius: 20px 20px 2px 2px !important;
@@ -19,6 +20,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 100%;
 }
 
 .formationOfGovernmentHorz {
@@ -29,6 +31,7 @@
 
 .formationOfGovernmentTopList {
     border-color: #CCCCCC !important;
+    width: 100%;
 }
 
 .formationOfGovernmentTopItem {
@@ -44,9 +47,6 @@
 .formationOfGovernmentDescription {
     padding: 0px 0px;
 }
-
-/* prevents flickering of the tooltip inside the google chart */
-svg > g > g:last-child { pointer-events: none }
 
 .formationOfGovernmentExpand {
     padding: 0px 0px 0px 8px !important;
@@ -65,4 +65,8 @@ svg > g > g:last-child { pointer-events: none }
 
 .dropdown-toggle::after {
     display:none !important;
+}
+
+.alert {
+    margin: 0px !important;
 }
