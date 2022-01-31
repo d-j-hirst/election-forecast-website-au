@@ -123,6 +123,7 @@ const VoteTrendChart = props => {
     trendData.at(-1).date = dateToStr(addDays(date, finalDay));
     trendData.at(-1).day = finalDay;
     for (let poll of thisPolls) {
+        if (party === "OTH") break;
         let trendIndex = Math.floor((poll.day - period / 2) / period) + 1;
         if (poll.day >= finalDay) trendIndex = trendData.length - 1;
         let pollVal = poll[pollType];
