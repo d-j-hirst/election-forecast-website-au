@@ -97,7 +97,73 @@ const TiesRow = props => {
     )
 };
 
+const MajorPartyExplainer = props => {
+    const partyName = props.partyIndex === 1 ? "the Coalition" : "Labor";
+    return (
+        <Alert variant="info" className={styles.alert}>
+            <p>
+                This row shows the probability, as simulated by the model, that {partyName} will
+                have a clear path to government, either with
+                a <a href="https://en.wikipedia.org/wiki/Majority_government">majority</a> or as 
+                a <a href="https://en.wikipedia.org/wiki/Minority_government">minority government</a> winning
+                 the support
+                of <a href="https://en.wikipedia.org/wiki/Minor party">minor parties</a> widely expected to support them.
+            </p>
+            <hr />
+            <p>
+                Clicking on "show detail" shows this probability broken down into majority or minority scenarios.
+            </p>
+            <hr />
+            {
+                props.partyIndex === 0 &&
+                <p>
+                    This site considers the Greens to be the only party assumed to support Labor.
+                </p>
+            }
+            {
+                props.partyIndex === 1 &&
+                <p>
+                    This site considers One Nation, the United Australia Party and Katter's Australian Party
+                    as assumed to support the Liberal/National Coalition.
+                </p>
+            }
+        </Alert>
+    )
+}
+
+const OthersExplainer = props => {
+    return (
+        <Alert variant="warning" className={styles.alert}>
+            <p>
+                This row shows the probability, as simulated by the model, that some party other than
+                the two traditional majors gains a majority.
+                Note that:
+                <ul>
+                    <li>Such an outcome would be unprecedented in modern Australian history.</li>
+                    <li>The probability for such an event is extrapolated from a small sample of historic results where third parties were far from gaining a majority.</li>
+                </ul>
+                As a result, the results in this section are included for the sake of completeness and <strong>should not be taken too seriously</strong>.
+            </p>
+            <hr />
+            <p>
+                The closest parallels are probably Queensland 1998, where One Nation won 22.7% of the first
+                preference vote and 11 seats, and South Australia 2018, when SA-BEST was briefly polling above
+                both major parties but ended up not winning any seats in the actual election.
+            </p>
+            <hr />
+            <p>
+                Click on "Show details" to show this probability broken down into the different possible winning parties,
+                including an "emerging party" option for parties that aren't prominent enough to be polled yet.
+                (This website does not assume any parties
+                to be supporting a minor party, so unlike for major parties there is no clear minority
+                government figure shown.)
+            </p>
+        </Alert>
+    )
+}
+
 const OverallWinGovernmentRow = props => {
+    const [showExplainer, setShowExplainer] = useState(false);
     const party = parseInt(props.partyIndex)
     const probMajority = jsonMap(props.forecast.majorityWinPc, party);
     const probMinority = jsonMap(props.forecast.minorityWinPc, party);
@@ -112,22 +178,39 @@ const OverallWinGovernmentRow = props => {
     const partyAbbr = standardiseParty(party, props.forecast);
     const bgClasses = `${styles['formationOfGovernmentTopItem']} ${lightBgClass(partyAbbr)}`;
     return (
-        <ListGroup.Item className={bgClasses}>
-            <div className={styles.majorRowArranger}>
-                <div className={styles.formationOfGovernmentDescription}>
-                    <ProbStatement forecast={props.forecast} party={party} prob={prob} text={props.text} outcome={"have a clear path to government"} />
+        <>
+            <ListGroup.Item className={bgClasses}>
+                <div className={styles.majorRowArranger}>
+                    <div className={styles.formationOfGovernmentDescription}>
+                        <ProbStatement forecast={props.forecast}
+                                       party={party}
+                                       prob={prob}
+                                       text={props.text}
+                                       outcome={"have a clear path to government"}
+                        />
+                        &nbsp;
+                        <InfoIcon onClick={() => setShowExplainer(!showExplainer)} warning={party === -1} />
+                    </div>
+                    {
+                        props.detailHandler !== undefined &&
+                        <Button onClick={props.detailHandler} className={styles.formationOfGovernmentExpand}>
+                            {props.expanded ? " Hide detail" : " Show detail"}
+                            <small>
+                                {props.expanded ? " ▲" : " ▼"}
+                            </small>
+                        </Button>
+                    }
                 </div>
-                {
-                    props.detailHandler !== undefined &&
-                    <Button onClick={props.detailHandler} className={styles.formationOfGovernmentExpand}>
-                        {props.expanded ? " Hide detail" : " Show detail"}
-                        <small>
-                            {props.expanded ? " ▲" : " ▼"}
-                        </small>
-                    </Button>
-                }
-            </div>
-        </ListGroup.Item>
+            </ListGroup.Item>
+            {
+                showExplainer && (party === 0 || party === 1) &&
+                <MajorPartyExplainer forecast={props.forecast} partyIndex={party} />
+            }
+            {
+                showExplainer && (party === -1) &&
+                <OthersExplainer />
+            }
+        </>
     )
 };
 
@@ -150,7 +233,30 @@ const MajorPartyCollapsibleRows = props => {
     )
 };
 
+const HungExplainer = props => {
+    return (
+        <Alert variant="info" className={styles.alert}>
+            <p>
+                This row shows the probability, as simulated by the model, that no party gets 
+                a <a href="https://en.wikipedia.org/wiki/Majority_government">majority</a> and
+                also cannot form <a href="https://en.wikipedia.org/wiki/Minority_government">minority government</a> only
+                with those parties assumed to support them.
+                In this situation, a party will still eventually form government once it gains the
+                confidence of independent candidates and unaligned parties.
+            </p>
+            <hr />
+            <p>
+                Click on "Show details" to show this probability broken down by the party getting the most seats.
+                Note that the party with the most seats will not necessarily form government, but is more likely to
+                have the upper hand in any negotiations. The final entry shows the chance outcomes where two (or rarely more)
+                parties are exactly tied in the lead with the same number of seats.
+            </p>
+        </Alert>
+    )
+}
+
 const HungParliamentMainRow = props => {
+    const [showExplainer, setShowExplainer] = useState(false);
     let prob = 100;
     for (const el of props.forecast.majorityWinPc) {
         prob -= el[1];
@@ -160,22 +266,30 @@ const HungParliamentMainRow = props => {
     }
     const bgClasses = `${styles['formationOfGovernmentTopItem']} ${lightBgClass("OTH")}`;
     return (
-        <ListGroup.Item className={bgClasses}>
-            <div className={styles.majorRowArranger}>
-                <div className={styles.formationOfGovernmentDescription}>
-                    <ProbStatement forecast={props.forecast} party={null} prob={prob} text={props.text} outcome={"no clear winner in the parliament"} />
+        <>
+            <ListGroup.Item className={bgClasses}>
+                <div className={styles.majorRowArranger}>
+                    <div className={styles.formationOfGovernmentDescription}>
+                        <ProbStatement forecast={props.forecast} party={null} prob={prob} text={props.text} outcome={"no clear winner in the parliament"} />
+                        &nbsp;
+                        <InfoIcon onClick={() => setShowExplainer(!showExplainer)} />
+                    </div>
+                    {
+                        props.detailHandler !== undefined &&
+                        <Button onClick={props.detailHandler} className={styles.formationOfGovernmentExpand}>
+                            {props.expanded ? " Hide detail" : " Show detail"}
+                            <small>
+                                {props.expanded ? " ▲" : " ▼"}
+                            </small>
+                        </Button>
+                    }
                 </div>
-                {
-                    props.detailHandler !== undefined &&
-                    <Button onClick={props.detailHandler} className={styles.formationOfGovernmentExpand}>
-                        {props.expanded ? " Hide detail" : " Show detail"}
-                        <small>
-                            {props.expanded ? " ▲" : " ▼"}
-                        </small>
-                    </Button>
-                }
-            </div>
-        </ListGroup.Item>
+            </ListGroup.Item>
+            {
+                showExplainer &&
+                <HungExplainer />
+            }
+        </>
     )
 };
 
@@ -245,7 +359,7 @@ const OthersCollapsibleRows = props => {
     </>)
 };
 
-const Explainer = props => {
+const MainExplainer = props => {
     return (
         <Alert variant="info" className={styles.alert}>
             <p>
@@ -318,7 +432,7 @@ const FormationOfGovernment = props => {
             <Card.Body className={styles.formationOfGovernmentBody}>
                 <ListGroup className={styles.formationOfGovernmentTopList}>
                     {
-                        showExplainer && <Explainer />
+                        showExplainer && <MainExplainer />
                     }
                     <MajorPartyCollapsibleRows partyIndex="0" forecast={props.forecast} />
                     <MajorPartyCollapsibleRows partyIndex="1" forecast={props.forecast} />

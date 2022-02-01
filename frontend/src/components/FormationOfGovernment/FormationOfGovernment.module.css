@@ -70,3 +70,7 @@
 .alert {
     margin: 0px !important;
 }
+
+.alert p {
+    margin: 0px !important;
+}

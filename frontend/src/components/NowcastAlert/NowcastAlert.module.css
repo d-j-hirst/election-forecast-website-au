@@ -7,6 +7,10 @@
     border-radius: 20px 20px 2px 2px !important;
 }
 
+.nowcastAlert p {
+    margin: 0px;
+}
+
 .firstPara {
     display: flex;
     flex: row;
