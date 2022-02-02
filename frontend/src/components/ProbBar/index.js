@@ -60,19 +60,19 @@ const ProbBar = props => {
     }
 
     if (offsetFromMid === 0) {
-        tooltipText += "This range covers the " + props.pluralNoun + " that are most expected given the current situation.";
+        tooltipText += "This range covers the " + props.pluralNoun + " that are most expected based on current information.";
     }
     else if (Math.abs(offsetFromMid) === 1) {
         tooltipText += "This range covers " + props.pluralNoun + " that are somewhat " +
-            (offsetFromMid > 0 ? "higher" : "lower") + " than expected, but not unusually so given the current situation.";
+            (offsetFromMid > 0 ? "higher" : "lower") + " than expected, but not unusually so based on current information.";
     }
     else if (Math.abs(offsetFromMid) === 2) {
         tooltipText += "This range covers " + props.pluralNoun + " that are unusually " +
-            (offsetFromMid > 0 ? "high" : "low") + " given the current situation.";
+            (offsetFromMid > 0 ? "high" : "low") + " based on current information.";
     }
     else if (Math.abs(offsetFromMid) >= 3) {
         tooltipText += "This range covers " + props.pluralNoun + " that are exceptionally " +
-            (offsetFromMid > 0 ? "high" : "low") + ", and should only happen rarely given the current situation.";
+            (offsetFromMid > 0 ? "high" : "low") + ", and should only happen rarely based on current information.";
     }
 
     return (

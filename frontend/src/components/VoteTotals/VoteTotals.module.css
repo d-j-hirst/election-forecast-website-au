@@ -1,6 +1,7 @@
 .summary {
     text-align: center;
-    max-width: 100%;
+    max-width: 800px;
+    width: 100%;
     margin: auto;
     border-color: #CCCCCC;
     border-radius: 20px 20px 2px 2px !important;
@@ -30,6 +31,7 @@
 }
 
 .voteTotalsList {
+    width: 100%;
     border-color: #CCCCCC !important;
 }
 
@@ -40,4 +42,12 @@
     align-items: center;
     height: '100%';
     justify-content: space-between;
+}
+
+.alert {
+    margin: 0px !important;
+}
+
+.alert p {
+    margin: 0px !important;
 }

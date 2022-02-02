@@ -8,7 +8,6 @@ import ListGroup from 'react-bootstrap/ListGroup';
 import ProbStatement from '../ProbStatement'
 import GovernmentFormationChart from '../GovernmentFormationChart'
 import InfoIcon from '../InfoIcon'
-import { SmartBadge } from '../PartyBadge'
 
 import { jsonMap } from '../../utils/jsonmap.js'
 import { lightBgClass, xLightBgClass, xxLightBgClass, xxxLightBgClass, standardiseParty } from '../../utils/partyclass.js'
@@ -140,7 +139,7 @@ const OthersExplainer = props => {
                 Note that:
                 <ul>
                     <li>Such an outcome would be unprecedented in modern Australian history.</li>
-                    <li>The probability for such an event is extrapolated from a small sample of historic results where third parties were far from gaining a majority.</li>
+                    <li>The probability for such an event is extrapolated from a small sample of historic results where third parties were still far from gaining a majority.</li>
                 </ul>
                 As a result, the results in this section are included for the sake of completeness and <strong>should not be taken too seriously</strong>.
             </p>
@@ -241,8 +240,9 @@ const HungExplainer = props => {
                 a <a href="https://en.wikipedia.org/wiki/Majority_government">majority</a> and
                 also cannot form <a href="https://en.wikipedia.org/wiki/Minority_government">minority government</a> only
                 with those parties assumed to support them.
-                In this situation, a party will still eventually form government once it gains the
-                confidence of independent candidates and unaligned parties.
+                In this situation, some party will still eventually form government once it gains the
+                confidence of independent candidates and unaligned parties (or perhaps if that cannot be done,
+                a new election is held.)
             </p>
             <hr />
             <p>
@@ -363,7 +363,7 @@ const MainExplainer = props => {
     return (
         <Alert variant="info" className={styles.alert}>
             <p>
-                This section describe the forecast model's calculated chances for parties to be
+                This section describes the forecast model's calculated chances for parties to be
                 in a position to <b>form government</b> by getting either a&nbsp;
                 <a href="https://en.wikipedia.org/wiki/Majority_government">majority</a>
                 &nbsp;themselves, or winning&nbsp;
@@ -385,38 +385,6 @@ const MainExplainer = props => {
         </Alert>
     )
 }
-
-{/*
-    <hr />
-    <p>
-        It is currently assumed on this site that, between the two major parties, the Greens will support
-        Labor, and that Katter's Australia Party, One Nation
-        and the United Australia Party will support the Liberal/National Coalition. 
-        For the time being, the Centre Alliance and any independents are not considered
-        to support either major party (even if an independent has announced they will support one).
-    </p>
-    <p>
-        Simulation results are counted as an overall win for a major party if they either have a majority
-        or have a path to minority government with the parties as described above. Click on "Show detail"
-        next to a party name to see the chances of majority vs. this kind of minority government.
-    </p>
-    <p>
-        There is also a very rare chance that some other party may form a majority, the total chance is shown
-        under "Any other party ...". To show the chance of each individual party, click on "Show detail"
-        for that section. We do not make any assumptions that any party would support any minor party, so
-        no minority figures are given.
-    </p>
-    <hr />
-    <p>
-        The chances that neither party has the numbers to win government (with the parties assumed to support them)
-        are listed as "no clear winner in the parliament". In this case, some government will still eventually
-        be formed, but this site does not want to speculate about who independents and certain minor parties
-        might support, so they are grouped together in this section.
-    </p>
-    <p>
-        The chances of each site 
-    </p>
-*/}
 
 const FormationOfGovernment = props => {
     const [showExplainer, setShowExplainer] = useState(false);
