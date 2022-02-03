@@ -216,7 +216,7 @@ const VoteTrendChart = props => {
             }
         </ListGroup.Item>
         {party === "OTH" && // don't show polls for OTH as different polls have different original OTH values
-            <div>Polls not shown for Others</div>
+            <div className={styles.chartNote}>Polls not shown for Others</div>
         }
         <ResponsiveContainer width="100%" height={400}>
             <ComposedChart

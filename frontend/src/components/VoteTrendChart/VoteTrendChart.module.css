@@ -32,3 +32,7 @@
     justify-content: space-evenly;
     flex-wrap: wrap;
 }
+
+.chartNote {
+    text-align: center;
+}
