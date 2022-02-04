@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 
+import Alert from 'react-bootstrap/Alert';
 import Card from 'react-bootstrap/Card';
 import ListGroup from 'react-bootstrap/ListGroup';
 
 // import TooltipPercentage from '../TooltipPercentage';
 import ProbBarDist from '../ProbBarDist';
 import { SmartBadge } from '../PartyBadge'
+import InfoIcon from '../InfoIcon'
+import TooltipWrapper from '../TooltipWrapper';
 
 import { jsonMap } from '../../utils/jsonmap.js'
 
@@ -48,7 +51,7 @@ const SeatsRowSet = props => {
     console.log(freqs);
     const maxVoteTotal = Math.max(...freqs.map(el => Math.max(...el[1])));
     return (
-        <ListGroup className={styles.voteTotalsTopList}>
+        <>
             {freqs.map((freqSet, index) => 
                 <SeatsRow forecast={props.forecast}
                           freqSet={freqSet}
@@ -56,18 +59,77 @@ const SeatsRowSet = props => {
                           minVoteTotal={0}
                           key={index}
                 />)}
-        </ListGroup>
+        </>
+    )
+}
+
+const MainExplainer = props => {
+    return (
+        <Alert variant="info" className={styles.alert}>
+        <p>
+            This part of the simulation report covers
+            the <strong> number of seats </strong> that
+            significant political parties are projected to win. These
+            estimates are based simulations of how the projected vote totals (above)
+            are most likely to translate into overall seat numbers in the parliament.
+        </p>
+            <hr/>
+            <p>
+                The numbers show the range from the
+                <TooltipWrapper tooltipText="5% chance of the number of seats being below this, 95% chance of the number of seats being above this">
+                    <strong> 5th percentile </strong>
+                </TooltipWrapper>
+                to the
+                <TooltipWrapper tooltipText="95% chance of the number of seats being below this, 5% chance of the number of seats being above this">
+                    <strong> 95th percentile </strong></TooltipWrapper>
+                with the outer numbers and the
+                <TooltipWrapper tooltipText="50% chance of the number of seats being below this, 50% chance of thenumber of seats being above this">
+                    <strong> median </strong>
+                </TooltipWrapper> in bold in between them. Numbers outside this range are possible but quite unlikely.
+            </p>
+            <hr/>
+            <p>
+                Coloured bars are also shown for a visual representation of range of possible numbers of seats.
+                The dark shaded bars show the more likely ranges with the lighter bars being progressively more
+                unlikely. Hover over or tap on the bars for the exact numbers they represent.
+            </p>
+            <hr/>
+            <p>
+                Coloured bars are also shown for a visual representation of range of possible numbers of seats.
+                The dark shaded bars show the more likely ranges with the lighter bars being progressively more
+                unlikely. Hover over or tap on the bars for the exact numbers they represent.
+            </p>
+            <hr/>
+            <p>
+                Further explanation for some categories below::
+                <ul>
+                    <li><SmartBadge party="ind" /> covers independents that are already known - either they are incumbents, achieved a significant vote at the previous election, or have a significant campaign and public presence.</li>
+                    <li><SmartBadge party="IndX" /> covers potential <i>emerging independents</i> that do not yet have a significant presence but may achieve one before the election.</li>
+                    <li><SmartBadge party="EOth" /> covers potential <i>emerging parties</i> that either do not yet exist or are not appearing in public polls yet.</li>
+                </ul>
+            </p>
+        </Alert>
     )
 }
 
 const SeatTotals = props => {
+    const [showExplainer, setShowExplainer] = useState(false);
+
     return (
         <Card className={styles.summary}>
             <Card.Header className={styles.seatTotalsTitle}>
-                <strong>Seat Totals</strong>
+                <strong>
+                    Seat Totals
+                    &nbsp;<InfoIcon onClick={() => setShowExplainer(!showExplainer)} />
+                </strong>
             </Card.Header>
             <Card.Body className={styles.seatTotalsBody}>
-                <SeatsRowSet forecast={props.forecast} />
+                <ListGroup className={styles.seatTotalsList}>
+                    {
+                        showExplainer && <MainExplainer />
+                    }
+                    <SeatsRowSet forecast={props.forecast} />
+                </ListGroup>
             </Card.Body>
         </Card>
     );
