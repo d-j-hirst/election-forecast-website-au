@@ -70,7 +70,7 @@ const MainExplainer = props => {
             This part of the simulation report covers
             the <strong> number of seats </strong> that
             significant political parties are projected to win. These
-            estimates are based simulations of how the projected vote totals (above)
+            estimates are based on simulations of how the projected vote totals (above)
             are most likely to translate into overall seat numbers in the parliament.
         </p>
             <hr/>
@@ -89,19 +89,13 @@ const MainExplainer = props => {
             </p>
             <hr/>
             <p>
-                Coloured bars are also shown for a visual representation of range of possible numbers of seats.
+                Coloured bars are also shown for a visual representation of the range of possible numbers of seats.
                 The dark shaded bars show the more likely ranges with the lighter bars being progressively more
                 unlikely. Hover over or tap on the bars for the exact numbers they represent.
             </p>
             <hr/>
             <p>
-                Coloured bars are also shown for a visual representation of range of possible numbers of seats.
-                The dark shaded bars show the more likely ranges with the lighter bars being progressively more
-                unlikely. Hover over or tap on the bars for the exact numbers they represent.
-            </p>
-            <hr/>
-            <p>
-                Further explanation for some categories below::
+                Further explanation for some categories below:
                 <ul>
                     <li><SmartBadge party="ind" /> covers independents that are already known - either they are incumbents, achieved a significant vote at the previous election, or have a significant campaign and public presence.</li>
                     <li><SmartBadge party="IndX" /> covers potential <i>emerging independents</i> that do not yet have a significant presence but may achieve one before the election.</li>

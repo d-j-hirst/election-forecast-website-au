@@ -1,6 +1,7 @@
 .summary {
     text-align: center;
-    max-width: 100%;
+    max-width: 600px;
+    width: 100%;
     margin: auto;
     border-color: #CCCCCC;
     border-radius: 20px 20px 2px 2px !important;
@@ -83,5 +84,14 @@
 }
 
 .seatsWinStatement {
-    padding: 2px 0px;
+    padding: 3px 0px;
+}
+
+.alert {
+    width: 100%;
+    margin: 0px !important;
+}
+
+.alert p {
+    margin: 0px !important;
 }

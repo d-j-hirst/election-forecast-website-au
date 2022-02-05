@@ -1,6 +1,7 @@
 import React, { useState }  from 'react';
 import { Link } from 'react-router-dom';
 
+import Alert from 'react-bootstrap/Alert';
 import Card from 'react-bootstrap/Card';
 import ListGroup from 'react-bootstrap/ListGroup';
 
@@ -9,6 +10,8 @@ import ProbStatement from '../ProbStatement';
 import ProbBarDist from '../ProbBarDist';
 import WinnerBarDist from '../WinnerBarDist';
 import { SmartBadge } from '../PartyBadge';
+import InfoIcon from '../InfoIcon'
+import TooltipWrapper from '../TooltipWrapper';
 
 import { jsonMap } from '../../utils/jsonmap.js';
 import { deepCopy } from '../../utils/deepcopy.js';
@@ -87,7 +90,40 @@ const SeatRow = props => {
     );
 }
 
+const FpExplainer = props => {
+    return (
+        <Alert variant="info" className={styles.alert}>
+        <p>
+            This section show the <strong> share of the first preference vote </strong> that
+            significant political parties are projected to get. Parties' possible vote shares are represented as text percentages and
+            using bars to represent more and less likely ranges for the vote.
+        </p>
+        <hr/>
+        <p>
+            The numbers show the range from the
+            <TooltipWrapper tooltipText="5% chance of the vote share being below this, 95% chance of the vote share being above this">
+                <strong> 5th percentile </strong>
+            </TooltipWrapper>
+            to the
+            <TooltipWrapper tooltipText="95% chance of the vote share being below this, 5% chance of the vote share being above this">
+                <strong> 95th percentile </strong></TooltipWrapper>
+            with the outer numbers and the
+            <TooltipWrapper tooltipText="50% chance of the vote share being below this, 50% chance of the vote share being above this">
+                <strong> median </strong>
+            </TooltipWrapper> in bold in between them. Numbers outside this range are possible but quite unlikely.
+        </p>
+        <hr/>
+        <p>
+            Coloured bars are also shown for a visual representation of the range of possible vote shares.
+            The dark shaded bars show the more likely ranges with the lighter bars being progressively more
+            unlikely. Hover over or tap on the bars for the exact numbers they represent.
+        </p>
+        </Alert>
+    )
+}
+
 const SeatFpSection = props => {
+    const [showExplainer, setShowExplainer] = useState(false);
     const seatName = props.forecast.seatNames[props.index];
     // create deep copy of the fp probability bands
     const fpFreqs = deepCopy(props.forecast.seatFpBands[props.index]);
@@ -99,9 +135,12 @@ const SeatFpSection = props => {
     return (
         <>
             <ListGroup.Item className={styles.seatsSubheading} key={props.index}>
-
                 <strong>First preference projection</strong> for {seatName}
+                &nbsp;<InfoIcon onClick={() => setShowExplainer(!showExplainer)} />
             </ListGroup.Item>
+            {
+                showExplainer && <FpExplainer seatName={seatName} />
+            }
             {
                 sortedFreqs.map((freqSet, index) =>
                     <SeatFpRow forecast={props.forecast}
@@ -114,7 +153,7 @@ const SeatFpSection = props => {
             }
             {someExcluded &&
                 <ListGroup.Item className={styles.seatsNote} key={props.index}>
-                    Some parties with low projected first preferences not shown
+                    This list is abbreviated to this seat's more popular parties. Click "full detail" above to see others.
                 </ListGroup.Item>
             }
         </>
@@ -142,7 +181,55 @@ const SeatFpRow = props => {
     );
 }
 
+const TcpExplainer = props => {
+    return (
+        <Alert variant="warning" className={styles.alert}>
+        <p>
+            This section show the <strong> share of the two-candidate preferred (TCP) vote </strong> that
+            significant political parties are projected to get, arranged into different
+            pairs of parties that might make up the final TCP after distribution of preferences.
+        </p>
+        <hr/>
+        <p>
+            Note that the reports for each TCP pair only include results for the simulations where
+            the that pair actually made the final TCP.
+            <strong> This means that the results need to
+                be interpreted with caution, and, in particular, conclusions should not be drawn by comparing
+                different TCP pairs to each 
+            other. </strong>
+            For a more thorough explanation with examples, see this FAQ.
+        </p>
+        <hr/>
+        <p>
+            Parties' possible TCP vote shares are shown as text percentages and
+            coloured bars to represent more and less likely ranges for the vote.
+        </p>
+        <hr/>
+        <p>
+            The numbers show the range from the
+            <TooltipWrapper tooltipText="5% chance of the vote share being below this, 95% chance of the vote share being above this">
+                <strong> 5th percentile </strong>
+            </TooltipWrapper>
+            to the
+            <TooltipWrapper tooltipText="95% chance of the vote share being below this, 5% chance of the vote share being above this">
+                <strong> 95th percentile </strong></TooltipWrapper>
+            with the outer numbers and the
+            <TooltipWrapper tooltipText="50% chance of the vote share being below this, 50% chance of the vote share being above this">
+                <strong> median </strong>
+            </TooltipWrapper> in bold in between them. Numbers outside this range are possible but quite unlikely.
+        </p>
+        <hr/>
+        <p>
+            Coloured bars are also shown for a visual representation of the range of possible vote shares.
+            The dark shaded bars show the more likely ranges with the lighter bars being progressively more
+            unlikely. Hover over or tap on the bars for the exact numbers they represent.
+        </p>
+        </Alert>
+    )
+}
+
 const SeatTcpSection = props => {
+    const [showExplainer, setShowExplainer] = useState(false);
     const seatName = props.forecast.seatNames[props.index];
     const tcpFreqs = deepCopy(props.forecast.seatTcpBands[props.index]);
     const sortedTcpFreqs = tcpFreqs
@@ -154,7 +241,11 @@ const SeatTcpSection = props => {
         <>
             <ListGroup.Item className={styles.seatsSubheading} key={props.index}>
                 <strong>Two-candidate preferred scenarios</strong> for {seatName}
+                &nbsp;<InfoIcon onClick={() => setShowExplainer(!showExplainer)} warning={true} />
             </ListGroup.Item>
+            {
+                showExplainer && <TcpExplainer />
+            }
             {
                 sortedTcpFreqs.map((freqSet, index) =>
                     <SeatTcpRowPair forecast={props.forecast}
@@ -165,7 +256,7 @@ const SeatTcpSection = props => {
             }
             {someExcluded &&
                 <ListGroup.Item className={styles.seatsNote} key={props.index}>
-                    Some scenarios projected to occur rarely not shown
+                    This list is abbreviated to the most likely scenarios. Click "full detail" above to see others.
                 </ListGroup.Item>
             }
         </>
@@ -207,7 +298,21 @@ const SeatTcpRowPair = props => {
     );
 }
 
+const WinsExplainer = props => {
+
+    return (
+        <Alert variant="info" className={styles.alert}>
+            <p>
+                These are the probabilities that the forecast model gives to each party and independents
+                to win the seat of {props.seatName}.
+            </p>
+        </Alert>
+    )
+}
+
 const SeatWinsSection = props => {
+    const [showExplainer, setShowExplainer] = useState(false);
+
     const seatName = props.forecast.seatNames[props.index];
 
     const freqs = deepCopy(props.forecast.seatPartyWinFrequencies[props.index]);
@@ -219,7 +324,11 @@ const SeatWinsSection = props => {
         <>
             <ListGroup.Item className={styles.seatsSubheading} key={props.index}>
                 <strong>Win Probabilities</strong> for {seatName}
+                &nbsp;<InfoIcon onClick={() => setShowExplainer(!showExplainer)} />
             </ListGroup.Item>
+            {
+                    showExplainer && <WinsExplainer seatName={seatName} />
+            }
             <ListGroup.Item className={styles.seatsMore} key={props.index+1000}>
                 {
                     sortedFreqs.map(
@@ -269,7 +378,46 @@ const SeatMore = props => {
     )
 }
 
+const MainExplainer = props => {
+    const marginTooltip = "How much of the total two-candidate-preferred vote the incumbent can lose" +
+        " before they lose the seat. For example, in a seat with 10000 voters and a margin of 3%," +
+        " the incumbent has 5300 votes and can lose the seat if they lose 300 votes."
+
+    return (
+        <Alert variant="info" className={styles.alert}>
+            <p>
+                This section lists the simulated results for each seat in this election.
+                Each row shows the seat name, incumbent party and the 
+                <TooltipWrapper tooltipText={marginTooltip}>
+                    <strong> margin </strong>
+                </TooltipWrapper> of the incumbent. Seats are shown in order of their competitiveness,
+                with the least certain results highest on the page.
+            </p>
+            <hr />
+            <p>
+                The coloured bar to the right of each row indicates the modelled probabilities for parties to
+                win the seat. Tap or mouse over the colours to see the party name and percentage chance of winning.
+            </p>
+            <hr />
+            <p>
+                Click on "more" or "full detail" to show more information about the model's forecast for each
+                seat. "More" will display an abbreviated set of results inline on this page, while "full detail" will
+                show everything there is to see on a separate page.
+            </p>
+            <hr />
+            <p>
+                The most robust seat figures here are those for the major parties, as there are much more
+                data on major-major contests for the model to work with. Results for seats where a minor party
+                or independent is prominent should be approached with some caution; good local knowledge is likely to
+                be more accurate than the model in such seats.
+            </p>
+        </Alert>
+    )
+}
+
 const Seats = props => {
+    const [showExplainer, setShowExplainer] = useState(false);
+
     const indexedSeats = props.forecast.seatPartyWinFrequencies.map((a, index) => [index, a]);
     const findMax = pair => pair[1].reduce((p, c) => p > c[1] ? p : c[1], 0);
     const indexedCompetitiveness = indexedSeats.map(a => [a[0], findMax(a)]);
@@ -280,17 +428,23 @@ const Seats = props => {
         <Card className={styles.summary}>
             <Card.Header className={styles.seatsTitle}>
                 Seats
+                &nbsp;<InfoIcon onClick={() => setShowExplainer(!showExplainer)} />
             </Card.Header>
-            <Card.Body className={styles.seatTotalsBody}>
+            <Card.Body className={styles.seatsBody}>
                 {
-                    sortedIndices.map(index =>
-                        <SeatRow forecast={props.forecast}
-                                 election={props.election}
-                                 mode={props.mode}
-                                 index={index}
-                                 key={index} />
-                    )
+                    showExplainer && <MainExplainer />
                 }
+                <ListGroup className={styles.seatsList}>
+                    {
+                        sortedIndices.map(index =>
+                            <SeatRow forecast={props.forecast}
+                                    election={props.election}
+                                    mode={props.mode}
+                                    index={index}
+                                    key={index} />
+                        )
+                    }
+                </ListGroup>
             </Card.Body>
         </Card>
     );

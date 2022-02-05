@@ -212,7 +212,7 @@ const MainExplainer = props => {
             </p>
             <hr/>
             <p>
-                Coloured bars are also shown for a visual representation of range of possible vote shares.
+                Coloured bars are also shown for a visual representation of the range of possible vote shares.
                 The dark shaded bars show the more likely ranges with the lighter bars being progressively more
                 unlikely. Hover over or tap on the bars for the exact numbers they represent.
             </p>
