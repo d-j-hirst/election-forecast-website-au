@@ -28,11 +28,11 @@ const SeatsRow = props => {
         <ListGroup.Item className={styles.seatTotalsItem}>
             <div className={styles.rowLeftSection}>
                 <div className={styles.rowParty}><SmartBadge party={partyAbbr} /></div>
-                <div className={styles.rowNumber}>{props.freqSet[1][4]}</div>
+                <div className={styles.rowNumber}><TooltipWrapper tooltipText="5th percentile">{props.freqSet[1][4]}</TooltipWrapper></div>
                 <div className={styles.rowDash}> - </div>
-                <div className={styles.rowNumber}><strong>{props.freqSet[1][7]}</strong></div>
+                <div className={styles.rowNumber}><TooltipWrapper tooltipText="Median"><strong>{props.freqSet[1][7]}</strong></TooltipWrapper></div>
                 <div className={styles.rowDash}> - </div>
-                <div className={styles.rowNumber}>{props.freqSet[1][10]}</div>
+                <div className={styles.rowNumber}><TooltipWrapper tooltipText="95th percentile">{props.freqSet[1][10]}</TooltipWrapper></div>
             </div>
             <ProbBarDist freqSet={props.freqSet}
                          thresholds={thresholds}

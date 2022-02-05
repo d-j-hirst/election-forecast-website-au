@@ -8,10 +8,10 @@ import TooltipPercentage from '../TooltipPercentage';
 import TooltipWrapper from '../TooltipWrapper';
 import ProbBarDist from '../ProbBarDist';
 import VoteTrendChart from '../VoteTrendChart';
-import { SmartBadge } from '../PartyBadge'
-import InfoIcon from '../InfoIcon'
+import { SmartBadge } from '../PartyBadge';
+import InfoIcon from '../InfoIcon';
 
-import { jsonMap } from '../../utils/jsonmap.js'
+import { jsonMap } from '../../utils/jsonmap.js';
 
 import styles from './VoteTotals.module.css';
 
@@ -22,11 +22,11 @@ const VoteShareRow = props => {
         <ListGroup.Item className={styles.voteTotalsItem}>
             <div className={styles.rowLeftSection}>
                 <div className={styles.rowParty}><SmartBadge party={partyAbbr} /></div>
-                <div className={styles.rowPercentage}> <TooltipPercentage value={props.freqSet[1][4]} /></div>
+                <div className={styles.rowPercentage}> <TooltipPercentage value={props.freqSet[1][4]} label="5th percentile" /></div>
                 <div className={styles.rowDash}> - </div>
-                <div className={styles.rowPercentage}>{<strong><TooltipPercentage value={props.freqSet[1][7]} /></strong>}</div>
+                <div className={styles.rowPercentage}>{<strong><TooltipPercentage value={props.freqSet[1][7]} label="Median" /></strong>}</div>
                 <div className={styles.rowDash}> - </div>
-                <div className={styles.rowPercentage}><TooltipPercentage value={props.freqSet[1][10]} /></div>
+                <div className={styles.rowPercentage}><TooltipPercentage value={props.freqSet[1][10]} label="95th percentile" /></div>
             </div>
             <ProbBarDist freqSet={props.freqSet}
                          thresholds={thresholds}
