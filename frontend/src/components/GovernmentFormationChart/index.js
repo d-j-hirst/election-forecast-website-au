@@ -36,7 +36,7 @@ const GovernmentFormationChart = props => {
         { name: partyOneName + ' minority', value: round1(partyOneVals[2]) },
         { name: partyOneName + ' most seats', value: round1(partyOneVals[3]) },
         { name: 'Exact ties', value: round1(allTies) },
-        { name: 'Any other party wins', value: round1(otherWins) },
+        { name: 'Any other party leads', value: round1(otherWins) },
         { name: partyTwoName + ' most seats', value: round1(partyTwoVals[3]) },
         { name: partyTwoName + ' minority', value: round1(partyTwoVals[2]) },
         { name: partyTwoName + ' majority', value: round1(partyTwoVals[1]) },
