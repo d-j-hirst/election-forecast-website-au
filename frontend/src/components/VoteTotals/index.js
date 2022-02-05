@@ -20,9 +20,14 @@ const VoteShareRow = props => {
     const thresholds = [[0,2,0],[2,4,1],[4,6,2],[6,8,3],[8,10,4],[10,12,5],[12,14,6]];
     return (
         <ListGroup.Item className={styles.voteTotalsItem}>
-            <SmartBadge party={partyAbbr} /> - <TooltipPercentage value={props.freqSet[1][4]} />
-            {" - "}{<strong><TooltipPercentage value={props.freqSet[1][7]} /></strong>}
-            {" - "}{<TooltipPercentage value={props.freqSet[1][10]} />}
+            <div className={styles.rowLeftSection}>
+                <div className={styles.rowParty}><SmartBadge party={partyAbbr} /></div>
+                <div className={styles.rowPercentage}> <TooltipPercentage value={props.freqSet[1][4]} /></div>
+                <div className={styles.rowDash}> - </div>
+                <div className={styles.rowPercentage}>{<strong><TooltipPercentage value={props.freqSet[1][7]} /></strong>}</div>
+                <div className={styles.rowDash}> - </div>
+                <div className={styles.rowPercentage}><TooltipPercentage value={props.freqSet[1][10]} /></div>
+            </div>
             <ProbBarDist freqSet={props.freqSet}
                          thresholds={thresholds}
                          partyAbbr={partyAbbr}
@@ -31,6 +36,7 @@ const VoteShareRow = props => {
                          thresholdLevels={props.forecast.voteTotalThresholds}
                          pluralNoun="vote totals"
                          valType="percentage"
+                         width={450}
             />
         </ListGroup.Item>
     );

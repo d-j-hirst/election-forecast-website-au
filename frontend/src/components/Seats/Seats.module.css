@@ -97,3 +97,31 @@
 .alert p {
     margin: 0px !important;
 }
+
+.rowLeftSection {
+    display: flex;
+    flex-direction: row;
+    width: 220px;
+    justify-content: space-around;
+}
+
+.rowParty {
+    width: 44px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.rowPercentage {
+    width: 46px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.rowDash {
+    width: 7px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}

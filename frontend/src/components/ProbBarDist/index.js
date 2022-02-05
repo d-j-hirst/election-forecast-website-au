@@ -79,7 +79,7 @@ const adjustFreqs = (freqs, thresholds) => {
 
 const ProbBarDist = props => {
     const midThreshold = Math.floor(props.thresholds.length / 2);
-    const chartWidth = 300;
+    const chartWidth = props.width !== undefined ? props.width : 300;
     const scalingFactor = chartWidth / (props.maxVoteTotal - props.minVoteTotal);
     const visualOffset = props.minVoteTotal;
     const voteDistStyle = {

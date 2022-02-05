@@ -393,7 +393,7 @@ const FormationOfGovernment = props => {
         <Card className={styles.summary}>
             <Card.Header className={styles.formationOfGovernmentTitle}>
                 <strong>
-                    Formation Of government
+                    Formation of Government
                     &nbsp;<InfoIcon onClick={() => setShowExplainer(!showExplainer)} />
                 </strong>
             </Card.Header>

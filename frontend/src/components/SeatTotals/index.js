@@ -26,9 +26,14 @@ const SeatsRow = props => {
     const thresholds = [[0,2,0],[2,4,1],[4,6,2],[6,8,3],[8,10,4],[10,12,5],[12,14,6]];
     return (
         <ListGroup.Item className={styles.seatTotalsItem}>
-            <SmartBadge party={partyAbbr} /> - {props.freqSet[1][4]}
-            {" - "}{<strong>{props.freqSet[1][7]}</strong>}
-            {" - "}{props.freqSet[1][10]}
+            <div className={styles.rowLeftSection}>
+                <div className={styles.rowParty}><SmartBadge party={partyAbbr} /></div>
+                <div className={styles.rowNumber}>{props.freqSet[1][4]}</div>
+                <div className={styles.rowDash}> - </div>
+                <div className={styles.rowNumber}><strong>{props.freqSet[1][7]}</strong></div>
+                <div className={styles.rowDash}> - </div>
+                <div className={styles.rowNumber}>{props.freqSet[1][10]}</div>
+            </div>
             <ProbBarDist freqSet={props.freqSet}
                          thresholds={thresholds}
                          partyAbbr={partyAbbr}
@@ -38,6 +43,7 @@ const SeatsRow = props => {
                          pluralNoun="seat totals"
                          valType="integer"
                          adjust={true}
+                         width={350}
             />
         </ListGroup.Item>
     );

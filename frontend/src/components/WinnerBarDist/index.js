@@ -5,7 +5,7 @@ import WinnerBar from '../WinnerBar';
 import { jsonMap } from '../../utils/jsonmap.js'
 
 const WinnerBarDist = props => {
-    const chartWidth = 300;
+    const chartWidth = props.width !== undefined ? props.width : 300;
     const voteDistStyle = {
         width: chartWidth.toString() + 'px',
         position: 'relative',
