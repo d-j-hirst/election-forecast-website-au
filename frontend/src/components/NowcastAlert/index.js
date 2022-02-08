@@ -10,7 +10,7 @@ import warning from './assets/warning.png'
 import styles from './NowcastAlert.module.css';
 
 const NowcastAlert = props => {
-    const [show, setShow] = useState(true);
+    const [show, setShow] = useState(props.showInitially === undefined || props.showInitially);
     // Obviously, the 'See this FAQ' should actually be linked to the relevant answer when it's made!
     if (show) {
         return (
