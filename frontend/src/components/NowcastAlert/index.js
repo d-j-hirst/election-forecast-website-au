@@ -19,7 +19,7 @@ const NowcastAlert = props => {
                    dismissible={true}
                    onClose={() => setShow(false)}
                 >
-                <p class={styles.firstPara}>
+                <div className={styles.firstPara}>
                     <img className={styles.largeWarning} src={warning} alt='Information symbol'/>
                     <div>
                         This a <strong>nowcast</strong>, not a forecast for the actual election.
@@ -29,7 +29,7 @@ const NowcastAlert = props => {
                         For a forecast for the election when it is held, see the&nbsp;
                         <Link to={"/forecast/" + props.code + "/regular"}>regular forecast</Link>.)
                     </div>
-                </p>
+                </div>
                 <hr />
                 <p>
                     It is based on publically available election, polling, and candidate information,

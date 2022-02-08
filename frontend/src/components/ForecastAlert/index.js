@@ -19,7 +19,7 @@ const ForecastAlert = props => {
                    dismissible={true}
                    onClose={() => setShow(false)}
             >
-                <p class={styles.firstPara}>
+                <div className={styles.firstPara}>
                     <img className={styles.largeInfo} src={info} alt='Information symbol'/>
                     <div>
                         This is a <strong>general forecast</strong> for the {props.forecast.electionName}.
@@ -27,7 +27,7 @@ const ForecastAlert = props => {
                         (For an estimate of how the election would appear if held now, see the&nbsp;
                         <Link to={"/forecast/" + props.code + "/nowcast"}>nowcast</Link>.)
                     </div>
-                </p>
+                </div>
                 <hr />
                 <p>
                     The forecast is based on publically available election, polling, and candidate information,

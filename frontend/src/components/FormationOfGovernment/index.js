@@ -141,7 +141,7 @@ const OthersExplainer = props => {
                     <li>Such an outcome would be unprecedented in modern Australian history.</li>
                     <li>The probability for such an event is extrapolated from a small sample of historic results where third parties were still far from gaining a majority.</li>
                 </ul>
-                As a result, the results in this section are included for the sake of completeness and <strong>should not be taken too seriously</strong>.
+                As a result, while this section is included for the sake of completeness, <strong>it should not be taken too seriously</strong>.
             </p>
             <hr />
             <p>

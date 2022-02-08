@@ -2,7 +2,7 @@ import React from 'react';
 
 import styles from './ForecastHeader.module.css';
 
-import { parseDateData } from '../../utils/date.js'
+import { parseDateStringAsUTC } from '../../utils/date.js'
 
 const ForecastHeader = props => {
     return (
@@ -12,8 +12,8 @@ const ForecastHeader = props => {
             </div>
             <div className={styles.forecastUpdateInfo}>
                 Last updated at&nbsp;
-                {parseDateData(props.forecast.reportDate)}
-                &nbsp;because of:&nbsp;
+                {parseDateStringAsUTC(props.forecast.reportDate)}
+                {" "}because&nbsp;of:&nbsp;
                 {props.forecast.reportLabel}
             </div>
         </>
