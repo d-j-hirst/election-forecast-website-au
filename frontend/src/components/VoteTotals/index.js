@@ -15,7 +15,9 @@ import { jsonMap } from '../../utils/jsonmap.js';
 
 import styles from './VoteTotals.module.css';
 
+
 const VoteShareRow = props => {
+
     let partyAbbr = jsonMap(props.forecast.partyAbbr, props.freqSet[0]);
     const thresholds = [[0,2,0],[2,4,1],[4,6,2],[6,8,3],[8,10,4],[10,12,5],[12,14,6]];
     return (
@@ -36,7 +38,7 @@ const VoteShareRow = props => {
                          thresholdLevels={props.forecast.voteTotalThresholds}
                          pluralNoun="vote totals"
                          valType="percentage"
-                         width={450}
+                         width={Math.min(props.windowWidth - 70, 450)}
             />
         </ListGroup.Item>
     );
@@ -87,6 +89,7 @@ const FpRowSet = props => {
                               maxVoteTotal={maxVoteTotal}
                               minVoteTotal={0}
                               key={index}
+                              windowWidth={props.windowWidth}
                 />)}
         </>
     )
@@ -132,11 +135,13 @@ const TppRowSet = props => {
             <VoteShareRow forecast={props.forecast}
                           freqSet={partyFreqs[firstHigher ? 0 : 1]}
                           maxVoteTotal={maxVoteTotal}
-                          minVoteTotal={minVoteTotal} />
+                          minVoteTotal={minVoteTotal}
+                          windowWidth={props.windowWidth} />
             <VoteShareRow forecast={props.forecast}
                           freqSet={partyFreqs[firstHigher ? 1 : 0]}
                           maxVoteTotal={maxVoteTotal}
-                          minVoteTotal={minVoteTotal} />
+                          minVoteTotal={minVoteTotal}
+                          windowWidth={props.windowWidth} />
         </>
     )
 }
@@ -242,9 +247,9 @@ const VoteTotals = props => {
                     {
                         showExplainer && <MainExplainer />
                     }
-                    <TppRowSet forecast={props.forecast} />
-                    <FpRowSet forecast={props.forecast} />
-                    <VoteTrendChartSet forecast={props.forecast} />
+                    <TppRowSet forecast={props.forecast} windowWidth={props.windowWidth} />
+                    <FpRowSet forecast={props.forecast} windowWidth={props.windowWidth} />
+                    <VoteTrendChartSet forecast={props.forecast} windowWidth={props.windowWidth} />
                 </ListGroup>
             </Card.Body>
         </Card>

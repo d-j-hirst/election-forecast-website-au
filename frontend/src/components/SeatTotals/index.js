@@ -43,7 +43,7 @@ const SeatsRow = props => {
                          pluralNoun="seat totals"
                          valType="integer"
                          adjust={true}
-                         width={350}
+                         width={Math.min(props.windowWidth - 70, 350)}
             />
         </ListGroup.Item>
     );
@@ -64,6 +64,7 @@ const SeatsRowSet = props => {
                           maxVoteTotal={maxVoteTotal}
                           minVoteTotal={0}
                           key={index}
+                          windowWidth={props.windowWidth}
                 />)}
         </>
     )
@@ -128,7 +129,7 @@ const SeatTotals = props => {
                     {
                         showExplainer && <MainExplainer />
                     }
-                    <SeatsRowSet forecast={props.forecast} />
+                    <SeatsRowSet forecast={props.forecast} windowWidth={props.windowWidth} />
                 </ListGroup>
             </Card.Body>
         </Card>

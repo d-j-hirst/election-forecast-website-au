@@ -81,13 +81,17 @@ const ProbBarDist = props => {
     const midThreshold = Math.floor(props.thresholds.length / 2);
     const chartWidth = props.width !== undefined ? props.width : 300;
     const scalingFactor = chartWidth / (props.maxVoteTotal - props.minVoteTotal);
+    console.log(chartWidth);
+    console.log(props.maxVoteTotal);
+    console.log(props.minVoteTotal);
+    console.log(scalingFactor);
     const visualOffset = props.minVoteTotal;
     const voteDistStyle = {
         width: chartWidth.toString() + 'px',
         position: 'relative',
-        height: '10px',
+        height: '30px',
         padding: '0px',
-        margin: '0px 0px 0px 8px'
+        margin: '0px auto'
     };
 
     let bars = undefined;

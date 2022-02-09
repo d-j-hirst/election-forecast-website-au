@@ -9,9 +9,9 @@ const WinnerBarDist = props => {
     const voteDistStyle = {
         width: chartWidth.toString() + 'px',
         position: 'relative',
-        height: '10px',
+        height: '30px',
         padding: '0px',
-        margin: '0px 0px 0px 8px'
+        margin: '0px auto',
     };
 
     let bars = undefined;

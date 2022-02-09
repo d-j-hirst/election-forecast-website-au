@@ -11,6 +11,7 @@ const WinnerBar = props => {
     const widthVal = Math.floor(rt - lt).toString() + 'px';
     const thisStyle = {
         height: '20px',
+        top: '5px',
         width: widthVal,
         left: leftVal,
         position: 'absolute'

@@ -47,10 +47,10 @@ const SeatSummary = props => {
         <ListGroup.Item className={styles.seatsItem}>
             <div className={styles.seatsTopLeft}>
                 Held by <SmartBadge party={incumbentAbbr} /> with margin {Number(margin).toFixed(1)}%
-                <br/>
             </div>
             <WinnerBarDist forecast={props.forecast}
                            freqSet={freqs}
+                           width={Math.min(props.windowWidth - 70, 300)}
             />
         </ListGroup.Item>
     );
@@ -113,6 +113,7 @@ const SeatFpSection = props => {
                                 maxVoteTotal={maxFpTotal}
                                 minVoteTotal={0}
                                 key={index}
+                                windowWidth={props.windowWidth}
                     />
                 )
             }
@@ -143,6 +144,7 @@ const SeatFpRow = props => {
                         thresholdLevels={props.forecast.voteTotalThresholds}
                         pluralNoun="vote totals"
                         valType="percentage"
+                        width={Math.min(props.windowWidth - 70, 450)}
             />
         </ListGroup.Item>
     );
@@ -217,6 +219,7 @@ const SeatTcpSection = props => {
                     <SeatTcpRowPair forecast={props.forecast}
                                     freqSet={freqSet}
                                     key={index}
+                                    windowWidth={props.windowWidth}
                     />
                 )
             }
@@ -249,11 +252,13 @@ const SeatTcpRowPair = props => {
                     freqSet={freqSet0}
                     minVoteTotal={minVoteTotal}
                     maxVoteTotal={maxVoteTotal}
+                    windowWidth={props.windowWidth}
             />
             <SeatFpRow forecast={props.forecast}
                     freqSet={freqSet1}
                     minVoteTotal={minVoteTotal}
                     maxVoteTotal={maxVoteTotal}
+                    windowWidth={props.windowWidth}
             />
         </>
     );
@@ -350,7 +355,7 @@ const SeatDetailBody = props => {
                 Seat details for {seatName}
                 &nbsp;<InfoIcon onClick={() => setShowExplainer(!showExplainer)} />
             </Card.Header>
-            <Card.Body className={styles.seatTotalsBody}>
+            <Card.Body className={styles.seatsBody}>
                 {
                     showExplainer && <MainExplainer seatName={seatName} />
                 }
@@ -358,6 +363,7 @@ const SeatDetailBody = props => {
                             election={props.election}
                             mode={props.mode}
                             index={props.index}
+                            windowWidth={props.windowWidth}
                 />
                 <SeatWinsSection forecast={props.forecast}
                             election={props.election}
@@ -368,11 +374,13 @@ const SeatDetailBody = props => {
                             election={props.election}
                             mode={props.mode}
                             index={props.index}
+                            windowWidth={props.windowWidth}
                 />
                 <SeatTcpSection forecast={props.forecast}
                             election={props.election}
                             mode={props.mode}
                             index={props.index}
+                            windowWidth={props.windowWidth}
                 />
             </Card.Body>
         </Card>

@@ -5,6 +5,7 @@ import { useUserRequired } from 'utils/hooks';
 import { Header, ForecastsNav, ForecastHeader, FormationOfGovernment,
   LoadingMarker, VoteTotals, SeatTotals, NowcastAlert, ForecastAlert, Seats } from 'components';
 import { getDirect } from 'utils/sdk';
+import { useWindowDimensions } from '../../utils/window.js';
 
 import styles from './Forecast.module.css';
 
@@ -16,6 +17,7 @@ const Forecast = () => {
   useUserRequired();
   const [ forecast, setForecast] = useState({});
   const [ forecastValid, setForecastValid] = useState(false);
+  const windowDimensions = useWindowDimensions();
 
   useEffect(() => {
     setForecastValid(false);
@@ -62,9 +64,9 @@ const Forecast = () => {
               <NowcastAlert forecast={forecast} code={code} />
             }
             <FormationOfGovernment election={code} mode={mode} forecast={forecast} />
-            <VoteTotals election={code} mode={mode} forecast={forecast} />
-            <SeatTotals election={code} mode={mode} forecast={forecast} />
-            <Seats election={code} mode={mode} forecast={forecast} />
+            <VoteTotals election={code} mode={mode} forecast={forecast} windowWidth={windowDimensions.width} />
+            <SeatTotals election={code} mode={mode} forecast={forecast} windowWidth={windowDimensions.width} />
+            <Seats election={code} mode={mode} forecast={forecast} windowWidth={windowDimensions.width} />
           </>
         }
         {!forecastValid &&

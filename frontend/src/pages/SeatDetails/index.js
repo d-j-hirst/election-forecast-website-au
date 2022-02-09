@@ -7,6 +7,7 @@ import { Header, ForecastAlert, ForecastsNav, ForecastHeader,
 
 import { getDirect } from 'utils/sdk';
 import { getIndexFromSeatUrl } from 'utils/seaturls';
+import { useWindowDimensions } from '../../utils/window.js';
 
 import styles from './SeatDetails.module.css';
 
@@ -20,6 +21,7 @@ const SeatDetails = () => {
   const [ forecast, setForecast] = useState({});
   const [ seatIndex, setSeatIndex] = useState(-1);
   const [ forecastValid, setForecastValid] = useState(false);
+  const windowDimensions = useWindowDimensions();
 
   useEffect(() => {
     setForecastValid(false);
@@ -70,6 +72,7 @@ const SeatDetails = () => {
                             election={code}
                             mode={mode}
                             index={seatIndex}
+                            windowWidth={windowDimensions.width}
             />
           </>
         }

@@ -57,6 +57,7 @@
     flex-direction: row;
     width: 165px;
     justify-content: space-around;
+    margin: 0px auto;
 }
 
 .rowParty {

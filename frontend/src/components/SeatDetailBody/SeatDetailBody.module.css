@@ -25,6 +25,8 @@
 
 .seatsList {
     border-color: #CCCCCC !important;
+    width: 100%;
+    padding: 0px;
 }
 
 .seatsItem {
@@ -36,6 +38,7 @@
     height: '100%';
     background-color: #E3E3E3 !important;
     justify-content: space-between;
+    width: 100%;
 }
 
 .seatsSubitem {
@@ -53,6 +56,8 @@
     padding: 2px !important;
     font-size: 17px;
     background-color: #E3E3E3 !important;
+    width: 100%;
+    text-align: center;
 }
 
 .seatsNote {
@@ -65,10 +70,13 @@
     padding: 2px !important;
     font-size: 16px;
     background-color: #EEEEEE !important;
+    width: 100%;
+    text-align: center;
 }
 
 .seatsTopLeft {
-    width: 200px;
+    max-width: 300px;
+    margin: 0px auto;
 }
 
 .seatsLink {
@@ -81,6 +89,8 @@
     display: flex !important;
     flex-direction: column;
     font-size: 14px;
+    width: 100%;
+    text-align: center;
 }
 
 .seatsWinStatement {
@@ -101,6 +111,7 @@
     flex-direction: row;
     width: 220px;
     justify-content: space-around;
+    margin: 0px auto;
 }
 
 .rowParty {

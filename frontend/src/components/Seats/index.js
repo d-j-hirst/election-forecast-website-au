@@ -80,11 +80,12 @@ const SeatRow = props => {
             </div>
             <WinnerBarDist forecast={props.forecast}
                            freqSet={freqs}
+                           width={Math.min(props.windowWidth - 70, 320)}
             />
         </ListGroup.Item>
         {
             showMore &&
-            <SeatMore index={props.index} forecast={props.forecast} />
+            <SeatMore index={props.index} forecast={props.forecast} windowWidth={props.windowWidth} />
         }
         </>
     );
@@ -148,6 +149,7 @@ const SeatFpSection = props => {
                                 maxVoteTotal={maxFpTotal}
                                 minVoteTotal={0}
                                 key={index}
+                                windowWidth={props.windowWidth}
                     />
                 )
             }
@@ -181,6 +183,7 @@ const SeatFpRow = props => {
                          thresholdLevels={props.forecast.voteTotalThresholds}
                          pluralNoun="vote totals"
                          valType="percentage"
+                         width={Math.min(props.windowWidth - 70, 450)}
             />
         </ListGroup.Item>
     );
@@ -256,6 +259,7 @@ const SeatTcpSection = props => {
                     <SeatTcpRowPair forecast={props.forecast}
                                     freqSet={freqSet}
                                     key={index}
+                                    windowWidth={props.windowWidth}
                     />
                 )
             }
@@ -293,11 +297,13 @@ const SeatTcpRowPair = props => {
                     freqSet={freqSet0}
                     minVoteTotal={minVoteTotal}
                     maxVoteTotal={maxVoteTotal}
+                    windowWidth={props.windowWidth}
             />
             <SeatFpRow forecast={props.forecast}
                     freqSet={freqSet1}
                     minVoteTotal={minVoteTotal}
                     maxVoteTotal={maxVoteTotal}
+                    windowWidth={props.windowWidth}
             />
         </>
     );
@@ -377,8 +383,8 @@ const SeatMore = props => {
     return (
         <>
             <SeatWinsSection forecast={props.forecast} index={props.index} key={props.index} />
-            <SeatFpSection forecast={props.forecast} index={props.index} key={props.index} />
-            <SeatTcpSection forecast={props.forecast} index={props.index} key={props.index} />
+            <SeatFpSection forecast={props.forecast} index={props.index} key={props.index} windowWidth={props.windowWidth} />
+            <SeatTcpSection forecast={props.forecast} index={props.index} key={props.index} windowWidth={props.windowWidth} />
         </>
     )
 }
@@ -446,7 +452,8 @@ const Seats = props => {
                                     election={props.election}
                                     mode={props.mode}
                                     index={index}
-                                    key={index} />
+                                    key={index}
+                                    windowWidth={props.windowWidth} />
                         )
                     }
                 </ListGroup>
