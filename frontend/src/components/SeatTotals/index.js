@@ -54,7 +54,6 @@ const SeatsRowSet = props => {
         return el2[1][7] - el1[1][7];
     });
     freqs = freqs.filter(a => a[1][a[1].length-1] > 0);
-    console.log(freqs);
     const maxVoteTotal = Math.max(...freqs.map(el => Math.max(...el[1])));
     return (
         <>

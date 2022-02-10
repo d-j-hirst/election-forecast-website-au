@@ -25,6 +25,7 @@ export const toShortIsoString = date => {
   }
 
 export const parseDateStringAsUTC = raw => {
-    const date = new Date(raw + '.000Z');
+    // Remove any Z and anything after it and replace with UTC label
+    const date = new Date(raw.split('Z')[0] + '.000Z');
     return toShortIsoString(date).split(".")[0].replace("T", " ");
 };

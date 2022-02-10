@@ -7,17 +7,31 @@ import Navbar from 'react-bootstrap/Navbar';
 import Container from 'react-bootstrap/Container';
 import styles from './ForecastsNav.module.css';
 
-const ElectionNav = (props) => {
+const ElectionNav = props => {
     const thisClass = props.activeElection === props.election ? styles.navselected : styles.navitem;
-    return <Nav.Link as={Link} to={"/forecast/" + props.election + "/" + props.mode}><div className={thisClass}>{props.text}</div></Nav.Link>
+    const linkUrl = "/forecast/" + props.election + "/" + props.mode;
+    return (
+        <Nav.Link as={Link} to={linkUrl}>
+            <div className={thisClass}>
+                {props.text}
+            </div>
+        </Nav.Link>
+    )
 }
 
-const ModeNav = (props) => {
+const ModeNav = props => {
     const thisClass = props.activeMode === props.mode ? styles.navselected : styles.navitem;
-    return <Nav.Link as={Link} to={"/forecast/" + props.election + "/" + props.mode}><div className={thisClass}>{props.text}</div></Nav.Link>
+    const linkUrl = "/forecast/" + props.election + "/" + props.mode;
+    return (
+        <Nav.Link as={Link} to={linkUrl}>
+            <div className={thisClass}>
+                {props.text}
+            </div>
+        </Nav.Link>
+    )
 }
 
-const ForecastsNav = (props) => (
+const ForecastsNav = props => (
     <>
     <Navbar bg="light" expand="sm">
         <Container >
@@ -39,6 +53,7 @@ const ForecastsNav = (props) => (
                     <Navbar.Text><div className={styles.title}>Modes</div></Navbar.Text>
                     <ModeNav text="Regular Forecast" election={props.election} mode="regular" activeMode={props.mode} />
                     <ModeNav text="Nowcast" election={props.election} mode="nowcast" activeMode={props.mode} />
+                    <ModeNav text="Archives" election={props.election} mode="archives" activeMode={props.mode} />
                 </Nav>
             </Navbar.Collapse>
         </Container>

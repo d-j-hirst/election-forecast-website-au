@@ -65,7 +65,9 @@ def serve_forecast_archives(code):
     forecasts = election.forecast_set.order_by('-date')
     if forecasts is None:
         raise Http404('No forecasts for this election!')
-    responses = [(forecast.id, forecast.mode, forecast.date, 
-                 forecast.report['reportLabel'])
-                 for forecast in forecasts]
+    responses = [{"id": forecast.id, 
+                  "mode": forecast.mode,
+                  "date": forecast.date, 
+                  "name": forecast.report['reportLabel']
+                 } for forecast in forecasts]
     return Response(responses)

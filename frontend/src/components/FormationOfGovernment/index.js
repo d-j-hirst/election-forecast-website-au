@@ -342,8 +342,6 @@ const OthersCollapsibleRows = props => {
     // Signal that no expansion should be allowed if there are no detail rows to show
     if (!minorParties.length) detailHandler = undefined;
 
-    console.log(detailHandler);
-
     return (<>
         <OverallWinGovernmentRow partyIndex="-1" forecast={props.forecast} detailHandler={detailHandler} expanded={showDetail} text="Any other party" />
         {

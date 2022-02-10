@@ -27,12 +27,6 @@ const ProbBar = props => {
                      [5, xxxLightBgClass(props.partyAbbr)]];
     const leftVal = Math.floor((lv - props.visualOffset) * props.scalingFactor).toString() + 'px';
     const widthVal = Math.floor((rv - lv) * props.scalingFactor + 1).toString() + 'px';
-    console.log("Prob bar itself");
-    console.log(rv);
-    console.log(props.visualOffset);
-    console.log(props.scalingFactor);
-    console.log(leftVal);
-    console.log(leftVal + widthVal);
     const thisStyle = {
         height: '10px',
         width: widthVal,
