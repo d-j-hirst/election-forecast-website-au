@@ -55,3 +55,17 @@ def serve_forecast_list():
         raise Exception('Could not find any matching elections!')
     responses = [(obj.code, obj.name) for obj in elections]
     return Response(responses)
+
+
+def serve_forecast_archives(code):
+    try:
+        election = Election.objects.get(code=code)
+    except Election.DoesNotExist:
+        raise Http404('Election does not exist')
+    forecasts = election.forecast_set.order_by('-date')
+    if forecasts is None:
+        raise Http404('No forecasts for this election!')
+    responses = [(forecast.id, forecast.mode, forecast.date, 
+                 forecast.report['reportLabel'])
+                 for forecast in forecasts]
+    return Response(responses)
