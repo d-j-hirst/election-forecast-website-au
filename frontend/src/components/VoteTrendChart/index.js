@@ -74,6 +74,11 @@ const VoteTrendChart = props => {
     const [ party, setParty ] = useState("ALP");
     const [ pollType, setPollType ] = useState("base");
 
+    if (props.forecast.polls === undefined) {
+        console.log("Not showing poll trend as the forecast didn't contain poll information.");
+        return null;
+    }
+
     const getPartyIndexFromAbbr = abbr => jsonMapReverse(props.forecast.partyAbbr, abbr, undefined, a => a >= -1);
 
     const partyHasFpTrend = abbr => {

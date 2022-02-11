@@ -3,9 +3,9 @@ import { React} from 'react';
 import { createBrowserHistory } from 'history';
 import { Router, Route, Switch, Redirect } from 'react-router-dom';
 
-import { LOGIN_URL, HOME_URL, FORECAST_URL, SEAT_DETAILS_URL, ARCHIVE_LIST_URL } from 'config/urls';
+import { LOGIN_URL, HOME_URL, FORECAST_URL, SEAT_DETAILS_URL, ARCHIVE_LIST_URL, ARCHIVE_URL, ARCHIVE_SEAT_URL } from 'config/urls';
 
-import { Login, Home, Forecast, SeatDetails, ArchiveList } from 'pages';
+import { Login, Home, Forecast, SeatDetails, ArchiveList, Archive, ArchiveSeat } from 'pages';
 
 export const history = createBrowserHistory();
 
@@ -18,6 +18,8 @@ const Routes = () => {
       <Switch>
         <Route path={LOGIN_URL} component={Login} />
         <Route path={ARCHIVE_LIST_URL} component={ArchiveList} />
+        <Route path={ARCHIVE_SEAT_URL} component={ArchiveSeat} />
+        <Route path={ARCHIVE_URL} component={Archive} />
         <Route path={FORECAST_URL} component={Forecast} />
         <Route path={SEAT_DETAILS_URL} component={SeatDetails} />
         {/* Keep this last so that other pages don't get replaced by it */}

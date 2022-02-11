@@ -37,10 +37,8 @@ def serve_forecast(code, mode):
     }
     if mode not in modes:
         raise Http404
-    info = {}
     mode_val = modes[mode]
     election = Election.objects.get(code=code)
-    info['name'] = election.name
     forecast = (election
                 .forecast_set
                 .filter(mode=mode_val)
@@ -57,7 +55,7 @@ def serve_forecast_list():
     return Response(responses)
 
 
-def serve_forecast_archives(code):
+def serve_forecast_archive_list(code):
     try:
         election = Election.objects.get(code=code)
     except Election.DoesNotExist:
@@ -71,3 +69,17 @@ def serve_forecast_archives(code):
                   "name": forecast.report['reportLabel']
                  } for forecast in forecasts]
     return Response(responses)
+
+
+def serve_forecast_archive(code, id):
+    try:
+        election = Election.objects.get(code=code)
+    except Election.DoesNotExist:
+        raise Http404('Election does not exist')
+    try:
+        forecast = (election
+                    .forecast_set
+                    .get(id=id))
+    except Forecast.DoesNotExist:
+        raise Http404('Forecast does not exist')
+    return Response(forecast.report)

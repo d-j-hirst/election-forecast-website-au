@@ -47,10 +47,9 @@ const SeatRow = props => {
         const bName = jsonMap(props.forecast.partyAbbr, b[0]);
         return partyCategory(aName) - partyCategory(bName);
     });
-    const detailsLink = "/seat/"
-                        + props.election + "/"
-                        + props.mode + "/"
-                        + getSeatUrl(seatName);
+    const detailsLink = (props.archiveId !== undefined ?
+        `/archive/${props.election}/${props.archiveId}/seat/${getSeatUrl(seatName)}` :
+        `/seat/${props.election}/${props.mode}/${getSeatUrl(seatName)}`);
 
     // const thresholds = [[0,2,0],[2,4,1],[4,6,2],[6,8,3],[8,10,4],[10,12,5],[12,14,6]];
     return (
@@ -449,11 +448,12 @@ const Seats = props => {
                     {
                         sortedIndices.map(index =>
                             <SeatRow forecast={props.forecast}
-                                    election={props.election}
-                                    mode={props.mode}
-                                    index={index}
-                                    key={index}
-                                    windowWidth={props.windowWidth} />
+                                     election={props.election}
+                                     mode={props.mode}
+                                     index={index}
+                                     key={index}
+                                     windowWidth={props.windowWidth}
+                                     archiveId={props.archiveId} />
                         )
                     }
                 </ListGroup>

@@ -249,7 +249,10 @@ const VoteTotals = props => {
                     }
                     <TppRowSet forecast={props.forecast} windowWidth={props.windowWidth} />
                     <FpRowSet forecast={props.forecast} windowWidth={props.windowWidth} />
-                    <VoteTrendChartSet forecast={props.forecast} windowWidth={props.windowWidth} />
+                    {
+                        props.forecast.polls !== undefined &&
+                        <VoteTrendChartSet forecast={props.forecast} windowWidth={props.windowWidth} />
+                    }
                 </ListGroup>
             </Card.Body>
         </Card>

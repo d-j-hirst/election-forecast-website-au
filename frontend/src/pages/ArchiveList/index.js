@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 
 import { useUserRequired } from 'utils/hooks';
 import { Header, ForecastsNav, LoadingMarker} from 'components';
@@ -12,10 +12,13 @@ import styles from './ArchiveList.module.css';
 const ArchiveLink = props => {
   const mode = props.item.mode === "FC" ? "General Forecast" : "Nowcast";
   const date = parseDateStringAsUTC(props.item.date);
+  const url = "/archive/"
+               + props.code + "/"
+               + props.item.id
 
   return (
     <p>
-      {mode}{", "}{date} &mdash; {props.item.name}
+      {mode}{", "}{date} &mdash; <Link to={url}>{props.item.name}</Link>
     </p>
   )
 }
@@ -46,7 +49,6 @@ const ArchiveList = () => {
         data => {
           setArchiveList(data);
           setArchiveListValid(true);
-          console.log(data);
         }
       ).catch(
         e => {
@@ -66,7 +68,7 @@ const ArchiveList = () => {
         {archiveListValid &&
           <>
             {
-              archiveList.map(item => <ArchiveLink item={item} />)
+              archiveList.map(item => <ArchiveLink item={item} code={code} />)
             }
           </>
         }

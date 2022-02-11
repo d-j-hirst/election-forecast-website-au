@@ -11,7 +11,8 @@ from forecast_api.models import Election, Forecast
 
 from forecast_api.serve import serve_forecast, \
                                serve_forecast_list, \
-                               serve_forecast_archives, \
+                               serve_forecast_archive_list, \
+                               serve_forecast_archive, \
                                ViewForecastPermission
 from forecast_api.submit import submit_report, SubmitForecastPermission
 
@@ -34,7 +35,13 @@ class ElectionListResponse(ApiAuthMixin, ApiErrorsMixin, APIView):
         return serve_forecast_list()
 
 
-class ElectionArchiveResponse(ApiAuthMixin, ApiErrorsMixin, APIView):
+class ElectionArchiveListResponse(ApiAuthMixin, ApiErrorsMixin, APIView):
     permission_classes = [IsAuthenticated&ViewForecastPermission]
     def get(self, request, code):
-        return serve_forecast_archives(code)
+        return serve_forecast_archive_list(code)
+
+
+class ElectionArchiveResponse(ApiAuthMixin, ApiErrorsMixin, APIView):
+    permission_classes = [IsAuthenticated&ViewForecastPermission]
+    def get(self, request, code, id):
+        return serve_forecast_archive(code, id)
