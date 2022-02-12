@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { useUserRequired } from 'utils/hooks';
-import { Header, ForecastAlert, ForecastsNav, ForecastHeader,
-  LoadingMarker, NowcastAlert, SeatDetailBody } from 'components';
+import { Header, ForecastsNav, ForecastHeader,
+  LoadingMarker, ArchiveAlert, SeatDetailBody } from 'components';
 
 import { getDirect } from 'utils/sdk';
 import { getIndexFromSeatUrl } from 'utils/seaturls';
@@ -67,14 +67,7 @@ const SeatDetails = () => {
         {forecastValid && seatIndex >= 0 &&
           <>
             <ForecastHeader mode={mode} forecast={forecast} />
-            {
-              mode === "regular" &&
-              <ForecastAlert forecast={forecast} code={code} showInitially={false} />
-            }
-            {
-              mode === "nowcast" &&
-              <NowcastAlert mode={mode} forecast={forecast} showInitially={false} />
-            }
+            <ArchiveAlert forecast={forecast} code={code} mode={mode} showInitially={false} />
             <SeatDetailBody forecast={forecast}
                             election={code}
                             mode={mode}
