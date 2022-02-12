@@ -68,7 +68,8 @@ def serve_forecast_archive_list(code):
                   "date": forecast.date, 
                   "name": forecast.report['reportLabel']
                  } for forecast in forecasts]
-    return Response(responses)
+    full_response = [election.name, responses]
+    return Response(full_response)
 
 
 def serve_forecast_archive(code, id):

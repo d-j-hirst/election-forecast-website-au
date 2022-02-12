@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 
+import Card from 'react-bootstrap/Card';
+import ListGroup from 'react-bootstrap/ListGroup';
+
 import { useUserRequired } from 'utils/hooks';
 import { Header, ForecastsNav, LoadingMarker} from 'components';
 import { getDirect } from 'utils/sdk';
@@ -9,7 +12,7 @@ import { parseDateStringAsUTC } from '../../utils/date.js'
 
 import styles from './ArchiveList.module.css';
 
-const ArchiveLink = props => {
+const ArchiveRow = props => {
   const mode = props.item.mode === "FC" ? "General Forecast" : "Nowcast";
   const date = parseDateStringAsUTC(props.item.date);
   const url = "/archive/"
@@ -17,10 +20,22 @@ const ArchiveLink = props => {
                + props.item.id
 
   return (
-    <p>
-      {mode}{", "}{date} &mdash; <Link to={url}>{props.item.name}</Link>
-    </p>
+    <ListGroup.Item className={styles.archiveListItem}>
+      <div>
+        <Link to={url}>{props.item.name}</Link> - <strong>{mode}</strong>
+        <br />
+        <small>Report created at {date}</small>
+      </div>
+    </ListGroup.Item>
   )
+}
+
+const ArchiveRowSet = props => {
+    return (
+        <>
+          {props.archiveList.map(item => <ArchiveRow item={item} code={props.code} />)}
+        </>
+    )
 }
 
 const ArchiveList = () => {
@@ -29,6 +44,7 @@ const ArchiveList = () => {
   // if a valid user is logged in. As always, don't trust the client
   // and protect on the backend as well!
   useUserRequired();
+  const [ electionName, setElectionName] = useState("");
   const [ archiveList, setArchiveList] = useState({});
   const [ archiveListValid, setArchiveListValid] = useState(false);
 
@@ -47,7 +63,9 @@ const ArchiveList = () => {
     const fetchArchiveList = () => {
       getArchiveList().then(
         data => {
-          setArchiveList(data);
+          console.log(data);
+          setElectionName(data[0]);
+          setArchiveList(data[1]);
           setArchiveListValid(true);
         }
       ).catch(
@@ -68,7 +86,18 @@ const ArchiveList = () => {
         {archiveListValid &&
           <>
             {
-              archiveList.map(item => <ArchiveLink item={item} code={code} />)
+              <Card className={styles.summary}>
+                  <Card.Header className={styles.archiveListTitle}>
+                      <strong>
+                        Archives for {electionName}
+                      </strong>
+                  </Card.Header>
+                  <Card.Body className={styles.archiveListBody}>
+                      <ListGroup className={styles.archiveList}>
+                          <ArchiveRowSet archiveList={archiveList} code={code} />
+                      </ListGroup>
+                  </Card.Body>
+              </Card>
             }
           </>
         }

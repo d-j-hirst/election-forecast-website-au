@@ -1,8 +1,8 @@
 import React from 'react';
 
-import styles from './ForecastHeader.module.css';
-
 import { parseDateStringAsUTC } from '../../utils/date.js'
+
+import styles from './ForecastHeader.module.css';
 
 const ForecastHeader = props => {
     return (

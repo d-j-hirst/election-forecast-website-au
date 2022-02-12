@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 
 import { useUserRequired } from 'utils/hooks';
 import { Header, ForecastsNav, ForecastHeader, FormationOfGovernment,
-  LoadingMarker, VoteTotals, SeatTotals, NowcastAlert, ForecastAlert, Seats } from 'components';
+  LoadingMarker, VoteTotals, SeatTotals, ArchiveAlert, Seats } from 'components';
 import { getDirect } from 'utils/sdk';
 import { useWindowDimensions } from '../../utils/window.js';
 
@@ -62,14 +62,7 @@ const Archive = () => {
         {forecastValid &&
           <>
             <ForecastHeader mode={mode} forecast={forecast} />
-            {
-              mode === "regular" &&
-              <ForecastAlert forecast={forecast} code={code} />
-            }
-            {
-              mode === "nowcast" &&
-              <NowcastAlert forecast={forecast} code={code} />
-            }
+            <ArchiveAlert forecast={forecast} code={code} />
             <FormationOfGovernment election={code} mode={mode} forecast={forecast} />
             <VoteTotals election={code} mode={mode} forecast={forecast} windowWidth={windowDimensions.width} />
             <SeatTotals election={code} mode={mode} forecast={forecast} windowWidth={windowDimensions.width} />
