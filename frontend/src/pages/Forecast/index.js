@@ -34,7 +34,7 @@ const Forecast = () => {
     const fetchElectionSummary = () => {
       getElectionSummary().then(
         data => {
-          setForecast(data);
+          setForecast(data.report);
           setForecastValid(true);
         }
       ).catch(

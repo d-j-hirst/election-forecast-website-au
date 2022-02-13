@@ -38,8 +38,8 @@ const SeatDetails = () => {
     const fetchElectionSummary = () => {
       getElectionSummary().then(
         data => {
-          setForecast(data);
-          setSeatIndex(getIndexFromSeatUrl(data.seatNames, seat));
+          setForecast(data.report);
+          setSeatIndex(getIndexFromSeatUrl(data.report.seatNames, seat));
           setForecastValid(true);
         }
       ).catch(

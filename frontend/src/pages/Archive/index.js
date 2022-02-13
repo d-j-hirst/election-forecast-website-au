@@ -36,7 +36,7 @@ const Archive = () => {
     const fetchArchive = () => {
       getArchive().then(
         data => {
-          setForecast(data);
+          setForecast(data.report);
           setForecastValid(true);
         }
       ).catch(
@@ -61,7 +61,7 @@ const Archive = () => {
       <div className={styles.content}>
         {forecastValid &&
           <>
-            <ForecastHeader mode={mode} forecast={forecast} />
+            <ForecastHeader mode={mode} forecast={forecast} archive={true} />
             <ArchiveAlert forecast={forecast} code={code} />
             <FormationOfGovernment election={code} mode={mode} forecast={forecast} />
             <VoteTotals election={code} mode={mode} forecast={forecast} windowWidth={windowDimensions.width} />

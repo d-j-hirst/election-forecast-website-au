@@ -44,7 +44,11 @@ def serve_forecast(code, mode):
                 .filter(mode=mode_val)
                 .order_by('-date')
                 .first())
-    return Response(forecast.report)
+    response = {"report": forecast.report,
+                "label": forecast.label,
+                "date": forecast.date,
+                "flags": forecast.flags}
+    return Response(response)
 
 
 def serve_forecast_list():
@@ -66,7 +70,7 @@ def serve_forecast_archive_list(code):
     responses = [{"id": forecast.id, 
                   "mode": forecast.mode,
                   "date": forecast.date, 
-                  "name": forecast.report['reportLabel']
+                  "label": forecast.label
                  } for forecast in forecasts]
     full_response = [election.name, responses]
     return Response(full_response)
@@ -83,4 +87,8 @@ def serve_forecast_archive(code, id):
                     .get(id=id))
     except Forecast.DoesNotExist:
         raise Http404('Forecast does not exist')
-    return Response(forecast.report)
+    response = {"report": forecast.report,
+                "label": forecast.label,
+                "date": forecast.date,
+                "flags": forecast.flags}
+    return Response(response)

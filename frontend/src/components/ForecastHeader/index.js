@@ -9,12 +9,14 @@ const ForecastHeader = props => {
         <>
             <div className={styles.forecastTitle}>
                 {props.forecast.electionName} - {props.mode === "nowcast" ? "Nowcast" : "Regular Forecast"}
+                {props.archive === true ? <strong>{" - Archive"}</strong> : ""}
             </div>
             <div className={styles.forecastUpdateInfo}>
-                Last updated at&nbsp;
+                {props.archive === true ? "Produced at " : "Last updated at "}
                 {parseDateStringAsUTC(props.forecast.reportDate)}
                 {" "}because&nbsp;of:&nbsp;
-                {props.forecast.reportLabel}
+                {props.archive === true && <strong>{props.forecast.reportLabel}</strong>}
+                {props.archive !== true && <>{props.forecast.reportLabel}</>}
             </div>
         </>
     );

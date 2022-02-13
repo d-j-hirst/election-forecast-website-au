@@ -33,6 +33,8 @@ def submit_report(request: HttpRequest):
     data = json.loads(data_json)
     code = data['termCode']
     name = data['electionName']
+    label = data['reportLabel']
+    flags = data['flags'] if 'flags' in data else ''
     date = make_aware(datetime.fromisoformat(data['reportDate']))
     mode = (Forecast.Mode.NOWCAST
             if data['reportMode'] == "NC"
@@ -48,6 +50,8 @@ def submit_report(request: HttpRequest):
     forecast, _ = Forecast.objects.get_or_create(election=election,
                                                  date=date,
                                                  mode=mode)
+    forecast.label = label
     forecast.report = data
+    forecast.flags = flags
     forecast.save()
     return Response("Forecast report successfully submitted.")

@@ -28,6 +28,17 @@ class Forecast(models.Model):
         default=Mode.REGULAR_FORECAST
     )
 
+    label = models.CharField(
+        max_length=256,
+        default=""
+    )
+
+    flags = models.TextField(
+        max_length=256,
+        default="",
+        blank=True
+    )
+
     def get_mode(self) -> Mode:
         return Forecast.Mode[self.mode]
 

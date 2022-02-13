@@ -40,8 +40,8 @@ const SeatDetails = () => {
     const fetchElectionSummary = () => {
       getElectionSummary().then(
         data => {
-          setForecast(data);
-          setSeatIndex(getIndexFromSeatUrl(data.seatNames, seat));
+          setForecast(data.report);
+          setSeatIndex(getIndexFromSeatUrl(data.report.seatNames, seat));
           setForecastValid(true);
         }
       ).catch(
@@ -66,7 +66,7 @@ const SeatDetails = () => {
       <div className={styles.content}>
         {forecastValid && seatIndex >= 0 &&
           <>
-            <ForecastHeader mode={mode} forecast={forecast} />
+            <ForecastHeader mode={mode} forecast={forecast} archive={true} />
             <ArchiveAlert forecast={forecast} code={code} mode={mode} showInitially={false} />
             <SeatDetailBody forecast={forecast}
                             election={code}

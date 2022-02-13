@@ -22,7 +22,7 @@ const ArchiveRow = props => {
   return (
     <ListGroup.Item className={styles.archiveListItem}>
       <div>
-        <Link to={url}>{props.item.name}</Link> - <strong>{mode}</strong>
+        <Link to={url}>{props.item.label}</Link> - <strong>{mode}</strong>
         <br />
         <small>Report created at {date}</small>
       </div>
