@@ -102,7 +102,7 @@ const ArchiveList = () => {
           </>
         }
         {!archiveListValid &&
-          <LoadingMarker />
+          <LoadingMarker text="Loading archive list" />
         }
       </div>
     </>
