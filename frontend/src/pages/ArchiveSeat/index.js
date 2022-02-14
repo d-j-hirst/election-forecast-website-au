@@ -41,7 +41,9 @@ const SeatDetails = () => {
       getElectionSummary().then(
         data => {
           setForecast(data.report);
-          setSeatIndex(getIndexFromSeatUrl(data.report.seatNames, seat));
+          const seatIndexTemp = getIndexFromSeatUrl(data.report.seatNames, seat);
+          setSeatIndex(seatIndexTemp);
+          document.title = `AEF - ${data.report.seatNames[seatIndexTemp]} archived ${data.report.electionName} ${data.report.reportMode === "NC" ? "nowcast" : "forecast"}`;
           setForecastValid(true);
         }
       ).catch(

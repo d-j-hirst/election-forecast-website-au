@@ -63,8 +63,8 @@ const ArchiveList = () => {
     const fetchArchiveList = () => {
       getArchiveList().then(
         data => {
-          console.log(data);
           setElectionName(data[0]);
+          document.title = `AEF - Archive list for ${data[0]}`;
           setArchiveList(data[1]);
           setArchiveListValid(true);
         }

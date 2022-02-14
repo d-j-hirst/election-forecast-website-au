@@ -37,6 +37,7 @@ const Archive = () => {
       getArchive().then(
         data => {
           setForecast(data.report);
+          document.title = `AEF - Archived ${data.report.electionName} ${data.report.reportMode === "NC" ? "nowcast" : "general forecast"}`;
           setForecastValid(true);
         }
       ).catch(
