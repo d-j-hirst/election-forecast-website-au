@@ -137,10 +137,12 @@ const OthersExplainer = props => {
                 This row shows the probability, as simulated by the model, that some party other than
                 the two traditional majors gains a majority.
                 Note that:
-                <ul>
-                    <li>Such an outcome would be unprecedented in modern Australian history.</li>
-                    <li>The probability for such an event is extrapolated from a small sample of historic results where third parties were still far from gaining a majority.</li>
-                </ul>
+            </p>
+            <ul>
+                <li>Such an outcome would be unprecedented in modern Australian history.</li>
+                <li>The probability for such an event is extrapolated from a small sample of historic results where third parties were still far from gaining a majority.</li>
+            </ul>
+            <p>
                 As a result, while this section is included for the sake of completeness, <strong>it should not be taken too seriously</strong>.
             </p>
             <hr />
@@ -371,13 +373,15 @@ const MainExplainer = props => {
             <hr />
             <p>
                 Simulated results are grouped here into four categories, with the chance of each shown as a percentage:
-                <ul>
-                    <li>one for <i>each major party</i> (Labor/ALP and the Liberal/National Coalition)
-                    being in a position to form government</li>
-                    <li>one for <i>some other party</i> being in a position to form government (this is usually highly unlikely)</li>
-                    <li>one for <i>no party</i> being in a such a position</li>
-                </ul>
-                 Click on the information icons (<InfoIcon />) for each
+            </p>
+            <ul>
+                <li>one for <i>each major party</i> (Labor/ALP and the Liberal/National Coalition)
+                being in a position to form government</li>
+                <li>one for <i>some other party</i> being in a position to form government (this is usually highly unlikely)</li>
+                <li>one for <i>no party</i> being in a such a position</li>
+            </ul>
+            <p>
+                Click on the information icons (<InfoIcon />) for each
                 section below for more on that particular category.
             </p>
         </Alert>

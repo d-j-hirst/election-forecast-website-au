@@ -166,11 +166,13 @@ const ChartExplainer = props => {
             <p>
                 The second menu allows for different ways to display the results of opinion polls. For two-party
                 preferred results, three options are given:
-                <ul>
-                    <li><i>Calculated two-party</i> - the two-party preferred vote calculated from the first preference votes, using preference flows from the previous election</li>
-                    <li><i>House effect adjusted</i> - the calculated two-party vote adjusted to the model's estimates of house effects.</li>
-                    <li><i>Reported two-party</i> - the value reported by the poll, without any adjustment by the model.</li>
-                </ul>
+            </p>
+            <ul>
+                <li><i>Calculated two-party</i> - the two-party preferred vote calculated from the first preference votes, using preference flows from the previous election</li>
+                <li><i>House effect adjusted</i> - the calculated two-party vote adjusted to the model's estimates of house effects.</li>
+                <li><i>Reported two-party</i> - the value reported by the poll, without any adjustment by the model.</li>
+            </ul>
+            <p>
                 For first-preference trends the is no "Calculated two-party" option as there is nothing to calculate, but the other options still exist.
             </p>
         </Alert>

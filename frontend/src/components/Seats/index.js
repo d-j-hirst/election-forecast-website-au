@@ -134,7 +134,7 @@ const SeatFpSection = props => {
     const someExcluded = sortedFreqs.length < fpFreqs.length;
     return (
         <>
-            <ListGroup.Item className={styles.seatsSubheading} key={props.index}>
+            <ListGroup.Item className={styles.seatsSubheading}>
                 <strong>First preference projection</strong> for {seatName}
                 &nbsp;<InfoIcon onClick={() => setShowExplainer(!showExplainer)} />
             </ListGroup.Item>
@@ -147,13 +147,14 @@ const SeatFpSection = props => {
                                 freqSet={freqSet}
                                 maxVoteTotal={maxFpTotal}
                                 minVoteTotal={0}
-                                key={index}
+                                key={`fp${seatName}a${index}`}
+                                index={`fp${seatName}a${index}`}
                                 windowWidth={props.windowWidth}
                     />
                 )
             }
             {someExcluded &&
-                <ListGroup.Item className={styles.seatsNote} key={props.index}>
+                <ListGroup.Item className={styles.seatsNote}>
                     This list is abbreviated to this seat's more popular parties. Click "full detail" above to see others.
                 </ListGroup.Item>
             }
@@ -246,7 +247,7 @@ const SeatTcpSection = props => {
     const someExcluded = sortedTcpFreqs.length < tcpFreqs.length;
     return (
         <>
-            <ListGroup.Item className={styles.seatsSubheading} key={props.index}>
+            <ListGroup.Item className={styles.seatsSubheading}>
                 <strong>Two-candidate preferred scenarios</strong> for {seatName}
                 &nbsp;<InfoIcon onClick={() => setShowExplainer(!showExplainer)} warning={true} />
             </ListGroup.Item>
@@ -257,13 +258,13 @@ const SeatTcpSection = props => {
                 sortedTcpFreqs.map((freqSet, index) =>
                     <SeatTcpRowPair forecast={props.forecast}
                                     freqSet={freqSet}
-                                    key={index}
+                                    key={`tcp${seatName}a${index}`}
                                     windowWidth={props.windowWidth}
                     />
                 )
             }
             {someExcluded &&
-                <ListGroup.Item className={styles.seatsNote} key={props.index}>
+                <ListGroup.Item className={styles.seatsNote}>
                     This list is abbreviated to the most likely scenarios. Click "full detail" above to see others.
                 </ListGroup.Item>
             }
@@ -285,7 +286,7 @@ const SeatTcpRowPair = props => {
     if (freqSet1[0] === -3) partyAbbr1 = "EOth";
     return (
         <>
-            <ListGroup.Item className={styles.seatsTcpScenarioHeading} key={props.index}>
+            <ListGroup.Item className={styles.seatsTcpScenarioHeading}>
                 <SmartBadge party={partyAbbr0} />
                 { } vs { }
                 <SmartBadge party={partyAbbr1} />
@@ -332,14 +333,14 @@ const SeatWinsSection = props => {
     const anyOtherWinPc = sortedFreqs.reduce((p, c) => p - c[1], 100);
     return (
         <>
-            <ListGroup.Item className={styles.seatsSubheading} key={props.index}>
+            <ListGroup.Item className={styles.seatsSubheading}>
                 <strong>Win Probabilities</strong> for {seatName}
                 &nbsp;<InfoIcon onClick={() => setShowExplainer(!showExplainer)} />
             </ListGroup.Item>
             {
                     showExplainer && <WinsExplainer seatName={seatName} />
             }
-            <ListGroup.Item className={styles.seatsMore} key={props.index+1000}>
+            <ListGroup.Item className={styles.seatsMore}>
                 {
                     sortedFreqs.map(
                         (a, index) => {
@@ -348,17 +349,16 @@ const SeatWinsSection = props => {
                             if (party === -3) text = "An emerging party";
                             if (party === -2) text = "An emerging independent";
                             return (
-                                <>
-                                    <div className={styles.seatsWinStatement} key={index}>
+                                <React.Fragment key={`a${index}`}>
+                                    <div className={styles.seatsWinStatement}>
                                         <ProbStatement forecast={props.forecast}
                                                     party={a[0]}
                                                     prob={a[1]}
                                                     text={text}
                                                     outcome={"win " + seatName}
-                                                    key={index}
                                         />
                                     </div>
-                                </>
+                                </React.Fragment>
                             )
                         }
                     )
@@ -381,9 +381,9 @@ const SeatWinsSection = props => {
 const SeatMore = props => {
     return (
         <>
-            <SeatWinsSection forecast={props.forecast} index={props.index} key={props.index} />
-            <SeatFpSection forecast={props.forecast} index={props.index} key={props.index} windowWidth={props.windowWidth} />
-            <SeatTcpSection forecast={props.forecast} index={props.index} key={props.index} windowWidth={props.windowWidth} />
+            <SeatWinsSection forecast={props.forecast} index={props.index} />
+            <SeatFpSection forecast={props.forecast} index={props.index} windowWidth={props.windowWidth} />
+            <SeatTcpSection forecast={props.forecast} index={props.index} windowWidth={props.windowWidth} />
         </>
     )
 }
@@ -451,7 +451,7 @@ const Seats = props => {
                                      election={props.election}
                                      mode={props.mode}
                                      index={index}
-                                     key={index}
+                                     key={props.forecast.seatNames[index]}
                                      windowWidth={props.windowWidth}
                                      archiveId={props.archiveId} />
                         )

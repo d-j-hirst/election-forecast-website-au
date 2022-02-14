@@ -33,7 +33,7 @@ const ArchiveRow = props => {
 const ArchiveRowSet = props => {
     return (
         <>
-          {props.archiveList.map(item => <ArchiveRow item={item} code={props.code} />)}
+          {props.archiveList.map((item, index) => <ArchiveRow item={item} code={props.code} key={index} />)}
         </>
     )
 }

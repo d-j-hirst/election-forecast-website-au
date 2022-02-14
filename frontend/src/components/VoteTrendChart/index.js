@@ -61,7 +61,7 @@ const VoteTrendTooltip = ({ active, payload, label }) => {
                 </p>
             }
             {payload[0].payload.pollDesc !== undefined &&
-                payload[0].payload.pollDesc.split(";").map(poll => <p>{poll.split(",")[0]}: <strong>{round1(poll.split(",")[1])}</strong></p>)}
+                payload[0].payload.pollDesc.split(";").map((poll, index) => <p key={index}>{poll.split(",")[0]}: <strong>{round1(poll.split(",")[1])}</strong></p>)}
         </div>
         );
     }
