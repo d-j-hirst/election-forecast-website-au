@@ -56,10 +56,10 @@ const ArchiveAlert = props => {
                 <hr />
                 <p>
                     <img className={styles.infoIcon} src={info} alt='Information symbol'/> icons below
-                    can be clicked or hovered over for explanations of what each part of the report means.<br />
+                    can be clicked for explanations of what each part of the report means.<br />
                     <img className={styles.warningIcon} src={warning} alt='Warning symbol'/> icons mark parts of the
                     report that are included for completeness but should be interpreted with caution - 
-                    click or hover over the icons to read the warning.
+                    click the icons to read the warning.
                 </p>
             </Alert>
         )
