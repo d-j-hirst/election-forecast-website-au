@@ -33,29 +33,29 @@ const ModeNav = props => {
 
 const ForecastsNav = props => (
     <>
-    <Navbar bg="light" expand="sm">
-        <Container >
-            <Navbar.Toggle aria-controls="basic-navbar-nav" />
-            <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
-                <Nav defaultActiveKey={"/forecast/" + props.election + "/" + props.mode} className="m-auto">
-                    <Navbar.Text><div className={styles.title}>Elections</div></Navbar.Text>
-                    <ElectionNav text="Federal" election="2022fed" mode={props.mode} activeElection={props.election} />
-                    <ElectionNav text="Victoria" election="2022vic" mode={props.mode} activeElection={props.election} />
-                </Nav>
-            </Navbar.Collapse>
+    <Navbar bg="light" expand="sm" className={styles.navbar}>
+        <Container>
+            <Nav defaultActiveKey={"/forecast/" + props.election + "/" + props.mode} className="m-auto">
+                <Navbar.Text><div className={styles.title}>Elections</div></Navbar.Text>
+                <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
+                        <ElectionNav text="Federal" election="2022fed" mode={props.mode} activeElection={props.election} />
+                        <ElectionNav text="Victoria" election="2022vic" mode={props.mode} activeElection={props.election} />
+                </Navbar.Collapse>
+            </Nav>
         </Container>
     </Navbar>
-    <Navbar bg="light" expand="sm">
+    <Navbar bg="light" expand="sm" className={styles.navbar}>
         <Container>
-            <Navbar.Toggle aria-controls="basic-navbar-nav" />
-            <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
-                <Nav defaultActiveKey={"/forecast/" + props.election + "/" + props.mode} className="m-auto">
-                    <Navbar.Text><div className={styles.title}>Modes</div></Navbar.Text>
+            <Nav defaultActiveKey={"/forecast/" + props.election + "/" + props.mode} className="m-auto">
+                <Navbar.Text><div className={styles.title}>Modes</div></Navbar.Text>
+                <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
                     <ModeNav text="Regular Forecast" election={props.election} mode="regular" activeMode={props.mode} />
                     <ModeNav text="Nowcast" election={props.election} mode="nowcast" activeMode={props.mode} />
                     <ModeNav text="Archives" election={props.election} mode="archives" activeMode={props.mode} />
-                </Nav>
-            </Navbar.Collapse>
+                </Navbar.Collapse>
+            </Nav>
         </Container>
     </Navbar>
     </>

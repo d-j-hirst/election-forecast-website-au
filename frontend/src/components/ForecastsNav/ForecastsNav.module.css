@@ -1,14 +1,17 @@
 .title {
   color: #442222;
   text-align: center;
+  padding-left: 10px;
   padding-right: 10px;
   font-size: 18px;
   font-weight: bold;
 }
 
 .navitem {
+  color: #666666;
   font-size: 18px;
   padding: 0px 5px;
+  text-align: center;
 }
 
 .navselected {
@@ -17,8 +20,13 @@
   padding: 0px 5px;
   background-color: #CCCCCC;
   border-radius: 5px !important;
+  text-align: center;
 }
 
 .navbar {
   border-bottom: 10;
+}
+
+.navCollapse {
+  min-width: 0px !important;
 }

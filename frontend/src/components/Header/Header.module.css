@@ -1,6 +1,47 @@
 .pageWrapper {
   height: 100px;
-  background: linear-gradient(#BBBBBB, #F8F9FA);
+  background: linear-gradient(#CCCCCC, #F8F9FA);
+  display: flex;
+  justify-content: space-between;
+}
+
+@media (max-width: 740px){
+  .pageWrapper {
+    justify-content: center;
+  }
+}
+
+.mainLinkArea {
+  display: flex !important;
+  justify-content: space-between;
+  flex-flow: row;
+  vertical-align: middle;
+  align-items: center;
+}
+
+.title {
+  color: #442222;
+  text-align: center;
+  padding-left: 10px;
+  padding-right: 10px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.navitem {
+  color: #666666;
+  font-size: 18px;
+  padding: 0px 5px;
+  text-align: center;
+}
+
+.navselected {
+  color: #000000;
+  font-size: 18px;
+  padding: 0px 5px;
+  background-color: #CCCCCC;
+  border-radius: 5px !important;
+  text-align: center;
 }
 
 .logo {
