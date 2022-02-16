@@ -8,3 +8,6 @@ export { default as ArchiveList } from './ArchiveList';
 export { default as Archive } from './Archive';
 export { default as ArchiveSeat } from './ArchiveSeat';
 export { default as Faq } from './Faq';
+export { default as Methodology } from './Methodology';
+export { default as Commentary } from './Commentary';
+export { default as About } from './About';

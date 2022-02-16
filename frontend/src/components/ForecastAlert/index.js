@@ -33,7 +33,8 @@ const ForecastAlert = props => {
                     This report is based on publically available election, polling, and candidate information,
                     and is this site's best guess as to the probability of eventual election results based on this information.
                     For more information on how these forecasts are constructed, check
-                    the <Link to={"/faq"}>FAQ&nbsp;page</Link>, the methodology&nbsp;page or
+                    the <Link to={"/faq"}>FAQ&nbsp;page</Link>, 
+                    the <Link to={"/methodology"}>methodology&nbsp;page</Link> or
                     the <a href="https://github.com/d-j-hirst/aus-polling-analyser">source code on Github</a>.
                 </p>
                 <hr />

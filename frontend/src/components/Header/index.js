@@ -32,7 +32,7 @@ const Header = props => (
                     <PageNav text="Forecasts" page="forecast" activePage={props.page} />
                     <PageNav text="FAQ" page="faq" activePage={props.page} />
                     <PageNav text="Methodology" page="methodology" activePage={props.page} />
-                    <PageNav text="Blog" page="blog" activePage={props.page} />
+                    <PageNav text="Commentary" page="commentary" activePage={props.page} />
                     <PageNav text="About" page="about" activePage={props.page} />
                 </div>
             }
@@ -47,7 +47,7 @@ const Header = props => (
                             <PageNav text="Forecasts" page="forecast" activePage={props.page} />
                             <PageNav text="FAQ" page="faq" activePage={props.page} />
                             <PageNav text="Methodology" page="methodology" activePage={props.page} />
-                            <PageNav text="Blog" page="blog" activePage={props.page} />
+                            <PageNav text="Commentary" page="commentary" activePage={props.page} />
                             <PageNav text="About" page="about" activePage={props.page} />
                         </Navbar.Collapse>
                     </Nav>

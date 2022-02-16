@@ -4,9 +4,11 @@ import { createBrowserHistory } from 'history';
 import { Router, Route, Switch, Redirect } from 'react-router-dom';
 
 import { LOGIN_URL, HOME_URL, FORECAST_URL, BASIC_FORECAST_URL, DEFAULT_FORECAST_URL,
-  SEAT_DETAILS_URL, ARCHIVE_LIST_URL, ARCHIVE_URL, ARCHIVE_SEAT_URL, FAQ_URL} from 'config/urls';
+  SEAT_DETAILS_URL, ARCHIVE_LIST_URL, ARCHIVE_URL, ARCHIVE_SEAT_URL, 
+  FAQ_URL, METHODOLOGY_URL, COMMENTARY_URL, ABOUT_URL} from 'config/urls';
 
-import { Login, Home, Forecast, SeatDetails, ArchiveList, Archive, ArchiveSeat, Faq } from 'pages';
+import { Login, Home, Forecast, SeatDetails, ArchiveList, Archive, ArchiveSeat, 
+  Faq, Methodology, Commentary, About } from 'pages';
 
 export const history = createBrowserHistory();
 
@@ -23,6 +25,9 @@ const Routes = () => {
         <Route path={ARCHIVE_URL} component={Archive} />
         <Route path={FORECAST_URL} component={Forecast} />
         <Route path={FAQ_URL} component={Faq} />
+        <Route path={METHODOLOGY_URL} component={Methodology} />
+        <Route path={COMMENTARY_URL} component={Commentary} />
+        <Route path={ABOUT_URL} component={About} />
         <Route path={BASIC_FORECAST_URL} component={Forecast}>
           <Redirect to={DEFAULT_FORECAST_URL} />
         </Route>

@@ -8,3 +8,6 @@ export const ARCHIVE_LIST_URL = '/forecast/:code/archives';
 export const ARCHIVE_URL = '/archive/:code/:id';
 export const ARCHIVE_SEAT_URL = '/archive/:code/:id/seat/:seat';
 export const FAQ_URL = '/faq';
+export const METHODOLOGY_URL = '/methodology';
+export const COMMENTARY_URL = '/commentary';
+export const ABOUT_URL = '/about';
