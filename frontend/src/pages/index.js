@@ -7,3 +7,4 @@ export { default as SeatDetails } from './SeatDetails';
 export { default as ArchiveList } from './ArchiveList';
 export { default as Archive } from './Archive';
 export { default as ArchiveSeat } from './ArchiveSeat';
+export { default as Faq } from './Faq';

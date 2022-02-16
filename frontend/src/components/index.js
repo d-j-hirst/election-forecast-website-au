@@ -15,3 +15,4 @@ export { default as LoadingMarker } from './LoadingMarker';
 export { default as ForecastAlert } from './ForecastAlert';
 export { default as NowcastAlert } from './NowcastAlert';
 export { default as ArchiveAlert } from './ArchiveAlert';
+export { default as FaqHeader } from './FaqHeader';
