@@ -24,7 +24,7 @@
 }
 
 .navbar {
-  border-bottom: 10;
+  outline: #D8D8D8 solid 1px;
 }
 
 .navCollapse {
