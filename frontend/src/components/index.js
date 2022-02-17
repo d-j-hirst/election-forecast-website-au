@@ -15,7 +15,7 @@ export { default as LoadingMarker } from './LoadingMarker';
 export { default as ForecastAlert } from './ForecastAlert';
 export { default as NowcastAlert } from './NowcastAlert';
 export { default as ArchiveAlert } from './ArchiveAlert';
-export { default as FaqHeader } from './FaqHeader';
+export { default as GuideHeader } from './GuideHeader';
 export { default as MethodologyHeader } from './MethodologyHeader';
 export { default as CommentaryHeader } from './CommentaryHeader';
 export { default as AboutHeader } from './AboutHeader';

@@ -30,7 +30,7 @@ const Header = props => (
             {props.windowWidth >= 740 && 
                 <div className={styles.mainLinkArea}>
                     <PageNav text="Forecasts" page="forecast" activePage={props.page} />
-                    <PageNav text="FAQ" page="faq" activePage={props.page} />
+                    <PageNav text="Guide" page="guide" activePage={props.page} />
                     <PageNav text="Methodology" page="methodology" activePage={props.page} />
                     <PageNav text="Commentary" page="commentary" activePage={props.page} />
                     <PageNav text="About" page="about" activePage={props.page} />
@@ -45,7 +45,7 @@ const Header = props => (
                         <Navbar.Toggle aria-controls="basic-navbar-nav" />
                         <Navbar.Collapse id="basic-navbar-nav" className="justify-content-center">
                             <PageNav text="Forecasts" page="forecast" activePage={props.page} />
-                            <PageNav text="FAQ" page="faq" activePage={props.page} />
+                            <PageNav text="Guide" page="guide" activePage={props.page} />
                             <PageNav text="Methodology" page="methodology" activePage={props.page} />
                             <PageNav text="Commentary" page="commentary" activePage={props.page} />
                             <PageNav text="About" page="about" activePage={props.page} />

@@ -50,7 +50,7 @@ const ArchiveAlert = props => {
                     and was this site's best guess as to the probability
                     of {isNowcast ? "hypothetical" : "eventual"} election results based on this information.
                     For more information on how these {isNowcast ? "nowcasts" : "forecasts"} are
-                    constructed, check the <Link to={"/faq"}>FAQ&nbsp;page</Link>, 
+                    constructed, check the <Link to={"/guide"}>forecast guide</Link>, 
                     the <Link to={"/methodology"}>methodology&nbsp;page</Link> or
                     the <a href="https://github.com/d-j-hirst/aus-polling-analyser">source code on Github</a>.
                 </p>

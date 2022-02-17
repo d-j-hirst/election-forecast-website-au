@@ -5,10 +5,10 @@ import { Router, Route, Switch, Redirect } from 'react-router-dom';
 
 import { LOGIN_URL, HOME_URL, FORECAST_URL, BASIC_FORECAST_URL, DEFAULT_FORECAST_URL,
   SEAT_DETAILS_URL, ARCHIVE_LIST_URL, ARCHIVE_URL, ARCHIVE_SEAT_URL, 
-  FAQ_URL, METHODOLOGY_URL, COMMENTARY_URL, ABOUT_URL} from 'config/urls';
+ GUIDE_URL, METHODOLOGY_URL, COMMENTARY_URL, ABOUT_URL} from 'config/urls';
 
 import { Login, Home, Forecast, SeatDetails, ArchiveList, Archive, ArchiveSeat, 
-  Faq, Methodology, Commentary, About } from 'pages';
+  Guide, Methodology, Commentary, About } from 'pages';
 
 export const history = createBrowserHistory();
 
@@ -24,7 +24,7 @@ const Routes = () => {
         <Route path={ARCHIVE_SEAT_URL} component={ArchiveSeat} />
         <Route path={ARCHIVE_URL} component={Archive} />
         <Route path={FORECAST_URL} component={Forecast} />
-        <Route path={FAQ_URL} component={Faq} />
+        <Route path={GUIDE_URL} component={Guide} />
         <Route path={METHODOLOGY_URL} component={Methodology} />
         <Route path={COMMENTARY_URL} component={Commentary} />
         <Route path={ABOUT_URL} component={About} />
