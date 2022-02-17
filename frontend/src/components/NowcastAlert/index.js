@@ -32,7 +32,7 @@ const NowcastAlert = props => {
                 </div>
                 <hr />
                 <p>
-                    It is based on publically available election, polling, and candidate information,
+                    It is based on publicly available election, polling, and candidate information,
                     and is this site's best guess as to the probability of hypothetical election results based on this information.
                     For more information on how these nowcasts are constructed, check 
                     the <Link to={"/guide"}>forecast guide</Link>,

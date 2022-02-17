@@ -30,7 +30,7 @@ const ForecastAlert = props => {
                 </div>
                 <hr />
                 <p>
-                    This report is based on publically available election, polling, and candidate information,
+                    This report is based on publicly available election, polling, and candidate information,
                     and is this site's best guess as to the probability of eventual election results based on this information.
                     For more information on how these forecasts are constructed, check
                     the <Link to={"/guide"}>forecast guide</Link>, 
