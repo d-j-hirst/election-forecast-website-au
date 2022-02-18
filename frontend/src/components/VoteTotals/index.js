@@ -200,7 +200,7 @@ const MainExplainer = props => {
                 This part of the simulation report covers
                 the <strong> share of the total vote </strong> that
                 significant political parties are projected to get. These
-                estimates are based on analysis of how historic poll results and
+                estimates are based on analysis of how historical poll results and
                 other political factors relate to election results, and take
                 into account their historic biases and level of accuracy.
             </p>

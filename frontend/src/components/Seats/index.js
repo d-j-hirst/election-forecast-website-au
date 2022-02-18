@@ -10,7 +10,7 @@ import ProbStatement from '../ProbStatement';
 import ProbBarDist from '../ProbBarDist';
 import WinnerBarDist from '../WinnerBarDist';
 import { SmartBadge } from '../PartyBadge';
-import InfoIcon from '../InfoIcon'
+import InfoIcon from '../InfoIcon';
 import TooltipWrapper from '../TooltipWrapper';
 
 import { jsonMap } from '../../utils/jsonmap.js';

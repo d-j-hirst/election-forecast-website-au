@@ -19,3 +19,4 @@ export { default as GuideHeader } from './GuideHeader';
 export { default as MethodologyHeader } from './MethodologyHeader';
 export { default as CommentaryHeader } from './CommentaryHeader';
 export { default as AboutHeader } from './AboutHeader';
+export { default as InfoIcon } from './InfoIcon';

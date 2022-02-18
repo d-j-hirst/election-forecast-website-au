@@ -4,8 +4,8 @@ import { Link } from 'react-router-dom';
 
 import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
-import info from './assets/info.png';
-import warning from './assets/warning.png'
+
+import InfoIcon from '../InfoIcon';
 
 import styles from './NowcastAlert.module.css';
 
@@ -20,7 +20,7 @@ const NowcastAlert = props => {
                    onClose={() => setShow(false)}
                 >
                 <div className={styles.firstPara}>
-                    <img className={styles.largeWarning} src={warning} alt='Information symbol'/>
+                    <InfoIcon size="large" inactive={true} warning={true}/>
                     <div>
                         This a <strong>nowcast</strong> report, not a forecast for the actual election.
                         This means it is an estimate of what the {props.forecast.electionName} might be like <strong>if it were held today</strong>.
@@ -41,9 +41,9 @@ const NowcastAlert = props => {
                 </p>
                 <hr />
                 <p>
-                    <img className={styles.infoIcon} src={info} alt='Information symbol'/> icons below
+                    <InfoIcon inactive={true}/> icons below
                     can be clicked for explanations of what each part of the report means.<br />
-                    <img className={styles.warningIcon} src={warning} alt='Warning symbol'/> icons mark parts of the
+                    <InfoIcon inactive={true} warning={true}/> icons mark parts of the
                     report that are included for completeness but should be interpreted with caution - 
                     click the icons to read the warning.
                 </p>

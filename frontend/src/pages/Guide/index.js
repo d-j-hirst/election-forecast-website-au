@@ -1,7 +1,9 @@
 import React from 'react';
 
+import { Link } from 'react-router-dom';
+
 import { useUserRequired } from 'utils/hooks';
-import { Header, GuideHeader } from 'components';
+import { Header, GuideHeader, InfoIcon } from 'components';
 import { useWindowDimensions } from '../../utils/window.js';
 
 import styles from './Guide.module.css';
@@ -18,7 +20,14 @@ const Guide = () => {
             <Header windowWidth={windowDimensions.width} page={"guide"} />
             <div className={styles.content}>
                 <GuideHeader />
-                <div className={styles.questions}>
+                <div className={styles.mainText}>
+                    <p>
+                        This page is a guide to using and interpreting the forecast. All parts of the
+                        forecast are explained briefly on the <Link to={"/forecast"}>forecast page</Link> itself, shown
+                        by clicking the
+                        the <InfoIcon inactive={true} /> and <InfoIcon inactive={true} warning={true} /> icons.
+                        This page is reserved for some topics that deserve a more in-depth discussion.
+                    </p>
                     <p><h4 id="purpose">Site purpose</h4></p>
                     <p>
                         The purpose of this site is to provide carefully designed probabilistic
@@ -67,7 +76,7 @@ const Guide = () => {
                     </p>
                     <p><h4 id="nowcast-q">Nowcast</h4></p>
                     <p>
-                        Answer later.
+                        To be added
                     </p>
                 </div>
             </div>

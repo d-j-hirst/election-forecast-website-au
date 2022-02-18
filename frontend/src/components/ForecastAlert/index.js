@@ -4,8 +4,8 @@ import { Link } from 'react-router-dom';
 
 import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
-import info from './assets/info.png';
-import warning from './assets/warning.png';
+
+import InfoIcon from '../InfoIcon';
 
 import styles from './ForecastAlert.module.css';
 
@@ -20,7 +20,7 @@ const ForecastAlert = props => {
                    onClose={() => setShow(false)}
             >
                 <div className={styles.firstPara}>
-                    <img className={styles.largeInfo} src={info} alt='Information symbol'/>
+                    <InfoIcon size="large" inactive={true}/>
                     <div>
                         This is a <strong>general forecast</strong> report for the {props.forecast.electionName}.
                         It estimates how the election might turn out <strong>when it is held</strong>.
@@ -39,9 +39,9 @@ const ForecastAlert = props => {
                 </p>
                 <hr />
                 <p>
-                    <img className={styles.infoIcon} src={info} alt='Information symbol'/> icons below
+                    <InfoIcon inactive={true}/> icons below
                     can be clicked for explanations of what each part of the report means.<br />
-                    <img className={styles.warningIcon} src={warning} alt='Warning symbol'/> icons mark parts of the
+                    <InfoIcon inactive={true} warning={true}/> icons mark parts of the
                     report that are included for completeness but should be interpreted with caution - 
                     click the icons to read the warning.
                 </p>
