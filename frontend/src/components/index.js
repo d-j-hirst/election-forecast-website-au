@@ -16,6 +16,7 @@ export { default as GuideHeader } from './GuideSections/Header';
 export { default as GuideIntro } from './GuideSections/Intro';
 export { default as GuidePurpose } from './GuideSections/Purpose';
 export { default as GuideNowcast } from './GuideSections/Nowcast';
+export { default as GuideTcpScenarios } from './GuideSections/TcpScenarios';
 export { default as MethodologyHeader } from './Methodology/Header';
 export { default as CommentaryHeader } from './Commentary/Header';
 export { default as AboutHeader } from './About/Header';

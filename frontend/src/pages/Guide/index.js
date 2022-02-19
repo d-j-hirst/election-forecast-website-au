@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { useUserRequired } from 'utils/hooks';
-import { Header, GuideHeader, GuideIntro, GuidePurpose, GuideNowcast } from 'components';
+import { Header, GuideHeader, GuideIntro, GuidePurpose, GuideNowcast, GuideTcpScenarios } from 'components';
 import { useWindowDimensions } from '../../utils/window.js';
 
 import styles from './Guide.module.css';
@@ -22,6 +22,7 @@ const Guide = () => {
                     <GuideIntro />
                     <GuidePurpose />
                     <GuideNowcast />
+                    <GuideTcpScenarios />
                 </div>
             </div>
         </>

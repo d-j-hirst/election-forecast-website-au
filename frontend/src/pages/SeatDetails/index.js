@@ -56,7 +56,7 @@ const SeatDetails = () => {
 
   return (
     <>
-      <Header />
+      <Header windowWidth={windowDimensions.width} page={"forecast"} />
       <ForecastsNav election={code} mode={mode} />
       <div className={styles.content}>
         {forecastValid && seatIndex >= 0 &&
