@@ -12,6 +12,7 @@ const Guide = () => {
     // and protect on the backend as well!
     useUserRequired();
     const windowDimensions = useWindowDimensions();
+    document.title = `AEF - Forecast Guide`;
 
     return (
         <>

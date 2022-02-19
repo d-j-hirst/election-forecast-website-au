@@ -12,6 +12,7 @@ const Commentary = () => {
     // and protect on the backend as well!
     useUserRequired();
     const windowDimensions = useWindowDimensions();
+    document.title = `AEF - Commentary`;
 
     return (
         <>

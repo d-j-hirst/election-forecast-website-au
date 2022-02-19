@@ -14,6 +14,7 @@ const Methodology = () => {
     const windowDimensions = useWindowDimensions();
     
     console.log("something");
+    document.title = `AEF - Methodology`;
 
     return (
         <>
