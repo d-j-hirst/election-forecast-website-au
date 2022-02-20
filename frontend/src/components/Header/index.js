@@ -9,11 +9,13 @@ import Container from 'react-bootstrap/Container';
 import logo from './assets/logo.png'
 import styles from './Header.module.css';
 
+const SeparateBarThreshold = 750;
+
 const PageNav = props => {
     const thisClass = props.activePage === props.page ? styles.navselected : styles.navitem;
     const linkUrl = "/" + props.page;
     return (
-        <Nav.Link as={Link} to={linkUrl}>
+        <Nav.Link as={Link} to={linkUrl} className={styles.navlink}>
             <div className={thisClass}>
                 {props.text}
             </div>
@@ -27,7 +29,7 @@ const Header = props => (
             <Link to={'/'}>
                 <img className={styles.logo} src={logo} alt='Australian Election Forecasts logo'/>
             </Link>
-            {props.windowWidth >= 740 && 
+            {props.windowWidth >= SeparateBarThreshold && 
                 <div className={styles.mainLinkArea}>
                     <PageNav text="Forecasts" page="forecast" activePage={props.page} />
                     <PageNav text="Guide" page="guide" activePage={props.page} />
@@ -37,8 +39,8 @@ const Header = props => (
                 </div>
             }
         </div>
-        {props.windowWidth < 740 &&
-            <Navbar bg="light" expand="sm" className={styles.navbar}>
+        {props.windowWidth < SeparateBarThreshold &&
+            <Navbar bg="light" expand="md" className={styles.navbar}>
                 <Container>
                     <Nav defaultActiveKey={"/forecast/" + props.election + "/" + props.mode} className="m-auto">
                         <Navbar.Text><div className={styles.title}>Pages</div></Navbar.Text>

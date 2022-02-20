@@ -1,9 +1,9 @@
 import React, { useState }  from 'react';
-import { Link } from 'react-router-dom';
 
 import Alert from 'react-bootstrap/Alert';
 import Card from 'react-bootstrap/Card';
 import ListGroup from 'react-bootstrap/ListGroup';
+import { HashLink as Link } from 'react-router-hash-link';
 
 import TooltipPercentage from '../../General/TooltipPercentage';
 import ProbStatement from '../../General/ProbStatement';
@@ -205,7 +205,8 @@ const TcpExplainer = props => {
                 be interpreted with caution, and, in particular, conclusions should not be drawn by comparing
                 different TCP pairs to each 
             other. </strong>
-            For a more thorough explanation with examples, see this FAQ.
+            For a more thorough explanation with examples, 
+            see <Link to={"/guide#tcp-scenarios-q"}> this section of the forecast guide</Link>.
         </p>
         <hr/>
         <p>

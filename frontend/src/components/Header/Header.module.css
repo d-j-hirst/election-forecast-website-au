@@ -5,7 +5,7 @@
   justify-content: space-between;
 }
 
-@media (max-width: 740px){
+@media (max-width: 750px){
   .pageWrapper {
     justify-content: center;
   }
@@ -17,6 +17,7 @@
   flex-flow: row;
   vertical-align: middle;
   align-items: center;
+  padding: 0px 10px;
 }
 
 .title {
@@ -26,6 +27,24 @@
   padding-right: 10px;
   font-size: 18px;
   font-weight: bold;
+}
+
+@media (max-width: 800px){
+  .navlink {
+    padding: 0px 5px;
+  }
+}
+
+@media (min-width: 800px) and (max-width: 850px){
+  .navlink {
+    padding: 0px 10px;
+  }
+}
+
+@media (min-width: 850px){
+  .navlink {
+    padding: 0px 15px;
+  }
 }
 
 .navitem {
