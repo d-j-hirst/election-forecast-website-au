@@ -18,6 +18,8 @@ export { default as GuidePurpose } from './GuideSections/Purpose';
 export { default as GuideNowcast } from './GuideSections/Nowcast';
 export { default as GuideTcpScenarios } from './GuideSections/TcpScenarios';
 export { default as MethodologyHeader } from './Methodology/Header';
+export { default as MethodologyIntro } from './Methodology/Intro';
+export { default as MethodologyOutline } from './Methodology/Outline';
 export { default as CommentaryHeader } from './Commentary/Header';
 export { default as AboutHeader } from './About/Header';
 export { default as InfoIcon } from './General/InfoIcon';

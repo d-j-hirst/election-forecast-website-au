@@ -25,7 +25,7 @@ const NowcastAlert = props => {
                         This a <strong>nowcast</strong> report, not a forecast for the actual election.
                         This means it is an estimate of what the {props.forecast.electionName} might be like <strong>if it were held today</strong>.
                         The election result may be quite different when it is actually held.
-                        See <Link to={"/guide#nowcast-q"}>this section of the forecast guide</Link> for more information.
+                        See <Link to={"/guide#nowcast"}>this section of the forecast guide</Link> for more information.
                         (For a forecast for the election when it is held, see the&nbsp;
                         <Link to={"/forecast/" + props.code + "/regular"}>regular forecast</Link>.)
                     </div>

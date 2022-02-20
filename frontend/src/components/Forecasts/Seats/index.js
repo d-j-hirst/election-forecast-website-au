@@ -206,7 +206,7 @@ const TcpExplainer = props => {
                 different TCP pairs to each 
             other. </strong>
             For a more thorough explanation with examples, 
-            see <Link to={"/guide#tcp-scenarios-q"}> this section of the forecast guide</Link>.
+            see <Link to={"/guide#tcp-scenarios"}> this section of the forecast guide</Link>.
         </p>
         <hr/>
         <p>

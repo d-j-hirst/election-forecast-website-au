@@ -3,7 +3,7 @@ import React from 'react';
 const GuideTcpScenarios = props => {
     return (
         <>
-            <p><h4 id="tcp-scenarios-q">Two-candidate preferred (TCP) scenarios and tactical voting</h4></p>
+            <p><h4 id="tcp-scenarios">Two-candidate preferred (TCP) scenarios and tactical voting</h4></p>
             <p>
                 Under Australia's system of preferential voting, elections are decided
                 by excluding the candidate with the lowest vote, distributing the preference of
@@ -74,8 +74,8 @@ const GuideTcpScenarios = props => {
                     rather than the one they think most likely to win as that cannot be known in advance.
                 </li>
                 <li>Other cases not covered by the two points above have few historical results to compare with,
-                    but as a general rule, tend towards voting for the candidate you prefer rather than the
-                    one you think might be more likely to beat an opponent unless there's quite strong
+                    but as a general rule: tend towards voting for the candidate you prefer - rather than the
+                    one you think might be more likely to beat an opponent - unless there's quite strong
                     evidence that there's a large difference in their chances.
                 </li>
             </ul>

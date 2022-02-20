@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { useUserRequired } from 'utils/hooks';
-import { Header, MethodologyHeader } from 'components';
+import { Header, MethodologyHeader, MethodologyIntro, MethodologyOutline } from 'components';
 import { useWindowDimensions } from '../../utils/window.js';
 
 import styles from './Methodology.module.css';
@@ -21,6 +21,10 @@ const Methodology = () => {
             <Header windowWidth={windowDimensions.width} page={"methodology"} />
             <div className={styles.content}>
                 <MethodologyHeader />
+                <div className={styles.mainText}>
+                    <MethodologyIntro />
+                    <MethodologyOutline />
+                </div>
             </div>
         </>
     );
