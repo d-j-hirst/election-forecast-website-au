@@ -1,7 +1,8 @@
 import React from 'react';
 
 import { useUserRequired } from 'utils/hooks';
-import { Header, MethodologyHeader, MethodologyIntro, MethodologyOutline } from 'components';
+import { Header, MethodologyHeader, MethodologyIntro, MethodologyOutline,
+    MethodologyPollTrend } from 'components';
 import { useWindowDimensions } from '../../utils/window.js';
 
 import styles from './Methodology.module.css';
@@ -24,6 +25,7 @@ const Methodology = () => {
                 <div className={styles.mainText}>
                     <MethodologyIntro />
                     <MethodologyOutline />
+                    <MethodologyPollTrend />
                 </div>
             </div>
         </>
