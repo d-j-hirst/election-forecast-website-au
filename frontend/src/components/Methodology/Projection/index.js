@@ -5,7 +5,7 @@ import { ExtLink } from '../../../utils/extlink.js';
 const MethodologyPollTrend = props => {
     return (
         <>
-            <h4 id="projection">Projection to election results</h4>
+            <h4 id="projection">Projecting to election results</h4>
             <p>
                 The poll trends can be thought of as the model's best guess at where the
                 poll averages would be if very many polls were done. The polling average 
@@ -104,7 +104,7 @@ const MethodologyPollTrend = props => {
                 For new election with an as yet unknown result, the fundamentals may then be calculated based on the
                 known impacts of the factors found above.
             </p>
-            <h5 id="mixing">Calculation of projection parameters</h5>
+            <h5 id="mixing">Calculating the projection parameters</h5>
             <p>
                 The idea here is to take the fundamentals on one hand, and the poll trend on the other,
                 and mix them together as a weighted average to make the most accurate estimate possible.
@@ -156,7 +156,7 @@ const MethodologyPollTrend = props => {
                 These smoothed results are then the truly final values that are used to project from a poll trend to
                 a future election result.
             </p>
-            <h5 id="mixing">Validation of projection</h5>
+            <h5 id="mixing">Validating the projection</h5>
             <p>
                 Finally, it is important to validate that projection actually has predictive skill in predicting out-of-sample
                 data. Since one cannot simply run new elections to test this, cross-one-out validation is again used. For each
@@ -171,15 +171,15 @@ const MethodologyPollTrend = props => {
                 election result from the poll trend, and the error in this projection is recorded. Validation is focused on the TPP result
                 as it is the most critical for determining the overall election result, but other values are also checked.
                 Errors for alternative, more basic estimates are also recorded for comparison:
-                <ul>
-                    <li>
-                        A simple baseline value, 50-50 for TPP, the most recent election for minor parties/others, and the average of the
-                        most recent 6 elections for major party primaries.
-                    </li>
-                    <li>The median value of the poll trend only.</li>
-                    <li>The "fundamentals" value used in calculating the projection.</li>
-                </ul>
             </p>
+            <ul>
+                <li>
+                    A simple baseline value, 50-50 for TPP, the most recent election for minor parties/others, and the average of the
+                    most recent 6 elections for major party primaries.
+                </li>
+                <li>The median value of the poll trend only.</li>
+                <li>The "fundamentals" value used in calculating the projection.</li>
+            </ul>
             <p>
                 Focusing on TPP, the results are clear - for almost all time points the projection method results in a
                 significant reduction in the error compared to any of the more basic estimates. For example, at exactly one year out, the
@@ -199,18 +199,50 @@ const MethodologyPollTrend = props => {
                 The other exception is that for estimates <i>very close</i> to the election - within a week or less - the raw poll trend does
                 outperform the projection somewhat. **
             </p>
-            <h5 id="mixing">Formation of polling samples</h5>
+            <h5 id="mixing">Sampling elections from the projection</h5>
             <p>
-                Need for sampling
+                So far, the fundamentals, poll trend and projection can be used to create a probability distribution for
+                each party's FP vote and also the TPP. But simulating elections requires the complete picture - all the
+                FP votes need to add to 100 and also need to match with the TPP. Doing this requires the creation of an
+                <i>election sample</i>, a complete description of the vote shares of the significant political parties,
+                including FP votes, the TPP and also the preference flows from each party (which will be subject to some
+                random variation).
             </p>
             <p>
-               Minor parties
+                The more straightforward part of this step is that for minor parties (including the Greens), who get a first
+                preference vote randomly selected from the probability distribution in their FP projection, as determined above.
             </p>
             <p>
-               Tpp-first and Fp-first, combining them
+                In addition to the significant minor parties, some samples also have an "emerging party", representing the possibility
+                of a new party emerging and getting a sizeable percentage of the vote (as One Nation did significantly in 1998 QLD, and
+                to a lesser extent UAP in 2013 Federal). The probability of emergence and size of the vote are loosely extrapolated from
+                the few such events that have occurred in the past, and both are reduced as the election approaches - the rate of which is
+                based on a subjective judgment as, while it is obvious that the chances of a new party emerging should decrease as the
+                election approaches, there is too little data on the matter to even roughly estimate how much.
             </p>
             <p>
-               Normalisation and bridge to next section.
+                With the major parties, it is necessary to coordinate their FPs with the TPP so that the TPP can come from a reasonable
+                preference flow. There are two approaches used to achieve this, either by using the FPs and ignoring the TPP projection
+                (<i>FP-first</i> approach) or by using the TPP projection and ignoring the FPs (<i>TPP-first</i> approach). These both
+                have advantages and disadvantages, so for each sample either one or the other is picked at random.
+            </p>
+            <ul>
+                <li>
+                    FP-first: Both ALP and LNP primaries are projected. The FP of all parties are normalised so that the total
+                    is equal to 100%, then each minor party is assigned a preference flow based on its preference flow at the
+                    previous election (or, if that is not available, the most comparable election available), with random variance
+                    according to the historic variability in that preference flow. From this a TPP is calculated at used in the
+                    election sample.
+                </li>
+                <li>
+                    TPP-first: The TPP value is projected. Preference flows for the minor parties are calculated as for the FP-first,
+                    including historical variance, but then the preferences are added together and major parties are assigned so that
+                    the match the TPP.
+                </li>
+            </ul>
+            <p>
+                Once the major party and TPP vote shares have been determined, there is now a coherent election sample that
+                can be used as a basis for an election simulation.
             </p>
         </>
     );
