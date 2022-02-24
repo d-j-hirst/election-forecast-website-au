@@ -2,7 +2,7 @@ import React from 'react';
 
 import { useUserRequired } from 'utils/hooks';
 import { Header, MethodologyHeader, MethodologyIntro, MethodologyOutline,
-    MethodologyPollTrend, MethodologyProjection } from 'components';
+    MethodologyPollTrend, MethodologyProjection, MethodologySimulation } from 'components';
 import { useWindowDimensions } from '../../utils/window.js';
 
 import styles from './Methodology.module.css';
@@ -27,6 +27,7 @@ const Methodology = () => {
                     <MethodologyOutline />
                     <MethodologyPollTrend />
                     <MethodologyProjection />
+                    <MethodologySimulation />
                 </div>
             </div>
         </>

@@ -22,6 +22,7 @@ export { default as MethodologyIntro } from './Methodology/Intro';
 export { default as MethodologyOutline } from './Methodology/Outline';
 export { default as MethodologyPollTrend } from './Methodology/PollTrend';
 export { default as MethodologyProjection } from './Methodology/Projection';
+export { default as MethodologySimulation } from './Methodology/Simulation';
 export { default as CommentaryHeader } from './Commentary/Header';
 export { default as AboutHeader } from './About/Header';
 export { default as InfoIcon } from './General/InfoIcon';

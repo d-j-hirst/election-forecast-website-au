@@ -203,8 +203,8 @@ const MethodologyPollTrend = props => {
             <p>
                 So far, the fundamentals, poll trend and projection can be used to create a probability distribution for
                 each party's FP vote and also the TPP. But simulating elections requires the complete picture - all the
-                FP votes need to add to 100 and also need to match with the TPP. Doing this requires the creation of an
-                <i>election sample</i>, a complete description of the vote shares of the significant political parties,
+                FP votes need to add to 100 and also need to match with the TPP. Doing this requires the creation of
+                an <i>election sample</i>, a complete description of the vote shares of the significant political parties,
                 including FP votes, the TPP and also the preference flows from each party (which will be subject to some
                 random variation).
             </p>
