@@ -28,7 +28,7 @@ const MethodologyPollTrend = props => {
                 The first step of this projection procedure is to have a baseline value for the
                 result that would be expected if there were <i>no</i> polls. This is called
                 a <i>fundamentals</i> projection. Fundamentals are analysed for a number
-                of different categories of parties and votes (known as party groups). The party groups are
+                of different categories of parties and votes (known as party categories). The party categories are
                 chosen according to similar electoral behaviour, and some do overlap:
             </p>
             <ul>
@@ -44,7 +44,7 @@ const MethodologyPollTrend = props => {
                     (either not polled, or only polling very low numbers).</li>
             </ul>
             <p>
-                For each of these party groups, the relationship between certain "fundamental" factors and the
+                For each of these party categories, the relationship between certain "fundamental" factors and the
                 eventual outcome are analysed. While the economic condition is often considered in such analyses,
                 especially overseas, both this site and others (such
                 as <ExtLink href="https://armariuminterreta.com/2021/08/05/australian-economy-electoral-impact/">this analysis 
@@ -72,7 +72,7 @@ const MethodologyPollTrend = props => {
             <p>
                 The values of the above factors are collected for all elections since 1990
                 and <ExtLink href="https://en.wikipedia.org/wiki/Quantile_regression">quantile regression</ExtLink> is
-                used to find the best estimate for the conditional median of the party group's election vote share. 
+                used to find the best estimate for the conditional median of the party category's election vote share. 
                 (Quantile regression differs from standard linear regression in that it minimizes the average error rather than
                 the average squared error, and therefore is less affected by outliers.)
             </p>

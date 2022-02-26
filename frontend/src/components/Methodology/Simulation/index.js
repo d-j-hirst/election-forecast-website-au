@@ -15,7 +15,7 @@ const MethodologyPollTrend = props => {
                 and then collating the results across all the simulation into statistics for display on the
                 site.
             </p>
-            <h5 id="two-party-seat">Regional analysis</h5>
+            <h5 id="two-party-seat">Regional analysis of two-party-preferred (TPP) vote share</h5>
             <p>
                 Many elections have different swings in different areas. (For example, the 2019 Federal Election
                 had a swing to the ALP in Victoria but to the LNP in Queensland.) In federal elections,
@@ -58,7 +58,7 @@ const MethodologyPollTrend = props => {
                 as it is desired that these swings do not change the national TPP from the election sample. Finally the swing
                 deviations are added to the election sample's national swing to give the regional swing for the simulation.
             </p>
-            <h5 id="two-party-seat">Two-party seat vote</h5>
+            <h5 id="two-party-seat">Two-party-preferred (TPP) seat vote</h5>
             <p>
                 Following the generation of each region's TPP swings, the next step of the seat simulation is to generate a
                 two-party-preferred result for each seat. (This is done even for seats where the the final two were not
@@ -94,6 +94,61 @@ const MethodologyPollTrend = props => {
                 the TPPs are adjusted linearly so that the seat average TPP for each region matches the overall TPP.
                 (Keep in mind that the regional TPPs have already been adjusted to match the election TPP, so this
                 adjustment also brings the seat TPPs in line with the election TPP.)
+            </p>
+            <h5 id="two-party-seat">First preference (FP) seat vote</h5>
+            <p>
+                The model simulates TPP votes first before FP as the former are a lot easier to work with and more
+                reliable to simulate. However, because this is a comprehensive model, and for the simulation of
+                contests that may not result in a TPP contest, FP votes are also simulated. This process is quite
+                involved as there are a lot of different variables to consider and many corner cases to cover,
+                so this page will only give an outline. There are also more judgment calls in this section than
+                others as there is relatively little historical data on the performance of third parties and
+                independents in some situations.
+            </p>
+            <p>
+                FP votes for non-major parties including independents are simulated first. The behaviour of FP votes
+                in previous elections is analysed for each party category (see "Fundamentals above") and then applied
+                to the previous election's vote. This includes, where appropriate, changes from previous election
+                vote share based on incumbency, previous vote share, and the level of variability in the vote (for
+                random variation).
+            </p>
+            <p>
+                For already prominent independents, the possibility that the independent may not recontest is also considered.
+                The chance to recontest is based on historical analysis and also some estimation about how this
+                probability might change as the election approaches as reliable historical data is hard to find.
+                Candidates that announce they are retiring/not recontesting are removed from consideration while
+                those announcing they will contest have their recontest chances greatly increased (but not quite to 100%).
+            </p>
+            <p>
+                The potential for as-yet-unrecognised independents to emerge and gain a significant vote is
+                also considered. Previous elections have been analysed for the typical rates that independent
+                candidates achieve certain levels of the vote, and how this varies by seat type (inner/outer urban,
+                provincial or rural), the previous performance of non-major parties in the seat,
+                and whether the election is a federal or state election.
+            </p>
+            <p>
+                Known independent candidates that are prominent, but are not yet incumbents, are treated similarly.
+                (There is some judgment about whether a candidate is considered prominent or not, but it generally
+                comes down to whether they are getting prominent media coverage and have a significant campaign team.)
+                Seat betting odds and seat polls are used here (and only here!) to help inform of the likely performance
+                of the prominent independent candidates. Slight historical bias overestimating independents' support in
+                seat betting and polling, and a considerable margin of error considering the low accuracy of Australian
+                seat polling (see <ExtLink href="https://kevinbonham.blogspot.com/2018/06/is-seat-polling-utterly-useless.html">this
+                analysis</ExtLink> by Kevin Bonham). This also applies to certain quasi-independent candidates
+                who technically stand for a party but are largely running on their personal appeal.
+            </p>
+            <p>
+                Parties in the "populist" category, which includes emerging parties, are considered to not be running in every
+                seat. Rather, they are assigned a random number of seats based on the number of seats they have contested
+                historically (plus random variation), and only get votes in those seats. Additionally, the votes of such parties
+                are calibrated on a seat-by-seat basis according to how parties of similar ideology have done in that or similar
+                seats historically - to One Nation in the case of rightist parties and to the Australian Democrats in the case of
+                centrist parties. Unidentified emerging parties are randomly decided between being centrist, rightist or somewhere
+                in between. (Some might wonder why the lack of a leftist "populist" party - the simple answer is that we've
+                never really had one so there's no way to assess where they might be most popular.)
+            </p>
+            <p>
+                Major party stuff
             </p>
             <p>
                 <ExtLink href="https://armariuminterreta.com/2021/08/05/australian-economy-electoral-impact/">this analysis 
