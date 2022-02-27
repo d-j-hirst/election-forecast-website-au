@@ -15,7 +15,7 @@ const MethodologyPollTrend = props => {
                 and then collating the results across all the simulation into statistics for display on the
                 site.
             </p>
-            <h5 id="two-party-seat">Regional analysis of two-party-preferred (TPP) vote share</h5>
+            <h5 id="tpp-region">Regional analysis of two-party-preferred (TPP) vote share</h5>
             <p>
                 Many elections have different swings in different areas. (For example, the 2019 Federal Election
                 had a swing to the ALP in Victoria but to the LNP in Queensland.) In federal elections,
@@ -58,7 +58,7 @@ const MethodologyPollTrend = props => {
                 as it is desired that these swings do not change the national TPP from the election sample. Finally the swing
                 deviations are added to the election sample's national swing to give the regional swing for the simulation.
             </p>
-            <h5 id="two-party-seat">Two-party-preferred (TPP) seat vote</h5>
+            <h5 id="tpp-seat">Two-party-preferred (TPP) seat vote share</h5>
             <p>
                 Following the generation of each region's TPP swings, the next step of the seat simulation is to generate a
                 two-party-preferred result for each seat. (This is done even for seats where the the final two were not
@@ -95,7 +95,7 @@ const MethodologyPollTrend = props => {
                 (Keep in mind that the regional TPPs have already been adjusted to match the election TPP, so this
                 adjustment also brings the seat TPPs in line with the election TPP.)
             </p>
-            <h5 id="two-party-seat">First preference (FP) seat vote</h5>
+            <h5 id="fp-seat">First preference (FP) seat vote share</h5>
             <p>
                 The model simulates TPP votes first before FP as the former are a lot easier to work with and more
                 reliable to simulate. However, because this is a comprehensive model, and for the simulation of
@@ -106,14 +106,16 @@ const MethodologyPollTrend = props => {
                 independents in some situations.
             </p>
             <p>
-                FP votes for non-major parties including independents are simulated first. The behaviour of FP votes
+                FP votes for non-major parties including independents and a generic "others" category are simulated first. The behaviour of FP votes
                 in previous elections is analysed for each party category (see "Fundamentals above") and then applied
                 to the previous election's vote. This includes, where appropriate, changes from previous election
                 vote share based on incumbency, previous vote share, and the level of variability in the vote (for
                 random variation).
             </p>
+            <h6 id="fp-seat-">Independents</h6>
             <p>
-                For already prominent independents, the possibility that the independent may not recontest is also considered.
+                For iindependents who are either incumbent, or obtained a substantial vote share in the previous election,
+                the possibility that the independent may not recontest is also considered.
                 The chance to recontest is based on historical analysis and also some estimation about how this
                 probability might change as the election approaches as reliable historical data is hard to find.
                 Candidates that announce they are retiring/not recontesting are removed from consideration while
@@ -137,19 +139,43 @@ const MethodologyPollTrend = props => {
                 analysis</ExtLink> by Kevin Bonham). This also applies to certain quasi-independent candidates
                 who technically stand for a party but are largely running on their personal appeal.
             </p>
+            <h6 id="fp-seat-">"Populist" parties and ideology</h6>
             <p>
                 Parties in the "populist" category, which includes emerging parties, are considered to not be running in every
                 seat. Rather, they are assigned a random number of seats based on the number of seats they have contested
-                historically (plus random variation), and only get votes in those seats. Additionally, the votes of such parties
+                historically (plus random variation), and only get votes in seats in a randomised fashion that heavily favours
+                seats that they are likely to get higher vote shares in. Additionally, the votes of such parties
                 are calibrated on a seat-by-seat basis according to how parties of similar ideology have done in that or similar
                 seats historically - to One Nation in the case of rightist parties and to the Australian Democrats in the case of
                 centrist parties. Unidentified emerging parties are randomly decided between being centrist, rightist or somewhere
                 in between. (Some might wonder why the lack of a leftist "populist" party - the simple answer is that we've
                 never really had one so there's no way to assess where they might be most popular.)
             </p>
+            <h6 id="fp-seat-">Major party FP votes</h6>
             <p>
-                Major party stuff
+                Having now simulated a set of minor party FP results for the seat, and a TPP result, the model
+                now calculates the major party FP votes implied from those results. This requires preference flows to be
+                calculated for each party. Since preference flows tend to differ from seat to seat and from election to
+                election, these must also be simulated to achieve this. The preference flow from the election sample is
+                used as a base, then adjusted for whether the preference flow in the seat was above or below the national
+                average in the previous election, and then further random variability is applied. Using this new
+                calculated preference flow result, the total preferences for each party are calculated and the major parties
+                are allocated the FP vote share required to match the TPP result.
             </p>
+            <h6 id="fp-seat-">Reconciling the simulated results with the election sample</h6>
+            <p>
+                Finally, once all the FP votes have been simulated, their totals across the whole election will usually
+                no longer match those in the election sample. In order for the simulation to be an accurate reflection of
+                the election sampling, the seat FPs need to be adjusted to fit the original sample. While the actual process is
+                quite involved, mainly it proceeds by adjusting minor party votes proportionally up or down across all seats, and then
+                recalculating the major party TPPs for each seat. This process is repeated 5 times, at which point the difference
+                between the FP votes for the election sample and simulation are usually on average below 0.1% (though rare cases
+                where a minor party gets a much higher share of the FP vote will be higher than this). One detail is
+                that in seats where a candidate is significantly higher that the general party vote, this seat will not
+                be impacted as much by the adjusment. This particularly affects independents who shouldn't have their vote
+                projections heavily reduced because the generic Others vote was too high.
+            </p>
+            <h5 id="simulation-aggregation">Aggregation of simulation results</h5>
             <p>
                 <ExtLink href="https://armariuminterreta.com/2021/08/05/australian-economy-electoral-impact/">this analysis 
                     by Armarium Interreta</ExtLink>
