@@ -176,10 +176,6 @@ const MethodologyPollTrend = props => {
                 projections heavily reduced because the generic Others vote was too high.
             </p>
             <h5 id="simulation-aggregation">Aggregation of simulation results</h5>
-            <p>
-                <ExtLink href="https://armariuminterreta.com/2021/08/05/australian-economy-electoral-impact/">this analysis 
-                    by Armarium Interreta</ExtLink>
-            </p>
         </>
     );
 }

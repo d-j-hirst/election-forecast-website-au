@@ -41,6 +41,7 @@ const ForecastsNav = props => (
                 <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
                         <ElectionNav text="Federal" election="2022fed" mode={props.mode} activeElection={props.election} />
                         <ElectionNav text="Victoria" election="2022vic" mode={props.mode} activeElection={props.election} />
+                        <ElectionNav text="South Australia" election="2022sa" mode={props.mode} activeElection={props.election} />
                 </Navbar.Collapse>
             </Nav>
         </Container>

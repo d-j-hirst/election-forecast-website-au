@@ -30,6 +30,7 @@ const colours = [["ALP", ["#FF0000", "#FF4444", "#FFAAAA", "#FFCCCC"]],
                  ["GRN", ["#008800", "#22CC00", "#66FF44", "#BBFF99"]],
                  ["ONP", ["#AA6600", "#FF7F00", "#FFAB58", "#FFC388"]],
                  ["UAP", ["#886600", "#C2B615", "#EBDF43", "#F0E87C"]],
+                 ["SAB", ["#886600", "#C2B615", "#EBDF43", "#F0E87C"]],
                  ["OTH", ["#777777", "#999999", "#C5C5C5", "#E0E0E0"]]];
 
 const VoteTrendTooltip = ({ active, payload, label }) => {
@@ -79,9 +80,14 @@ const VoteTrendChart = props => {
         return null;
     }
 
-    const getPartyIndexFromAbbr = abbr => jsonMapReverse(props.forecast.partyAbbr, abbr, undefined, a => a >= -1);
+    const getPartyIndexFromAbbr = abbr => jsonMapReverse(props.forecast.partyAbbr, abbr, null, a => a >= -1);
 
     const partyHasFpTrend = abbr => {
+        console.log(props.forecast.partyAbbr)
+        console.log(props.forecast.fpTrend)
+        console.log(abbr)
+        console.log(getPartyIndexFromAbbr(abbr))
+        console.log(props.forecast.fpTrend.find(a => a[0] === getPartyIndexFromAbbr(abbr)))
         return props.forecast.fpTrend.find(a => a[0] === getPartyIndexFromAbbr(abbr)) !== undefined;
     }
     
@@ -179,6 +185,7 @@ const VoteTrendChart = props => {
     const setGrnFp = () => {setGenericFp("GRN");};
     const setOnpFp = () => {setGenericFp("ONP");};
     const setUapFp = () => {setGenericFp("UAP");};
+    const setSabFp = () => {setGenericFp("SAB");};
     const setOthFp = () => {setGenericFp("OTH");};
 
     const pollTypeDesc = pollType => {
@@ -206,6 +213,10 @@ const VoteTrendChart = props => {
                 {
                     partyHasFpTrend("UAP") &&
                     <Dropdown.Item as="button" onClick={setUapFp}>Party: UAP first preferences</Dropdown.Item>
+                }
+                {
+                    partyHasFpTrend("SAB") &&
+                    <Dropdown.Item as="button" onClick={setSabFp}>Party: SAB first preferences</Dropdown.Item>
                 }
                 <Dropdown.Item as="button" onClick={setOthFp}>Party: OTH first preferences</Dropdown.Item>
             </DropdownButton>

@@ -1,7 +1,7 @@
 import {jsonMap} from './jsonmap.js'
 
 const isKnownParty = party => {
-    return ['alp', 'grn', 'kap', 'lnp', 'onp', 'oth', 'uap', 'ca', 'ind'].some(el => el === party.toLowerCase());
+    return ['alp', 'grn', 'kap', 'lnp', 'onp', 'oth', 'uap', 'ca', 'sab', 'ind'].some(el => el === party.toLowerCase());
 };
 
 export const standardiseParty = (party, forecast) => {
@@ -15,6 +15,7 @@ export const standardiseParty = (party, forecast) => {
 export const partyColorClass = (party, forecast) => {
     let sParty = standardiseParty(party);
     if (sParty === 'ca') sParty = 'onp';
+    if (sParty === 'sab') sParty = 'onp';
     return sParty;
 }
 

@@ -4,8 +4,9 @@ export const jsonMap = (map, val, default_result=0) => {
     return found[1];
 };
 
-export const jsonMapReverse = (map, val, default_result=0, restrict=undefined) => {
-    const found = map.find(el => el[1] === val && (restrict === undefined || restrict(el[0])));
+export const jsonMapReverse = (map, val, default_result=null, restrict=null) => {
+    const found = map.find(el => el[1] === val && (restrict === null || restrict(el[0])));
+    console.log(found);
     if (found === undefined) return default_result;
     return found[0];
 };

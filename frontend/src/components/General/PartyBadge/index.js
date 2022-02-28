@@ -92,6 +92,15 @@ export const CaBadge = props => {
     )
 };
 
+export const SabBadge = props => {
+    const classes = `${styles['party-badge']} ${styles['onp-badge']}`;
+    return (
+        <TooltipWrapper tooltipText="SA Best">
+            <span className={classes}>SAB</span>
+        </TooltipWrapper>
+    )
+};
+
 export const UapBadge = props => {
     const classes = `${styles['party-badge']} ${styles['uap-badge']}`;
     return (
@@ -109,6 +118,7 @@ export const SmartBadge = props => {
     if (partyName === "indx") return <IndXBadge text={props.text} />
     if (partyName === "kap") return <KapBadge/>
     if (partyName === "ca") return <CaBadge/>
+    if (partyName === "sab") return <SabBadge/>
     if (partyName === "lnp" || partyName === "lib") return <LnpBadge/>
     if (partyName === "onp") return <OnpBadge/>
     if (partyName === "uap") return <UapBadge/>
