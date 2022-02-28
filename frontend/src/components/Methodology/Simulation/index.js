@@ -176,6 +176,12 @@ const MethodologyPollTrend = props => {
                 projections heavily reduced because the generic Others vote was too high.
             </p>
             <h5 id="simulation-aggregation">Aggregation of simulation results</h5>
+            <p>
+                There's not too much to say about this. For each simulation, the results of each seat (primaries, tcp results)
+                are recorded along with many aggregate results (total seats won, total vote share, etc.) and after all simulations
+                are complete, percentiles, averages and some other statistics are compiled. These are then stored and uploaded to the
+                server, from where the website can via either the latest report or the archives.
+            </p>
         </>
     );
 }
