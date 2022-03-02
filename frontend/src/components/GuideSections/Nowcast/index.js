@@ -21,10 +21,10 @@ const GuideNowcast = props => {
                 actual election (especially in federal politics), and the nowcast does not take
                 this into account. It is also not testable, as
                 the hypothetical election it is "predicting" for never actually occurs (except
-                when it is run immediately before the real election, of course). Finally, it
-                is arguable that the presence of an election campaign would influence the
-                polling before an actual election, and that polls at any given point in time
-                would actually be saying something different were an election really about to be held.
+                when it is run immediately before the real election). Finally, the presence of
+                an election campaign might influence the
+                polling before an actual election, so that polls at any given point in time
+                might actually be saying something different were an election really about to be held.
             </p>
             <p>
                 So, why pay attention to a nowcast at all? It's still good as a measure

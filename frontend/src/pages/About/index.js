@@ -19,7 +19,9 @@ const About = () => {
             <Header windowWidth={windowDimensions.width} page={"about"} />
             <div className={styles.content}>
                 <AboutHeader />
-                <AboutTheSite />
+                <div className={styles.mainText}>
+                    <AboutTheSite />
+                </div>
             </div>
         </>
     );

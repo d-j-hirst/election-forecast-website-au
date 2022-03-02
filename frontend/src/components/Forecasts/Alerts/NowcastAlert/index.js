@@ -6,6 +6,7 @@ import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
 
 import InfoIcon from '../../../General/InfoIcon';
+import { ExtLink } from '../../../../utils/extlink.js';
 
 import styles from './NowcastAlert.module.css';
 
@@ -37,7 +38,7 @@ const NowcastAlert = props => {
                     For more information on how these nowcasts are constructed, check 
                     the <Link to={"/guide"}>forecast guide</Link>,
                     the <Link to={"/methodology"}>methodology&nbsp;page</Link> or
-                    the <a href="https://github.com/d-j-hirst/aus-polling-analyser">source code on Github</a>.
+                    the <ExtLink href="https://github.com/d-j-hirst/aus-polling-analyser">source code on Github</ExtLink>.
                 </p>
                 <hr />
                 <p>

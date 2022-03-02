@@ -31,7 +31,7 @@ const GuideIntro = props => {
                 <li>
                     "The polls were wrong last time, so they don't mean anything." This is an
                     example of a hasty generalisation. In fact, in the vast majority of Australian elections
-                    were a party was leading in the polls immediately before the election, they go on to
+                    where a party was leading in the polls immediately before the election, they go on to
                     form government after the election.
                 </li>
                 <li>
