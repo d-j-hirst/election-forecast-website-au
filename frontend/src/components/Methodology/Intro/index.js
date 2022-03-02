@@ -1,4 +1,5 @@
 import React from 'react';
+import Email from '../../General/Email';
 
 const MethodologyIntro = props => {
     // Light obfuscation to make this a little harder for bots to figure out.
@@ -19,7 +20,7 @@ const MethodologyIntro = props => {
                 wanting to know the precise details the source code is
                 available <a href="https://github.com/d-j-hirst/aus-polling-analyser">on Github</a> or,
                 for specific questions, feel free
-                to <a href={eFull}> email</a> the site's author.
+                to <Email>email</Email> the site's author.
             </p>
         </>
     );

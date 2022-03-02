@@ -2,6 +2,7 @@ import React from 'react';
 
 import InfoIcon from '../../General/InfoIcon';
 import { ExtLink } from '../../../utils/extlink.js';
+import Email from '../../General/Email';
 
 const AboutTheSite = props => {
     return (
@@ -51,6 +52,17 @@ const AboutTheSite = props => {
                     {" "}and the <ExtLink href="https://github.com/d-j-hirst/election-forecast-website-au">website</ExtLink>.
                 </li>
             </ul>
+            <h4 id="introduction">About the Author</h4>
+            <p>
+                The author of this site is based in Melbourne, is interested in politics as
+                well as forecasting in various disciplines, and has a PhD in biochemistry.
+                He has never been a member of, or associated with, a political party, but tends to vote for parties
+                to the left of the political centre, and is an occasional commenter on
+                political sites under the nickname "dendrite". If you have any questions about the 
+                website, forecasting or Australian political system in general, feel free to
+                contact via <Email>email</Email> him.
+            </p>
+            <h4 id="introduction">Acknowledgements</h4>
         </>
     );
 }
