@@ -9,7 +9,7 @@ import { jsonMap } from '../../../../utils/jsonmap.js'
 
 import styles from './GovernmentFormationChart.module.css';
 
-const round1 = num => num === null ? null : Math.round(num * 10) / 10;
+const round1 = num => (num === null || num === undefined ? 0 : Math.round(num * 10) / 10);
 
 const RADIAN = Math.PI / 180;
 
@@ -18,19 +18,21 @@ const GovernmentFormationChart = props => {
 
     const partyOneName = jsonMap(props.forecast.partyAbbr, 0);
     const otherWins = 100 - jsonMap(props.forecast.overallWinPc, 0) - jsonMap(props.forecast.overallWinPc, 1)
-    const partyOneVals = [jsonMap(props.forecast.overallWinPc, 0),
+    let partyOneVals = [jsonMap(props.forecast.overallWinPc, 0),
                      jsonMap(props.forecast.majorityWinPc, 0),
                      jsonMap(props.forecast.minorityWinPc, 0),
                      jsonMap(props.forecast.mostSeatsWinPc, 0)];
+    partyOneVals = partyOneVals.map(a => a === undefined || a === null ? 0 : a);
     const partyOneTies = Math.max(0, partyOneVals[0] - partyOneVals[1] - partyOneVals[2] - partyOneVals[3]);
     const partyTwoName = jsonMap(props.forecast.partyAbbr, 1);
-    const partyTwoVals = [jsonMap(props.forecast.overallWinPc, 1),
+    let partyTwoVals = [jsonMap(props.forecast.overallWinPc, 1),
                      jsonMap(props.forecast.majorityWinPc, 1),
                      jsonMap(props.forecast.minorityWinPc, 1),
                      jsonMap(props.forecast.mostSeatsWinPc, 1)];
+                     partyTwoVals = partyTwoVals.map(a => a === undefined || a === null ? 0 : a);
     const partyTwoTies = Math.max(0, partyTwoVals[0] - partyTwoVals[1] - partyTwoVals[2] - partyTwoVals[3]);
     const allTies = partyOneTies + partyTwoTies;
-    
+
     const data = [
         { name: partyOneName + ' majority', value: round1(partyOneVals[1]) },
         { name: partyOneName + ' minority', value: round1(partyOneVals[2]) },
@@ -41,6 +43,8 @@ const GovernmentFormationChart = props => {
         { name: partyTwoName + ' minority', value: round1(partyTwoVals[2]) },
         { name: partyTwoName + ' majority', value: round1(partyTwoVals[1]) },
     ]
+
+    console.log(data);
 
     const colors = ['#dc3545', '#ec7480', '#f5a3ab', '#885588', '#888888', '#87b2e7', '#5792da', '#1467cc']
     
