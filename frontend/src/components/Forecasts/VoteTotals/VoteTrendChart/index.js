@@ -83,11 +83,6 @@ const VoteTrendChart = props => {
     const getPartyIndexFromAbbr = abbr => jsonMapReverse(props.forecast.partyAbbr, abbr, null, a => a >= -1);
 
     const partyHasFpTrend = abbr => {
-        console.log(props.forecast.partyAbbr)
-        console.log(props.forecast.fpTrend)
-        console.log(abbr)
-        console.log(getPartyIndexFromAbbr(abbr))
-        console.log(props.forecast.fpTrend.find(a => a[0] === getPartyIndexFromAbbr(abbr)))
         return props.forecast.fpTrend.find(a => a[0] === getPartyIndexFromAbbr(abbr)) !== undefined;
     }
     
@@ -104,73 +99,84 @@ const VoteTrendChart = props => {
 
     let thisTrend = undefined;
     let thisPolls = undefined;
+    const period = props.forecast.trendPeriod;
+    const finalDay = props.forecast.finalTrendValue;
+    const dateParts = props.forecast.trendStartDate.split("-");
+    const date = new Date(parseInt(dateParts[0]), parseInt(dateParts[1]) - 1, parseInt(dateParts[2]));
+    let trendData = undefined;
+    let maxVal = undefined;
+    let minVal = undefined;
+    let tickDistance = undefined;
+    let minTick = undefined;
+    let numTicks = undefined;
+    let ticks = undefined;
     if (!isFp) {
         thisTrend = deepCopy(props.forecast.tppTrend);
         thisPolls = deepCopy(props.forecast.polls["@TPP"]);
     }
     else {
-        thisTrend = deepCopy(getTrendFromAbbr(party));
-        thisPolls = deepCopy(props.forecast.polls[party]);
-    }
-    const period = props.forecast.trendPeriod;
-    const finalDay = props.forecast.finalTrendValue;
-    const dateParts = props.forecast.trendStartDate.split("-");
-    const date = new Date(parseInt(dateParts[0]), parseInt(dateParts[1]) - 1, parseInt(dateParts[2]));
-    if (!isFp && party === "LNP") {
-        thisTrend = thisTrend.map(spread => [...spread].reverse().map(a => 100 - a));
-        thisPolls = thisPolls.map(invertPoll);
-    }
-    let trendData = undefined;
-    trendData = thisTrend.map((spread, index) => {
-        return {
-            "date": dateToStr(addDays(date, index * period)),
-            "day": index * period,
-            "median": [round2(spread[3])],
-            "25-75": [round2(spread[2]), round2(spread[4])],
-            "5-95": [round2(spread[1]), round2(spread[5])],
-            "1-99": [round2(spread[0]), round2(spread[6])]
-        };
-    });
-    trendData.at(-1).date = dateToStr(addDays(date, finalDay));
-    trendData.at(-1).day = finalDay;
-    for (let poll of thisPolls) {
-        if (party === "OTH") break;
-        let trendIndex = Math.floor((poll.day - period / 2) / period) + 1;
-        if (poll.day >= finalDay) trendIndex = trendData.length - 1;
-        let pollVal = poll[pollType];
-        if (pollVal === null) continue;
-        // not the most elegant way of doing this, but it'll work for now.
-        // Add more lines if needed to handle more polls in a single time period.
-        if (trendData[trendIndex].hasOwnProperty("poll5")) {
-            trendData[trendIndex]["poll6"] = round1(pollVal);
-        } else if (trendData[trendIndex].hasOwnProperty("poll4")) {
-            trendData[trendIndex]["poll5"] = round1(pollVal);
-        } else if (trendData[trendIndex].hasOwnProperty("poll3")) {
-            trendData[trendIndex]["poll4"] = round1(pollVal);
-        } else if (trendData[trendIndex].hasOwnProperty("poll2")) {
-            trendData[trendIndex]["poll3"] = round1(pollVal);
-        } else if (trendData[trendIndex].hasOwnProperty("poll")) {
-            trendData[trendIndex]["poll2"] = round1(pollVal);
-        } else {
-            trendData[trendIndex]["poll"] = round1(pollVal);
+        const tempTrend = getTrendFromAbbr(party);
+        if (tempTrend !== undefined) {
+            thisTrend = deepCopy(tempTrend);
+            thisPolls = deepCopy(props.forecast.polls[party]);
         }
-        if (!trendData[trendIndex].hasOwnProperty("pollDesc")) trendData[trendIndex]["pollDesc"] = "";
-        else trendData[trendIndex]["pollDesc"] += ";";
-        const pollster = poll.pollster.replace("Newspoll2", "Newspoll");
-        trendData[trendIndex]["pollDesc"] += `${pollster}, ${round1(pollVal)}`;
+    }
+    if (thisTrend !== undefined) {
+        if (!isFp && party === "LNP") {
+            thisTrend = thisTrend.map(spread => [...spread].reverse().map(a => 100 - a));
+            thisPolls = thisPolls.map(invertPoll);
+        }
+        trendData = thisTrend.map((spread, index) => {
+            return {
+                "date": dateToStr(addDays(date, index * period)),
+                "day": index * period,
+                "median": [round2(spread[3])],
+                "25-75": [round2(spread[2]), round2(spread[4])],
+                "5-95": [round2(spread[1]), round2(spread[5])],
+                "1-99": [round2(spread[0]), round2(spread[6])]
+            };
+        });
+        trendData.at(-1).date = dateToStr(addDays(date, finalDay));
+        trendData.at(-1).day = finalDay;
+        for (let poll of thisPolls) {
+            if (party === "OTH") break;
+            let trendIndex = Math.floor((poll.day - period / 2) / period) + 1;
+            if (poll.day >= finalDay) trendIndex = trendData.length - 1;
+            let pollVal = poll[pollType];
+            if (pollVal === null) continue;
+            // not the most elegant way of doing this, but it'll work for now.
+            // Add more lines if needed to handle more polls in a single time period.
+            if (trendData[trendIndex].hasOwnProperty("poll5")) {
+                trendData[trendIndex]["poll6"] = round1(pollVal);
+            } else if (trendData[trendIndex].hasOwnProperty("poll4")) {
+                trendData[trendIndex]["poll5"] = round1(pollVal);
+            } else if (trendData[trendIndex].hasOwnProperty("poll3")) {
+                trendData[trendIndex]["poll4"] = round1(pollVal);
+            } else if (trendData[trendIndex].hasOwnProperty("poll2")) {
+                trendData[trendIndex]["poll3"] = round1(pollVal);
+            } else if (trendData[trendIndex].hasOwnProperty("poll")) {
+                trendData[trendIndex]["poll2"] = round1(pollVal);
+            } else {
+                trendData[trendIndex]["poll"] = round1(pollVal);
+            }
+            if (!trendData[trendIndex].hasOwnProperty("pollDesc")) trendData[trendIndex]["pollDesc"] = "";
+            else trendData[trendIndex]["pollDesc"] += ";";
+            const pollster = poll.pollster.replace("Newspoll2", "Newspoll");
+            trendData[trendIndex]["pollDesc"] += `${pollster}, ${round1(pollVal)}`;
+        }
+
+        maxVal = thisTrend.reduce((prev, spread) => {
+            return Math.max(prev, spread.at(-1));
+        }, 0);
+        minVal = thisTrend.reduce((prev, spread) => {
+            return Math.min(prev, spread[0]);
+        }, 100);
+        tickDistance = 2;
+        minTick = Math.floor(minVal / tickDistance) * tickDistance;
+        numTicks = Math.floor((maxVal - minTick) / tickDistance) + 1;
+        ticks = [...Array(Math.abs(numTicks)).keys()].map(n => n * tickDistance + minTick);
     }
 
-
-    const maxVal = thisTrend.reduce((prev, spread) => {
-        return Math.max(prev, spread.at(-1));
-    }, 0);
-    const minVal = thisTrend.reduce((prev, spread) => {
-        return Math.min(prev, spread[0]);
-    }, 100);
-    const tickDistance = 2;
-    const minTick = Math.floor(minVal / tickDistance) * tickDistance;
-    const numTicks = Math.floor((maxVal - minTick) / tickDistance) + 1;
-    let ticks = [...Array(Math.abs(numTicks)).keys()].map(n => n * tickDistance + minTick);
     const currentColours = jsonMap(colours, party);
 
     const setPollsBase = () => {setPollType("base");}
@@ -234,36 +240,41 @@ const VoteTrendChart = props => {
         {party === "OTH" && // don't show polls for OTH as different polls have different original OTH values
             <div className={styles.chartNote}>Polls not shown for Others</div>
         }
-        <ResponsiveContainer width="100%" height={400}>
-            <ComposedChart
-                width={730}
-                height={250}
-                data={trendData}
-                margin={{
-                top: 20, right: 20, bottom: 20, left: 20,
-                }}
-            >
-                <XAxis dataKey="date"/>
-                <ZAxis range={[12, 12]} width={200}/>
-                <YAxis type="number" domain={[minVal, maxVal]} ticks={ticks}/>
-                <Area dataKey="1-99" type="number" stroke="none" activeDot={false} isAnimationActive={false} fill={currentColours[3]} />
-                <Area dataKey="5-95" type="number" stroke="none" activeDot={false} isAnimationActive={false} fill={currentColours[2]} />
-                <Area dataKey="25-75" type="number" stroke="none" activeDot={false} isAnimationActive={false} fill={currentColours[1]} />
-                {!isFp && <ReferenceLine y={50} stroke="black" />}
-                <Line dataKey="median" type="number" dot={false} activeDot={false} isAnimationActive={false} stroke={currentColours[0]} fill="none" />
-                { party !== "OTH" && // don't show polls for OTH as different polls have different original OTH values
-                    <>
-                    <Scatter dataKey="pollster" type="number" dot={false} isAnimationActive={false} stroke={currentColours[0]} fill="none" />
-                    <Scatter dataKey="poll" type="number" dot={true} shape={"circle"} isAnimationActive={false} stroke={currentColours[0]} fill={currentColours[0]} />
-                    <Scatter dataKey="pollster2" type="number" dot={false} isAnimationActive={false} stroke={currentColours[0]} fill="none" />
-                    <Scatter dataKey="poll2" type="number" dot={true} shape={"circle"} isAnimationActive={false} stroke={currentColours[0]} fill={currentColours[0]} />
-                    <Scatter dataKey="pollster3" type="number" dot={false} isAnimationActive={false} stroke={currentColours[0]} fill="none" />
-                    <Scatter dataKey="poll3" type="number" dot={true} shape={"circle"} isAnimationActive={false} stroke={currentColours[0]} fill={currentColours[0]} />
-                    </>
-                }
-                <Tooltip content={<VoteTrendTooltip />}isAnimationActive={false} />
-            </ComposedChart>
-        </ResponsiveContainer>
+        {thisTrend !== undefined &&
+            <ResponsiveContainer width="100%" height={400}>
+                <ComposedChart
+                    width={730}
+                    height={250}
+                    data={trendData}
+                    margin={{
+                    top: 20, right: 20, bottom: 20, left: 20,
+                    }}
+                >
+                    <XAxis dataKey="date"/>
+                    <ZAxis range={[12, 12]} width={200}/>
+                    <YAxis type="number" domain={[minVal, maxVal]} ticks={ticks}/>
+                    <Area dataKey="1-99" type="number" stroke="none" activeDot={false} isAnimationActive={false} fill={currentColours[3]} />
+                    <Area dataKey="5-95" type="number" stroke="none" activeDot={false} isAnimationActive={false} fill={currentColours[2]} />
+                    <Area dataKey="25-75" type="number" stroke="none" activeDot={false} isAnimationActive={false} fill={currentColours[1]} />
+                    {!isFp && <ReferenceLine y={50} stroke="black" />}
+                    <Line dataKey="median" type="number" dot={false} activeDot={false} isAnimationActive={false} stroke={currentColours[0]} fill="none" />
+                    { party !== "OTH" && // don't show polls for OTH as different polls have different original OTH values
+                        <>
+                        <Scatter dataKey="pollster" type="number" dot={false} isAnimationActive={false} stroke={currentColours[0]} fill="none" />
+                        <Scatter dataKey="poll" type="number" dot={true} shape={"circle"} isAnimationActive={false} stroke={currentColours[0]} fill={currentColours[0]} />
+                        <Scatter dataKey="pollster2" type="number" dot={false} isAnimationActive={false} stroke={currentColours[0]} fill="none" />
+                        <Scatter dataKey="poll2" type="number" dot={true} shape={"circle"} isAnimationActive={false} stroke={currentColours[0]} fill={currentColours[0]} />
+                        <Scatter dataKey="pollster3" type="number" dot={false} isAnimationActive={false} stroke={currentColours[0]} fill="none" />
+                        <Scatter dataKey="poll3" type="number" dot={true} shape={"circle"} isAnimationActive={false} stroke={currentColours[0]} fill={currentColours[0]} />
+                        </>
+                    }
+                    <Tooltip content={<VoteTrendTooltip />}isAnimationActive={false} />
+                </ComposedChart>
+            </ResponsiveContainer>
+        }
+        {thisTrend === undefined &&
+            <>Poll trend not available for this selection</>
+        }
         </>
     )
 }

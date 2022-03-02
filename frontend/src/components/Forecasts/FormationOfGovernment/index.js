@@ -17,7 +17,8 @@ import styles from './FormationOfGovernment.module.css';
 const MajorityWinGovernmentRow = props => {
     const party = parseInt(props.partyIndex)
     const partyAbbr = standardiseParty(party, props.forecast);
-    const prob = jsonMap(props.forecast.majorityWinPc, party);
+    let prob = jsonMap(props.forecast.majorityWinPc, party);
+    if (prob === undefined) prob = 0;
     const bgClasses = `${styles['formationOfGovernmentSubItem']} ${xLightBgClass(partyAbbr)}`;
     return (
         <ListGroup.Item className={bgClasses}>
@@ -35,7 +36,8 @@ const MajorityWinGovernmentRow = props => {
 const MinorityWinGovernmentRow = props => {
     const party = parseInt(props.partyIndex)
     const partyAbbr = standardiseParty(party, props.forecast);
-    const prob = jsonMap(props.forecast.minorityWinPc, party);
+    let prob = jsonMap(props.forecast.minorityWinPc, party);
+    if (prob === undefined) prob = 0;
     const bgClasses = `${styles['formationOfGovernmentSubItem']} ${xxLightBgClass(partyAbbr)}`;
     const minorityTooltipText = "Parties expected to support this major party in a minority government. " + 
         "The Greens are expected to support the ALP; One Nation, United Australia Party and Katter's Australian Party " +
@@ -57,7 +59,8 @@ const MinorityWinGovernmentRow = props => {
 const MostSeatsRow = props => {
     const party = parseInt(props.partyIndex)
     const partyAbbr = standardiseParty(party, props.forecast);
-    const prob = jsonMap(props.forecast.mostSeatsWinPc, party);
+    let prob = jsonMap(props.forecast.mostSeatsWinPc, party);
+    if (prob === undefined) prob = 0;
     const bgClasses = `${styles['formationOfGovernmentSubItem']} ${xxxLightBgClass(partyAbbr)}`;
     const hungTooltipText = "While the term hung parliament is often used to indicate any parliament where no " +
         "party can form a majority, here it is used in a narrower sense to count only those situations where " +
@@ -166,8 +169,10 @@ const OthersExplainer = props => {
 const OverallWinGovernmentRow = props => {
     const [showExplainer, setShowExplainer] = useState(false);
     const party = parseInt(props.partyIndex)
-    const probMajority = jsonMap(props.forecast.majorityWinPc, party);
-    const probMinority = jsonMap(props.forecast.minorityWinPc, party);
+    let probMajority = jsonMap(props.forecast.majorityWinPc, party);
+    let probMinority = jsonMap(props.forecast.minorityWinPc, party);
+    if (probMajority === undefined) probMajority = 0;
+    if (probMinority === undefined) probMinority = 0;
     let prob = probMajority + probMinority;
     if (party === -1) {
         prob = 0;
