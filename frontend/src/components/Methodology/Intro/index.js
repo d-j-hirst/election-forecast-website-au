@@ -2,17 +2,9 @@ import React from 'react';
 import Email from '../../General/Email';
 
 const MethodologyIntro = props => {
-    // Light obfuscation to make this a little harder for bots to figure out.
-    const ePart1 = "mai";
-    const ePart2 = "lto:aefo";
-    const ePart3 = "recasts@";
-    const ePart4 = "gma";
-    const ePart5 = "il.c";
-    const ePart6 = "om";
-    const eFull = ePart1 + ePart2 + ePart3 + ePart4 + ePart5 + ePart6;
     return (
         <>
-            <p><h4 id="introduction">Introduction</h4></p>
+            <h4 id="introduction">Introduction</h4>
             <p>
                 This page is a description of the methodology used in this site - that
                 is, the procedure by which the forecasts are created. As this procedure

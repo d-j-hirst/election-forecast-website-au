@@ -51,7 +51,7 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760 # 10 MB for now
 SECURE_SSL_REDIRECT: bool = os.environ['DEBUG'] == '0'
 
 ALLOWED_HOSTS: List[str] = env.list('DJANGO_ALLOWED_HOSTS', default=[   # type: ignore
-    "dendrite.pythonanywhere.com", "localhost", "127.0.0.1"]
+    "dendrite.pythonanywhere.com", "www.aeforecasts.com", "localhost", "127.0.0.1"]
 )
 
 # Application definition
