@@ -50,6 +50,7 @@ const AboutTheSite = props => {
                     technical implementation, so those wanting to know the full details can check
                     the source code for the <ExtLink href="https://github.com/d-j-hirst/aus-polling-analyser">forecast generation</ExtLink>
                     {" "}and the <ExtLink href="https://github.com/d-j-hirst/election-forecast-website-au">website</ExtLink>.
+                    These contain all the information required to replicate the forecasts.
                 </li>
             </ul>
             <h4 id="introduction">About the Author</h4>
@@ -59,10 +60,20 @@ const AboutTheSite = props => {
                 He has never been a member of, or associated with, a political party, but tends to vote for parties
                 to the left of the political centre, and is an occasional commenter on
                 political sites under the nickname "dendrite". If you have any questions about the 
-                website, forecasting or Australian political system in general, feel free to
-                contact via <Email>email</Email> him.
+                website, forecasting or Australian political system in general, feel free
+                to <Email>email</Email> him.
             </p>
             <h4 id="introduction">Acknowledgements</h4>
+            <p>
+                This site and its analysis procedures are constructed largely independently but
+                the work of others in this field has been very helpful and is greatly appreciated - in no
+                particular order <ExtLink href="https://kevinbonham.blogspot.com/">Kevin&nbsp;Bonham</ExtLink>,
+                {" "}<ExtLink href="https://www.pollbludger.net/">The&nbsp;Poll&nbsp;Bludger</ExtLink>,
+                {" "}<ExtLink href="https://marktheballot.blogspot.com/">Mark&nbsp;The&nbsp;Ballot</ExtLink>,
+                {" "}<ExtLink href="https://armariuminterreta.com/">Armarium&nbsp;Interreta</ExtLink> and
+                {" "}<ExtLink href="https://www.tallyroom.com.au/">The&nbsp;Tally&nbsp;Room</ExtLink>.
+
+            </p>
         </>
     );
 }

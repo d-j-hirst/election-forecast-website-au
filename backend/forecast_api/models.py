@@ -9,6 +9,9 @@ class Election(models.Model):
 
     # Descriptive name of the election
     name = models.CharField(max_length=100)
+    
+    def __str__(self):
+        return self.code + " - " + self.name
 
     
 class Forecast(models.Model):
@@ -39,7 +42,11 @@ class Forecast(models.Model):
         blank=True
     )
 
+    report = models.JSONField(default=str)
+
     def get_mode(self) -> Mode:
         return Forecast.Mode[self.mode]
-
-    report = models.JSONField(default=str)
+    
+    def __str__(self):
+        return (self.label + " - " + self.election.name + " - " + 
+                self.mode + " - " + str(self.date).split('+')[0])

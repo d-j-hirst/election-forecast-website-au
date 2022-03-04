@@ -58,6 +58,7 @@ ALLOWED_HOSTS: List[str] = env.list('DJANGO_ALLOWED_HOSTS', default=[   # type: 
 
 INSTALLED_APPS = [
     'forecast_api.apps.ForecastApiConfig',
+    'commentary_api.apps.CommentaryApiConfig',
     'corsheaders',
     'accounts.apps.AccountsConfig',
     'whitenoise.runserver_nostatic',
