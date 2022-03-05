@@ -50,14 +50,17 @@ const Commentary = () => {
             <Header windowWidth={windowDimensions.width} page={"commentary"} />
             <div className={styles.content}>
                 <CommentaryHeader />
-                <div className={styles.mainText}>
-                    {commentariesValid &&
-                        commentaries.map((commentary, index) => <CommentaryItem commentary={commentary} key={index} />)
-                    }
-                    {!commentariesValid &&
-                    <LoadingMarker text="Loading ..." />
-                    }
-                </div>
+                {commentariesValid &&
+                    <div className={styles.mainText}>
+                        {commentaries.map((commentary, index) => <>
+                            <CommentaryItem commentary={commentary} key={index} />
+                            {index !== commentaries.length - 1 && <hr />}
+                        </>)}
+                    </div>
+                }
+                {!commentariesValid &&
+                <LoadingMarker text="Loading ..." />
+                }
             </div>
         </>
     );

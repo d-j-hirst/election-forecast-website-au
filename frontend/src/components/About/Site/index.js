@@ -48,7 +48,7 @@ const AboutTheSite = props => {
                     a forecast is given on the <a href="/methodology">methodology page</a>. As this
                     is quite complex, the methodology page does not describe every detail of the
                     technical implementation, so those wanting to know the full details can check
-                    the source code for the <ExtLink href="https://github.com/d-j-hirst/aus-polling-analyser">forecast generation</ExtLink>
+                    the source code and data for the <ExtLink href="https://github.com/d-j-hirst/aus-polling-analyser">forecast generation</ExtLink>
                     {" "}and the <ExtLink href="https://github.com/d-j-hirst/election-forecast-website-au">website</ExtLink>.
                     These contain all the information required to replicate the forecasts.
                 </li>

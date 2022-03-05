@@ -7,10 +7,10 @@ const MethodologyPollTrend = props => {
         <>
             <h4 id="simulation">Simulation of full election results</h4>
             <p>
-                In order to generate forecasts the model simulates the election a large number of times
+                In order to generate forecasts, the model simulates the election a large number of times
                 (typically 100,000) to evaluate how the projected vote totals correspond to actual seats
-                in parliament. This involves taking election samples simulating the results in each seat individually based on
-                both the overall vote shares and also the history of that individual seat, adjusting those
+                in parliament. This involves taking election samples, simulating the results in each seat (based on
+                both the overall vote shares and also the history of that individual seat), adjusting those
                 results so that the overall totals match the projected election sample as closely as possible,
                 and then collating the results across all the simulation into statistics for display on the
                 site.
@@ -38,44 +38,55 @@ const MethodologyPollTrend = props => {
             </p>
             <p>
                 In order for the use of these swing deviations to reflect their historic performance, the predictiveness
-                of polled swing deviations from previous elections is analysed. Regional polling breakdowns are analysed for bias
-                (do are swing deviations too high or too low on average?), sensitivity (how do the sizes of swing
-                deviations in polls compare to those in an actual election? - it is in fact found that polling swing deviations
-                usually overestimate those in the actual result, but more so in some states than others),
-                and spread in the error (after taking those two factors into account, how far off are the results?)
+                of polled swing deviations from previous elections is analysed. Regional polling breakdowns are analysed for:
             </p>
+            <ul>
+                <li>
+                    bias - do swing deviations overestimate one party or the other on average?
+                </li>
+                <li>
+                    sensitivity - how do the sizes of swing deviations in polls compare to those in an actual election? 
+                    (Generally the swing deviations
+                    seen in polls overestimate those in the actual result, but more so in some regions than others.)
+                </li>
+                <li>
+                    spread in the error - after taking those two factors into account, how far off are the swing deviations from the actual results?
+                </li>
+            </ul>
             <p>
-                A similar process is run for elections without taking into account polls at all - in terms of how does
-                the <i>overall swing</i> predict state swings. In this case the "bias" represents trends over time
+                A similar process is run for elections, but this time without taking into account polls at all -
+                instead it is in terms of how does the <i>overall swing</i> predict state swings. In this case
+                the "bias" represents trends over time for a state compared to the national average,
                 and the "sensitivity" represents whether the state swings more or less than the national average. These
                 results are used both for regions which don't have polling (for federal elections, usually Tasmania, ACT and NT)
                 or mixed with the poll-based deviations for polling that is some time out from the election.
             </p>
             <p>
                 In any given election simulation, each region has its own swing deviation calculated from the
-                patterns observed in the polled swing deviation and/or the base deviation, including random variation. The
-                deviation is then adjusted so that the total of all swing deviations, weighted by population, is equal to zero,
-                as it is desired that these swings do not change the national TPP from the election sample. Finally the swing
+                patterns observed in the polled swing deviation and/or the base deviation, with different random variation for
+                each simulation. The deviation is then adjusted so that the total of all swing deviations, weighted by population,
+                is equal to zero, as it is desired that these swings do not change the national TPP from the election sample. Finally the swing
                 deviations are added to the election sample's national swing to give the regional swing for the simulation.
             </p>
             <h5 id="tpp-seat">Two-party-preferred (TPP) seat vote share</h5>
             <p>
                 Following the generation of each region's TPP swings, the next step of the seat simulation is to generate a
-                two-party-preferred result for each seat. (This is done even for seats where the the final two were not
-                the major parties.) The regional two-party swing is applied to the existing margin
+                two-party-preferred result for each seat. (This is done even for seats where the the final TCP was not
+                between the major parties.) The regional two-party swing is applied to the existing margin
                 in the seat (accounting for the redistributed margin according
                 to <ExtLink href="https://antonygreen.com.au/category/redistribution/">Antony Green's estimates</ExtLink>,
-                including for draft redistributions). This is then adjusted based on statistics calculated from the seat's
-                history, specifically its <i>elasticity</i> - whether it tends to swing more or less than the regional
-                average - and <i>trend</i> - its long term tendency to move towards one party or another. The analysis
-                of these variables includes previous seats covering a similar area with a different name, and if the seat
-                is new the statistics from other seats are used.
+                including for draft redistributions). This is then adjusted to account for the <i>elasticity</i> of the seat -
+                whether it tends to swing more or less than the regional average. This analysis includes previous seats covering
+                a similar area with a different name, and if the seat is new the statistics from other seats are used.
+                As in sections above, a cross-one-out analysis is used to estimate the predictiveness of the elasticity analysis
+                and adjust the extent to which it affects the simulated result.
             </p>
             <p>
                 The TPP for each seat is also adjusted for candidate factors - such as retirements, and the
                 "sophomore surge" where newly elected candidates and parties do better than the region average
                 for their second election. (Sophomore effects for new candidates and parties are treated as
-                separate, with both added together when a candidate takes a seat from the opposing party).
+                separate, with both added together when a candidate takes a seat from the opposing party,
+                and are also analysed separately for urban and regional seats).
                 These adjustments are determined by analysing previous elections separately for urban and
                 regional seats. An adjustment is also made for candidate disendorsements, it is assumed that
                 a candidate loses 3% TPP on average for being disendorsed and the party gains half that much (1.5%)
@@ -103,12 +114,12 @@ const MethodologyPollTrend = props => {
                 involved as there are a lot of different variables to consider and many corner cases to cover,
                 so this page will only give an outline. There are also more judgment calls in this section than
                 others as there is relatively little historical data on the performance of third parties and
-                independents in some situations.
+                independents in some unusual situations.
             </p>
             <p>
                 FP votes for non-major parties including independents and a generic "others" category are simulated first. The behaviour of FP votes
-                in previous elections is analysed for each party category (see "Fundamentals above") and then applied
-                to the previous election's vote. This includes, where appropriate, changes from previous election
+                in historical elections is analysed for each party category (see "Fundamentals" above) and then the results
+                are applied to the vote for those parties in the previous election. This includes, where appropriate, changes from previous election
                 vote share based on incumbency, previous vote share, and the level of variability in the vote (for
                 random variation).
             </p>
@@ -133,8 +144,9 @@ const MethodologyPollTrend = props => {
                 (There is some judgment about whether a candidate is considered prominent or not, but it generally
                 comes down to whether they are getting prominent media coverage and have a significant campaign team.)
                 Seat betting odds and seat polls are used here (and only here!) to help inform of the likely performance
-                of the prominent independent candidates. Slight historical bias overestimating independents' support in
-                seat betting and polling, and a considerable margin of error considering the low accuracy of Australian
+                of the prominent independent candidates. A slight historical bias overestimating independents' support in
+                seat betting and polling is taken into account, and for polls a considerable margin of error is used due to the
+                low accuracy of Australian
                 seat polling (see <ExtLink href="https://kevinbonham.blogspot.com/2018/06/is-seat-polling-utterly-useless.html">this
                 analysis</ExtLink> by Kevin Bonham). This also applies to certain quasi-independent candidates
                 who technically stand for a party but are largely running on their personal appeal.
@@ -143,12 +155,12 @@ const MethodologyPollTrend = props => {
             <p>
                 Parties in the "populist" category, which includes emerging parties, are considered to not be running in every
                 seat. Rather, they are assigned a random number of seats based on the number of seats they have contested
-                historically (plus random variation), and only get votes in seats in a randomised fashion that heavily favours
+                historically (with substatial random variation), and only run in seats in a randomised fashion that heavily favours
                 seats that they are likely to get higher vote shares in. Additionally, the votes of such parties
                 are calibrated on a seat-by-seat basis according to how parties of similar ideology have done in that or similar
                 seats historically - to One Nation in the case of rightist parties and to the Australian Democrats in the case of
                 centrist parties. Unidentified emerging parties are randomly decided between being centrist, rightist or somewhere
-                in between. (Some might wonder why the lack of a leftist "populist" party - the simple answer is that we've
+                in between. (Some might wonder why the lack of a leftist "populist" party - basically, we've
                 never really had one so there's no way to assess where they might be most popular.)
             </p>
             <h6 id="fp-seat-">Major party FP votes</h6>
@@ -158,9 +170,9 @@ const MethodologyPollTrend = props => {
                 calculated for each party. Since preference flows tend to differ from seat to seat and from election to
                 election, these must also be simulated to achieve this. The preference flow from the election sample is
                 used as a base, then adjusted for whether the preference flow in the seat was above or below the national
-                average in the previous election, and then further random variability is applied. Using this new
+                average in the previous election, and then further random variability is applied. Using this newly
                 calculated preference flow result, the total preferences for each party are calculated and the major parties
-                are allocated the FP vote share required to match the TPP result.
+                are allocated an FP vote share required to match the TPP result.
             </p>
             <h6 id="fp-seat-">Reconciling the simulated results with the election sample</h6>
             <p>
@@ -170,15 +182,18 @@ const MethodologyPollTrend = props => {
                 quite involved, mainly it proceeds by adjusting minor party votes proportionally up or down across all seats, and then
                 recalculating the major party TPPs for each seat. This process is repeated 5 times, at which point the difference
                 between the FP votes for the election sample and simulation are usually on average below 0.1% (though rare cases
-                where a minor party gets a much higher share of the FP vote will be higher than this). One detail is
+                where a minor party gets a much higher share of the FP vote will be higher than this). 
+            </p>
+            <p>
+                One detail is
                 that in seats where a candidate is significantly higher that the general party vote, this seat will not
                 be impacted as much by the adjusment. This particularly affects independents who shouldn't have their vote
                 projections heavily reduced because the generic Others vote was too high.
             </p>
             <h5 id="simulation-aggregation">Aggregation of simulation results</h5>
             <p>
-                There's not too much to say about this. For each simulation, the results of each seat (primaries, tcp results)
-                are recorded along with many aggregate results (total seats won, total vote share, etc.) and after all simulations
+                There's not too much to say about this. For each simulation, the results of each seat (primaries, TCP results)
+                are recorded along with many aggregate results (total seats won, total vote share, etc.). After all simulations
                 are complete, percentiles, averages and some other statistics are compiled. These are then stored and uploaded to the
                 server, from where they can be viewed on the website from either the latest report or the archives.
             </p>

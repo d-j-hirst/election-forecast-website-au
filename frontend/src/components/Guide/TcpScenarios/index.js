@@ -23,7 +23,7 @@ const GuideTcpScenarios = props => {
                 last two candidates remaining, but will be different in seats where that doesn't
                 happen. Electoral commissions usually count the TPP vote in seats even
                 when one or both of the two major parties don't make the final two candidates, as
-                this information is useful in analysis (it's used quite a bit in making the forecasts
+                this information is useful in analysis (it's used quite a lot in making the forecasts
                 on this site.)
             </p>
             <p>
@@ -33,7 +33,7 @@ const GuideTcpScenarios = props => {
                 actually preference in a typical election. For scenarios that are given a very small chance
                 of happening, this can be particularly distorting - for, example, in some seats One Nation
                 might be shown as beating one or both major parties in the TCP, but this only applies to the very
-                unusual sets of circumstances where those minor parties make the final two in the first place,
+                unusual sets of circumstances where One Nation makes the final two in the first place,
                 and would probably have do significantly worse in that comparison in a more typical election.
             </p>
             <p>
@@ -41,7 +41,8 @@ const GuideTcpScenarios = props => {
                 tactical voting to get a candidate into second place in order to beat another candidate.
                 A typical example is that a Labor voter, thinking the Labor candidate has no chance of
                 winning, votes instead for an independent candidate in the aim of getting that candidate
-                to the final two and winning the TCP against the Coalition. The logic here is that, even though
+                to the final two and winning the TCP against the Coalition once preferences for Labor and any minor
+                parties are distributed. The logic here is that, even though
                 the voter prefers the Labor candidate to the independent, they vote for the independent in order
                 for that independent to reach the final two where that independent has a much better chance of
                 beating the Coalition candidate that the Labor candidate would. (The model accounts for tactical voting
@@ -70,8 +71,8 @@ const GuideTcpScenarios = props => {
                     for a prominent independent or centrist party in seats where your preferred major party is unlikely to win.
                 </li>
                 <li>Labor and Greens tend to do very similarly against the Coalition. On average the Greens tend to do very slightly
-                    better, but sometimes it is the other way around. This sites recommends voters vote for the party that they prefer
-                    rather than the one they think most likely to win as that cannot be known in advance.
+                    better, but sometimes it is the other way around. This site recommends voters vote for the party that they prefer,
+                    rather than the one they think most likely to win, as that cannot be known in advance.
                 </li>
                 <li>Other cases not covered by the two points above have few historical results to compare with,
                     but as a general rule: tend towards voting for the candidate you prefer - rather than the
