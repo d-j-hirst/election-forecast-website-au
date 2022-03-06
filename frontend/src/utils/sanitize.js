@@ -1,7 +1,7 @@
 import * as sanitizeHtml from 'sanitize-html';
 
 const defaultOptions = {
-    allowedTags: [ 'b', 'i', 'em', 'strong', 'a' ],
+    allowedTags: [ 'b', 'i', 'em', 'strong', 'a', 'p', 'br', 'h5', 'h6' ],
     allowedAttributes: {
         'a': [ 'href' ]
     },
@@ -14,6 +14,6 @@ const sanitize = (dirty, options) => ({
     )
 });
   
-export const SanitizeHtml = ({ html, options }) => (
-    <div dangerouslySetInnerHTML={sanitize(html, options)} />
-);
+export const SanitizeHtml = ({ html, options }) => {
+    return <div dangerouslySetInnerHTML={sanitize(html, options)} />
+};
