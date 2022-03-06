@@ -5,12 +5,14 @@ import { Link } from 'react-router-dom';
 import { parseDateStringAsUTC } from '../../../utils/date.js'
 import { SanitizeHtml } from '../../../utils/sanitize.js';
 
+import styles from './CommentaryItem.module.css';
+
 const CommentaryItem = props => {
     const headingLink = `commentary/${props.commentary.id}/`
     return (
         <>
             {props.headingLink &&
-                <h4><Link to={headingLink}>{props.commentary.title}</Link></h4>
+                <h4><Link to={headingLink} className={styles.commentaryHeadingLink}>{props.commentary.title}</Link></h4>
             }
             {!props.headingLink &&
                 <h4>{props.commentary.title}</h4>
