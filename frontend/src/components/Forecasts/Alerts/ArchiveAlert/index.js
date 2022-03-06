@@ -15,7 +15,6 @@ import styles from './ArchiveAlert.module.css';
 const ArchiveAlert = props => {
     const [show, setShow] = useState(props.showInitially === undefined || props.showInitially);
     const isNowcast = props.forecast.reportMode === "NC";
-    // Obviously, the 'See this FAQ' should actually be linked to the relevant answer when it's made!
     if (show) {
         return (
             <Alert variant="warning"

@@ -12,7 +12,6 @@ import styles from './ForecastAlert.module.css';
 
 const ForecastAlert = props => {
     const [show, setShow] = useState(props.showInitially === undefined || props.showInitially);
-    // Obviously, the 'See this FAQ' should actually be linked to the relevant answer when it's made!
     if (show) {
         return (
             <Alert variant="info"
