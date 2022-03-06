@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { useUserRequired } from 'utils/hooks';
 import { Header, Footer, ForecastAlert, ForecastsNav, ForecastHeader,
   LoadingMarker, NowcastAlert, SeatDetailBody } from 'components';
 
@@ -14,10 +13,6 @@ import styles from './SeatDetails.module.css';
 
 const SeatDetails = () => {
   const { code, mode, seat } = useParams();
-  // Putting this here instructs the frontend to only display this page
-  // if a valid user is logged in. As always, don't trust the client
-  // and protect on the backend as well!
-  useUserRequired();
   const [ forecast, setForecast] = useState({});
   const [ seatIndex, setSeatIndex] = useState(-1);
   const [ forecastValid, setForecastValid] = useState(false);

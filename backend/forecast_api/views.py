@@ -23,25 +23,29 @@ class SubmitReportResponse(ApiAuthMixin, ApiErrorsMixin, APIView):
         return submit_report(request)
 
 
-class ElectionSummaryResponse(ApiAuthMixin, ApiErrorsMixin, APIView):
-    permission_classes = [IsAuthenticated&ViewForecastPermission]
+class ElectionSummaryResponse(APIView):
+    authentication_classes = []
+    permission_classes = []
     def get(self, request, code, mode):
         return serve_forecast(code, mode)
 
 
-class ElectionListResponse(ApiAuthMixin, ApiErrorsMixin, APIView):
-    permission_classes = [IsAuthenticated&ViewForecastPermission]
+class ElectionListResponse(APIView):
+    authentication_classes = []
+    permission_classes = []
     def get(self, request):
         return serve_forecast_list()
 
 
-class ElectionArchiveListResponse(ApiAuthMixin, ApiErrorsMixin, APIView):
-    permission_classes = [IsAuthenticated&ViewForecastPermission]
+class ElectionArchiveListResponse(APIView):
+    authentication_classes = []
+    permission_classes = []
     def get(self, request, code):
         return serve_forecast_archive_list(code)
 
 
-class ElectionArchiveResponse(ApiAuthMixin, ApiErrorsMixin, APIView):
-    permission_classes = [IsAuthenticated&ViewForecastPermission]
+class ElectionArchiveResponse(APIView):
+    authentication_classes = []
+    permission_classes = []
     def get(self, request, code, id):
         return serve_forecast_archive(code, id)

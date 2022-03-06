@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { useUserRequired } from 'utils/hooks';
 import { Header, Footer, ForecastsNav, ForecastHeader,
   LoadingMarker, ArchiveAlert, SeatDetailBody } from 'components';
 
@@ -14,10 +13,6 @@ import styles from './ArchiveSeat.module.css';
 
 const SeatDetails = () => {
   const { code, id, seat } = useParams();
-  // Putting this here instructs the frontend to only display this page
-  // if a valid user is logged in. As always, don't trust the client
-  // and protect on the backend as well!
-  useUserRequired();
   const [ forecast, setForecast] = useState({});
   const [ seatIndex, setSeatIndex] = useState(-1);
   const [ forecastValid, setForecastValid] = useState(false);
@@ -60,7 +55,7 @@ const SeatDetails = () => {
 
   return (
     <div className={styles.site}>
-      <Header />
+      <Header windowWidth={windowDimensions.width} page={"archive"} />
       {/* Even though the archived forecast is still in some mode,
           it's needed to set the mode to "other" here as that will
           keep the links clickable */}

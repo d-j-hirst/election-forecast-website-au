@@ -4,11 +4,11 @@ import { useParams, Link } from 'react-router-dom';
 import Card from 'react-bootstrap/Card';
 import ListGroup from 'react-bootstrap/ListGroup';
 
-import { useUserRequired } from 'utils/hooks';
 import { Header, Footer, ForecastsNav, LoadingMarker} from 'components';
 import { getDirect } from 'utils/sdk';
 
 import { parseDateStringAsUTC } from '../../utils/date.js'
+import { useWindowDimensions } from '../../utils/window.js';
 
 import styles from './ArchiveList.module.css';
 
@@ -40,13 +40,10 @@ const ArchiveRowSet = props => {
 
 const ArchiveList = () => {
   const { code } = useParams();
-  // Putting this here instructs the frontend to only display this page
-  // if a valid user is logged in. As always, don't trust the client
-  // and protect on the backend as well!
-  useUserRequired();
   const [ electionName, setElectionName] = useState("");
   const [ archiveList, setArchiveList] = useState({});
   const [ archiveListValid, setArchiveListValid] = useState(false);
+  const windowDimensions = useWindowDimensions();
 
   useEffect(() => {
     setArchiveListValid(false);
@@ -80,7 +77,7 @@ const ArchiveList = () => {
 
   return (
     <div className={styles.site}>
-      <Header />
+      <Header windowWidth={windowDimensions.width} page={"archive"} />
       <ForecastsNav election={code} mode="archives" />
       <div className={styles.content}>
         {archiveListValid &&
