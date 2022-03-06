@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { useUserRequired } from 'utils/hooks';
-import { Header, MethodologyHeader, MethodologyIntro, MethodologyOutline,
+import { Header, Footer, MethodologyHeader, MethodologyIntro, MethodologyOutline,
     MethodologyPollTrend, MethodologyProjection, MethodologySimulation } from 'components';
 import { useWindowDimensions } from '../../utils/window.js';
 
@@ -18,7 +18,7 @@ const Methodology = () => {
     document.title = `AEF - Methodology`;
 
     return (
-        <>
+        <div className={styles.site}>
             <Header windowWidth={windowDimensions.width} page={"methodology"} />
             <div className={styles.content}>
                 <MethodologyHeader />
@@ -30,7 +30,8 @@ const Methodology = () => {
                     <MethodologySimulation />
                 </div>
             </div>
-        </>
+            <Footer />
+        </div>
     );
 };
 

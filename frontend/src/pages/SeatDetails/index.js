@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { useUserRequired } from 'utils/hooks';
-import { Header, ForecastAlert, ForecastsNav, ForecastHeader,
+import { Header, Footer, ForecastAlert, ForecastsNav, ForecastHeader,
   LoadingMarker, NowcastAlert, SeatDetailBody } from 'components';
 
 import { getDirect } from 'utils/sdk';
@@ -55,7 +55,7 @@ const SeatDetails = () => {
   }, [code, mode, seat, seatIndex]);
 
   return (
-    <>
+    <div className={styles.site}>
       <Header windowWidth={windowDimensions.width} page={"forecast"} />
       <ForecastsNav election={code} mode={mode} />
       <div className={styles.content}>
@@ -87,7 +87,8 @@ const SeatDetails = () => {
           <LoadingMarker />
         }
       </div>
-    </>
+      <Footer />
+    </div>
   );
 };
 

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { useUserRequired } from 'utils/hooks';
-import { Header, ForecastsNav, ForecastHeader,
+import { Header, Footer, ForecastsNav, ForecastHeader,
   LoadingMarker, ArchiveAlert, SeatDetailBody } from 'components';
 
 import { getDirect } from 'utils/sdk';
@@ -59,7 +59,7 @@ const SeatDetails = () => {
   const mode = forecastValid ? (forecast.reportMode === "NC" ? "nowcast" : "regular") : ""
 
   return (
-    <>
+    <div className={styles.site}>
       <Header />
       {/* Even though the archived forecast is still in some mode,
           it's needed to set the mode to "other" here as that will
@@ -87,7 +87,8 @@ const SeatDetails = () => {
           <LoadingMarker />
         }
       </div>
-    </>
+      <Footer />
+    </div>
   );
 };
 

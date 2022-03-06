@@ -1,7 +1,7 @@
 import React, { useState , useEffect } from 'react';
 
 import { useUserRequired } from 'utils/hooks';
-import { Header, CommentaryHeader, CommentaryItem, LoadingMarker } from 'components';
+import { Header, Footer, CommentaryHeader, CommentaryItem, LoadingMarker } from 'components';
 import { useWindowDimensions } from '../../utils/window.js';
 import { getDirect } from 'utils/sdk';
 
@@ -46,7 +46,7 @@ const Commentary = () => {
     }, []);
 
     return (
-        <>
+      <div className={styles.site}>
             <Header windowWidth={windowDimensions.width} page={"commentary"} />
             <div className={styles.content}>
                 <CommentaryHeader />
@@ -62,7 +62,8 @@ const Commentary = () => {
                 <LoadingMarker text="Loading ..." />
                 }
             </div>
-        </>
+            <Footer />
+        </div>
     );
 };
 

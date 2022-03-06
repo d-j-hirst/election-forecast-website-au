@@ -5,7 +5,7 @@ import Card from 'react-bootstrap/Card';
 import ListGroup from 'react-bootstrap/ListGroup';
 
 import { useUserRequired } from 'utils/hooks';
-import { Header, ForecastsNav, LoadingMarker} from 'components';
+import { Header, Footer, ForecastsNav, LoadingMarker} from 'components';
 import { getDirect } from 'utils/sdk';
 
 import { parseDateStringAsUTC } from '../../utils/date.js'
@@ -79,7 +79,7 @@ const ArchiveList = () => {
   }, [code]);
 
   return (
-    <>
+    <div className={styles.site}>
       <Header />
       <ForecastsNav election={code} mode="archives" />
       <div className={styles.content}>
@@ -105,7 +105,8 @@ const ArchiveList = () => {
           <LoadingMarker text="Loading archive list" />
         }
       </div>
-    </>
+      <Footer />
+    </div>
   );
 };
 

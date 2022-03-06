@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { useUserRequired } from 'utils/hooks';
-import { Header, GuideHeader, GuideIntro, GuidePurpose, GuideNowcast, GuideTcpScenarios } from 'components';
+import { Header, Footer, GuideHeader, GuideIntro, GuidePurpose, GuideNowcast, GuideTcpScenarios } from 'components';
 import { useWindowDimensions } from '../../utils/window.js';
 
 import styles from './Guide.module.css';
@@ -15,7 +15,7 @@ const Guide = () => {
     document.title = `AEF - Forecast Guide`;
 
     return (
-        <>
+        <div className={styles.site}>
             <Header windowWidth={windowDimensions.width} page={"guide"} />
             <div className={styles.content}>
                 <GuideHeader />
@@ -26,7 +26,8 @@ const Guide = () => {
                     <GuideTcpScenarios />
                 </div>
             </div>
-        </>
+            <Footer />
+        </div>
     );
 };
 

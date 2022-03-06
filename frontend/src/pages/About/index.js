@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { useUserRequired } from 'utils/hooks';
-import { Header, AboutHeader, AboutTheSite } from 'components';
+import { Header, Footer, AboutHeader, AboutTheSite } from 'components';
 import { useWindowDimensions } from '../../utils/window.js';
 
 import styles from './About.module.css';
@@ -15,15 +15,16 @@ const About = () => {
     document.title = `AEF - About`;
 
     return (
-        <>
+        <div className={styles.site}>
             <Header windowWidth={windowDimensions.width} page={"about"} />
-            <div className={styles.content}>
+            <main className={styles.content}>
                 <AboutHeader />
                 <div className={styles.mainText}>
                     <AboutTheSite />
                 </div>
-            </div>
-        </>
+            </main>
+            <Footer />
+        </div>
     );
 };
 

@@ -1,6 +1,7 @@
 export { default as UserContext } from './UserContext';
 export { default as Layout } from './Layout';
 export { default as Header } from './Header';
+export { default as Footer } from './Footer';
 export { default as ForecastsNav } from './Forecasts/Nav';
 export { default as ForecastHeader } from './Forecasts/Header';
 export { default as FormationOfGovernment } from './Forecasts/FormationOfGovernment';

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { useUserRequired } from 'utils/hooks';
-import { Header, ForecastsNav, ForecastHeader, FormationOfGovernment,
+import { Header, Footer, ForecastsNav, ForecastHeader, FormationOfGovernment,
   LoadingMarker, VoteTotals, SeatTotals, NowcastAlert, ForecastAlert, Seats } from 'components';
 import { getDirect } from 'utils/sdk';
 import { useWindowDimensions } from '../../utils/window.js';
@@ -49,7 +49,7 @@ const Forecast = () => {
   }, [code, mode]);
 
   return (
-    <>
+    <div className={styles.site}>
       <Header windowWidth={windowDimensions.width} page={"forecast"} />
       <ForecastsNav election={code} mode={mode} />
       <div className={styles.content}>
@@ -74,7 +74,8 @@ const Forecast = () => {
           <LoadingMarker />
         }
       </div>
-    </>
+      <Footer />
+    </div>
   );
 };
 
