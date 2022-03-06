@@ -37,9 +37,11 @@ const MethodologyPollTrend = props => {
                     phone, SMS and multi-mode polls.)
                 </li>
                 <li>
-                    A <i>quality rating</i> for the poll, based on track record (or lack thereof), sample size, regularity, membership of
-                    the Australian Polling Council (only for polls taken after its inception), and other factors. For the full breakdown of
-                    how polls are rated see this <ExtLink href="https://github.com/d-j-hirst/aus-polling-analyser/blob/master/analysis/Data/poll-quality-guidelines.txt">file</ExtLink>.
+                    A <i>confidence rating</i> for the poll, based on track record (or lack thereof), sample size, regularity, membership of
+                    the Australian Polling Council (only for polls taken after its inception), and other factors. This is not quite a measure
+                    of how good the poll is, but rather a measure of how confident one can be that it is conducted professionally without 
+                    obvious deficiencies. For the full breakdown of
+                    how polls are rated see this <ExtLink href="https://github.com/d-j-hirst/aus-polling-analyser/blob/master/analysis/Data/poll-confidence-guidelines.txt">file</ExtLink>.
                     Better polls are assigned lower ratings numerically (a 0 rating indicates best practice),
                     and are given more weight when generating the forecast.
                 </li>
@@ -80,15 +82,15 @@ const MethodologyPollTrend = props => {
                     especially in the final two weeks.
                 </li>
                 <li>Polls are assumed to be imperfect and biased estimates of actual voting intention.
-                    Polls with the best quality rating are assumed to have an effective sample size of 1000
+                    Polls with the best confidence rating are assumed to have an effective sample size of 1000
                     to determine their margin of error (even if the actual sample size is larger),
-                    and polls with lower quality ratings are assigned lower effective sample sizes. Roughly speaking,
+                    and polls with worse confidence ratings are assigned lower effective sample sizes. Roughly speaking,
                     this determines how much weight the model gives the poll in terms of its effect on the vote trend.
                 </li>
                 <li>Polls for each polling house are assumed to have a <i>house effect</i>, giving lower or higher results than
                     the actual voting intention on average over time. Further, house effects from certain
                     "anchoring" polling houses are assumed to sum to zero. Anchoring polling houses selected are generally
-                    polls with good quality ratings (specifically, 0 or 1 excluding sample size considerations, see above)
+                    polls with good confidence ratings (specifically, 0 or 1 excluding sample size considerations, see above)
                     and, after the inception of the Australian Polling Council, must be members of it. If there are not
                     at least two polling houses running polls that meet these criteria, then another polling house may be used
                     as an anchoring polling house temporarily. Note that the real house effects would typically not add exactly

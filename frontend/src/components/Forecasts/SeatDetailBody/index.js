@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 
+import { Link } from 'react-router-dom';
+
 import Card from 'react-bootstrap/Card';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Alert from 'react-bootstrap/Alert';
@@ -167,7 +169,8 @@ const TcpExplainer = props => {
                 be interpreted with caution, and, in particular, conclusions should not be drawn by comparing
                 different TCP pairs to each 
             other. </strong>
-            For a more thorough explanation with examples, see this FAQ.
+            For a more thorough explanation with examples, 
+            see <Link to="/guide#tcp-scenarios"> this part of the Forecast Guide</Link>.
         </p>
         <hr/>
         <p>
