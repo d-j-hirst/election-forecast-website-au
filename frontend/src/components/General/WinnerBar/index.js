@@ -27,7 +27,7 @@ const WinnerBar = props => {
     }
 
     let tooltipText = "";
-    tooltipText = props.bar.partyName + " - " + Number(props.bar.winPercent).toFixed(1) + "%";
+    tooltipText = props.bar.partyName + " - " + Number(props.bar.winPercent).toFixed(1) + "% chance to win";
 
     return (
         <div style={thisStyle} className={barClass}>

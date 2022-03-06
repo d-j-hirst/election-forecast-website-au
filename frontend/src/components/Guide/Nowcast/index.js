@@ -18,7 +18,7 @@ const GuideNowcast = props => {
                 Importantly, this means that the nowcast <strong>is not a forecast</strong> in
                 some important ways. It is not an indicator of the actual election
                 results, as much can change in the time between current polling and the
-                actual election (especially in federal politics), and the nowcast does not take
+                actual election, and the nowcast does not take
                 this into account. It is also not testable, as
                 the hypothetical election it is "predicting" for never actually occurs (except
                 when it is run immediately before the real election). Finally, the presence of
@@ -31,7 +31,8 @@ const GuideNowcast = props => {
                 of how public opinion is evolving in reaction to new developments. Many media outlets,
                 especially those who commission or are partnered with polling agencies, tend to report
                 on the results of individual polls as if others don't exist, even if the movements of
-                that poll are small enough to have easily been caused by random chance. By aggregating
+                that poll are small enough to have easily been caused by random chance, or the polling house
+                has a consistent lean to one party compared to others (a "house effect"). By aggregating
                 many different polls together and accounting for house effects and other confounding
                 factors, the signal produced by public events can be distinguished from the noise of
                 random sampling. This makes it easier to recognise what kinds of events are really

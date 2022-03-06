@@ -1,27 +1,29 @@
 import React, { useState , useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 
 import { useUserRequired } from 'utils/hooks';
 import { Header, CommentaryHeader, CommentaryItem, LoadingMarker } from 'components';
 import { useWindowDimensions } from '../../utils/window.js';
 import { getDirect } from 'utils/sdk';
 
-import styles from './Commentary.module.css';
+import styles from './CommentarySingle.module.css';
 
-const Commentary = () => {
+const CommentarySingle = () => {
+    const { id } = useParams();
     // Putting this here instructs the frontend to only display this page
     // if a valid user is logged in. As always, don't trust the client
     // and protect on the backend as well!
     useUserRequired();
-    const [ commentaries, setCommentaries] = useState([]);
-    const [ commentariesValid, setCommentariesValid] = useState(false);
+    const [ commentary, setCommentary] = useState([]);
+    const [ commentaryValid, setCommentaryValid] = useState(false);
     const windowDimensions = useWindowDimensions();
     document.title = `AEF - Commentary`;
 
     useEffect(() => {
-        setCommentariesValid(false);
+        setCommentaryValid(false);
   
-      const getCommentaries = () => {
-        return getDirect(`commentary-api/all-commentaries`).then(
+      const getCommentary = () => {
+        return getDirect(`commentary-api/commentary/${id}/`).then(
           resp => {
             if (!resp.ok) throw Error("Couldn't find commentary data");
             return resp.data;
@@ -29,11 +31,11 @@ const Commentary = () => {
         );
       }
   
-      const fetchCommentaries = () => {
-        getCommentaries().then(
+      const fetchCommentary = () => {
+        getCommentary().then(
           data => {
-            setCommentaries(data);
-            setCommentariesValid(true);
+            setCommentary(data);
+            setCommentaryValid(true);
           }
         ).catch(
           e => {
@@ -42,23 +44,20 @@ const Commentary = () => {
         );
       }
   
-      fetchCommentaries();
-    }, []);
+      fetchCommentary();
+    }, [id]);
 
     return (
         <>
             <Header windowWidth={windowDimensions.width} page={"commentary"} />
             <div className={styles.content}>
-                <CommentaryHeader />
-                {commentariesValid &&
+                <CommentaryHeader returnLink />
+                {commentaryValid &&
                     <div className={styles.mainText}>
-                        {commentaries.map((commentary, index) => <>
-                            <CommentaryItem commentary={commentary} key={index} headingLink={true} />
-                            {index !== commentaries.length - 1 && <hr />}
-                        </>)}
+                        <CommentaryItem commentary={commentary} />
                     </div>
                 }
-                {!commentariesValid &&
+                {!commentaryValid &&
                 <LoadingMarker text="Loading ..." />
                 }
             </div>
@@ -66,4 +65,4 @@ const Commentary = () => {
     );
 };
 
-export default Commentary;
+export default CommentarySingle;

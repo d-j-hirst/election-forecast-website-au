@@ -28,12 +28,13 @@ const GuideTcpScenarios = props => {
             </p>
             <p>
                 One important thing to note for the TCP scenarios is that this site only reports TCP
-                results for simulated results where those candidates actually make the final two.
+                results for simulated results where, in those simulations, those candidates are projected to
+                actually be the final two candidates after preferences are distributed.
                 This means that the results aren't necessarily representative of how voters would
                 actually preference in a typical election. For scenarios that are given a very small chance
-                of happening, this can be particularly distorting - for, example, in some seats One Nation
+                of happening, this can be particularly distorting - for, example, in some seats a minor party
                 might be shown as beating one or both major parties in the TCP, but this only applies to the very
-                unusual sets of circumstances where One Nation makes the final two in the first place,
+                unusual sets of circumstances where that minor party makes the final two in the first place,
                 and would probably have do significantly worse in that comparison in a more typical election.
             </p>
             <p>
@@ -62,24 +63,6 @@ const GuideTcpScenarios = props => {
                 that actually takes place, and the TCP scenarios don't help with that decision as they don't compare
                 TCPs within the same election.
             </p>
-            <p>
-                For those who might vote tactically, the main things to note are (these are general observations, not
-                outputs of the model):
-            </p>
-            <ul>
-                <li>Independents and centrist parties tend to do better against a major party than the opposing major party does. Consider a tactical vote
-                    for a prominent independent or centrist party in seats where your preferred major party is unlikely to win.
-                </li>
-                <li>Labor and Greens tend to do very similarly against the Coalition. On average the Greens tend to do very slightly
-                    better, but sometimes it is the other way around. This site recommends voters vote for the party that they prefer,
-                    rather than the one they think most likely to win, as that cannot be known in advance.
-                </li>
-                <li>Other cases not covered by the two points above have few historical results to compare with,
-                    but as a general rule: tend towards voting for the candidate you prefer - rather than the
-                    one you think might be more likely to beat an opponent - unless there's quite strong
-                    evidence that there's a large difference in their chances.
-                </li>
-            </ul>
         </>
     );
 }

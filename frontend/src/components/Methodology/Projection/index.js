@@ -32,14 +32,14 @@ const MethodologyPollTrend = props => {
                 chosen according to similar electoral behaviour, and some do overlap:
             </p>
             <ul>
-                <li>ALP two-party-preferred vote</li>
+                <li>Two-party-preferred vote</li>
                 <li>ALP first preference vote</li>
                 <li>LNP first preference vote (including combination of both parties' vote in WA state elections)</li>
-                <li>"Consituency parties" - minor parties that represent a fairly well-defined ideology or
+                <li>"Constituency minors" - minor parties that represent a fairly well-defined ideology or
                     section of the community, e.g. Greens, Family First, WA Nationals</li>
-                <li>"Populist parties" - minor parties that tend to define themselves against the major parties
-                    and have volatile support levels. E.g. One Nation, Australian Democrates, UAP/PUP</li>
-                <li>"Others" - Sum of all parties not including the major parties, Greens, and WA Nationals</li>
+                <li>"Populist minors" - minor parties that tend to define themselves against the major parties
+                    and have volatile support levels, e.g. One Nation, Australian Democrates, UAP/PUP</li>
+                <li>"Others" - Sum of <i>all</i> parties (including any mentioned above) <i>except</i> the major parties, Greens, and WA Nationals</li>
                 <li>"Unnamed others" - Sum of all parties not considered significant 
                     (either not polled, or only polling very low numbers)</li>
             </ul>
@@ -49,7 +49,7 @@ const MethodologyPollTrend = props => {
                 especially overseas, both this site and others (such
                 as <ExtLink href="https://armariuminterreta.com/2021/08/05/australian-economy-electoral-impact/">this analysis 
                 by Armarium Interreta</ExtLink>) have found
-                that the predictiveness of such factors is weak at best for Australian elections.
+                that the predictiveness of such factors is weak for Australian elections.
                 The fundamentals projection used here instead relies on known facts of the electoral situation:
             </p>
             <ul>
@@ -190,7 +190,7 @@ const MethodologyPollTrend = props => {
             <p>
                 There are two main exceptions to this. The first is that, when out from the election by a year or longer, the
                 projection for <i>federal</i> TPP is not consistently better than the straight fundamentals (which, despite being merely
-                an average of the past 6 elections, are quite an accurate predictor most of the time!). For example, at 730 days (exactly two) the
+                an average of the past 6 elections, are quite an accurate predictor most of the time!). For example, at 730 days (exactly two years) the
                 projected model is still somewhat better than the fundamentals (and <i>much</i> better than the raw poll trend!) but this is not
                 the case for 600 and 500 days, as fluctuations in historical polling actually cause the projected model to narrowly underperform
                 the fundamentals at those times. Note this <i>doesn't</i> apply to state elections - for them, the projected model notably and

@@ -47,7 +47,7 @@ const MethodologyPollTrend = props => {
                     First preference votes for all significant parties (some polled parties may be judged sufficiently unlikely to
                     ever challenge for a lower house seat). The Liberal and National parties are recorded separately for polls in
                     Western Australia but only the sum of their vote shares is recorded elsewhere. The publicised two-party preferred vote
-                    for the ALP (if present) is recorded for display purposes but is not used in the forecast calculations. If the poll report
+                    (if present) is recorded for display purposes but is not used in the forecast calculations. If the poll report
                     leaves undecided voters in the sample they are removed and the vote shares are rescaled so that the total adds to 100%.
                     If a poll does not give a specific value for "Others" it is assumed to be the number required to make all the first preferences
                     add up to 100.
@@ -74,7 +74,7 @@ const MethodologyPollTrend = props => {
                 The following assumptions are used to formulate the model:
             </p>
             <ul>
-                <li>The real voting intention changes over time approximately following a
+                <li>The real voting intention for the whole election is assumed to change over time approximately following a
                     a <ExtLink href="https://en.wikipedia.org/wiki/Random_walk#Gaussian_random_walk">Gaussian random walk</ExtLink>.
                     Changes in voting intention are assumed to mostly be small most of the time, but increase during the election campaign,
                     especially in the final two weeks.
@@ -106,7 +106,8 @@ const MethodologyPollTrend = props => {
                 </li>
             </ul>
             <p>
-                The model is run using the available polling data, generating trends from the first poll in the current
+                The model is run using the available polling data, generating trends for vote shares across the whole election
+                from the first poll in the current
                 election cycle until the most recent poll. Estimates are made for first preferences for all major and
                 minor parties deemed "significant" (generally, polling more than 3% or getting more than 5% in some
                 previous general election), as well as a generic "others" for all minor parties except the Greens.
