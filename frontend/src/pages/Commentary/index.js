@@ -27,6 +27,13 @@ const Commentary = () => {
       const fetchCommentaries = () => {
         getCommentaries().then(
           data => {
+            console.log(data);
+            data.sort((a, b) => {
+              if (a.date > b.date) return -1;
+              if (a.date < b.date) return 1;
+              return 0;
+            });
+            console.log(data);
             setCommentaries(data);
             setCommentariesValid(true);
           }
