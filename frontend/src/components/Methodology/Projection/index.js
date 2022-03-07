@@ -189,16 +189,16 @@ const MethodologyPollTrend = props => {
             </p>
             <p>
                 There are two main exceptions to this. The first is that, when out from the election by a year or longer, the
-                projection for <i>federal</i> TPP is not consistently better than the straight fundamentals (which, despite being merely
-                an average of the past 6 elections, are quite an accurate predictor most of the time!). For example, at 730 days (exactly two years) the
-                projected model is still somewhat better than the fundamentals (and <i>much</i> better than the raw poll trend!) but this is not
-                the case for 600 and 500 days, as fluctuations in historical polling actually cause the projected model to narrowly underperform
-                the fundamentals at those times. Note this <i>doesn't</i> apply to state elections - for them, the projected model notably and
+                projection for <i>federal</i> TPP is not quite consistently better than the straight fundamentals (which, despite being merely
+                an average of the past 6 elections, are quite an accurate predictor most of the time, as federal elections are usually quite close).
+                For most time points the model still performs better, but (as of writing at March 2022) at some time points, such as 500 and
+                900+ days out from the election, the projection fails to beat the fundamentals, but isn't significantly worse either.
+                Note this <i>doesn't</i> apply to state elections - for them, the projected model notably and
                 consistently outperforms other estimates as far as 2.5 years out from the election.
             </p>
             <p>
-                The other exception is that for estimates <i>very close</i> to the election - within a week or less - the raw poll trend does
-                outperform the projection somewhat.
+                The other exception is that for estimates <i>very close</i> to the election - within a week or less - the projection
+                becomes neither particularly better nor worse than the raw poll trend.
                 
             </p>
             <h5 id="mixing">Sampling elections from the projection</h5>
