@@ -44,8 +44,6 @@ const GovernmentFormationChart = props => {
         { name: partyTwoName + ' majority', value: round1(partyTwoVals[1]) },
     ]
 
-    console.log(data);
-
     const colors = ['#dc3545', '#ec7480', '#f5a3ab', '#885588', '#888888', '#87b2e7', '#5792da', '#1467cc']
     
     const chartHeight = lowerLegendRequired ? 420 : 320;
