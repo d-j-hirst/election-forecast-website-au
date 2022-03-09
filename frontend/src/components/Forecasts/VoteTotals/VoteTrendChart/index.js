@@ -139,7 +139,12 @@ const VoteTrendChart = props => {
         console.log(thisTrend);
         console.log(trendData);
         console.log(trendData[0]);
-        trendData.at(-1).date = dateToStr(addDays(date, finalDay));
+        
+        try {
+            trendData.at(-1).date = dateToStr(addDays(date, finalDay));
+        } catch {
+            return null;
+        }
         trendData.at(-1).day = finalDay;
         for (let poll of thisPolls) {
             if (party === "OTH") break;
