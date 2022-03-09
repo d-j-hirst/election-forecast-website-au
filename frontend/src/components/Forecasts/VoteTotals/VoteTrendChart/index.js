@@ -136,7 +136,9 @@ const VoteTrendChart = props => {
                 "1-99": [round2(spread[0]), round2(spread[6])]
             };
         });
+        console.log(thisTrend);
         console.log(trendData);
+        console.log(trendData[0]);
         trendData.at(-1).date = dateToStr(addDays(date, finalDay));
         trendData.at(-1).day = finalDay;
         for (let poll of thisPolls) {
