@@ -5,6 +5,7 @@ import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import ListGroup from 'react-bootstrap/ListGroup';
 
+import StandardErrorBoundary from '../../General/StandardErrorBoundary';
 import ProbStatement from '../../General/ProbStatement'
 import GovernmentFormationChart from './GovernmentFormationChart'
 import InfoIcon from '../../General/InfoIcon'
@@ -405,16 +406,20 @@ const FormationOfGovernment = props => {
                 </strong>
             </Card.Header>
             <Card.Body className={styles.formationOfGovernmentBody}>
-                <ListGroup className={styles.formationOfGovernmentTopList}>
-                    {
-                        showExplainer && <MainExplainer />
-                    }
-                    <MajorPartyCollapsibleRows partyIndex="0" forecast={props.forecast} />
-                    <MajorPartyCollapsibleRows partyIndex="1" forecast={props.forecast} />
-                    <OthersCollapsibleRows forecast={props.forecast} />
-                    <HungParliamentCollapsibleRows forecast={props.forecast} />
-                </ListGroup>
-                <GovernmentFormationChart forecast={props.forecast} />
+                <StandardErrorBoundary>
+                    <ListGroup className={styles.formationOfGovernmentTopList}>
+                        {
+                            showExplainer && <MainExplainer />
+                        }
+                        <MajorPartyCollapsibleRows partyIndex="0" forecast={props.forecast} />
+                        <MajorPartyCollapsibleRows partyIndex="1" forecast={props.forecast} />
+                        <OthersCollapsibleRows forecast={props.forecast} />
+                        <HungParliamentCollapsibleRows forecast={props.forecast} />
+                    </ListGroup>
+                </StandardErrorBoundary>
+                <StandardErrorBoundary>
+                    <GovernmentFormationChart forecast={props.forecast} />
+                </StandardErrorBoundary>
             </Card.Body>
         </Card>
     );
