@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { Header, Footer, ForecastsNav, ForecastHeader, FormationOfGovernment,
-  LoadingMarker, VoteTotals, SeatTotals, ArchiveAlert, Seats } from 'components';
+  LoadingMarker, VoteTotals, SeatTotals, ArchiveAlert, Seats, StandardErrorBoundary } from 'components';
 import { getDirect } from 'utils/sdk';
 import { useWindowDimensions } from '../../utils/window.js';
 
@@ -59,10 +59,18 @@ const Archive = () => {
           <>
             <ForecastHeader mode={mode} forecast={forecast} archive={true} />
             <ArchiveAlert forecast={forecast} code={code} />
-            <FormationOfGovernment election={code} mode={mode} forecast={forecast} />
-            <VoteTotals election={code} mode={mode} forecast={forecast} windowWidth={windowDimensions.width} />
-            <SeatTotals election={code} mode={mode} forecast={forecast} windowWidth={windowDimensions.width} />
-            <Seats election={code} mode={mode} forecast={forecast} archiveId={id} windowWidth={windowDimensions.width} />
+            <StandardErrorBoundary>
+              <FormationOfGovernment election={code} mode={mode} forecast={forecast} />
+            </StandardErrorBoundary>
+            <StandardErrorBoundary>
+              <VoteTotals election={code} mode={mode} forecast={forecast} windowWidth={windowDimensions.width} />
+            </StandardErrorBoundary>
+            <StandardErrorBoundary>
+              <SeatTotals election={code} mode={mode} forecast={forecast} windowWidth={windowDimensions.width} />
+            </StandardErrorBoundary>
+            <StandardErrorBoundary>
+              <Seats election={code} mode={mode} forecast={forecast} archiveId={id} windowWidth={windowDimensions.width} />
+            </StandardErrorBoundary>
           </>
         }
         {!forecastValid &&

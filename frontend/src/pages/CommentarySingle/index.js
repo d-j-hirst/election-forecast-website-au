@@ -1,7 +1,7 @@
 import React, { useState , useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { Header, Footer, CommentaryHeader, CommentaryItem, LoadingMarker } from 'components';
+import { Header, Footer, CommentaryHeader, CommentaryItem, LoadingMarker, StandardErrorBoundary } from 'components';
 import { useWindowDimensions } from '../../utils/window.js';
 import { getDirect } from 'utils/sdk';
 
@@ -47,14 +47,18 @@ const CommentarySingle = () => {
             <Header windowWidth={windowDimensions.width} page={"commentary"} />
             <div className={styles.content}>
                 <CommentaryHeader returnLink />
-                {commentaryValid &&
-                    <div className={styles.mainText}>
+                <StandardErrorBoundary>
+                  {commentaryValid &&
+                    <StandardErrorBoundary>
+                      <div className={styles.mainText}>
                         <CommentaryItem commentary={commentary} />
-                    </div>
-                }
-                {!commentaryValid &&
-                <LoadingMarker text="Loading ..." />
-                }
+                      </div>
+                    </StandardErrorBoundary>
+                  }
+                  {!commentaryValid &&
+                  <LoadingMarker text="Loading ..." />
+                  }
+                </StandardErrorBoundary>
             </div>
             <Footer />
         </div>

@@ -4,7 +4,7 @@ import Alert from 'react-bootstrap/Alert';
 import Card from 'react-bootstrap/Card';
 import ListGroup from 'react-bootstrap/ListGroup';
 
-// import TooltipPercentage from '../TooltipPercentage';
+import StandardErrorBoundary from '../../General/StandardErrorBoundary';
 import ProbBarDist from '../../General/ProbBarDist';
 import { SmartBadge } from '../../General/PartyBadge'
 import InfoIcon from '../../General/InfoIcon'
@@ -128,7 +128,9 @@ const SeatTotals = props => {
                     {
                         showExplainer && <MainExplainer />
                     }
-                    <SeatsRowSet forecast={props.forecast} windowWidth={props.windowWidth} />
+                    <StandardErrorBoundary>
+                        <SeatsRowSet forecast={props.forecast} windowWidth={props.windowWidth} />
+                    </StandardErrorBoundary>
                 </ListGroup>
             </Card.Body>
         </Card>

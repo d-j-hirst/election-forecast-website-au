@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Header, Footer, GuideHeader, GuideIntro, GuidePurpose, GuideNowcast, GuideTcpScenarios } from 'components';
+import { Header, Footer, GuideHeader, GuideIntro, GuidePurpose, GuideNowcast, GuideTcpScenarios, StandardErrorBoundary } from 'components';
 import { useWindowDimensions } from '../../utils/window.js';
 
 import styles from './Guide.module.css';
@@ -14,12 +14,14 @@ const Guide = () => {
             <Header windowWidth={windowDimensions.width} page={"guide"} />
             <div className={styles.content}>
                 <GuideHeader />
-                <div className={styles.mainText}>
-                    <GuideIntro />
-                    <GuidePurpose />
-                    <GuideNowcast />
-                    <GuideTcpScenarios />
-                </div>
+                <StandardErrorBoundary>
+                    <div className={styles.mainText}>
+                        <GuideIntro />
+                        <GuidePurpose />
+                        <GuideNowcast />
+                        <GuideTcpScenarios />
+                    </div>
+                </StandardErrorBoundary>
             </div>
             <Footer />
         </div>

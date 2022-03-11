@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Header, Footer, MethodologyHeader, MethodologyIntro, MethodologyOutline,
-    MethodologyPollTrend, MethodologyProjection, MethodologySimulation } from 'components';
+    MethodologyPollTrend, MethodologyProjection, MethodologySimulation, StandardErrorBoundary } from 'components';
 import { useWindowDimensions } from '../../utils/window.js';
 
 import styles from './Methodology.module.css';
@@ -17,13 +17,15 @@ const Methodology = () => {
             <Header windowWidth={windowDimensions.width} page={"methodology"} />
             <div className={styles.content}>
                 <MethodologyHeader />
-                <div className={styles.mainText}>
-                    <MethodologyIntro />
-                    <MethodologyOutline />
-                    <MethodologyPollTrend />
-                    <MethodologyProjection />
-                    <MethodologySimulation />
-                </div>
+                <StandardErrorBoundary>
+                    <div className={styles.mainText}>
+                        <MethodologyIntro />
+                        <MethodologyOutline />
+                        <MethodologyPollTrend />
+                        <MethodologyProjection />
+                        <MethodologySimulation />
+                    </div>
+                </StandardErrorBoundary>
             </div>
             <Footer />
         </div>

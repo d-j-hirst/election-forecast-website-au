@@ -1,6 +1,6 @@
 import React, { useState , useEffect } from 'react';
 
-import { Header, Footer, CommentaryHeader, CommentaryItem, LoadingMarker } from 'components';
+import { Header, Footer, CommentaryHeader, CommentaryItem, LoadingMarker, StandardErrorBoundary } from 'components';
 import { useWindowDimensions } from '../../utils/window.js';
 import { getDirect } from 'utils/sdk';
 
@@ -52,17 +52,19 @@ const Commentary = () => {
             <Header windowWidth={windowDimensions.width} page={"commentary"} />
             <div className={styles.content}>
                 <CommentaryHeader />
-                {commentariesValid &&
-                    <div className={styles.mainText}>
-                        {commentaries.map((commentary, index) => <>
-                            <CommentaryItem commentary={commentary} key={index} headingLink={true} />
-                            {index !== commentaries.length - 1 && <hr />}
-                        </>)}
-                    </div>
-                }
-                {!commentariesValid &&
-                <LoadingMarker text="Loading ..." />
-                }
+                <StandardErrorBoundary>
+                  {commentariesValid &&
+                      <div className={styles.mainText}>
+                          {commentaries.map((commentary, index) => <StandardErrorBoundary>
+                              <CommentaryItem commentary={commentary} key={index} headingLink={true} />
+                              {index !== commentaries.length - 1 && <hr />}
+                          </StandardErrorBoundary>)}
+                      </div>
+                  }
+                  {!commentariesValid &&
+                  <LoadingMarker text="Loading ..." />
+                  }
+                </StandardErrorBoundary>
             </div>
             <Footer />
         </div>

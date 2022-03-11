@@ -4,6 +4,7 @@ import Alert from 'react-bootstrap/Alert';
 import Card from 'react-bootstrap/Card';
 import ListGroup from 'react-bootstrap/ListGroup';
 
+import StandardErrorBoundary from '../../General/StandardErrorBoundary';
 import TooltipPercentage from '../../General/TooltipPercentage';
 import TooltipWrapper from '../../General/TooltipWrapper';
 import ProbBarDist from '../../General/ProbBarDist';
@@ -249,11 +250,17 @@ const VoteTotals = props => {
                     {
                         showExplainer && <MainExplainer />
                     }
-                    <TppRowSet forecast={props.forecast} windowWidth={props.windowWidth} />
-                    <FpRowSet forecast={props.forecast} windowWidth={props.windowWidth} />
+                    <StandardErrorBoundary>
+                        <TppRowSet forecast={props.forecast} windowWidth={props.windowWidth} />
+                    </StandardErrorBoundary>
+                    <StandardErrorBoundary>
+                        <FpRowSet forecast={props.forecast} windowWidth={props.windowWidth} />
+                    </StandardErrorBoundary>
                     {
                         props.forecast.polls !== undefined &&
-                        <VoteTrendChartSet forecast={props.forecast} windowWidth={props.windowWidth} />
+                        <StandardErrorBoundary>
+                            <VoteTrendChartSet forecast={props.forecast} windowWidth={props.windowWidth} />
+                        </StandardErrorBoundary>
                     }
                 </ListGroup>
             </Card.Body>

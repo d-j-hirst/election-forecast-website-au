@@ -5,6 +5,7 @@ import Card from 'react-bootstrap/Card';
 import ListGroup from 'react-bootstrap/ListGroup';
 import { HashLink as Link } from 'react-router-hash-link';
 
+import StandardErrorBoundary from '../../General/StandardErrorBoundary';
 import TooltipPercentage from '../../General/TooltipPercentage';
 import ProbStatement from '../../General/ProbStatement';
 import ProbBarDist from '../../General/ProbBarDist';
@@ -445,19 +446,21 @@ const Seats = props => {
                 {
                     showExplainer && <MainExplainer />
                 }
-                <ListGroup className={styles.seatsList}>
-                    {
-                        sortedIndices.map(index =>
-                            <SeatRow forecast={props.forecast}
-                                     election={props.election}
-                                     mode={props.mode}
-                                     index={index}
-                                     key={props.forecast.seatNames[index]}
-                                     windowWidth={props.windowWidth}
-                                     archiveId={props.archiveId} />
-                        )
-                    }
-                </ListGroup>
+                <StandardErrorBoundary>
+                    <ListGroup className={styles.seatsList}>
+                        {
+                            sortedIndices.map(index =>
+                                <SeatRow forecast={props.forecast}
+                                        election={props.election}
+                                        mode={props.mode}
+                                        index={index}
+                                        key={props.forecast.seatNames[index]}
+                                        windowWidth={props.windowWidth}
+                                        archiveId={props.archiveId} />
+                            )
+                        }
+                    </ListGroup>
+                </StandardErrorBoundary>
             </Card.Body>
         </Card>
     );

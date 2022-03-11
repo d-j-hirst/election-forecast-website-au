@@ -6,6 +6,7 @@ import Card from 'react-bootstrap/Card';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Alert from 'react-bootstrap/Alert';
 
+import StandardErrorBoundary from '../../General/StandardErrorBoundary';
 import TooltipPercentage from '../../General/TooltipPercentage';
 import ProbStatement from '../../General/ProbStatement';
 import ProbBarDist from '../../General/ProbBarDist';
@@ -365,29 +366,37 @@ const SeatDetailBody = props => {
                 {
                     showExplainer && <MainExplainer seatName={seatName} />
                 }
-                <SeatSummary forecast={props.forecast}
-                            election={props.election}
-                            mode={props.mode}
-                            index={props.index}
-                            windowWidth={props.windowWidth}
-                />
-                <SeatWinsSection forecast={props.forecast}
-                            election={props.election}
-                            mode={props.mode}
-                            index={props.index}
-                />
-                <SeatFpSection forecast={props.forecast}
-                            election={props.election}
-                            mode={props.mode}
-                            index={props.index}
-                            windowWidth={props.windowWidth}
-                />
-                <SeatTcpSection forecast={props.forecast}
-                            election={props.election}
-                            mode={props.mode}
-                            index={props.index}
-                            windowWidth={props.windowWidth}
-                />
+                <StandardErrorBoundary>
+                    <SeatSummary forecast={props.forecast}
+                                election={props.election}
+                                mode={props.mode}
+                                index={props.index}
+                                windowWidth={props.windowWidth}
+                    />
+                </StandardErrorBoundary>
+                <StandardErrorBoundary>
+                    <SeatWinsSection forecast={props.forecast}
+                                election={props.election}
+                                mode={props.mode}
+                                index={props.index}
+                    />
+                </StandardErrorBoundary>
+                <StandardErrorBoundary>
+                    <SeatFpSection forecast={props.forecast}
+                                election={props.election}
+                                mode={props.mode}
+                                index={props.index}
+                                windowWidth={props.windowWidth}
+                    />
+                </StandardErrorBoundary>
+                <StandardErrorBoundary>
+                    <SeatTcpSection forecast={props.forecast}
+                                election={props.election}
+                                mode={props.mode}
+                                index={props.index}
+                                windowWidth={props.windowWidth}
+                    />
+                </StandardErrorBoundary>
             </Card.Body>
         </Card>
     );

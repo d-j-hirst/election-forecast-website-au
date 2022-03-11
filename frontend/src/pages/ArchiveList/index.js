@@ -4,7 +4,7 @@ import { useParams, Link } from 'react-router-dom';
 import Card from 'react-bootstrap/Card';
 import ListGroup from 'react-bootstrap/ListGroup';
 
-import { Header, Footer, ForecastsNav, LoadingMarker} from 'components';
+import { Header, Footer, ForecastsNav, LoadingMarker, StandardErrorBoundary } from 'components';
 import { getDirect } from 'utils/sdk';
 
 import { parseDateStringAsUTC } from '../../utils/date.js'
@@ -90,9 +90,11 @@ const ArchiveList = () => {
                       </strong>
                   </Card.Header>
                   <Card.Body className={styles.archiveListBody}>
+                    <StandardErrorBoundary>
                       <ListGroup className={styles.archiveList}>
                           <ArchiveRowSet archiveList={archiveList} code={code} />
                       </ListGroup>
+                    </StandardErrorBoundary>
                   </Card.Body>
               </Card>
             }

@@ -10,6 +10,7 @@ export { default as SeatDetailBody } from './Forecasts/SeatDetailBody';
 export { default as SeatTotals } from './Forecasts/SeatTotals';
 export { default as Seats } from './Forecasts/Seats';
 export { default as LoadingMarker } from './General/LoadingMarker';
+export { default as StandardErrorBoundary } from './General/StandardErrorBoundary';
 export { default as ForecastAlert } from './Forecasts/Alerts/ForecastAlert';
 export { default as NowcastAlert } from './Forecasts/Alerts/NowcastAlert';
 export { default as ArchiveAlert } from './Forecasts/Alerts/ArchiveAlert';

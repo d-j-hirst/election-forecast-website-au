@@ -2,11 +2,13 @@ import React from 'react';
 
 import { parseDateStringAsUTC } from '../../../utils/date.js'
 
+import StandardErrorBoundary from '../../General/StandardErrorBoundary';
+
 import styles from './ForecastHeader.module.css';
 
 const ForecastHeader = props => {
     return (
-        <>
+        <StandardErrorBoundary>
             <div className={styles.forecastTitle}>
                 {props.forecast.electionName} - {props.mode === "nowcast" ? "Nowcast" : "Regular Forecast"}
                 {props.archive === true ? <strong>{" - Archive"}</strong> : ""}
@@ -18,7 +20,8 @@ const ForecastHeader = props => {
                 {props.archive === true && <strong>{props.forecast.reportLabel}</strong>}
                 {props.archive !== true && <>{props.forecast.reportLabel}</>}
             </div>
-        </>
+        
+        </StandardErrorBoundary>
     );
 }
 

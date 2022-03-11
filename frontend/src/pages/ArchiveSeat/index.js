@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { Header, Footer, ForecastsNav, ForecastHeader,
-  LoadingMarker, ArchiveAlert, SeatDetailBody } from 'components';
+  LoadingMarker, ArchiveAlert, SeatDetailBody, StandardErrorBoundary } from 'components';
 
 import { getDirect } from 'utils/sdk';
 import { getIndexFromSeatUrl } from 'utils/seaturls';
@@ -65,12 +65,15 @@ const SeatDetails = () => {
           <>
             <ForecastHeader mode={mode} forecast={forecast} archive={true} />
             <ArchiveAlert forecast={forecast} code={code} mode={mode} showInitially={false} />
-            <SeatDetailBody forecast={forecast}
+            <StandardErrorBoundary>
+              <SeatDetailBody forecast={forecast}
                             election={code}
                             mode={mode}
                             index={seatIndex}
                             windowWidth={windowDimensions.width}
-            />
+              />
+            </StandardErrorBoundary>
+            
           </>
         }
         {forecastValid && seatIndex === -1 &&

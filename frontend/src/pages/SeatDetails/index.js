@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { Header, Footer, ForecastAlert, ForecastsNav, ForecastHeader,
-  LoadingMarker, NowcastAlert, SeatDetailBody } from 'components';
+  LoadingMarker, NowcastAlert, SeatDetailBody, StandardErrorBoundary } from 'components';
 
 import { getDirect } from 'utils/sdk';
 import { getIndexFromSeatUrl } from 'utils/seaturls';
@@ -53,35 +53,39 @@ const SeatDetails = () => {
     <div className={styles.site}>
       <Header windowWidth={windowDimensions.width} page={"forecast"} />
       <ForecastsNav election={code} mode={mode} />
-      <div className={styles.content}>
-        {forecastValid && seatIndex >= 0 &&
-          <>
-            <ForecastHeader mode={mode} forecast={forecast} />
-            {
-              mode === "regular" &&
-              <ForecastAlert forecast={forecast} code={code} showInitially={false} />
-            }
-            {
-              mode === "nowcast" &&
-              <NowcastAlert mode={mode} forecast={forecast} showInitially={false} />
-            }
-            <SeatDetailBody forecast={forecast}
-                            election={code}
-                            mode={mode}
-                            index={seatIndex}
-                            windowWidth={windowDimensions.width}
-            />
-          </>
-        }
-        {forecastValid && seatIndex === -1 &&
-          <>
-            Couldn't find a seat matching name: {seat}. Make sure the seat is spelled correctly and any groups of spaced and other special characters are replaced with single hyphens.
-          </>
-        }
-        {!forecastValid &&
-          <LoadingMarker />
-        }
-      </div>
+      <StandardErrorBoundary>
+        <div className={styles.content}>
+          {forecastValid && seatIndex >= 0 &&
+            <>
+              <ForecastHeader mode={mode} forecast={forecast} />
+              {
+                mode === "regular" &&
+                <ForecastAlert forecast={forecast} code={code} showInitially={false} />
+              }
+              {
+                mode === "nowcast" &&
+                <NowcastAlert mode={mode} forecast={forecast} showInitially={false} />
+              }
+              <StandardErrorBoundary>
+                <SeatDetailBody forecast={forecast}
+                                election={code}
+                                mode={mode}
+                                index={seatIndex}
+                                windowWidth={windowDimensions.width}
+                />
+              </StandardErrorBoundary>
+            </>
+          }
+          {forecastValid && seatIndex === -1 &&
+            <>
+              Couldn't find a seat matching name: {seat}. Make sure the seat is spelled correctly and any groups of spaced and other special characters are replaced with single hyphens.
+            </>
+          }
+          {!forecastValid &&
+            <LoadingMarker />
+          }
+        </div>
+      </StandardErrorBoundary>
       <Footer />
     </div>
   );

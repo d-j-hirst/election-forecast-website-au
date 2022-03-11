@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Header, Footer, AboutHeader, AboutTheSite } from 'components';
+import { Header, Footer, AboutHeader, AboutTheSite, StandardErrorBoundary } from 'components';
 import { useWindowDimensions } from '../../utils/window.js';
 
 import styles from './About.module.css';
@@ -13,10 +13,14 @@ const About = () => {
         <div className={styles.site}>
             <Header windowWidth={windowDimensions.width} page={"about"} />
             <main className={styles.content}>
-                <AboutHeader />
-                <div className={styles.mainText}>
-                    <AboutTheSite />
-                </div>
+                <StandardErrorBoundary>
+                    <AboutHeader />
+                    <div className={styles.mainText}>
+                        <StandardErrorBoundary>
+                            <AboutTheSite />
+                        </StandardErrorBoundary>   
+                    </div>
+                </StandardErrorBoundary>   
             </main>
             <Footer />
         </div>
