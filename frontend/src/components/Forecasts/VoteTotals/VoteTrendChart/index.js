@@ -139,6 +139,7 @@ const VoteTrendChart = props => {
         
         trendData[trendData.length - 1].date = dateToStr(addDays(date, finalDay));
         trendData[trendData.length - 1].day = finalDay;
+        console.log("Confirming got past this part");
         for (let poll of thisPolls) {
             if (party === "OTH") break;
             let trendIndex = Math.floor((poll.day - period / 2) / period) + 1;
@@ -178,6 +179,8 @@ const VoteTrendChart = props => {
         ticks = [...Array(Math.abs(numTicks)).keys()].map(n => n * tickDistance + minTick);
     }
 
+    console.log("Checkpoint A");
+
     const currentColours = jsonMap(colours, party);
 
     const setPollsBase = () => {setPollType("base");}
@@ -203,6 +206,8 @@ const VoteTrendChart = props => {
     const currentPollTypeDesc = () => pollTypeDesc(pollType);
 
     const dropdownTitle = "Party: " + party + (isFp ? " first preferences" : " two-party preferred");
+
+    console.log("Checkpoint B");
 
     return (
         <>
