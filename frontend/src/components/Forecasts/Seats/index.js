@@ -74,7 +74,7 @@ const SeatRow = props => {
                 </span>{"  |  "}
                 <Link to={detailsLink}>
                     <span className={styles.seatsLink}>
-                        <strong>&#11177;</strong>full detail
+                        <strong>&#187;</strong>full detail
                     </span>
                 </Link>
             </div>
