@@ -61,7 +61,7 @@ const Forecast = () => {
                 <NowcastAlert forecast={forecast} code={code} />
               }
               <StandardErrorBoundary>
-                <FormationOfGovernment election={code} mode={mode} forecast={forecast} />
+                <FormationOfGovernment election={code} mode={mode} forecast={forecast} windowWidth={windowDimensions.width} />
               </StandardErrorBoundary>
               <StandardErrorBoundary>
                 <VoteTotals election={code} mode={mode} forecast={forecast} windowWidth={windowDimensions.width} />

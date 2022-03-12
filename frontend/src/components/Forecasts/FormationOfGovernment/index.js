@@ -418,7 +418,7 @@ const FormationOfGovernment = props => {
                     </ListGroup>
                 </StandardErrorBoundary>
                 <StandardErrorBoundary>
-                    <GovernmentFormationChart forecast={props.forecast} />
+                    <GovernmentFormationChart forecast={props.forecast} windowWidth={props.windowWidth} />
                 </StandardErrorBoundary>
             </Card.Body>
         </Card>

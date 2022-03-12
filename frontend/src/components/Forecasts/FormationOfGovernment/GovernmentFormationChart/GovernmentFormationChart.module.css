@@ -14,3 +14,10 @@
 .legendLabel {
     color: #333333;
 }
+
+/* Hack to handle different font used on iOS */
+@supports (-webkit-touch-callout: none) {
+    .legendLabel {
+        font-size: 15px;
+    }
+}

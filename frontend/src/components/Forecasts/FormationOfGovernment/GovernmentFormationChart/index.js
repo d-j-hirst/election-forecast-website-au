@@ -1,11 +1,9 @@
 import React from 'react';
 
-import { useMediaQuery } from 'react-responsive'
-
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
-import { brightness } from '../../../../utils/brightness.js'
-import { jsonMap } from '../../../../utils/jsonmap.js'
+import { brightness } from '../../../../utils/brightness.js';
+import { jsonMap } from '../../../../utils/jsonmap.js';
 
 import styles from './GovernmentFormationChart.module.css';
 
@@ -14,7 +12,7 @@ const round1 = num => (num === null || num === undefined ? 0 : Math.round(num * 
 const RADIAN = Math.PI / 180;
 
 const GovernmentFormationChart = props => {
-    const lowerLegendRequired = useMediaQuery({ query: '(max-width: 550px)' });
+    const lowerLegendRequired = props.windowWidth < 550;
 
     const partyOneName = jsonMap(props.forecast.partyAbbr, 0);
     const otherWins = 100 - jsonMap(props.forecast.overallWinPc, 0) - jsonMap(props.forecast.overallWinPc, 1)
@@ -46,7 +44,8 @@ const GovernmentFormationChart = props => {
 
     const colors = ['#dc3545', '#ec7480', '#f5a3ab', '#885588', '#888888', '#87b2e7', '#5792da', '#1467cc']
     
-    const chartHeight = lowerLegendRequired ? 420 : 320;
+    const chartHeight = lowerLegendRequired ? (props.windowWidth < 360 ? 440 : 420) : 320;
+
 
     const renderCustomizedLabel = ({
         cx, cy, midAngle, innerRadius, outerRadius, percent, index,
@@ -89,7 +88,7 @@ const GovernmentFormationChart = props => {
                 <Pie
                     data={data}
                     cx="50%"
-                    cy="50%"
+                    cy={lowerLegendRequired ? 160 : "50%"}
                     labelLine={false}
                     legendType={'square'}
                     outerRadius={145}
