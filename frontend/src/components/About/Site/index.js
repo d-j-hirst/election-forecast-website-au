@@ -53,6 +53,10 @@ const AboutTheSite = props => {
                     These contain all the information required to replicate the forecasts.
                 </li>
             </ul>
+            <p>
+                Follow on <ExtLink href="https://twitter.com/aeforecasts">Twitter</ExtLink> for
+                notifications when new forecasts are released.
+            </p>
             <h4 id="introduction">About the Author</h4>
             <p>
                 The author of this site is based in Melbourne, is interested in politics as
