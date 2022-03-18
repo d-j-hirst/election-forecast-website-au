@@ -60,20 +60,20 @@ const SeatRow = props => {
                 <strong>{seatName}</strong>
                 {" - "}<SmartBadge party={incumbentAbbr} /> {Number(margin).toFixed(1)}%
                 <br/>
+                <span className={styles.seatsLink} onClick={moreHandler}>
+                    {!showMore &&
+                        <>
+                        &#9660;more
+                        </>
+                    }
+                    {showMore &&
+                        <>
+                        &#9650;less
+                        </>
+                    }
+                </span>
                 {props.mode !== "live" && 
                     <>
-                        <span className={styles.seatsLink} onClick={moreHandler}>
-                            {!showMore &&
-                                <>
-                                &#9660;more
-                                </>
-                            }
-                            {showMore &&
-                                <>
-                                &#9650;less
-                                </>
-                            }
-                        </span>
                         {"  |  "}
                         <Link to={detailsLink}>
                             <span className={styles.seatsLink}>
@@ -90,7 +90,7 @@ const SeatRow = props => {
         </ListGroup.Item>
         {
             showMore &&
-            <SeatMore index={props.index} forecast={props.forecast} windowWidth={props.windowWidth} />
+            <SeatMore index={props.index} forecast={props.forecast} windowWidth={props.windowWidth} mode={props.mode} />
         }
         </>
     );
@@ -389,8 +389,12 @@ const SeatMore = props => {
     return (
         <>
             <SeatWinsSection forecast={props.forecast} index={props.index} />
-            <SeatFpSection forecast={props.forecast} index={props.index} windowWidth={props.windowWidth} />
-            <SeatTcpSection forecast={props.forecast} index={props.index} windowWidth={props.windowWidth} />
+            {props.mode !== "live" &&
+                <>
+                    <SeatFpSection forecast={props.forecast} index={props.index} windowWidth={props.windowWidth} />
+                    <SeatTcpSection forecast={props.forecast} index={props.index} windowWidth={props.windowWidth} />
+                </>
+            }
         </>
     )
 }
