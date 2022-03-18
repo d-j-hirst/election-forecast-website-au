@@ -32,7 +32,10 @@ const ModeNav = props => {
 }
 
 const ForecastsNav = props => {
-    const effectiveMode = props.mode === "other" ? "forecast" : props.mode
+    // This determines the type of forecast we get from switching elections
+    let effectiveMode = props.mode;
+    if (props.mode === "other") effectiveMode = "regular";
+    if (props.mode === "live") effectiveMode = "regular";
     return (
         <>
         <Navbar bg="light" expand="sm" className={styles.navbar}>
@@ -57,6 +60,10 @@ const ForecastsNav = props => {
                         <ModeNav text="Regular Forecast" election={props.election} mode="regular" activeMode={props.mode} />
                         <ModeNav text="Nowcast" election={props.election} mode="nowcast" activeMode={props.mode} />
                         <ModeNav text="Archives" election={props.election} mode="archives" activeMode={props.mode} />
+                        {props.election === "2022sa" &&
+                            <ModeNav text="Live" election={props.election} mode="live" activeMode={props.mode} />
+                        }
+                        
                     </Navbar.Collapse>
                 </Nav>
             </Container>

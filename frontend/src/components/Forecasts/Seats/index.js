@@ -60,23 +60,28 @@ const SeatRow = props => {
                 <strong>{seatName}</strong>
                 {" - "}<SmartBadge party={incumbentAbbr} /> {Number(margin).toFixed(1)}%
                 <br/>
-                <span className={styles.seatsLink} onClick={moreHandler}>
-                    {!showMore &&
-                        <>
-                        &#9660;more
-                        </>
-                    }
-                    {showMore &&
-                        <>
-                        &#9650;less
-                        </>
-                    }
-                </span>{"  |  "}
-                <Link to={detailsLink}>
-                    <span className={styles.seatsLink}>
-                        <strong>&#187;</strong>full detail
-                    </span>
-                </Link>
+                {props.mode !== "live" && 
+                    <>
+                        <span className={styles.seatsLink} onClick={moreHandler}>
+                            {!showMore &&
+                                <>
+                                &#9660;more
+                                </>
+                            }
+                            {showMore &&
+                                <>
+                                &#9650;less
+                                </>
+                            }
+                        </span>
+                        {"  |  "}
+                        <Link to={detailsLink}>
+                            <span className={styles.seatsLink}>
+                                <strong>&#187;</strong>full detail
+                            </span>
+                        </Link>
+                    </>
+                }
             </div>
             <WinnerBarDist forecast={props.forecast}
                            freqSet={freqs}

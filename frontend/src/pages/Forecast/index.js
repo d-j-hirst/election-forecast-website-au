@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 
 import { Header, Footer, ForecastsNav, ForecastHeader, FormationOfGovernment,
   LoadingMarker, VoteTotals, SeatTotals, NowcastAlert, ForecastAlert, Seats, StandardErrorBoundary } from 'components';
@@ -10,9 +10,14 @@ import styles from './Forecast.module.css';
 
 const Forecast = () => {
   const { code, mode } = useParams();
+  const location = useLocation();
   const [ forecast, setForecast] = useState({});
   const [ forecastValid, setForecastValid] = useState(false);
   const windowDimensions = useWindowDimensions();
+
+  useEffect(() => {
+    setForecastValid(false);
+  }, [location]);
 
   useEffect(() => {
     setForecastValid(false);
@@ -30,7 +35,9 @@ const Forecast = () => {
       getElectionSummary().then(
         data => {
           setForecast(data.report);
-          document.title = `AEF - ${data.report.electionName} ${data.report.reportMode === "NC" ? "nowcast" : "general forecast"}`;
+          const modeTitles = {FC: "General Forecast", NC: "Nowcast", LF: "Live Forecast"};
+          const modeTitle = modeTitles[data.report.reportMode];
+          document.title = `AEF - ${data.report.electionName} ${modeTitle}`;
           setForecastValid(true);
         }
       ).catch(
@@ -43,13 +50,21 @@ const Forecast = () => {
     fetchElectionSummary();
   }, [code, mode]);
 
+  // This section prevents the leftover UI from the previous forecast 
+  // being displayed just after a new one has been clicked.
+  const modeNames = {RF: "regular", NC: "nowcast", LF: "live"};
+  let showForecast = true;
+  if (forecast.reportMode !== undefined && modeNames[forecast.reportMode] !== mode) {
+    showForecast = false;
+  }
+
   return (
     <div className={styles.site}>
       <Header windowWidth={windowDimensions.width} page={"forecast"} />
       <ForecastsNav election={code} mode={mode} />
       <div className={styles.content}>
         <StandardErrorBoundary>
-          {forecastValid &&
+          {forecastValid && showForecast &&
             <>
               <ForecastHeader mode={mode} forecast={forecast} />
               {
@@ -74,7 +89,7 @@ const Forecast = () => {
               </StandardErrorBoundary>
             </>
           }
-          {!forecastValid &&
+          {(!forecastValid || !showForecast) &&
             <LoadingMarker />
           }
         </StandardErrorBoundary>

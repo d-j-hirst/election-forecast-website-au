@@ -13,7 +13,8 @@ import { useWindowDimensions } from '../../utils/window.js';
 import styles from './ArchiveList.module.css';
 
 const ArchiveRow = props => {
-  const mode = props.item.mode === "FC" ? "General Forecast" : "Nowcast";
+  const modeNames = {FC: "General Forecast", NC: "Nowcast", LF: "Live Forecast"};
+  const mode = modeNames[props.item.mode];
   const date = parseDateStringAsUTC(props.item.date);
   const url = "/archive/"
                + props.code + "/"

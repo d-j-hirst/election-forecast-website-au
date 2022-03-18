@@ -7,10 +7,11 @@ import StandardErrorBoundary from '../../General/StandardErrorBoundary';
 import styles from './ForecastHeader.module.css';
 
 const ForecastHeader = props => {
+    const modeNames = {regular: " General Forecast", nowcast: "Nowcast", live: "Live Forecast"};
     return (
         <StandardErrorBoundary>
             <div className={styles.forecastTitle}>
-                {props.forecast.electionName} - {props.mode === "nowcast" ? "Nowcast" : "Regular Forecast"}
+                {props.forecast.electionName} - {modeNames[props.mode]}
                 {props.archive === true ? <strong>{" - Archive"}</strong> : ""}
             </div>
             <div className={styles.forecastUpdateInfo}>

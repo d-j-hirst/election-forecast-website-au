@@ -14,6 +14,8 @@ const Archive = () => {
   const [ forecastValid, setForecastValid] = useState(false);
   const windowDimensions = useWindowDimensions();
 
+  
+
   useEffect(() => {
     setForecastValid(false);
 
@@ -32,7 +34,8 @@ const Archive = () => {
       getArchive().then(
         data => {
           setForecast(data.report);
-          document.title = `AEF - Archived ${data.report.electionName} ${data.report.reportMode === "NC" ? "nowcast" : "general forecast"}`;
+          const modeNames = {FC: "general forecast", NC: "nowcast", LF: "live forecast"};
+          document.title = `AEF - Archived ${data.report.electionName} ${modeNames[data.report.reportMode]}`;
           setForecastValid(true);
         }
       ).catch(
@@ -45,7 +48,9 @@ const Archive = () => {
     fetchArchive();
   }, [code, id]);
 
-  const mode = forecastValid ? (forecast.reportMode === "NC" ? "nowcast" : "regular") : ""
+  
+  const modeNames = {FC: "regular", NC: "nowcast", LF: "live"};
+  const mode = forecastValid ? modeNames[forecast.reportMode] : ""
 
   return (
     <div className={styles.site}>
