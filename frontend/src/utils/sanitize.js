@@ -1,9 +1,10 @@
 import * as sanitizeHtml from 'sanitize-html';
 
 const defaultOptions = {
-    allowedTags: [ 'b', 'i', 'em', 'strong', 'a', 'p', 'br', 'h5', 'h6', 'ul', 'li' ],
+    allowedTags: [ 'b', 'i', 'em', 'strong', 'a', 'p', 'br', 'h5', 'h6', 'ul', 'li', 'img' ],
     allowedAttributes: {
-        'a': [ 'href' ]
+        'a': [ 'href' ],
+        'img': [ 'src', 'alt' ]
     },
 };
   
