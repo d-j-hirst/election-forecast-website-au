@@ -16,7 +16,7 @@ import { SmartBadge } from '../../General/PartyBadge';
 import InfoIcon from '../../General/InfoIcon';
 import TooltipWrapper from '../../General/TooltipWrapper';
 
-import { jsonMap } from '../../../utils/jsonmap.js';
+import { jsonMap, jsonMapReverse } from '../../../utils/jsonmap.js';
 import { deepCopy } from '../../../utils/deepcopy.js';
 import { getSeatUrl } from '../../../utils/seaturls.js';
 
@@ -439,10 +439,15 @@ const MainExplainer = props => {
 }
 
 const Seats = props => {
-    const SortTypeEnum = Object.freeze({"competitiveness": 1, "alphabetical": 2});
+    const SortTypeEnum = Object.freeze({"competitiveness": 1,
+                                        "alphabetical": 2,
+                                        "alpTppMargin": 3,
+                                        "lnpTppMargin": 4,
+                                        "winChance": 5});
 
     const [showExplainer, setShowExplainer] = useState(false);
     const [sortType, setSortType] = useState(SortTypeEnum.competitiveness);
+    const [sortParty, setSortParty] = useState(0);
 
     let sortedIndices = [];
     if (sortType === SortTypeEnum.competitiveness) {
@@ -457,9 +462,62 @@ const Seats = props => {
         indexedNames.sort((a, b) => a[1] < b[1] ? -1 : 1);
         sortedIndices = indexedNames.map((a, b) => a[0]);
     }
+    else if (sortType === SortTypeEnum.alpTppMargin) {
+        const indexedMargins = props.forecast.seatMargins.map(
+            (a, index) => [index, a, props.forecast.seatIncumbents[index]]);
+        indexedMargins.sort((a, b) => {
+            if (a[2] <= 1 && b[2] >= 2) return -1;
+            if (a[2] >= 2 && b[2] <= 1) return 1;
+            let margin1 = a[1];
+            let margin2 = b[1];
+            if (a[2] === 1) margin1 = -margin1;
+            if (b[2] === 1) margin2 = -margin2;
+            return margin1 > margin2 ? -1 : 1;
+        });
+        sortedIndices = indexedMargins.map((a, b) => a[0]);
+    }
+    else if (sortType === SortTypeEnum.lnpTppMargin) {
+        const indexedMargins = props.forecast.seatMargins.map(
+            (a, index) => [index, a, props.forecast.seatIncumbents[index]]);
+        indexedMargins.sort((a, b) => {
+            if (a[2] <= 1 && b[2] >= 2) return -1;
+            if (a[2] >= 2 && b[2] <= 1) return 1;
+            let margin1 = a[1];
+            let margin2 = b[1];
+            if (a[2] === 0) margin1 = -margin1;
+            if (b[2] === 0) margin2 = -margin2;
+            return margin1 > margin2 ? -1 : 1;
+        });
+        sortedIndices = indexedMargins.map((a, b) => a[0]);
+    }
+    else if (sortType === SortTypeEnum.winChance) {
+        const indexedChances = props.forecast.seatPartyWinFrequencies.map(
+            (a, index) => [index, jsonMap(a, sortParty, 0)]);
+        console.log(indexedChances);
+        indexedChances.sort((a, b) => a[1] > b[1] ? -1 : 1);
+        sortedIndices = indexedChances.map((a, b) => a[0]);
+    }
+
+    const grnIndex = jsonMapReverse(props.forecast.partyAbbr, "GRN");
+    const indIndex = jsonMapReverse(props.forecast.partyAbbr, "IND", null, a => a >= 0);
+    let onpIndex = jsonMapReverse(props.forecast.partyAbbr, "ONP");
+    if (onpIndex && jsonMap(props.forecast.seatCountFrequencies, onpIndex)[14] === 0) onpIndex = null;
+    let uapIndex = jsonMapReverse(props.forecast.partyAbbr, "UAP");
+    if (uapIndex && jsonMap(props.forecast.seatCountFrequencies, uapIndex)[14] === 0) uapIndex = null;
+    console.log(onpIndex);
 
     const setSortCompetitiveness = () => {setSortType(SortTypeEnum.competitiveness);};
     const setSortAlphabetical = () => {setSortType(SortTypeEnum.alphabetical);};
+    const setSortAlpTppMargin = () => {setSortType(SortTypeEnum.alpTppMargin);};
+    const setSortLnpTppMargin = () => {setSortType(SortTypeEnum.lnpTppMargin);};
+    const setSortAlpWinChance = () => {setSortType(SortTypeEnum.winChance); setSortParty(0)};
+    const setSortLnpWinChance = () => {setSortType(SortTypeEnum.winChance); setSortParty(1)};
+    const setSortGrnWinChance = () => {setSortType(SortTypeEnum.winChance); setSortParty(grnIndex)};
+    const setSortIndWinChance = () => {setSortType(SortTypeEnum.winChance); setSortParty(indIndex)};
+    const setSortOnpWinChance = () => {setSortType(SortTypeEnum.winChance); setSortParty(onpIndex)};
+    const setSortUapWinChance = () => {setSortType(SortTypeEnum.winChance); setSortParty(uapIndex)};
+    const setSortEmergingIndWinChance = () => {setSortType(SortTypeEnum.winChance); setSortParty(-2)};
+    const setSortEmergingPartyWinChance = () => {setSortType(SortTypeEnum.winChance); setSortParty(-3)};
 
     return (
         <Card className={styles.summary}>
@@ -477,6 +535,24 @@ const Seats = props => {
                             <DropdownButton id="sort-dropdown" title="Sort by:" variant="secondary">
                                 <Dropdown.Item as="button" onClick={setSortCompetitiveness}>Competitiveness</Dropdown.Item>
                                 <Dropdown.Item as="button" onClick={setSortAlphabetical}>Alphabetical order</Dropdown.Item>
+                                <Dropdown.Item as="button" onClick={setSortAlpTppMargin}>ALP TPP margin</Dropdown.Item>
+                                <Dropdown.Item as="button" onClick={setSortLnpTppMargin}>LNP TPP margin</Dropdown.Item>
+                                <Dropdown.Item as="button" onClick={setSortAlpWinChance}>ALP win chance</Dropdown.Item>
+                                <Dropdown.Item as="button" onClick={setSortLnpWinChance}>LNP win chance</Dropdown.Item>
+                                {grnIndex &&
+                                    <Dropdown.Item as="button" onClick={setSortGrnWinChance}>GRN win chance</Dropdown.Item>
+                                }
+                                {indIndex &&
+                                    <Dropdown.Item as="button" onClick={setSortIndWinChance}>IND win chance</Dropdown.Item>
+                                }
+                                {onpIndex &&
+                                    <Dropdown.Item as="button" onClick={setSortOnpWinChance}>ONP win chance</Dropdown.Item>
+                                }
+                                {uapIndex &&
+                                    <Dropdown.Item as="button" onClick={setSortUapWinChance}>UAP win chance</Dropdown.Item>
+                                }
+                                <Dropdown.Item as="button" onClick={setSortEmergingIndWinChance}>Emerging IND win chance</Dropdown.Item>
+                                <Dropdown.Item as="button" onClick={setSortEmergingPartyWinChance}>Emerging party win chance</Dropdown.Item>
                             </DropdownButton>
                         </ListGroup.Item>
                         {
