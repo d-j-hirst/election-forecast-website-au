@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 
 import { ComposedChart, Line, XAxis, YAxis, ZAxis, ReferenceLine, Area, Scatter, Tooltip, ResponsiveContainer } from 'recharts';
 
+import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import ListGroup from 'react-bootstrap/ListGroup';
-import Dropdown from 'react-bootstrap/Dropdown';
 
 import { jsonMap, jsonMapReverse } from '../../../../utils/jsonmap.js'
 import { deepCopy } from '../../../../utils/deepcopy.js'

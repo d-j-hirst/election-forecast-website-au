@@ -2,6 +2,8 @@ import React, { useState }  from 'react';
 
 import Alert from 'react-bootstrap/Alert';
 import Card from 'react-bootstrap/Card';
+import Dropdown from 'react-bootstrap/Dropdown';
+import DropdownButton from 'react-bootstrap/DropdownButton';
 import ListGroup from 'react-bootstrap/ListGroup';
 import { HashLink as Link } from 'react-router-hash-link';
 
@@ -437,19 +439,33 @@ const MainExplainer = props => {
 }
 
 const Seats = props => {
-    const [showExplainer, setShowExplainer] = useState(false);
+    const SortTypeEnum = Object.freeze({"competitiveness": 1, "alphabetical": 2});
 
-    const indexedSeats = props.forecast.seatPartyWinFrequencies.map((a, index) => [index, a]);
-    const findMax = pair => pair[1].reduce((p, c) => p > c[1] ? p : c[1], 0);
-    const indexedCompetitiveness = indexedSeats.map(a => [a[0], findMax(a)]);
-    indexedCompetitiveness.sort((a, b) => a[1] - b[1]);
-    const sortedIndices = indexedCompetitiveness.map(a => a[0]);
+    const [showExplainer, setShowExplainer] = useState(false);
+    const [sortType, setSortType] = useState(SortTypeEnum.competitiveness);
+
+    let sortedIndices = [];
+    if (sortType === SortTypeEnum.competitiveness) {
+        const indexedSeats = props.forecast.seatPartyWinFrequencies.map((a, index) => [index, a]);
+        const findMax = pair => pair[1].reduce((p, c) => p > c[1] ? p : c[1], 0);
+        const indexedCompetitiveness = indexedSeats.map(a => [a[0], findMax(a)]);
+        indexedCompetitiveness.sort((a, b) => a[1] - b[1]);
+        sortedIndices = indexedCompetitiveness.map(a => a[0]);
+    }
+    else if (sortType === SortTypeEnum.alphabetical) {
+        const indexedNames = props.forecast.seatNames.map((a, index) => [index, a]);
+        indexedNames.sort((a, b) => a[1] < b[1] ? -1 : 1);
+        sortedIndices = indexedNames.map((a, b) => a[0]);
+    }
+
+    const setSortCompetitiveness = () => {setSortType(SortTypeEnum.competitiveness);};
+    const setSortAlphabetical = () => {setSortType(SortTypeEnum.alphabetical);};
 
     return (
         <Card className={styles.summary}>
             <Card.Header className={styles.seatsTitle}>
-                Seats
-                &nbsp;<InfoIcon onClick={() => setShowExplainer(!showExplainer)} />
+                Seats &nbsp;
+                <InfoIcon onClick={() => setShowExplainer(!showExplainer)} />
             </Card.Header>
             <Card.Body className={styles.seatsBody}>
                 {
@@ -457,6 +473,12 @@ const Seats = props => {
                 }
                 <StandardErrorBoundary>
                     <ListGroup className={styles.seatsList}>
+                        <ListGroup.Item className={styles.seatOptions}>
+                            <DropdownButton id="sort-dropdown" title="Sort by:" variant="secondary">
+                                <Dropdown.Item as="button" onClick={setSortCompetitiveness}>Competitiveness</Dropdown.Item>
+                                <Dropdown.Item as="button" onClick={setSortAlphabetical}>Alphabetical order</Dropdown.Item>
+                            </DropdownButton>
+                        </ListGroup.Item>
                         {
                             sortedIndices.map(index =>
                                 <SeatRow forecast={props.forecast}
