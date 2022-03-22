@@ -17,29 +17,29 @@ const CommentarySingle = () => {
     useEffect(() => {
         setCommentaryValid(false);
   
-      const getCommentary = () => {
-        return getDirect(`commentary-api/commentary/${id}/`).then(
-          resp => {
-            if (!resp.ok) throw Error("Couldn't find commentary data");
-            return resp.data;
-          }
-        );
-      }
-  
-      const fetchCommentary = () => {
-        getCommentary().then(
-          data => {
-            setCommentary(data);
-            setCommentaryValid(true);
-          }
-        ).catch(
-          e => {
-            console.log(e);
-          }
-        );
-      }
-  
-      fetchCommentary();
+        const getCommentary = () => {
+            return getDirect(`commentary-api/commentary/${id}/`).then(
+                resp => {
+                    if (!resp.ok) throw Error("Couldn't find commentary data");
+                    return resp.data;
+                }
+            );
+        }
+    
+        const fetchCommentary = () => {
+            getCommentary().then(
+                data => {
+                    setCommentary(data);
+                    setCommentaryValid(true);
+                }
+            ).catch(
+                e => {
+                    console.log(e);
+                }
+            );
+        }
+    
+        fetchCommentary();
     }, [id]);
 
     return (
@@ -48,16 +48,16 @@ const CommentarySingle = () => {
             <div className={styles.content}>
                 <CommentaryHeader returnLink />
                 <StandardErrorBoundary>
-                  {commentaryValid &&
-                    <StandardErrorBoundary>
-                      <div className={styles.mainText}>
-                        <CommentaryItem commentary={commentary} />
-                      </div>
-                    </StandardErrorBoundary>
-                  }
-                  {!commentaryValid &&
-                  <LoadingMarker text="Loading ..." />
-                  }
+                    {commentaryValid &&
+                        <StandardErrorBoundary>
+                            <div className={styles.mainText}>
+                                <CommentaryItem commentary={commentary} />
+                            </div>
+                        </StandardErrorBoundary>
+                    }
+                    {!commentaryValid &&
+                        <LoadingMarker text="Loading ..." />
+                    }
                 </StandardErrorBoundary>
             </div>
             <Footer />

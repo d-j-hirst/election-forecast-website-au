@@ -4,8 +4,8 @@ import styles from './LoadingMarker.module.css';
 
 const LoadingMarker = props => (
     <div className={styles.summary}>
-    <Spinner animation="border" role="status" size="sm"/>
-    &nbsp;{props.text === undefined ? "Loading report" : props.text}
+        <Spinner animation="border" role="status" size="sm"/>
+        &nbsp;{props.text === undefined ? "Loading report" : props.text}
     </div>
 )
 

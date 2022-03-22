@@ -7,14 +7,14 @@ const defaultOptions = {
         'img': [ 'src', 'alt' ]
     },
 };
-  
+
 const sanitize = (dirty, options) => ({
     __html: sanitizeHtml(
         dirty, 
         { ...defaultOptions, ...options }
     )
 });
-  
+
 export const SanitizeHtml = ({ html, options }) => {
     return <div dangerouslySetInnerHTML={sanitize(html, options)} />
 };

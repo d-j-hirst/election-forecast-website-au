@@ -1,8 +1,3 @@
-import { history } from 'config/routes';
-import { LOGIN_URL } from 'config/urls';
-
-import { notifyError } from 'utils/notifications';
-
 export const BASE_BACKEND_URL = `${process.env.REACT_APP_BASE_BACKEND_URL}`;
 export const BASE_API_URL = `${BASE_BACKEND_URL}/auth-api/v1`;
 
@@ -10,20 +5,10 @@ export const BASE_API_URL = `${BASE_BACKEND_URL}/auth-api/v1`;
 // which includes headers that should always be included
 // for a given method
 const getBaseConfig = method => ({
-  method,
-  credentials: 'include',
-  headers: { 'Content-Type': 'application/json' }
+    method,
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' }
 });
-
-// Notify user if the user can't be authenticated.
-// This uses a standard react-toastify toast.
-const handle401 = resp => {
-  if (resp.status === 401) {
-    history.push(LOGIN_URL);
-    notifyError('Unauthenticated.');
-  }
-  return resp;
-};
 
 // convert the response to straight data, removing any extraneous information
 // by convert text to parsed JSON if that's possible, and then passing
@@ -44,13 +29,6 @@ export const getDirect = (url, options) =>
   fetch(`${BASE_BACKEND_URL}/${url}`, { ...getBaseConfig('get'), ...options })
     .then(serializeResponse);
 
-// Generic function for using GET from a given (relative) url from the API.
-// Will handle 401 and 403 errors by returning to the login screen.
-export const getChecked = (url, options) =>
-  fetch(`${BASE_API_URL}/${url}`, { ...getBaseConfig('get'), ...options })
-    .then(serializeResponse)
-    .then(handle401);
-
 // Generic function for using POST from a given (relative) url from the API.
 // additional fetch() options can be given using an object for the
 // "options" parameter
@@ -60,5 +38,4 @@ export const post = (url, data, options) =>
     ...options,
     body: JSON.stringify(data)
   })
-    .then(serializeResponse)
-    .then(handle401);
+    .then(serializeResponse);
