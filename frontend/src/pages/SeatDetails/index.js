@@ -22,7 +22,10 @@ const SeatDetails = () => {
         setForecastValid(false);
 
         const getElectionSummary = () => {
-            return getDirect(`forecast-api/election-summary/${code}/${mode}`).then(
+            let requestUri = `forecast-api/election-summary/${code}/${mode}`;
+            const cached_id = localStorage.getItem('cachedForecastId');
+            if (cached_id !== null) requestUri += `/${cached_id}`;
+            return getDirect(requestUri).then(
                 resp => {
                     if (!resp.ok) throw Error("Couldn't find election data");
                     return resp.data;
@@ -31,8 +34,25 @@ const SeatDetails = () => {
         }
 
         const fetchElectionSummary = () => {
+            if (code === localStorage.getItem('cachedForecastCode')
+                    && mode === localStorage.getItem('cachedForecastMode')) {
+                const tempForecast = JSON.parse(localStorage.getItem('cachedForecast'));
+                setForecast(tempForecast);
+                const seatIndexTemp = getIndexFromSeatUrl(tempForecast.seatNames, seat);
+                setSeatIndex(seatIndexTemp);
+                document.title = `AEF - ${tempForecast.seatNames[seatIndexTemp]} ${tempForecast.electionName} ${tempForecast.reportMode === "NC" ? "nowcast" : "forecast"}`;
+                setForecastValid(true);
+            } 
             getElectionSummary().then(
                 data => {
+                    if (data.new === false) {
+                        data['report'] = JSON.parse(localStorage.getItem('cachedForecast'));
+                    } else {
+                        localStorage.setItem('cachedForecast', JSON.stringify(data.report));
+                        localStorage.setItem('cachedForecastId', String(data.id));
+                        localStorage.setItem('cachedForecastCode', String(code));
+                        localStorage.setItem('cachedForecastMode', String(mode));
+                    }
                     setForecast(data.report);
                     const seatIndexTemp = getIndexFromSeatUrl(data.report.seatNames, seat);
                     setSeatIndex(seatIndexTemp);
@@ -48,6 +68,8 @@ const SeatDetails = () => {
 
         fetchElectionSummary();
     }, [code, mode, seat, seatIndex]);
+    
+    console.log(`forecastValid: ${forecastValid}`);
 
     return (
         <div className={styles.site}>

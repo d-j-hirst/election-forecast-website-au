@@ -29,7 +29,7 @@ def find_mapped(mapped_list, val):
     return first(mapped_list, lambda x: x[0] == val)[1]
 
 
-def serve_forecast(code, mode):
+def serve_forecast(code, mode, cached_id):
     modes = {
         'regular': Forecast.Mode.REGULAR_FORECAST,
         'live': Forecast.Mode.LIVE_FORECAST,
@@ -44,19 +44,15 @@ def serve_forecast(code, mode):
                 .filter(mode=mode_val)
                 .order_by('-date')
                 .first())
+    if forecast.id == cached_id:
+        return Response({"new": False})
     response = {"report": forecast.report,
                 "label": forecast.label,
                 "date": forecast.date,
-                "flags": forecast.flags}
+                "flags": forecast.flags,
+                "id": forecast.id,
+                "new": True}
     return Response(response)
-
-
-def serve_forecast_list():
-    elections: Any = get_list_or_404(Election)
-    if elections is None:
-        raise Exception('Could not find any matching elections!')
-    responses = [(obj.code, obj.name) for obj in elections]
-    return Response(responses)
 
 
 def serve_forecast_archive_list(code):
@@ -70,7 +66,8 @@ def serve_forecast_archive_list(code):
     responses = [{"id": forecast.id, 
                   "mode": forecast.mode,
                   "date": forecast.date, 
-                  "label": forecast.label
+                  "label": forecast.label,
+                  "id": forecast.id
                  } for forecast in forecasts]
     full_response = [election.name, responses]
     return Response(full_response)
@@ -90,5 +87,6 @@ def serve_forecast_archive(code, id):
     response = {"report": forecast.report,
                 "label": forecast.label,
                 "date": forecast.date,
-                "flags": forecast.flags}
+                "flags": forecast.flags,
+                "id": forecast.id}
     return Response(response)

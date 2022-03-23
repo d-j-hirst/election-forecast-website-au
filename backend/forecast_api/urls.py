@@ -10,9 +10,9 @@ urlpatterns = [
     path('election-summary/<str:code>/<str:mode>',
          views.ElectionSummaryResponse.as_view(),  # type: ignore
          name='election-summary'),
-    path('election-list',
-         views.ElectionListResponse.as_view(),  # type: ignore
-         name='election-list'),
+    path('election-summary/<str:code>/<str:mode>/<int:cached_id>',
+         views.ElectionSummaryResponse.as_view(),  # type: ignore
+         name='election-summary'),
     path('election-archives/<str:code>',
          views.ElectionArchiveListResponse.as_view(),  # type: ignore
          name='archive-list'),

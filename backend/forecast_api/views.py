@@ -10,7 +10,6 @@ from auth_api.mixins import ApiErrorsMixin, ApiAuthMixin, PublicApiMixin
 from forecast_api.models import Election, Forecast
 
 from forecast_api.serve import serve_forecast, \
-                               serve_forecast_list, \
                                serve_forecast_archive_list, \
                                serve_forecast_archive, \
                                ViewForecastPermission
@@ -26,15 +25,8 @@ class SubmitReportResponse(ApiAuthMixin, ApiErrorsMixin, APIView):
 class ElectionSummaryResponse(APIView):
     authentication_classes = []
     permission_classes = []
-    def get(self, request, code, mode):
-        return serve_forecast(code, mode)
-
-
-class ElectionListResponse(APIView):
-    authentication_classes = []
-    permission_classes = []
-    def get(self, request):
-        return serve_forecast_list()
+    def get(self, request, code, mode, cached_id=-1):
+        return serve_forecast(code, mode, cached_id)
 
 
 class ElectionArchiveListResponse(APIView):

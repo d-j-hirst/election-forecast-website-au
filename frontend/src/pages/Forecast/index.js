@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useLocation } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import { Header, Footer, ForecastsNav, ForecastHeader, FormationOfGovernment,
     LoadingMarker, VoteTotals, SeatTotals, NowcastAlert, ForecastAlert,
@@ -11,20 +11,18 @@ import styles from './Forecast.module.css';
 
 const Forecast = () => {
     const { code, mode } = useParams();
-    const location = useLocation();
     const [ forecast, setForecast] = useState({});
     const [ forecastValid, setForecastValid] = useState(false);
     const windowDimensions = useWindowDimensions();
 
     useEffect(() => {
         setForecastValid(false);
-    }, [location]);
-
-    useEffect(() => {
-        setForecastValid(false);
 
         const getElectionSummary = () => {
-            return getDirect(`forecast-api/election-summary/${code}/${mode}`).then(
+            let requestUri = `forecast-api/election-summary/${code}/${mode}`;
+            const cached_id = localStorage.getItem('cachedForecastId');
+            if (cached_id !== null) requestUri += `/${cached_id}`;
+            return getDirect(requestUri).then(
                 resp => {
                     if (!resp.ok) throw Error("Couldn't find election data");
                     return resp.data;
@@ -33,10 +31,26 @@ const Forecast = () => {
         }
 
         const fetchElectionSummary = () => {
+            const modeTitles = {FC: "General Forecast", NC: "Nowcast", LF: "Live Forecast"};
+            if (code === localStorage.getItem('cachedForecastCode')
+                    && mode === localStorage.getItem('cachedForecastMode')) {
+                const tempForecast = JSON.parse(localStorage.getItem('cachedForecast'));
+                setForecast(tempForecast);
+                const modeTitle = modeTitles[tempForecast.reportMode];
+                document.title = `AEF - ${tempForecast.electionName} ${modeTitle}`;
+                setForecastValid(true);
+            }
             getElectionSummary().then(
                 data => {
+                    if (data.new === false) {
+                        data['report'] = JSON.parse(localStorage.getItem('cachedForecast'));
+                    } else {
+                        localStorage.setItem('cachedForecast', JSON.stringify(data.report));
+                        localStorage.setItem('cachedForecastId', String(data.id));
+                        localStorage.setItem('cachedForecastCode', String(code));
+                        localStorage.setItem('cachedForecastMode', String(mode));
+                    }
                     setForecast(data.report);
-                    const modeTitles = {FC: "General Forecast", NC: "Nowcast", LF: "Live Forecast"};
                     const modeTitle = modeTitles[data.report.reportMode];
                     document.title = `AEF - ${data.report.electionName} ${modeTitle}`;
                     setForecastValid(true);
@@ -58,6 +72,7 @@ const Forecast = () => {
     if (forecast.reportMode !== undefined && modeNames[forecast.reportMode] !== mode) {
         showForecast = false;
     }
+    console.log(`showForecast: ${showForecast} forecastValid: ${forecastValid}`);
 
     return (
         <div className={styles.site}>
