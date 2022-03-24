@@ -521,7 +521,7 @@ const Seats = props => {
 
     return (
         <Card className={styles.summary}>
-            <Card.Header className={styles.seatsTitle}>
+            <Card.Header className={styles.seatsTitle} id="seats">
                 Seats &nbsp;
                 <InfoIcon onClick={() => setShowExplainer(!showExplainer)} />
             </Card.Header>

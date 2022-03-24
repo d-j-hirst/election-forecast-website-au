@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { Link } from 'react-router-dom';
+import { HashLink as Link } from 'react-router-hash-link';
 
 import Card from 'react-bootstrap/Card';
 import ListGroup from 'react-bootstrap/ListGroup';
@@ -30,6 +30,18 @@ const partyCategory = (party, forecast) => {
     if (sp === 'onp') return 3;
     if (sp === 'uap') return 3;
     return 0;
+}
+
+const ReturnToMain = props => {
+    const linkUrl = (props.archiveId !== undefined ?
+        `/archive/${props.election}/${props.archiveId}#seats` :
+        `/forecast/${props.election}/${props.mode}#seats`);
+
+    return (
+        <ListGroup.Item className={styles.returnToMain}>
+            <Link to={linkUrl}><div><strong>&#187;</strong>back to seat list</div></Link>
+        </ListGroup.Item>
+    );
 }
 
 const SeatSummary = props => {
@@ -366,6 +378,10 @@ const SeatDetailBody = props => {
                 {
                     showExplainer && <MainExplainer seatName={seatName} />
                 }
+                <StandardErrorBoundary>
+                    <ReturnToMain election={props.election}
+                                  mode={props.mode} />
+                </StandardErrorBoundary>
                 <StandardErrorBoundary>
                     <SeatSummary forecast={props.forecast}
                                 election={props.election}

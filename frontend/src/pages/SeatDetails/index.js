@@ -67,6 +67,7 @@ const SeatDetails = () => {
         }
 
         fetchElectionSummary();
+        window.scrollTo(0, 0)
     }, [code, mode, seat, seatIndex]);
     
     console.log(`forecastValid: ${forecastValid}`);
