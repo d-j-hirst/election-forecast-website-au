@@ -1,5 +1,6 @@
 from django.http.request import HttpRequest
 from django.utils.timezone import make_aware
+from django.shortcuts import get_object_or_404
 from datetime import datetime
 from forecast_api.models import Election, Forecast
 from rest_framework.response import Response
@@ -20,6 +21,27 @@ class SubmitForecastPermission(BasePermission):
 
 def first(iterable, condition = lambda x: True):
     return next(x for x in iterable if condition(x))
+
+
+def update_timeseries(election: Election):
+    forecasts = Forecast.objects.filter(election=election, mode='FC')
+    series = [
+        {
+            'date': str(a.date),
+            'majorityWinPc': a.report['majorityWinPc'],
+            'minorityWinPc': a.report['minorityWinPc'],
+            'mostSeatsWinPc': a.report['mostSeatsWinPc'],
+            'overallWinPc': a.report['overallWinPc'],
+            'tppFrequencies': a.report['tppFrequencies'],
+            'fpFrequencies': a.report['fpFrequencies'],
+            'seatCountFrequencies': a.report['seatCountFrequencies'],
+            'seatPartyWinFrequencies': a.report['seatPartyWinFrequencies'],
+        }
+        for a in forecasts
+    ]
+    print(series)
+    election.time_series = series
+    election.save()
 
 
 # Assuming mapped_list is a list of two-element list items, returns the value
@@ -55,3 +77,12 @@ def submit_report(request: HttpRequest):
     forecast.flags = flags
     forecast.save()
     return Response("Forecast report successfully submitted.")
+
+
+def submit_timeseries_update(request: HttpRequest):
+    data_json = request.body.decode()
+    data = json.loads(data_json)
+    code = data['termCode']
+    election = get_object_or_404(Election, code=code)
+    update_timeseries(election)
+    return Response("Election timeseries successfully updated.")

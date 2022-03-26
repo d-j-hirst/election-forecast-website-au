@@ -7,6 +7,9 @@ urlpatterns = [
     path('submit-report',
          views.SubmitReportResponse.as_view(),  # type: ignore
          name='submit-report'),
+    path('submit-timeseries-update',
+         views.SubmitTimeseriesUpdateResponse.as_view(),  # type: ignore
+         name='submit-timeseries-update'),
     path('election-summary/<str:code>/<str:mode>',
          views.ElectionSummaryResponse.as_view(),  # type: ignore
          name='election-summary'),

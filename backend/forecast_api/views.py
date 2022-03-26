@@ -1,25 +1,27 @@
 from django.http.request import HttpRequest
 from rest_framework.views import APIView
-from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
-from typing import Any
-
-from auth_api.mixins import ApiErrorsMixin, ApiAuthMixin, PublicApiMixin
-
-from forecast_api.models import Election, Forecast
+from auth_api.mixins import ApiErrorsMixin, ApiAuthMixin
 
 from forecast_api.serve import serve_forecast, \
                                serve_forecast_archive_list, \
-                               serve_forecast_archive, \
-                               ViewForecastPermission
-from forecast_api.submit import submit_report, SubmitForecastPermission
+                               serve_forecast_archive
+from forecast_api.submit import submit_report, \
+                                submit_timeseries_update, \
+                                SubmitForecastPermission
 
 
 class SubmitReportResponse(ApiAuthMixin, ApiErrorsMixin, APIView):
     permission_classes = [IsAuthenticated&SubmitForecastPermission]
     def post(self, request: HttpRequest):
         return submit_report(request)
+
+
+class SubmitTimeseriesUpdateResponse(ApiAuthMixin, ApiErrorsMixin, APIView):
+    permission_classes = [IsAuthenticated&SubmitForecastPermission]
+    def post(self, request: HttpRequest):
+        return submit_timeseries_update(request)
 
 
 class ElectionSummaryResponse(APIView):
