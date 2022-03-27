@@ -504,7 +504,6 @@ const Seats = props => {
     if (onpIndex && jsonMap(props.forecast.seatCountFrequencies, onpIndex)[14] === 0) onpIndex = null;
     let uapIndex = jsonMapReverse(props.forecast.partyAbbr, "UAP");
     if (uapIndex && jsonMap(props.forecast.seatCountFrequencies, uapIndex)[14] === 0) uapIndex = null;
-    console.log(onpIndex);
 
     const setSortCompetitiveness = () => {setSortType(SortTypeEnum.competitiveness);};
     const setSortAlphabetical = () => {setSortType(SortTypeEnum.alphabetical);};

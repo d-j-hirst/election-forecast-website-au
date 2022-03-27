@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 
 import { Header, Footer, ForecastsNav, ForecastHeader, FormationOfGovernment,
     LoadingMarker, VoteTotals, SeatTotals, NowcastAlert, ForecastAlert,
-    LiveOldAlert, Seats, StandardErrorBoundary } from 'components';
+    LiveOldAlert, History, Seats, StandardErrorBoundary } from 'components';
 import { getDirect } from 'utils/sdk';
 import { useWindowDimensions } from '../../utils/window.js';
 
@@ -72,7 +72,6 @@ const Forecast = () => {
     if (forecast.reportMode !== undefined && modeNames[forecast.reportMode] !== mode) {
         showForecast = false;
     }
-    console.log(`showForecast: ${showForecast} forecastValid: ${forecastValid}`);
 
     return (
         <div className={styles.site}>
@@ -103,6 +102,9 @@ const Forecast = () => {
                             </StandardErrorBoundary>
                             <StandardErrorBoundary>
                                 <SeatTotals election={code} mode={mode} forecast={forecast} windowWidth={windowDimensions.width} />
+                            </StandardErrorBoundary>
+                            <StandardErrorBoundary>
+                                <History election={code} mode={mode} forecast={forecast} windowWidth={windowDimensions.width} />
                             </StandardErrorBoundary>
                             <StandardErrorBoundary>
                                 <Seats election={code} mode={mode} forecast={forecast} windowWidth={windowDimensions.width} />

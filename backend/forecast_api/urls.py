@@ -22,7 +22,10 @@ urlpatterns = [
     path('election-archive/<str:code>/<int:id>/',
          views.ElectionArchiveResponse.as_view(),  # type: ignore
          name='archive'),
-    path('election-timeseries/<str:code>/<str:mode>/<int:cached_id>',
+    path('election-timeseries/<str:code>/<str:mode>/',
          views.ElectionTimeseriesResponse.as_view(),  # type: ignore
-         name='election-summary')
+         name='election-timeseries'),
+    path('election-timeseries/<str:code>/<str:mode>/<int:cached_version>/',
+         views.ElectionTimeseriesResponse.as_view(),  # type: ignore
+         name='election-timeseries')
 ]

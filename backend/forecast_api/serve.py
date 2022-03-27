@@ -101,13 +101,13 @@ def serve_election_timeseries(code, mode, cached_version):
         election = Election.objects.get(code=code)
     except Election.DoesNotExist:
         raise Http404('Election does not exist')
-    if mode == Forecast.Mode.REGULAR_FORECAST:
+    if mode == 'regular':
         series = election.timeseries_fc
         version = election.timeseries_fc_version
-    elif mode == Forecast.Mode.NOWCAST:
+    elif mode == 'nowcast':
         series = election.timeseries_nc
         version = election.timeseries_nc_version
-    elif mode == Forecast.Mode.LIVE_FORECAST:
+    elif mode == 'live':
         series = election.timeseries_lf
         version = election.timeseries_lf_version
     else:

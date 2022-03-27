@@ -6,6 +6,7 @@ export { default as ForecastsNav } from './Forecasts/Nav';
 export { default as ForecastHeader } from './Forecasts/Header';
 export { default as FormationOfGovernment } from './Forecasts/FormationOfGovernment';
 export { default as VoteTotals } from './Forecasts/VoteTotals';
+export { default as History } from './Forecasts/History';
 export { default as SeatDetailBody } from './Forecasts/SeatDetailBody';
 export { default as SeatTotals } from './Forecasts/SeatTotals';
 export { default as Seats } from './Forecasts/Seats';
