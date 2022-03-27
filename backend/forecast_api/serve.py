@@ -7,6 +7,11 @@ from rest_framework.permissions import BasePermission
 
 from typing import Any
 
+modes = {
+    'regular': Forecast.Mode.REGULAR_FORECAST,
+    'live': Forecast.Mode.LIVE_FORECAST,
+    'nowcast': Forecast.Mode.NOWCAST,
+}
 
 class ViewForecastPermission(BasePermission):
     def has_permission(self, request, view):
@@ -30,13 +35,8 @@ def find_mapped(mapped_list, val):
 
 
 def serve_forecast(code, mode, cached_id):
-    modes = {
-        'regular': Forecast.Mode.REGULAR_FORECAST,
-        'live': Forecast.Mode.LIVE_FORECAST,
-        'nowcast': Forecast.Mode.NOWCAST,
-    }
     if mode not in modes:
-        raise Http404
+        raise Http404('Invalid mode')
     mode_val = modes[mode]
     election = Election.objects.get(code=code)
     forecast = (election
@@ -48,6 +48,7 @@ def serve_forecast(code, mode, cached_id):
         return Response({"new": False})
     response = {"report": forecast.report,
                 "label": forecast.label,
+                "mode": forecast.mode,
                 "date": forecast.date,
                 "flags": forecast.flags,
                 "id": forecast.id,
@@ -67,7 +68,7 @@ def serve_forecast_archive_list(code):
                   "mode": forecast.mode,
                   "date": forecast.date, 
                   "label": forecast.label,
-                  "id": forecast.id
+                  "flags": forecast.flags
                  } for forecast in forecasts]
     full_response = [election.name, responses]
     return Response(full_response)
@@ -85,8 +86,37 @@ def serve_forecast_archive(code, id):
     except Forecast.DoesNotExist:
         raise Http404('Forecast does not exist')
     response = {"report": forecast.report,
+                "mode": forecast.mode,
                 "label": forecast.label,
                 "date": forecast.date,
                 "flags": forecast.flags,
                 "id": forecast.id}
+    return Response(response)
+
+
+def serve_election_timeseries(code, mode, cached_version):
+    if mode not in modes:
+        raise Http404('Invalid mode')
+    try:
+        election = Election.objects.get(code=code)
+    except Election.DoesNotExist:
+        raise Http404('Election does not exist')
+    if mode == Forecast.Mode.REGULAR_FORECAST:
+        series = election.timeseries_fc
+        version = election.timeseries_fc_version
+    elif mode == Forecast.Mode.NOWCAST:
+        series = election.timeseries_nc
+        version = election.timeseries_nc_version
+    elif mode == Forecast.Mode.LIVE_FORECAST:
+        series = election.timeseries_lf
+        version = election.timeseries_lf_version
+    else:
+        raise Http404('Invalid mode')
+    if version == cached_version:
+        return Response({"new": False})
+    response = {"timeseries": series,
+                "code": code,
+                "mode": mode,
+                "version": version,
+                "new": True}
     return Response(response)

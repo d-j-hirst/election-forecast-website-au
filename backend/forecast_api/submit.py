@@ -23,24 +23,33 @@ def first(iterable, condition = lambda x: True):
     return next(x for x in iterable if condition(x))
 
 
+def get_series_from_forecasts(forecasts):
+    return [{
+                    'date': str(a.date),
+                    'majorityWinPc': a.report['majorityWinPc'],
+                    'minorityWinPc': a.report['minorityWinPc'],
+                    'mostSeatsWinPc': a.report['mostSeatsWinPc'],
+                    'overallWinPc': a.report['overallWinPc'],
+                    'tppFrequencies': a.report['tppFrequencies'],
+                    'fpFrequencies': (a.report['fpFrequencies'] 
+                        if 'fpFrequencies' in a.report else []) ,
+                    'seatCountFrequencies': a.report['seatCountFrequencies']
+            } for a in forecasts]
+
+
 def update_timeseries(election: Election):
-    forecasts = Forecast.objects.filter(election=election, mode='FC')
-    series = [
-        {
-            'date': str(a.date),
-            'majorityWinPc': a.report['majorityWinPc'],
-            'minorityWinPc': a.report['minorityWinPc'],
-            'mostSeatsWinPc': a.report['mostSeatsWinPc'],
-            'overallWinPc': a.report['overallWinPc'],
-            'tppFrequencies': a.report['tppFrequencies'],
-            'fpFrequencies': a.report['fpFrequencies'],
-            'seatCountFrequencies': a.report['seatCountFrequencies'],
-            'seatPartyWinFrequencies': a.report['seatPartyWinFrequencies'],
-        }
-        for a in forecasts
-    ]
-    print(series)
-    election.time_series = series
+    fc_forecasts = Forecast.objects.filter(election=election, mode='FC')
+    fc_series = get_series_from_forecasts(fc_forecasts)
+    nc_forecasts = Forecast.objects.filter(election=election, mode='NC')
+    nc_series = get_series_from_forecasts(nc_forecasts)
+    lf_forecasts = Forecast.objects.filter(election=election, mode='LF')
+    lf_series = get_series_from_forecasts(lf_forecasts)
+    election.timeseries_fc = fc_series
+    election.timeseries_fc_version += 1
+    election.timeseries_nc = nc_series
+    election.timeseries_nc_version += 1
+    election.timeseries_lf = lf_series
+    election.timeseries_lf_version += 1
     election.save()
 
 

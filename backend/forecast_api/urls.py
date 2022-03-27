@@ -21,5 +21,8 @@ urlpatterns = [
          name='archive-list'),
     path('election-archive/<str:code>/<int:id>/',
          views.ElectionArchiveResponse.as_view(),  # type: ignore
-         name='archive')
+         name='archive'),
+    path('election-timeseries/<str:code>/<str:mode>/<int:cached_id>',
+         views.ElectionTimeseriesResponse.as_view(),  # type: ignore
+         name='election-summary')
 ]

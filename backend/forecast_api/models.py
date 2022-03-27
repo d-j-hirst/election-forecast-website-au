@@ -10,7 +10,17 @@ class Election(models.Model):
     # Descriptive name of the election
     name = models.CharField(max_length=100)
 
-    time_series = models.JSONField(default=str)
+    timeseries_fc = models.JSONField(default=str)
+
+    timeseries_fc_version = models.IntegerField(default=0)
+
+    timeseries_nc = models.JSONField(default=str)
+
+    timeseries_nc_version = models.IntegerField(default=0)
+
+    timeseries_lf = models.JSONField(default=str)
+
+    timeseries_lf_version = models.IntegerField(default=0)
     
     def __str__(self):
         return self.code + " - " + self.name
