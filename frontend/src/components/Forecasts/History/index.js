@@ -12,7 +12,7 @@ import LoadingMarker from '../../General/LoadingMarker';
 
 import { getDirect } from 'utils/sdk';
 
-import styles from './VoteTotals.module.css';
+import styles from './History.module.css';
 import { jsonMap } from 'utils/jsonmap';
 
 const colours = [["ALP", ["#FF0000", "#FF4444", "#FFAAAA", "#FFCCCC"]],
@@ -25,8 +25,51 @@ const colours = [["ALP", ["#FF0000", "#FF4444", "#FFAAAA", "#FFCCCC"]],
 
 const tieColour = "#885588"
 
+const dateToStr = date => {
+    var dateUTC = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+    return dateUTC.toISOString().slice(0, 10);
+}
+
+const round2 = num => Math.round(num * 100) / 100;
+
+const HistoryTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+        const thisDate = dateToStr(new Date(payload[0].payload.unixDate));
+        return (
+        <div className={styles.customTooltip}>
+            <p>
+                Update: {payload[0].payload.label}
+                <br/>
+                {thisDate}
+                <br/>
+                ALP majority: {round2(payload[0].payload.alpMaj[1])}%
+                <br/>
+                ALP minority: {round2(payload[0].payload.alpMin[1] - payload[0].payload.alpMaj[1])}%
+                <br/>
+                ALP most seats: {round2(payload[0].payload.alpMost[1] - payload[0].payload.alpMin[1])}%
+                <br/>
+                Exact ties: {round2(payload[0].payload.ties[1] - payload[0].payload.alpMost[1])}%
+                <br/>
+                Other party leads: {round2(payload[0].payload.othLeads[1] - payload[0].payload.ties[1])}%
+                <br/>
+                LNP most seats: {round2(payload[0].payload.lnpMost[1] - payload[0].payload.othLeads[1])}%
+                <br/>
+                LNP minority: {round2(payload[0].payload.lnpMin[1] - payload[0].payload.lnpMost[1])}%
+                <br/>
+                LNP majority: {round2(payload[0].payload.lnpMaj[1] - payload[0].payload.lnpMin[1])}%
+                <br/>
+            </p>
+        </div>
+        );
+    }
+
+    return null;
+};
+
 const Chart = props => {
-    const tempDates = props.data.map(a => new Date(a.date).getTime() / 86400000);
+    const unixDates = props.data.map(a => new Date(a.date).getTime())
+    const tempDates = unixDates.map(a => a / 86400000);
+    const labels = props.data.map(a => a.label);
     const prevDate = Math.min.apply(Math, tempDates);
     const adjDates = tempDates.map(a => a - prevDate);
     const alpMaj = props.data.map(a => jsonMap(a.majorityWinPc, 0));
@@ -41,7 +84,7 @@ const Chart = props => {
         a.minorityWinPc.reduce((a, b) => a + (b[0] > 1 || b[0] < 0 ? b[1] : 0), 0) +
         a.mostSeatsWinPc.reduce((a, b) => a + (b[0] > 1 || b[0] < 0 ? b[1] : 0), 0));
     const lnpMost = props.data.map((a, index) => jsonMap(a.mostSeatsWinPc, 1));
-    const lnpMin = props.data.map((a, index) => jsonMap(a.minorityWinPc, 1));
+    const lnpMin = props.data.map((a, index) => jsonMap(a.minorityWinPc, 1, 0));
     const lnpMaj = props.data.map((a, index) => jsonMap(a.majorityWinPc, 1));
 
     const alpMinStacked = alpMin.map((a, index) => a + alpMaj[index]);
@@ -53,6 +96,8 @@ const Chart = props => {
     const lnpMajStacked = lnpMaj.map((a, index) => a + lnpMinStacked[index]);
     const trendData = adjDates.map((date, index) => ({
         "date": date,
+        "unixDate": unixDates[index],
+        "label": labels[index],
         "alpMaj": [0, alpMaj[index]],
         "alpMin": [alpMaj[index], alpMinStacked[index]],
         "alpMost": [alpMinStacked[index], alpMostStacked[index]],
@@ -85,7 +130,7 @@ const Chart = props => {
                     <Area dataKey="lnpMost" type="stepAfter" activeDot={false} isAnimationActive={false} fill={jsonMap(colours, "LNP")[2]} />
                     <Area dataKey="lnpMin" type="stepAfter" activeDot={false} isAnimationActive={false} fill={jsonMap(colours, "LNP")[1]} />
                     <Area dataKey="lnpMaj" type="stepAfter" activeDot={false} isAnimationActive={false} fill={jsonMap(colours, "LNP")[0]} />
-                    <Tooltip />
+                    <Tooltip content={<HistoryTooltip />} isAnimationActive={false} />
                 </ComposedChart>
             </ResponsiveContainer>
         }
