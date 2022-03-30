@@ -86,6 +86,7 @@ def submit_report(request: HttpRequest):
     forecast.report = data
     forecast.flags = flags
     forecast.save()
+    update_timeseries(election)
     return Response("Forecast report successfully submitted.")
 
 
