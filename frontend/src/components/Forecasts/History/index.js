@@ -33,6 +33,7 @@ const dateToStr = date => {
 }
 
 const unixDateToStr = unixDate => new Date(unixDate).toISOString().slice(0, 10)
+const unixTimeToStr = unixDate => new Date(unixDate - 9000000).toISOString().slice(11, 16)
 
 const round2 = num => Math.round(num * 100) / 100;
 
@@ -51,7 +52,8 @@ const TickIntervalEnum = Object.freeze({"MonthThird": 1,
     "SixMonths": 6});
 
 const createTicks = (lowUnixDate, highUnixDate) => {
-    const ONE_DAY = 24 * 60 * 60 * 1000;
+    const ONE_HOUR = 60 * 60 * 1000;
+    const ONE_DAY = 24 * ONE_HOUR;
     const lowDateRep = new Date(lowUnixDate);
     const highDateRep = new Date(highUnixDate);
     const numDays = Math.round(Math.abs((highDateRep - lowDateRep) / ONE_DAY));
@@ -71,6 +73,13 @@ const createTicks = (lowUnixDate, highUnixDate) => {
     const lowDateYear = lowDateRep.getFullYear();
     const highDateYear = highDateRep.getFullYear();
     const customTicks = [];
+    if (numDays < 3) {
+        // for now, this means a live forecast, just have a tick every hour
+        for (let tick = Math.ceil(lowUnixDate / ONE_HOUR) * ONE_HOUR - ONE_HOUR / 2; tick < highUnixDate; tick += ONE_HOUR) {
+            customTicks.push(new Date(tick));
+        }
+        return customTicks;
+    }
     for (let year = lowDateYear; year <= highDateYear; ++year) {
         for (let month = (year === lowDateYear ? lowDateMonth : 0); month <= (year === highDateYear ? highDateMonth : 11); ++month){
             if (interval === TickIntervalEnum.MonthThird) {
@@ -126,7 +135,7 @@ const createTicks = (lowUnixDate, highUnixDate) => {
     return customTicks;
 }
 
-const GovernmentFormationTooltip = ({ active, payload, label }) => {
+const GovernmentFormationTooltip = ({ active, payload, label, mode }) => {
     if (active && payload && payload.length) {
         const thisDate = dateToStr(new Date(payload[0].payload.unixDate));
         return (
@@ -177,7 +186,8 @@ const GovernmentFormation = props => {
                 }}
             >
                 <XAxis type="number" dataKey="unixDate" domain={[lowDate, highDate]} scale="time" 
-                       ticks={customTicks} tick={props.mode !== "live"} tickFormatter={unixDateToStr} interval={0}/>
+                       ticks={customTicks} interval={0}
+                       tickFormatter={props.mode === "live" ? unixTimeToStr : unixDateToStr}/>
                 <YAxis type="number" domain={[0, 100]} tickCount={6} tickFormatter={integerPercent} width={30} />
                 <Area dataKey="alpMaj" type="stepAfter" activeDot={false} isAnimationActive={false} fill={jsonMap(colours, "ALP")[0]} />
                 <Area dataKey="alpMin" type="stepAfter" activeDot={false} isAnimationActive={false} fill={jsonMap(colours, "ALP")[1]} />
@@ -187,13 +197,13 @@ const GovernmentFormation = props => {
                 <Area dataKey="lnpMost" type="stepAfter" activeDot={false} isAnimationActive={false} fill={jsonMap(colours, "LNP")[2]} />
                 <Area dataKey="lnpMin" type="stepAfter" activeDot={false} isAnimationActive={false} fill={jsonMap(colours, "LNP")[1]} />
                 <Area dataKey="lnpMaj" type="stepAfter" activeDot={false} isAnimationActive={false} fill={jsonMap(colours, "LNP")[0]} />
-                <Tooltip content={<GovernmentFormationTooltip />} isAnimationActive={false} />
+                <Tooltip content={<GovernmentFormationTooltip mode={props.mode} />} isAnimationActive={false} />
             </ComposedChart>
         </ResponsiveContainer>
     )
 }
 
-const TppTooltip = ({ active, payload, label }) => {
+const TppTooltip = ({ active, payload, label, mode }) => {
     if (active && payload && payload.length) {
         const thisDate = dateToStr(new Date(payload[0].payload.unixDate));
         return (
@@ -251,7 +261,8 @@ const Tpp = props => {
                 }}
             >
                 <XAxis type="number" dataKey="unixDate" domain={[lowDate, highDate]} scale="time" 
-                       ticks={customTicks} tick={props.mode !== "live"} tickFormatter={unixDateToStr} interval={0}/>
+                       ticks={customTicks} interval={0}
+                       tickFormatter={props.mode === "live" ? unixTimeToStr : unixDateToStr}/>
                 <YAxis type="number" domain={[lowTpp, highTpp]} interval="preserveStartEnd"
                     allowDecimals={false} tickCount={numTicks} width={25} />
                 <ReferenceLine y={50} stroke="black" />
@@ -261,13 +272,13 @@ const Tpp = props => {
                 <Area dataKey="tpp75-95" type="stepAfter" activeDot={false} stroke="none" isAnimationActive={false} fill={jsonMap(colours, props.partyAbbr)[2]} />
                 <Area dataKey="tpp95-99" type="stepAfter" activeDot={false} stroke="none" isAnimationActive={false} fill={jsonMap(colours, props.partyAbbr)[3]} />
                 <Line dataKey="tppMedian" type="stepAfter" activeDot={false} dot={false} isAnimationActive={false} stroke={jsonMap(colours, props.partyAbbr)[0]} />
-                <Tooltip content={<TppTooltip />} isAnimationActive={false} />
+                <Tooltip content={<TppTooltip mode={props.mode} />} isAnimationActive={false} />
             </ComposedChart>
         </ResponsiveContainer>
     )
 }
 
-const FpTooltip = ({ active, payload, label }) => {
+const FpTooltip = ({ active, payload, label, mode }) => {
     if (active && payload && payload.length) {
         const thisDate = dateToStr(new Date(payload[0].payload.unixDate));
         return (
@@ -323,7 +334,8 @@ const Fp = props => {
                 }}
             >
                 <XAxis type="number" dataKey="unixDate" domain={[lowDate, highDate]} scale="time" 
-                   ticks={customTicks} tick={props.mode !== "live"} tickFormatter={unixDateToStr} interval={0}/>
+                       ticks={customTicks} interval={0}
+                       tickFormatter={props.mode === "live" ? unixTimeToStr : unixDateToStr}/>
                 <YAxis type="number" domain={[lowFp, highFp]} width={25}
                      interval="preserveStartEnd" allowDecimals={false} tickCount={numTicks} />
                 <Area dataKey="fp1-5" type="stepAfter" activeDot={false} stroke="none" isAnimationActive={false} fill={jsonMap(colours, props.partyAbbr)[3]} />
@@ -332,15 +344,16 @@ const Fp = props => {
                 <Area dataKey="fp75-95" type="stepAfter" activeDot={false} stroke="none" isAnimationActive={false} fill={jsonMap(colours, props.partyAbbr)[2]} />
                 <Area dataKey="fp95-99" type="stepAfter" activeDot={false} stroke="none" isAnimationActive={false} fill={jsonMap(colours, props.partyAbbr)[3]} />
                 <Line dataKey="fpMedian" type="stepAfter" activeDot={false} dot={false} isAnimationActive={false} stroke={jsonMap(colours, props.partyAbbr)[0]} />
-                <Tooltip content={<FpTooltip />} isAnimationActive={false} />
+                <Tooltip content={<FpTooltip mode={props.mode} />} isAnimationActive={false} />
             </ComposedChart>
         </ResponsiveContainer>
     )
 }
 
-const SeatsTooltip = ({ active, payload, label }) => {
+const SeatsTooltip = ({ active, payload, label, mode }) => {
     if (active && payload && payload.length) {
-        const thisDate = dateToStr(new Date(payload[0].payload.unixDate));
+        const date = payload[0].payload.unixDate
+        const thisDate = mode === "live" ? unixTimeToStr(date) : unixDateToStr(date);
         return (
         <div className={styles.customTooltip}>
             <p>
@@ -404,7 +417,8 @@ const Seats = props => {
                 }}
             >
                 <XAxis type="number" dataKey="unixDate" domain={[lowDate, highDate]} scale="time" 
-                   ticks={customTicks} tick={props.mode !== "live"} tickFormatter={unixDateToStr} interval={0}/>
+                       ticks={customTicks} interval={0}
+                       tickFormatter={props.mode === "live" ? unixTimeToStr : unixDateToStr}/>
                 <YAxis type="number" domain={[lowSeats, highSeats]} width={25}
                     interval="preserveStartEnd" allowDecimals={false} tickCount={numTicks} />
                 <Area dataKey="seats1-5" type="stepAfter" activeDot={false} stroke="none" isAnimationActive={false} 
@@ -420,7 +434,7 @@ const Seats = props => {
                 {highSeats > majorityLine && <ReferenceLine y={majorityLine} stroke="black" />}
                 <Line dataKey="seatsMedian" type="stepAfter" activeDot={false} dot={false} isAnimationActive={false}
                     stroke={jsonMap(colours, colourKey)[0]} />
-                <Tooltip content={<SeatsTooltip />} isAnimationActive={false} />
+                <Tooltip content={<SeatsTooltip mode={props.mode} />} isAnimationActive={false} />
             </ComposedChart>
         </ResponsiveContainer>
     )
