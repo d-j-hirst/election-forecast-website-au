@@ -168,6 +168,8 @@ const GovernmentFormation = props => {
     
     const customTicks = createTicks(lowDate, highDate);
 
+    console.log("Checkpoint D");
+    console.log(props.data);
     console.log(props.data.unixDate);
 
     return (
@@ -431,6 +433,10 @@ const Seats = props => {
 }
 
 const Chart = props => {
+
+    console.log("Checkpoint A");
+    console.log(props.data);
+
     const unixDates = props.data.map(a => new Date(a.date).getTime())
     const tempDates = unixDates.map(a => a / 86400000);
     const labels = props.data.map(a => a.label.length > 26 ? a.label.substring(0, 24) + "..." : a.label);
@@ -479,6 +485,9 @@ const Chart = props => {
                                       jsonMap(a.seatCountFrequencies, props.party)[13]]
                                       : [0, 0, 0, 0, 0, 0, 0]);
 
+    console.log("Checkpoint B");
+    console.log(unixDates);
+
     const chartData = adjDates.map((date, index) => ({
         "date": date,
         "unixDate": unixDates[index],
@@ -512,6 +521,9 @@ const Chart = props => {
     }));
 
     const partyAbbr = jsonMap(props.partyAbbr, props.party);
+
+    console.log("Checkpoint C");
+    console.log(chartData);
 
     return (
         <>
