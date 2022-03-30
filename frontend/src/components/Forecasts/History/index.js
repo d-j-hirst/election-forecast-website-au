@@ -6,7 +6,7 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import ListGroup from 'react-bootstrap/ListGroup';
 
-import { ComposedChart, Line, XAxis, YAxis, ZAxis, ReferenceLine, Area, Scatter, Tooltip, ResponsiveContainer } from 'recharts';
+import { ComposedChart, Line, XAxis, YAxis, ReferenceLine, Area, Tooltip, ResponsiveContainer } from 'recharts';
 
 import StandardErrorBoundary from '../../General/StandardErrorBoundary';
 import InfoIcon from '../../General/InfoIcon';
@@ -28,9 +28,11 @@ const colours = [["ALP", ["#FF0000", "#FF4444", "#FFAAAA", "#FFCCCC"]],
 const tieColour = "#885588"
 
 const dateToStr = date => {
-    var dateUTC = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+    const dateUTC = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
     return dateUTC.toISOString().slice(0, 10);
 }
+
+const unixDateToStr = unixDate => new Date(unixDate).toISOString().slice(0, 10)
 
 const round2 = num => Math.round(num * 100) / 100;
 
@@ -38,6 +40,89 @@ const GraphTypeEnum = Object.freeze({"governmentFormation": 1,
     "tpp": 2,
     "fp": 3,
     "seats": 4});
+
+const TickIntervalEnum = Object.freeze({"MonthThird": 1,
+    "MonthHalf": 2,
+    "Month": 3,
+    "TwoMonths": 4,
+    "ThreeMonths": 5,
+    "SixMonths": 6});
+
+const createTicks = (lowUnixDate, highUnixDate) => {
+    const ONE_DAY = 24 * 60 * 60 * 1000;
+    const lowDateRep = new Date(lowUnixDate);
+    const highDateRep = new Date(highUnixDate);
+    const numDays = Math.round(Math.abs((highDateRep - lowDateRep) / ONE_DAY));
+    const daysToInterval = days => {
+        if (days < 60) return TickIntervalEnum.MonthThird;
+        if (days < 90) return TickIntervalEnum.MonthHalf;
+        if (days < 180) return TickIntervalEnum.Month;
+        if (days < 360) return TickIntervalEnum.TwoMonths;
+        if (days < 540) return TickIntervalEnum.ThreeMonths;
+        return TickIntervalEnum.SixMonths;
+    };
+    const interval = daysToInterval(numDays);
+    const lowDateDay = lowDateRep.getDate();
+    const highDateDay = highDateRep.getDate();
+    const lowDateMonth = lowDateRep.getMonth();
+    const highDateMonth = highDateRep.getMonth();
+    const lowDateYear = lowDateRep.getFullYear();
+    const highDateYear = highDateRep.getFullYear();
+    const customTicks = [];
+    for (let year = lowDateYear; year <= highDateYear; ++year) {
+        for (let month = (year === lowDateYear ? lowDateMonth : 0); month <= (year === highDateYear ? highDateMonth : 11); ++month){
+            if (interval === TickIntervalEnum.MonthThird) {
+                if ((year > lowDateYear || month > lowDateMonth || lowDateDay <= 1) &&
+                        (year < highDateYear || month < highDateMonth || highDateDay >= 1)) {
+                    customTicks.push(Date.UTC(year, month, 1));
+                }
+                if ((year > lowDateYear || month > lowDateMonth || lowDateDay <= 11) &&
+                        (year < highDateYear || month < highDateMonth || highDateDay >= 11)) {
+                    customTicks.push(Date.UTC(year, month, 11));
+                }
+                if ((year > lowDateYear || month > lowDateMonth || lowDateDay <= 21) &&
+                        (year < highDateYear || month < highDateMonth || highDateDay >= 21)) {
+                    customTicks.push(Date.UTC(year, month, 21));
+                }
+            }
+            else if (interval === TickIntervalEnum.MonthHalf) {
+                if ((year > lowDateYear || month > lowDateMonth || lowDateDay <= 1) &&
+                        (year < highDateYear || month < highDateMonth || highDateDay >= 1)) {
+                    customTicks.push(Date.UTC(year, month, 1));
+                }
+                if ((year > lowDateYear || month > lowDateMonth || lowDateDay <= 16) &&
+                        (year < highDateYear || month < highDateMonth || highDateDay >= 16)) {
+                    customTicks.push(Date.UTC(year, month, 16));
+                }
+            }
+            else if (interval === TickIntervalEnum.Month) {
+                if ((year > lowDateYear || month > lowDateMonth || lowDateDay <= 1) &&
+                        (year < highDateYear || month < highDateMonth || highDateDay >= 1)) {
+                    customTicks.push(Date.UTC(year, month, 1));
+                }
+            }
+            else if (interval === TickIntervalEnum.TwoMonths) {
+                if (month % 2 === 0 && (year > lowDateYear || month > lowDateMonth || lowDateDay <= 1) &&
+                        (year < highDateYear || month < highDateMonth || highDateDay >= 1)) {
+                    customTicks.push(Date.UTC(year, month, 1));
+                }
+            }
+            else if (interval === TickIntervalEnum.ThreeMonths) {
+                if (month % 3 === 0 && (year > lowDateYear || month > lowDateMonth || lowDateDay <= 1) &&
+                        (year < highDateYear || month < highDateMonth || highDateDay >= 1)) {
+                    customTicks.push(Date.UTC(year, month, 1));
+                }
+            }
+            else if (interval === TickIntervalEnum.SixMonths) {
+                if (month % 6 === 0 && (year > lowDateYear || month > lowDateMonth || lowDateDay <= 1) &&
+                        (year < highDateYear || month < highDateMonth || highDateDay >= 1)) {
+                    customTicks.push(Date.UTC(year, month, 1));
+                }
+            }
+        }
+    }
+    return customTicks;
+}
 
 const GovernmentFormationTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
@@ -74,6 +159,11 @@ const GovernmentFormationTooltip = ({ active, payload, label }) => {
 };
 
 const GovernmentFormation = props => {
+    const lowDate = Math.min.apply(Math, props.data.map(a => a.unixDate));
+    const highDate = Math.max.apply(Math, props.data.map(a => a.unixDate));
+    
+    const customTicks = createTicks(lowDate, highDate);
+
     return (
         <ResponsiveContainer width="100%" height={400}>
             <ComposedChart
@@ -84,7 +174,8 @@ const GovernmentFormation = props => {
                 top: 20, right: 20, bottom: 20, left: 20,
                 }}
             >
-                <XAxis type="number" dataKey="date" domain={[0, 100]}/>
+                <XAxis type="number" dataKey="unixDate" domain={[lowDate, highDate]} scale="time" 
+                       ticks={customTicks} tickFormatter={unixDateToStr} interval={0}/>
                 <YAxis type="number" domain={[0, 100]}/>
                 <Area dataKey="alpMaj" type="stepAfter" activeDot={false} isAnimationActive={false} fill={jsonMap(colours, "ALP")[0]} />
                 <Area dataKey="alpMin" type="stepAfter" activeDot={false} isAnimationActive={false} fill={jsonMap(colours, "ALP")[1]} />
@@ -134,6 +225,11 @@ const TppTooltip = ({ active, payload, label }) => {
 };
 
 const Tpp = props => {
+    const lowDate = Math.min.apply(Math, props.data.map(a => a.unixDate));
+    const highDate = Math.max.apply(Math, props.data.map(a => a.unixDate));
+    
+    const customTicks = createTicks(lowDate, highDate);
+
     return (
         <ResponsiveContainer width="100%" height={400}>
             <ComposedChart
@@ -144,7 +240,8 @@ const Tpp = props => {
                 top: 20, right: 20, bottom: 20, left: 20,
                 }}
             >
-                <XAxis type="number" dataKey="date" domain={[0, 100]}/>
+                <XAxis type="number" dataKey="unixDate" domain={[lowDate, highDate]} scale="time" 
+                       ticks={customTicks} tickFormatter={unixDateToStr} interval={0}/>
                 <YAxis type="number" domain={[35, 65]}/>
                 <Area dataKey="tpp1-5" type="stepAfter" activeDot={false} stroke="none" isAnimationActive={false} fill={jsonMap(colours, props.partyAbbr)[3]} />
                 <Area dataKey="tpp5-25" type="stepAfter" activeDot={false} stroke="none" isAnimationActive={false} fill={jsonMap(colours, props.partyAbbr)[2]} />
@@ -194,6 +291,12 @@ const FpTooltip = ({ active, payload, label }) => {
 const Fp = props => {
     const lowFp = Math.min.apply(Math, props.data.map(a => Math.floor(a["fp1-5"][0])));
     const highFp = Math.max.apply(Math, props.data.map(a => Math.floor(a["fp95-99"][1]) + 1));
+
+    const lowDate = Math.min.apply(Math, props.data.map(a => a.unixDate));
+    const highDate = Math.max.apply(Math, props.data.map(a => a.unixDate));
+    
+    const customTicks = createTicks(lowDate, highDate);
+
     return (
         <ResponsiveContainer width="100%" height={400}>
             <ComposedChart
@@ -204,7 +307,8 @@ const Fp = props => {
                 top: 20, right: 20, bottom: 20, left: 20,
                 }}
             >
-                <XAxis type="number" dataKey="date" domain={[0, 100]}/>
+                <XAxis type="number" dataKey="unixDate" domain={[lowDate, highDate]} scale="time" 
+                   ticks={customTicks} tickFormatter={unixDateToStr} interval={0}/>
                 <YAxis type="number" domain={[Math.max(0, lowFp - 1), highFp + 1]}/>
                 <Area dataKey="fp1-5" type="stepAfter" activeDot={false} stroke="none" isAnimationActive={false} fill={jsonMap(colours, props.partyAbbr)[3]} />
                 <Area dataKey="fp5-25" type="stepAfter" activeDot={false} stroke="none" isAnimationActive={false} fill={jsonMap(colours, props.partyAbbr)[2]} />
@@ -254,7 +358,14 @@ const SeatsTooltip = ({ active, payload, label }) => {
 const Seats = props => {
     const lowSeats = Math.min.apply(Math, props.data.map(a => Math.floor(a["seats1-5"][0])));
     const highSeats = Math.max.apply(Math, props.data.map(a => Math.floor(a["seats95-99"][1]) + 1));
+
+    const lowDate = Math.min.apply(Math, props.data.map(a => a.unixDate));
+    const highDate = Math.max.apply(Math, props.data.map(a => a.unixDate));
+    
+    const customTicks = createTicks(lowDate, highDate);
+
     const colourKey = jsonMap(colours, props.partyAbbr) ? props.partyAbbr : "OTH";
+
     return (
         <ResponsiveContainer width="100%" height={400}>
             <ComposedChart
@@ -265,7 +376,8 @@ const Seats = props => {
                 top: 20, right: 20, bottom: 20, left: 20,
                 }}
             >
-                <XAxis type="number" dataKey="date" domain={[0, 100]}/>
+                <XAxis type="number" dataKey="unixDate" domain={[lowDate, highDate]} scale="time" 
+                   ticks={customTicks} tickFormatter={unixDateToStr} interval={0}/>
                 <YAxis type="number" domain={[Math.max(0, lowSeats - 1), highSeats + 1]}/>
                 <Area dataKey="seats1-5" type="stepAfter" activeDot={false} stroke="none" isAnimationActive={false} 
                     fill={jsonMap(colours, colourKey)[3]} />
@@ -333,6 +445,8 @@ const Chart = props => {
                                       jsonMap(a.seatCountFrequencies, props.party)[8], jsonMap(a.seatCountFrequencies, props.party)[10], 
                                       jsonMap(a.seatCountFrequencies, props.party)[13]]
                                       : [0, 0, 0, 0, 0, 0, 0]);
+
+    
 
     const chartData = adjDates.map((date, index) => ({
         "date": date,
