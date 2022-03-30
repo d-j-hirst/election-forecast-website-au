@@ -137,7 +137,8 @@ const createTicks = (lowUnixDate, highUnixDate) => {
 
 const GovernmentFormationTooltip = ({ active, payload, label, mode }) => {
     if (active && payload && payload.length) {
-        const thisDate = dateToStr(new Date(payload[0].payload.unixDate));
+        const date = payload[0].payload.unixDate
+        const thisDate = mode === "live" ? unixTimeToStr(date) : unixDateToStr(date);
         return (
         <div className={styles.customTooltip}>
             <p>
@@ -205,7 +206,8 @@ const GovernmentFormation = props => {
 
 const TppTooltip = ({ active, payload, label, mode }) => {
     if (active && payload && payload.length) {
-        const thisDate = dateToStr(new Date(payload[0].payload.unixDate));
+        const date = payload[0].payload.unixDate
+        const thisDate = mode === "live" ? unixTimeToStr(date) : unixDateToStr(date);
         return (
         <div className={styles.customTooltip}>
             <p>
@@ -280,7 +282,8 @@ const Tpp = props => {
 
 const FpTooltip = ({ active, payload, label, mode }) => {
     if (active && payload && payload.length) {
-        const thisDate = dateToStr(new Date(payload[0].payload.unixDate));
+        const date = payload[0].payload.unixDate
+        const thisDate = mode === "live" ? unixTimeToStr(date) : unixDateToStr(date);
         return (
         <div className={styles.customTooltip}>
             <p>
