@@ -426,7 +426,9 @@ const Seats = props => {
 
 const Chart = props => {
     const unixDates = props.data.map(a => new Date(Number(a.date.substring(0, 4)),
-        Number(a.date.substring(5, 7)) - 1, Number(a.date.substring(8, 10))).getTime());
+        Number(a.date.substring(5, 7)) - 1, Number(a.date.substring(8, 10)),
+        Number(a.date.substring(11, 13)), Number(a.date.substring(14, 16)),
+        Number(a.date.substring(17, 19))).getTime());
     const tempDates = unixDates.map(a => a / 86400000);
     const labels = props.data.map(a => a.label.length > 26 ? a.label.substring(0, 24) + "..." : a.label);
     const prevDate = Math.min.apply(Math, tempDates);
