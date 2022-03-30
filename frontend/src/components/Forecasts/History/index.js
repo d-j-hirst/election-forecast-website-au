@@ -17,8 +17,8 @@ import { getDirect } from 'utils/sdk';
 import styles from './History.module.css';
 import { jsonMap, jsonMapReverse } from '../../../utils/jsonmap.js';
 
-const colours = [["ALP", ["#FF0000", "#FF4444", "#FFAAAA", "#FFCCCC"]],
-                 ["LNP", ["#0000FF", "#4444FF", "#AAAAFF", "#CCCCFF"]],
+const colours = [["ALP", ["#FF0000", "#FF4444", "#FF9999", "#FFCCCC"]],
+                 ["LNP", ["#0000FF", "#4444FF", "#9999FF", "#CCCCFF"]],
                  ["GRN", ["#008800", "#22CC00", "#66FF44", "#BBFF99"]],
                  ["ONP", ["#AA6600", "#FF7F00", "#FFAB58", "#FFC388"]],
                  ["UAP", ["#886600", "#C2B615", "#EBDF43", "#F0E87C"]],
@@ -132,7 +132,7 @@ const GovernmentFormationTooltip = ({ active, payload, label }) => {
             <p>
                 Update: {payload[0].payload.label}
                 <br/>
-                {thisDate}
+                Forecast date: {thisDate}
                 <br/>
                 ALP majority: {round2(payload[0].payload.alpMaj[1])}%
                 <br/>
@@ -168,15 +168,15 @@ const GovernmentFormation = props => {
         <ResponsiveContainer width="100%" height={400}>
             <ComposedChart
                 width={730}
-                height={250}
+                height={280}
                 data={props.data}
                 margin={{
                 top: 20, right: 20, bottom: 20, left: 20,
                 }}
             >
                 <XAxis type="number" dataKey="unixDate" domain={[lowDate, highDate]} scale="time" 
-                       ticks={customTicks} tickFormatter={unixDateToStr} interval={0}/>
-                <YAxis type="number" domain={[0, 100]}/>
+                       ticks={customTicks} tick={props.mode !== "live"} tickFormatter={unixDateToStr} interval={0}/>
+                <YAxis type="number" domain={[0, 100]} interval="preserveStartEnd" allowDecimals={false}/>
                 <Area dataKey="alpMaj" type="stepAfter" activeDot={false} isAnimationActive={false} fill={jsonMap(colours, "ALP")[0]} />
                 <Area dataKey="alpMin" type="stepAfter" activeDot={false} isAnimationActive={false} fill={jsonMap(colours, "ALP")[1]} />
                 <Area dataKey="alpMost" type="stepAfter" activeDot={false} isAnimationActive={false} fill={jsonMap(colours, "ALP")[2]} />
@@ -199,7 +199,7 @@ const TppTooltip = ({ active, payload, label }) => {
             <p>
                 Update: {payload[0].payload.label}
                 <br/>
-                {thisDate}
+                Forecast date: {thisDate}
                 <br/>
             </p>
             <p className={styles.smallTooltipText}>
@@ -225,6 +225,14 @@ const TppTooltip = ({ active, payload, label }) => {
 };
 
 const Tpp = props => {
+    let lowTpp = Math.min.apply(Math, props.data.map(a => Math.floor(a["tpp1-5"][0])));
+    if (lowTpp % 2 !== 0) --lowTpp;
+    lowTpp = Math.min(48, lowTpp);
+    let highTpp = Math.max.apply(Math, props.data.map(a => Math.floor(a["tpp95-99"][1]) + 1));
+    if ((highTpp - lowTpp) % 2 !== 0) ++highTpp;
+    highTpp = Math.max(52, highTpp);
+    const numTicks = (highTpp - lowTpp) / 2 + 1
+
     const lowDate = Math.min.apply(Math, props.data.map(a => a.unixDate));
     const highDate = Math.max.apply(Math, props.data.map(a => a.unixDate));
     
@@ -234,15 +242,16 @@ const Tpp = props => {
         <ResponsiveContainer width="100%" height={400}>
             <ComposedChart
                 width={730}
-                height={250}
+                height={280}
                 data={props.data}
                 margin={{
                 top: 20, right: 20, bottom: 20, left: 20,
                 }}
             >
                 <XAxis type="number" dataKey="unixDate" domain={[lowDate, highDate]} scale="time" 
-                       ticks={customTicks} tickFormatter={unixDateToStr} interval={0}/>
-                <YAxis type="number" domain={[35, 65]}/>
+                       ticks={customTicks} tick={props.mode !== "live"} tickFormatter={unixDateToStr} interval={0}/>
+                <YAxis type="number" domain={[lowTpp, highTpp]} interval="preserveStartEnd" allowDecimals={false} tickCount={numTicks} />
+                <ReferenceLine y={50} stroke="black" />
                 <Area dataKey="tpp1-5" type="stepAfter" activeDot={false} stroke="none" isAnimationActive={false} fill={jsonMap(colours, props.partyAbbr)[3]} />
                 <Area dataKey="tpp5-25" type="stepAfter" activeDot={false} stroke="none" isAnimationActive={false} fill={jsonMap(colours, props.partyAbbr)[2]} />
                 <Area dataKey="tpp25-75" type="stepAfter" activeDot={false} stroke="none" isAnimationActive={false} fill={jsonMap(colours, props.partyAbbr)[1]} />
@@ -263,7 +272,7 @@ const FpTooltip = ({ active, payload, label }) => {
             <p>
                 Update: {payload[0].payload.label}
                 <br/>
-                {thisDate}
+                Forecast date: {thisDate}
                 <br/>
             </p>
             <p className={styles.smallTooltipText}>
@@ -289,8 +298,11 @@ const FpTooltip = ({ active, payload, label }) => {
 };
 
 const Fp = props => {
-    const lowFp = Math.min.apply(Math, props.data.map(a => Math.floor(a["fp1-5"][0])));
-    const highFp = Math.max.apply(Math, props.data.map(a => Math.floor(a["fp95-99"][1]) + 1));
+    let lowFp = Math.min.apply(Math, props.data.map(a => Math.floor(a["fp1-5"][0])));
+    while (lowFp % 4 !== 0) --lowFp;
+    let highFp = Math.max.apply(Math, props.data.map(a => Math.floor(a["fp95-99"][1]) + 1));
+    while ((highFp - lowFp) % 4 !== 0) ++highFp;
+    const numTicks = (highFp - lowFp) / 4 + 1;
 
     const lowDate = Math.min.apply(Math, props.data.map(a => a.unixDate));
     const highDate = Math.max.apply(Math, props.data.map(a => a.unixDate));
@@ -301,15 +313,16 @@ const Fp = props => {
         <ResponsiveContainer width="100%" height={400}>
             <ComposedChart
                 width={730}
-                height={250}
+                height={280}
                 data={props.data}
                 margin={{
                 top: 20, right: 20, bottom: 20, left: 20,
                 }}
             >
                 <XAxis type="number" dataKey="unixDate" domain={[lowDate, highDate]} scale="time" 
-                   ticks={customTicks} tickFormatter={unixDateToStr} interval={0}/>
-                <YAxis type="number" domain={[Math.max(0, lowFp - 1), highFp + 1]}/>
+                   ticks={customTicks} tick={props.mode !== "live"} tickFormatter={unixDateToStr} interval={0}/>
+                <YAxis type="number" domain={[lowFp, highFp]}
+                     interval="preserveStartEnd" allowDecimals={false} tickCount={numTicks} />
                 <Area dataKey="fp1-5" type="stepAfter" activeDot={false} stroke="none" isAnimationActive={false} fill={jsonMap(colours, props.partyAbbr)[3]} />
                 <Area dataKey="fp5-25" type="stepAfter" activeDot={false} stroke="none" isAnimationActive={false} fill={jsonMap(colours, props.partyAbbr)[2]} />
                 <Area dataKey="fp25-75" type="stepAfter" activeDot={false} stroke="none" isAnimationActive={false} fill={jsonMap(colours, props.partyAbbr)[1]} />
@@ -330,11 +343,11 @@ const SeatsTooltip = ({ active, payload, label }) => {
             <p>
                 Update: {payload[0].payload.label}
                 <br/>
-                {thisDate}
+                Forecast date: {thisDate}
                 <br/>
             </p>
             <p className={styles.smallTooltipText}>
-                Vote total percentiles (
+                Seat percentiles (
                 <span className={styles.outerProbsText}>5%</span>
                 <span className={styles.innerProbsText}>-25%</span>
                 -<strong>median</strong>-
@@ -356,8 +369,13 @@ const SeatsTooltip = ({ active, payload, label }) => {
 };
 
 const Seats = props => {
-    const lowSeats = Math.min.apply(Math, props.data.map(a => Math.floor(a["seats1-5"][0])));
-    const highSeats = Math.max.apply(Math, props.data.map(a => Math.floor(a["seats95-99"][1]) + 1));
+    let lowSeats = Math.min.apply(Math, props.data.map(a => Math.floor(a["seats1-5"][0])));
+    while (lowSeats % 10 !== 0) --lowSeats;
+    let highSeats = Math.max.apply(Math, props.data.map(a => Math.floor(a["seats95-99"][1]) + 1));
+    while ((highSeats - lowSeats) % 10 !== 0) ++highSeats;
+    let numTicks = (highSeats - lowSeats) / 10 + 1;
+    if (numTicks < 5) numTicks = (highSeats - lowSeats) / 5 + 1;
+    if (numTicks < 4) numTicks = (highSeats - lowSeats) / 2 + 1;
 
     const lowDate = Math.min.apply(Math, props.data.map(a => a.unixDate));
     const highDate = Math.max.apply(Math, props.data.map(a => a.unixDate));
@@ -366,19 +384,26 @@ const Seats = props => {
 
     const colourKey = jsonMap(colours, props.partyAbbr) ? props.partyAbbr : "OTH";
 
+    const majorityLine = (() => {
+        if (props.election === "2022fed") return 75.5;
+        if (props.election === "2022sa") return 23.5;
+        if (props.election === "2022vic") return 44.5;
+    })();
+
     return (
         <ResponsiveContainer width="100%" height={400}>
             <ComposedChart
                 width={730}
-                height={250}
+                height={280}
                 data={props.data}
                 margin={{
                 top: 20, right: 20, bottom: 20, left: 20,
                 }}
             >
                 <XAxis type="number" dataKey="unixDate" domain={[lowDate, highDate]} scale="time" 
-                   ticks={customTicks} tickFormatter={unixDateToStr} interval={0}/>
-                <YAxis type="number" domain={[Math.max(0, lowSeats - 1), highSeats + 1]}/>
+                   ticks={customTicks} tick={props.mode !== "live"} tickFormatter={unixDateToStr} interval={0}/>
+                <YAxis type="number" domain={[lowSeats, highSeats]}
+                    interval="preserveStartEnd" allowDecimals={false} tickCount={numTicks} />
                 <Area dataKey="seats1-5" type="stepAfter" activeDot={false} stroke="none" isAnimationActive={false} 
                     fill={jsonMap(colours, colourKey)[3]} />
                 <Area dataKey="seats5-25" type="stepAfter" activeDot={false} stroke="none" isAnimationActive={false} 
@@ -389,6 +414,7 @@ const Seats = props => {
                     fill={jsonMap(colours, colourKey)[2]} />
                 <Area dataKey="seats95-99" type="stepAfter" activeDot={false} stroke="none" isAnimationActive={false} 
                     fill={jsonMap(colours, colourKey)[3]} />
+                {highSeats > majorityLine && <ReferenceLine y={majorityLine} stroke="black" />}
                 <Line dataKey="seatsMedian" type="stepAfter" activeDot={false} dot={false} isAnimationActive={false}
                     stroke={jsonMap(colours, colourKey)[0]} />
                 <Tooltip content={<SeatsTooltip />} isAnimationActive={false} />
@@ -446,8 +472,6 @@ const Chart = props => {
                                       jsonMap(a.seatCountFrequencies, props.party)[13]]
                                       : [0, 0, 0, 0, 0, 0, 0]);
 
-    
-
     const chartData = adjDates.map((date, index) => ({
         "date": date,
         "unixDate": unixDates[index],
@@ -487,16 +511,16 @@ const Chart = props => {
         {chartData !== undefined &&
             <>
                 {props.type === GraphTypeEnum.governmentFormation &&
-                    <GovernmentFormation data={chartData} />
+                    <GovernmentFormation data={chartData} mode={props.mode} />
                 }
                 {props.type === GraphTypeEnum.tpp &&
-                    <Tpp data={chartData} partyAbbr={partyAbbr} />
+                    <Tpp data={chartData} partyAbbr={partyAbbr} mode={props.mode} />
                 }
                 {props.type === GraphTypeEnum.fp &&
-                    <Fp data={chartData} partyAbbr={partyAbbr} />
+                    <Fp data={chartData} partyAbbr={partyAbbr} mode={props.mode} />
                 }
                 {props.type === GraphTypeEnum.seats &&
-                    <Seats data={chartData} partyAbbr={partyAbbr} />
+                    <Seats data={chartData} partyAbbr={partyAbbr} election={props.election} mode={props.mode} />
                 }
             </>
         }
@@ -508,8 +532,37 @@ const MainExplainer = props => {
     return (
         <Alert variant="info" className={styles.alert}>
             <p>
-                Placeholder alert.
+                This section displays graphs for
+                the <b>history of this forecast type</b> over time. That is,
+                it shows the changes over time of what the forecast was <i>predicting
+                at that time</i>.
             </p>
+            <hr />
+            <p>
+                You can see the history of the following statistics by selecting the appropriate option in the dropdown menu:
+            </p>
+            <ul>
+                <li>
+                    <i>Formation of government:</i> Shows the probabilities of parties winning a majority as well
+                    as different scenarios where no party wins a majority.
+                </li>
+                <li>
+                    <i>Two-party preferred:</i> Shows the forecast two-party-preferred vote
+                    at that point in time for a major party. Note that for the regular forecast this is the
+                    forecast vote at the actual election, not the voting intention at that point in time!
+                    A black horizontal line indicates the 50% level.
+                </li>
+                <li>
+                    <i>First preferences:</i> Shows the forecast first preferences for a significant party
+                    or collective "others" at that point in time. Note that for the regular
+                    forecast this is the forecast vote at the election, not the voting intention at that point in time!
+                </li>
+                <li>
+                    <i>Seats:</i> Shows the forecast number of seats won for significant parties
+                    as well as collective known independents at that point in time. A black horizonal line indicates
+                    the number of seats required for a majority.
+                </li>
+            </ul>
         </Alert>
     )
 }
@@ -571,6 +624,16 @@ const History = props => {
         fetchElectionSummary();
     }, [props.election, props.mode]);
 
+    const title = (() => {
+        let title = "Display: ";
+        const partyAbbr = jsonMap(props.forecast.partyAbbr, graphParty);
+        if (graphType === GraphTypeEnum.governmentFormation) title += "Formation of Government";
+        else if (graphType === GraphTypeEnum.tpp) title += `${partyAbbr} two-party preferred`;
+        else if (graphType === GraphTypeEnum.fp) title += `${partyAbbr} first preferences`;
+        else if (graphType === GraphTypeEnum.seats) title += `${partyAbbr} seats`;
+        return title;
+    })();
+
     const grnIndex = jsonMapReverse(props.forecast.partyAbbr, "GRN");
     const indIndex = jsonMapReverse(props.forecast.partyAbbr, "IND", null, a => a >= 0);
     let onpIndex = jsonMapReverse(props.forecast.partyAbbr, "ONP");
@@ -610,20 +673,22 @@ const History = props => {
                     {historyValid &&
                         <StandardErrorBoundary>
                             <ListGroup.Item className={styles.historyOptions}>
-                                <DropdownButton id="sort-dropdown" title="Display:" variant="secondary">
+                                <DropdownButton id="sort-dropdown" title={title} variant="secondary">
                                     <Dropdown.Item as="button" onClick={setGraphGovernmentFormation}>Formation of government</Dropdown.Item>
                                     <Dropdown.Item as="button" onClick={setGraphAlpTpp}>ALP two-party-preferred</Dropdown.Item>
                                     <Dropdown.Item as="button" onClick={setGraphLnpTpp}>LNP two-party-preferred</Dropdown.Item>
-                                    <Dropdown.Item as="button" onClick={setGraphAlpFp}>ALP first preferences</Dropdown.Item>
-                                    <Dropdown.Item as="button" onClick={setGraphLnpFp}>LNP first preferences</Dropdown.Item>
-                                    <Dropdown.Item as="button" onClick={setGraphGrnFp}>GRN first preferences</Dropdown.Item>
-                                    {onpIndex &&
-                                        <Dropdown.Item as="button" onClick={setGraphOnpFp}>ONP first preferences</Dropdown.Item>
-                                    }
-                                    {uapIndex &&
-                                        <Dropdown.Item as="button" onClick={setGraphUapFp}>UAP first preferences</Dropdown.Item>
-                                    }
-                                    <Dropdown.Item as="button" onClick={setGraphOthFp}>OTH first preferences</Dropdown.Item>
+                                    {props.mode !== "live" && <>
+                                        <Dropdown.Item as="button" onClick={setGraphAlpFp}>ALP first preferences</Dropdown.Item>
+                                        <Dropdown.Item as="button" onClick={setGraphLnpFp}>LNP first preferences</Dropdown.Item>
+                                        <Dropdown.Item as="button" onClick={setGraphGrnFp}>GRN first preferences</Dropdown.Item>
+                                        {onpIndex &&
+                                            <Dropdown.Item as="button" onClick={setGraphOnpFp}>ONP first preferences</Dropdown.Item>
+                                        }
+                                        {uapIndex &&
+                                            <Dropdown.Item as="button" onClick={setGraphUapFp}>UAP first preferences</Dropdown.Item>
+                                        }
+                                        <Dropdown.Item as="button" onClick={setGraphOthFp}>OTH first preferences</Dropdown.Item>
+                                    </>}
                                     <Dropdown.Item as="button" onClick={setGraphAlpSeats}>ALP seats</Dropdown.Item>
                                     <Dropdown.Item as="button" onClick={setGraphLnpSeats}>LNP seats</Dropdown.Item>
                                     <Dropdown.Item as="button" onClick={setGraphGrnSeats}>GRN seats</Dropdown.Item>
@@ -636,7 +701,7 @@ const History = props => {
                                     <Dropdown.Item as="button" onClick={setGraphIndSeats}>IND seats</Dropdown.Item>
                                 </DropdownButton>
                             </ListGroup.Item>
-                            <Chart data={history} type={graphType} party={graphParty} partyAbbr={props.forecast.partyAbbr} />
+                            <Chart data={history} type={graphType} party={graphParty} partyAbbr={props.forecast.partyAbbr} election={props.election} mode={props.mode} />
                         </StandardErrorBoundary>
                     }
                     {!historyValid &&

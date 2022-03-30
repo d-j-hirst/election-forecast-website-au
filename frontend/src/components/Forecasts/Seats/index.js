@@ -493,10 +493,24 @@ const Seats = props => {
     else if (sortType === SortTypeEnum.winChance) {
         const indexedChances = props.forecast.seatPartyWinFrequencies.map(
             (a, index) => [index, jsonMap(a, sortParty, 0)]);
-        console.log(indexedChances);
         indexedChances.sort((a, b) => a[1] > b[1] ? -1 : 1);
         sortedIndices = indexedChances.map((a, b) => a[0]);
     }
+
+    const title = (() => {
+        let title = "Sort by: ";
+        const partyAbbr = (() => {
+            if (sortParty === -2) return "Emerging IND ";
+            if (sortParty === -3) return "Emerging party ";
+            return jsonMap(props.forecast.partyAbbr, sortParty);
+        })();
+        if (sortType === SortTypeEnum.competitiveness) title += "Competitiveness";
+        else if (sortType === SortTypeEnum.alphabetical) title += "Alphabetical order";
+        else if (sortType === SortTypeEnum.alpTppMargin) title += "ALP TPP margin";
+        else if (sortType === SortTypeEnum.lnpTppMargin) title += "LNP TPP margin";
+        else if (sortType === SortTypeEnum.winChance) title += `${partyAbbr} win chance`;
+        return title;
+    })();
 
     const grnIndex = jsonMapReverse(props.forecast.partyAbbr, "GRN");
     const indIndex = jsonMapReverse(props.forecast.partyAbbr, "IND", null, a => a >= 0);
@@ -531,7 +545,7 @@ const Seats = props => {
                 <StandardErrorBoundary>
                     <ListGroup className={styles.seatsList}>
                         <ListGroup.Item className={styles.seatOptions}>
-                            <DropdownButton id="sort-dropdown" title="Sort by:" variant="secondary">
+                            <DropdownButton id="sort-dropdown" title={title} variant="secondary">
                                 <Dropdown.Item as="button" onClick={setSortCompetitiveness}>Competitiveness</Dropdown.Item>
                                 <Dropdown.Item as="button" onClick={setSortAlphabetical}>Alphabetical order</Dropdown.Item>
                                 <Dropdown.Item as="button" onClick={setSortAlpTppMargin}>ALP TPP margin</Dropdown.Item>

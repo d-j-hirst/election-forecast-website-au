@@ -43,6 +43,14 @@
     font-size: 16px;
 }
 
+.alert {
+    margin: 0px !important;
+}
+
+.alert p {
+    margin: 0px !important;
+}
+
 .customTooltip p {
     margin: 0px;
 }
