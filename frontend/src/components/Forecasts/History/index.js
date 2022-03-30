@@ -144,7 +144,7 @@ const GovernmentFormationTooltip = ({ active, payload, label, mode }) => {
             <p>
                 Update: {payload[0].payload.label}
                 <br/>
-                Forecast date: {thisDate}
+                Forecast { mode === "live" ? "time" : "date" }: {thisDate}
                 <br/>
                 ALP majority: {round2(payload[0].payload.alpMaj[1])}%
                 <br/>
@@ -213,7 +213,7 @@ const TppTooltip = ({ active, payload, label, mode }) => {
             <p>
                 Update: {payload[0].payload.label}
                 <br/>
-                Forecast date: {thisDate}
+                Forecast { mode === "live" ? "time" : "date" }: {thisDate}
                 <br/>
             </p>
             <p className={styles.smallTooltipText}>
@@ -289,7 +289,7 @@ const FpTooltip = ({ active, payload, label, mode }) => {
             <p>
                 Update: {payload[0].payload.label}
                 <br/>
-                Forecast date: {thisDate}
+                Forecast { mode === "live" ? "time" : "date" }: {thisDate}
                 <br/>
             </p>
             <p className={styles.smallTooltipText}>
@@ -362,7 +362,7 @@ const SeatsTooltip = ({ active, payload, label, mode }) => {
             <p>
                 Update: {payload[0].payload.label}
                 <br/>
-                Forecast date: {thisDate}
+                Forecast { mode === "live" ? "time" : "date" }: {thisDate}
                 <br/>
             </p>
             <p className={styles.smallTooltipText}>
