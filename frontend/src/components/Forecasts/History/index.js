@@ -32,7 +32,11 @@ const dateToStr = date => {
     return dateUTC.toISOString().slice(0, 10);
 }
 
-const unixDateToStr = unixDate => new Date(unixDate).toISOString().slice(0, 10)
+const unixDateToStr = unixDate => {
+    console.log(unixDate);
+    console.log(new Date(unixDate).toISOString());
+    new Date(unixDate).toISOString().slice(0, 10)
+}
 
 const round2 = num => Math.round(num * 100) / 100;
 
