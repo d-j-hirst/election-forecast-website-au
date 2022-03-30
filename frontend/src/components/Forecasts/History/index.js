@@ -176,7 +176,7 @@ const GovernmentFormation = props => {
             >
                 <XAxis type="number" dataKey="unixDate" domain={[lowDate, highDate]} scale="time" 
                        ticks={customTicks} tick={props.mode !== "live"} tickFormatter={unixDateToStr} interval={0}/>
-                <YAxis type="number" domain={[0, 100]} interval="preserveStartEnd" allowDecimals={false}/>
+                <YAxis type="number" domain={[0, 100]} tickCount={6} tickFormatter={round2} width={25} />
                 <Area dataKey="alpMaj" type="stepAfter" activeDot={false} isAnimationActive={false} fill={jsonMap(colours, "ALP")[0]} />
                 <Area dataKey="alpMin" type="stepAfter" activeDot={false} isAnimationActive={false} fill={jsonMap(colours, "ALP")[1]} />
                 <Area dataKey="alpMost" type="stepAfter" activeDot={false} isAnimationActive={false} fill={jsonMap(colours, "ALP")[2]} />
@@ -250,7 +250,8 @@ const Tpp = props => {
             >
                 <XAxis type="number" dataKey="unixDate" domain={[lowDate, highDate]} scale="time" 
                        ticks={customTicks} tick={props.mode !== "live"} tickFormatter={unixDateToStr} interval={0}/>
-                <YAxis type="number" domain={[lowTpp, highTpp]} interval="preserveStartEnd" allowDecimals={false} tickCount={numTicks} />
+                <YAxis type="number" domain={[lowTpp, highTpp]} interval="preserveStartEnd"
+                    allowDecimals={false} tickCount={numTicks} width={25} />
                 <ReferenceLine y={50} stroke="black" />
                 <Area dataKey="tpp1-5" type="stepAfter" activeDot={false} stroke="none" isAnimationActive={false} fill={jsonMap(colours, props.partyAbbr)[3]} />
                 <Area dataKey="tpp5-25" type="stepAfter" activeDot={false} stroke="none" isAnimationActive={false} fill={jsonMap(colours, props.partyAbbr)[2]} />
@@ -321,7 +322,7 @@ const Fp = props => {
             >
                 <XAxis type="number" dataKey="unixDate" domain={[lowDate, highDate]} scale="time" 
                    ticks={customTicks} tick={props.mode !== "live"} tickFormatter={unixDateToStr} interval={0}/>
-                <YAxis type="number" domain={[lowFp, highFp]}
+                <YAxis type="number" domain={[lowFp, highFp]} width={25}
                      interval="preserveStartEnd" allowDecimals={false} tickCount={numTicks} />
                 <Area dataKey="fp1-5" type="stepAfter" activeDot={false} stroke="none" isAnimationActive={false} fill={jsonMap(colours, props.partyAbbr)[3]} />
                 <Area dataKey="fp5-25" type="stepAfter" activeDot={false} stroke="none" isAnimationActive={false} fill={jsonMap(colours, props.partyAbbr)[2]} />
@@ -402,7 +403,7 @@ const Seats = props => {
             >
                 <XAxis type="number" dataKey="unixDate" domain={[lowDate, highDate]} scale="time" 
                    ticks={customTicks} tick={props.mode !== "live"} tickFormatter={unixDateToStr} interval={0}/>
-                <YAxis type="number" domain={[lowSeats, highSeats]}
+                <YAxis type="number" domain={[lowSeats, highSeats]} width={25}
                     interval="preserveStartEnd" allowDecimals={false} tickCount={numTicks} />
                 <Area dataKey="seats1-5" type="stepAfter" activeDot={false} stroke="none" isAnimationActive={false} 
                     fill={jsonMap(colours, colourKey)[3]} />

@@ -253,7 +253,7 @@ const VoteTrendChart = props => {
                 >
                     <XAxis dataKey="date"/>
                     <ZAxis range={[12, 12]} width={200}/>
-                    <YAxis type="number" domain={[minVal, maxVal]} ticks={ticks}/>
+                    <YAxis type="number" domain={[minVal, maxVal]} ticks={ticks} width={25}/>
                     <Area dataKey="1-99" type="number" stroke="none" activeDot={false} isAnimationActive={false} fill={currentColours[3]} />
                     <Area dataKey="5-95" type="number" stroke="none" activeDot={false} isAnimationActive={false} fill={currentColours[2]} />
                     <Area dataKey="25-75" type="number" stroke="none" activeDot={false} isAnimationActive={false} fill={currentColours[1]} />
