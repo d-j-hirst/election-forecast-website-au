@@ -35,7 +35,7 @@ const dateToStr = date => {
 const unixDateToStr = unixDate => {
     console.log(unixDate);
     console.log(new Date(unixDate).toISOString());
-    new Date(unixDate).toISOString().slice(0, 10)
+    new Date(unixDate).toISOString().slice(0, 10);
 }
 
 const round2 = num => Math.round(num * 100) / 100;
@@ -167,6 +167,8 @@ const GovernmentFormation = props => {
     const highDate = Math.max.apply(Math, props.data.map(a => a.unixDate));
     
     const customTicks = createTicks(lowDate, highDate);
+
+    console.log(props.data.unixDate);
 
     return (
         <ResponsiveContainer width="100%" height={400}>
