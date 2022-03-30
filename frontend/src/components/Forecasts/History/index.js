@@ -36,6 +36,8 @@ const unixDateToStr = unixDate => new Date(unixDate).toISOString().slice(0, 10)
 
 const round2 = num => Math.round(num * 100) / 100;
 
+const integerPercent = a => String(Math.round(a)) + "%";
+
 const GraphTypeEnum = Object.freeze({"governmentFormation": 1,
     "tpp": 2,
     "fp": 3,
@@ -176,7 +178,7 @@ const GovernmentFormation = props => {
             >
                 <XAxis type="number" dataKey="unixDate" domain={[lowDate, highDate]} scale="time" 
                        ticks={customTicks} tick={props.mode !== "live"} tickFormatter={unixDateToStr} interval={0}/>
-                <YAxis type="number" domain={[0, 100]} tickCount={6} tickFormatter={round2} width={25} />
+                <YAxis type="number" domain={[0, 100]} tickCount={6} tickFormatter={integerPercent} width={30} />
                 <Area dataKey="alpMaj" type="stepAfter" activeDot={false} isAnimationActive={false} fill={jsonMap(colours, "ALP")[0]} />
                 <Area dataKey="alpMin" type="stepAfter" activeDot={false} isAnimationActive={false} fill={jsonMap(colours, "ALP")[1]} />
                 <Area dataKey="alpMost" type="stepAfter" activeDot={false} isAnimationActive={false} fill={jsonMap(colours, "ALP")[2]} />

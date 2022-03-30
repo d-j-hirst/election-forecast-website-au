@@ -112,6 +112,20 @@ const MainExplainer = props => {
     )
 }
 
+const MajorityRow = props => {
+    const majoritySize = (() => {
+        if (props.election === "2022fed") return 76;
+        if (props.election === "2022sa") return 24;
+        if (props.election === "2022vic") return 45;
+    })();
+
+    return (
+        <ListGroup.Item className={styles.seatTotalsNote}>
+            Seats required for a majority: <strong>{majoritySize}</strong>
+        </ListGroup.Item>
+    )
+}
+
 const SeatTotals = props => {
     const [showExplainer, setShowExplainer] = useState(false);
 
@@ -128,6 +142,7 @@ const SeatTotals = props => {
                     {
                         showExplainer && <MainExplainer />
                     }
+                    <MajorityRow election={props.election} />
                     <StandardErrorBoundary>
                         <SeatsRowSet forecast={props.forecast} windowWidth={props.windowWidth} />
                     </StandardErrorBoundary>
