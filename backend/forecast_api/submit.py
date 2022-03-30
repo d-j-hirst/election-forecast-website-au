@@ -39,11 +39,11 @@ def get_series_from_forecasts(forecasts):
 
 
 def update_timeseries(election: Election):
-    fc_forecasts = Forecast.objects.filter(election=election, mode='FC').order_by('-date')
+    fc_forecasts = Forecast.objects.filter(election=election, mode='FC').order_by('date')
     fc_series = get_series_from_forecasts(fc_forecasts)
-    nc_forecasts = Forecast.objects.filter(election=election, mode='NC').order_by('-date')
+    nc_forecasts = Forecast.objects.filter(election=election, mode='NC').order_by('date')
     nc_series = get_series_from_forecasts(nc_forecasts)
-    lf_forecasts = Forecast.objects.filter(election=election, mode='LF').order_by('-date')
+    lf_forecasts = Forecast.objects.filter(election=election, mode='LF').order_by('date')
     lf_series = get_series_from_forecasts(lf_forecasts)
     election.timeseries_fc = fc_series
     election.timeseries_fc_version += 1
