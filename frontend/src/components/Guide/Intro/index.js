@@ -7,7 +7,7 @@ import InfoIcon from '../../General/InfoIcon';
 const GuideIntro = props => {
     return (
         <>
-            <p><h4 id="introduction">Introduction</h4></p>
+            <h4 id="introduction">Introduction</h4>
             <p>
                 This page is a guide to using and interpreting the forecast. All parts of the
                 forecast are explained briefly on the <Link to={"/forecast"}>forecast page</Link> itself, shown

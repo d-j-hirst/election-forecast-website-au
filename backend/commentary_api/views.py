@@ -8,7 +8,8 @@ class AllCommentariesResponse(APIView):
     authentication_classes = []
     permission_classes = []
     def get(self, request):
-        return serve_commentaries()
+        page = request.query_params.get('page', 1)
+        return serve_commentaries(page=page)
 
 
 class CommentaryResponse(APIView):

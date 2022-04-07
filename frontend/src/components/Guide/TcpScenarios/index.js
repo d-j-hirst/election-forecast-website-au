@@ -3,7 +3,7 @@ import React from 'react';
 const GuideTcpScenarios = props => {
     return (
         <>
-            <p><h4 id="tcp-scenarios">Two-candidate preferred (TCP) scenarios and tactical voting</h4></p>
+            <h4 id="tcp-scenarios">Two-candidate preferred (TCP) scenarios and tactical voting</h4>
             <p>
                 Under Australia's system of preferential voting, elections are decided
                 by excluding the candidate with the lowest vote, distributing the preference of

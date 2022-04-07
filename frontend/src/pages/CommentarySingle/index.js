@@ -1,5 +1,5 @@
 import React, { useState , useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 
 import { Header, Footer, CommentaryHeader, CommentaryItem, LoadingMarker, StandardErrorBoundary } from 'components';
 import { useWindowDimensions } from '../../utils/window.js';
@@ -9,10 +9,15 @@ import styles from './CommentarySingle.module.css';
 
 const CommentarySingle = () => {
     const { id } = useParams();
+    const [ searchParams ] = useSearchParams();
     const [ commentary, setCommentary] = useState([]);
     const [ commentaryValid, setCommentaryValid] = useState(false);
     const windowDimensions = useWindowDimensions();
     document.title = `AEF - Commentary`;
+
+    let returnPage = searchParams.get('returnPage');
+    if (returnPage === null) returnPage = 1;
+    console.log(returnPage)
 
     useEffect(() => {
         setCommentaryValid(false);
@@ -46,7 +51,7 @@ const CommentarySingle = () => {
       <div className={styles.site}>
             <Header windowWidth={windowDimensions.width} page={"commentary"} />
             <div className={styles.content}>
-                <CommentaryHeader returnLink />
+                <CommentaryHeader returnLink returnPage={returnPage} />
                 <StandardErrorBoundary>
                     {commentaryValid &&
                         <StandardErrorBoundary>

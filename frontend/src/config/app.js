@@ -1,10 +1,10 @@
 import React from 'react';
-import Routes from 'config/routes';
+import AllRoutes from 'config/routes';
 
 function App() {
     
     return (
-        <Routes />
+        <AllRoutes />
     );
 }
 

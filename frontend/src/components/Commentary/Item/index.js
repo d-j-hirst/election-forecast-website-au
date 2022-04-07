@@ -8,7 +8,8 @@ import { SanitizeHtml } from '../../../utils/sanitize.js';
 import styles from './CommentaryItem.module.css';
 
 const CommentaryItem = props => {
-    const headingLink = `commentary/${props.commentary.id}/`
+    console.log(props.returnPage);
+    const headingLink = `/commentary/${props.commentary.id}/${props.returnPage ? `?returnPage=${props.returnPage}` : ""}`
     return (
         <>
             {props.headingLink &&

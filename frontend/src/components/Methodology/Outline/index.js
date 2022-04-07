@@ -3,7 +3,7 @@ import React from 'react';
 const GuideNowcast = props => {
     return (
         <>
-            <p><h4 id="outline">Outline</h4></p>
+            <h4 id="outline">Outline</h4>
             <p>
                 The overall approach is to use data relating to a future election - mainly public opinion
                 polling and recent election results - and compare to historical data and results

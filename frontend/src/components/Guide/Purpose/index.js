@@ -3,7 +3,7 @@ import React from 'react';
 const GuideIntro = props => {
     return (
         <>
-            <p><h4 id="purpose">Site purpose</h4></p>
+            <h4 id="purpose">Site purpose</h4>
             <p>
                 The purpose of this site is to provide carefully designed probabilistic
                 forecasts for elections in Australia. This is done by analysing recent

@@ -3,7 +3,7 @@ import React from 'react';
 const GuideNowcast = props => {
     return (
         <>
-            <p><h4 id="nowcast">Nowcast</h4></p>
+            <h4 id="nowcast">Nowcast</h4>
             <p>
                 Nowcasting is a term used in forecasting fields such as meteorology and
                 economics to refer to the process of estimating conditions at the 

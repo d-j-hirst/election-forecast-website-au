@@ -27,11 +27,6 @@ const colours = [["ALP", ["#FF0000", "#FF4444", "#FF9999", "#FFCCCC"]],
 
 const tieColour = "#885588"
 
-const dateToStr = date => {
-    const dateUTC = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-    return dateUTC.toISOString().slice(0, 10);
-}
-
 const unixDateToStr = unixDate => new Date(unixDate).toISOString().slice(0, 10)
 const unixTimeToStr = unixDate => new Date(unixDate - 9000000).toISOString().slice(11, 16)
 
