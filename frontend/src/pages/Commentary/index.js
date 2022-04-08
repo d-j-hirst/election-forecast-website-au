@@ -34,13 +34,11 @@ const Commentary = () => {
             getCommentaries().then(
                 data => {
                     const commentaries = data.commentaries;
-                    console.log(commentaries);
                     commentaries.sort((a, b) => {
                         if (a.date > b.date) return -1;
                         if (a.date < b.date) return 1;
                         return 0;
                     });
-                    console.log(commentaries);
                     setPageCount(data.pageCount);
                     setCommentaries(commentaries);
                     setCommentariesValid(true);
@@ -53,7 +51,7 @@ const Commentary = () => {
         }
     
         fetchCommentaries();
-    }, [searchParams]);
+    }, [searchParams, page]);
 
     return (
         <div className={styles.site}>
@@ -62,8 +60,9 @@ const Commentary = () => {
                 <CommentaryHeader />
                 <StandardErrorBoundary>
                     {commentariesValid && <>
+                        <CommentaryPages pageCount={pageCount} thisPage={page} />
                         <div className={styles.mainText}>
-                            {commentaries.map((commentary, index) => <StandardErrorBoundary>
+                            {commentaries.map((commentary, index) => <StandardErrorBoundary key={index}>
                                 <CommentaryItem commentary={commentary}
                                                 key={index}
                                                 headingLink={true}
@@ -72,10 +71,10 @@ const Commentary = () => {
                                 {index !== commentaries.length - 1 && <hr />}
                             </StandardErrorBoundary>)}
                         </div>
-                        <CommentaryPages pageCount={pageCount} />
+                        <CommentaryPages pageCount={pageCount} thisPage={page} />
                     </>}
                     {!commentariesValid &&
-                    <LoadingMarker text="Loading ..." />
+                        <LoadingMarker text="Loading ..." />
                     }
                 </StandardErrorBoundary>
             </div>

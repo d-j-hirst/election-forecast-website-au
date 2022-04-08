@@ -1,9 +1,28 @@
 
-.commentaryTitle {
-    font-size: 22px;
+.pageBar {
+    display: flex;
+    flex-direction: row;
     text-align: center;
-    padding: 2px 8px;
-    border-radius: 10px;
-    background-color: #DDDDDD;
-    color: #222222;
+}
+
+.thisPage {
+    padding: 0px 8px;
+    margin: 0px 3px;
+    min-width: 30px;
+    height: 30px;
+    border: 1px solid #888888;
+    border-radius: 4px;
+    flex-direction: row;
+    vertical-align: middle;
+}
+
+.pageLink {
+    padding: 0px 8px;
+    margin: 0px 3px;
+    min-width: 30px;
+    height: 30px;
+    border: 1px solid #888888;
+    border-radius: 4px;
+    flex-direction: row;
+    vertical-align: middle;
 }
