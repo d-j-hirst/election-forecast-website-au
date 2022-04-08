@@ -261,12 +261,12 @@ const VoteTrendChart = props => {
                     <Line dataKey="median" type="number" dot={false} activeDot={false} isAnimationActive={false} stroke={currentColours[0]} fill="none" />
                     { party !== "OTH" && // don't show polls for OTH as different polls have different original OTH values
                         <>
-                        <Scatter dataKey="pollster" type="number" dot={false} isAnimationActive={false} stroke={currentColours[0]} fill="none" />
                         <Scatter dataKey="poll" type="number" dot={true} shape={"circle"} isAnimationActive={false} stroke={currentColours[0]} fill={currentColours[0]} />
-                        <Scatter dataKey="pollster2" type="number" dot={false} isAnimationActive={false} stroke={currentColours[0]} fill="none" />
                         <Scatter dataKey="poll2" type="number" dot={true} shape={"circle"} isAnimationActive={false} stroke={currentColours[0]} fill={currentColours[0]} />
-                        <Scatter dataKey="pollster3" type="number" dot={false} isAnimationActive={false} stroke={currentColours[0]} fill="none" />
                         <Scatter dataKey="poll3" type="number" dot={true} shape={"circle"} isAnimationActive={false} stroke={currentColours[0]} fill={currentColours[0]} />
+                        <Scatter dataKey="poll4" type="number" dot={true} shape={"circle"} isAnimationActive={false} stroke={currentColours[0]} fill={currentColours[0]} />
+                        <Scatter dataKey="poll5" type="number" dot={true} shape={"circle"} isAnimationActive={false} stroke={currentColours[0]} fill={currentColours[0]} />
+                        <Scatter dataKey="poll6" type="number" dot={true} shape={"circle"} isAnimationActive={false} stroke={currentColours[0]} fill={currentColours[0]} />
                         </>
                     }
                     <Tooltip content={<VoteTrendTooltip />}isAnimationActive={false} />
