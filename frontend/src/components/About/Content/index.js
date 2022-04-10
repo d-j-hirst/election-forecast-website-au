@@ -4,7 +4,7 @@ import InfoIcon from '../../General/InfoIcon';
 import { ExtLink } from '../../../utils/extlink.js';
 import Email from '../../General/Email';
 
-const AboutTheSite = props => {
+const AboutContent = props => {
     return (
         <>
             <h4 id="introduction">About the Site</h4>
@@ -82,4 +82,4 @@ const AboutTheSite = props => {
     );
 }
 
-export default AboutTheSite;
+export default AboutContent;

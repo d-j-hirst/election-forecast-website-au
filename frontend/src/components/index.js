@@ -31,5 +31,5 @@ export { default as CommentaryHeader } from './Commentary/Header';
 export { default as CommentaryItem } from './Commentary/Item';
 export { default as CommentaryPages } from './Commentary/Pages';
 export { default as AboutHeader } from './About/Header';
-export { default as AboutTheSite } from './About/Site';
+export { default as AboutContent } from './About/Content';
 export { default as InfoIcon } from './General/InfoIcon';

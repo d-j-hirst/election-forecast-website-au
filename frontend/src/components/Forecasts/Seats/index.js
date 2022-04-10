@@ -39,7 +39,11 @@ const SeatRow = props => {
 
     const moreHandler = () => setShowMore(!showMore);
 
-    const seatName = props.forecast.seatNames[props.index];
+    let seatName = props.forecast.seatNames[props.index];
+    if (seatName.length > 14) {
+        seatName = seatName.replace("North", "N").replace("South", "S");
+        seatName = seatName.replace("East", "E").replace("West", "W");
+    }
     const incumbentIndex = props.forecast.seatIncumbents[props.index];
     const incumbentAbbr = jsonMap(props.forecast.partyAbbr, incumbentIndex);
     const margin = props.forecast.seatMargins[props.index];
@@ -58,7 +62,7 @@ const SeatRow = props => {
     return (
         <>
         <ListGroup.Item className={styles.seatsItem}>
-            <div className={styles.seatsTopLeft}>
+            <div className={styles.seatsLeft}>
                 <strong>{seatName}</strong>
                 {" - "}<SmartBadge party={incumbentAbbr} /> {Number(margin).toFixed(1)}%
                 <br/>
@@ -87,7 +91,7 @@ const SeatRow = props => {
             </div>
             <WinnerBarDist forecast={props.forecast}
                            freqSet={freqs}
-                           width={Math.min(props.windowWidth - 70, 320)}
+                           width={Math.min(props.windowWidth - 70, 300)}
             />
         </ListGroup.Item>
         {

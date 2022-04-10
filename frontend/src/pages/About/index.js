@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Header, Footer, AboutHeader, AboutTheSite, StandardErrorBoundary } from 'components';
+import { Header, Footer, AboutHeader, AboutContent, StandardErrorBoundary } from 'components';
 import { useWindowDimensions } from '../../utils/window.js';
 
 import styles from './About.module.css';
@@ -17,7 +17,7 @@ const About = () => {
                     <AboutHeader />
                     <div className={styles.mainText}>
                         <StandardErrorBoundary>
-                            <AboutTheSite />
+                            <AboutContent />
                         </StandardErrorBoundary>   
                     </div>
                 </StandardErrorBoundary>   
