@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 
 import Card from 'react-bootstrap/Card';
+import Dropdown from 'react-bootstrap/Dropdown';
+import DropdownButton from 'react-bootstrap/DropdownButton';
 import ListGroup from 'react-bootstrap/ListGroup';
 
 import { Header, Footer, ForecastsNav, LoadingMarker, StandardErrorBoundary } from 'components';
@@ -11,6 +13,11 @@ import { parseDateStringAsUTC } from '../../utils/date.js'
 import { useWindowDimensions } from '../../utils/window.js';
 
 import styles from './ArchiveList.module.css';
+
+const FilterEnum = Object.freeze({"all": 1,
+                                  "regular": 2,
+                                  "nowcast": 3,
+                                  "live": 4});
 
 const ArchiveRow = props => {
     const modeNames = {FC: "General Forecast", NC: "Nowcast", LF: "Live Forecast"};
@@ -34,16 +41,25 @@ const ArchiveRow = props => {
 const ArchiveRowSet = props => {
     return (
         <>
-            {props.archiveList.map((item, index) => <ArchiveRow item={item} code={props.code} key={index} />)}
+            {props.archiveList.map((item, index) => {
+                const display = props.filter === FilterEnum.all ||
+                    (props.filter === FilterEnum.regular && item.mode === 'FC') ||
+                    (props.filter === FilterEnum.nowcast && item.mode === 'NC') ||
+                    (props.filter === FilterEnum.live && item.mode === 'LF');
+                if (display) return <ArchiveRow item={item} code={props.code} key={index} />
+                return null;
+            })}
         </>
     )
 }
 
 const ArchiveList = () => {
+
     const { code } = useParams();
     const [ electionName, setElectionName] = useState("");
     const [ archiveList, setArchiveList] = useState({});
     const [ archiveListValid, setArchiveListValid] = useState(false);
+    const [ filter, setFilter ] = useState(FilterEnum.all);
     const windowDimensions = useWindowDimensions();
 
     useEffect(() => {
@@ -76,6 +92,20 @@ const ArchiveList = () => {
         fetchArchiveList();
     }, [code]);
 
+    const title = (() => {
+        let title = "Filter by: ";
+        if (filter === FilterEnum.all) title += "All";
+        else if (filter === FilterEnum.regular) title += "General forecasts only";
+        else if (filter === FilterEnum.nowcast) title += "Nowcasts only";
+        else if (filter === FilterEnum.live) title += "Live forecasts only";
+        return title;
+    })();
+
+    const setFilterAll = () => {setFilter(FilterEnum.all);};
+    const setFilterRegular = () => {setFilter(FilterEnum.regular);};
+    const setFilterNowcast = () => {setFilter(FilterEnum.nowcast);};
+    const setFilterLive = () => {setFilter(FilterEnum.live);};
+
     return (
         <div className={styles.site}>
             <Header windowWidth={windowDimensions.width} page={"archive"} />
@@ -93,7 +123,15 @@ const ArchiveList = () => {
                                 <Card.Body className={styles.archiveListBody}>
                                     <StandardErrorBoundary>
                                         <ListGroup className={styles.archiveList}>
-                                            <ArchiveRowSet archiveList={archiveList} code={code} />
+                                            <ListGroup.Item className={styles.archiveListFilters}>
+                                                <DropdownButton id="sort-dropdown" title={title} variant="secondary">
+                                                    <Dropdown.Item as="button" onClick={setFilterAll}>All</Dropdown.Item>
+                                                    <Dropdown.Item as="button" onClick={setFilterRegular}>General forecasts only</Dropdown.Item>
+                                                    <Dropdown.Item as="button" onClick={setFilterNowcast}>Nowcasts only</Dropdown.Item>
+                                                    <Dropdown.Item as="button" onClick={setFilterLive}>Live forecasts only</Dropdown.Item>
+                                                </DropdownButton>
+                                            </ListGroup.Item>
+                                            <ArchiveRowSet archiveList={archiveList} code={code} filter={filter} />
                                         </ListGroup>
                                     </StandardErrorBoundary>
                                 </Card.Body>
