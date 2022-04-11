@@ -1,0 +1,31 @@
+
+.tagBar {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    text-align: center;
+    justify-content: center;
+    max-width: 750px;
+}
+
+.thisTag {
+    padding: 0px 8px;
+    margin: 3px;
+    min-width: 30px;
+    height: 30px;
+    border: 1px solid #888888;
+    border-radius: 4px;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.tagLink {
+    padding: 0px 8px;
+    margin: 3px;
+    min-width: 30px;
+    height: 30px;
+    border: 1px solid #888888;
+    border-radius: 4px;
+    vertical-align: middle;
+    white-space: nowrap;
+}

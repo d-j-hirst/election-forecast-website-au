@@ -17,7 +17,7 @@ const CommentarySingle = () => {
 
     let returnPage = searchParams.get('returnPage');
     if (returnPage === null) returnPage = 1;
-    console.log(returnPage)
+    let returnTag = searchParams.get('returnTag');
 
     useEffect(() => {
         setCommentaryValid(false);
@@ -51,7 +51,7 @@ const CommentarySingle = () => {
       <div className={styles.site}>
             <Header windowWidth={windowDimensions.width} page={"commentary"} />
             <div className={styles.content}>
-                <CommentaryHeader returnLink returnPage={returnPage} />
+                <CommentaryHeader returnLink returnPage={returnPage} returnTag={returnTag} />
                 <StandardErrorBoundary>
                     {commentaryValid &&
                         <StandardErrorBoundary>

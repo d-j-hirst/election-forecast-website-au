@@ -1,7 +1,7 @@
 import React, { useState , useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
-import { Header, Footer, CommentaryHeader, CommentaryItem, CommentaryPages, LoadingMarker, StandardErrorBoundary } from 'components';
+import { Header, Footer, CommentaryHeader, CommentaryItem, CommentaryPages, CommentaryTags, LoadingMarker, StandardErrorBoundary } from 'components';
 import { useWindowDimensions } from '../../utils/window.js';
 import { getDirect } from 'utils/sdk';
 
@@ -11,18 +11,22 @@ const Commentary = () => {
     const [ searchParams ] = useSearchParams();
     const [ commentaries, setCommentaries ] = useState([]);
     const [ commentariesValid, setCommentariesValid ] = useState(false);
-    const [ pageCount, setPageCount ] = useState([]);
+    const [ pageCount, setPageCount ] = useState(0);
+    const [ allTags, setAllTags ] = useState([]);
     const windowDimensions = useWindowDimensions();
     document.title = `AEF - Commentary`;
 
     let page = searchParams.get('page');
+    let tag = searchParams.get('tag');
     if (page === null) page = 1;
 
     useEffect(() => {
         setCommentariesValid(false);
 
         const getCommentaries = () => {
-            return getDirect(`commentary-api/all-commentaries?page=${page}`).then(
+            let url = `commentary-api/all-commentaries?page=${page}`;
+            if (tag) url += `&tag=${tag}`;
+            return getDirect(url).then(
                 resp => {
                     if (!resp.ok) throw Error("Couldn't find commentary data");
                     return resp.data;
@@ -39,6 +43,7 @@ const Commentary = () => {
                         if (a.date < b.date) return 1;
                         return 0;
                     });
+                    setAllTags(data.allTags);
                     setPageCount(data.pageCount);
                     setCommentaries(commentaries);
                     setCommentariesValid(true);
@@ -51,7 +56,7 @@ const Commentary = () => {
         }
     
         fetchCommentaries();
-    }, [searchParams, page]);
+    }, [searchParams, page, tag]);
 
     return (
         <div className={styles.site}>
@@ -60,18 +65,21 @@ const Commentary = () => {
                 <CommentaryHeader />
                 <StandardErrorBoundary>
                     {commentariesValid && <>
-                        <CommentaryPages pageCount={pageCount} thisPage={page} />
+                        <CommentaryPages pageCount={pageCount} thisPage={page} tag={tag} />
+                        <CommentaryTags allTags={allTags} thisTag={tag} />
                         <div className={styles.mainText}>
                             {commentaries.map((commentary, index) => <StandardErrorBoundary key={index}>
                                 <CommentaryItem commentary={commentary}
                                                 key={index}
                                                 headingLink={true}
                                                 returnPage={page}
+                                                returnTag={tag}
                                 />
                                 {index !== commentaries.length - 1 && <hr />}
                             </StandardErrorBoundary>)}
                         </div>
-                        <CommentaryPages pageCount={pageCount} thisPage={page} />
+                        <CommentaryPages pageCount={pageCount} thisPage={page} tag={tag} />
+                        <CommentaryTags allTags={allTags} thisTag={tag} />
                     </>}
                     {!commentariesValid &&
                         <LoadingMarker text="Loading ..." />

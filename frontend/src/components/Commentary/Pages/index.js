@@ -9,7 +9,6 @@ const Pages = props => {
     for (let i = 1; i <= props.pageCount; ++i) {
         pageArray.push(i);
     }
-    console.log(props.thisPage);
     return (
         <div className={styles.pageBar}>
             <div className={styles.pageLink}>
@@ -17,11 +16,12 @@ const Pages = props => {
             </div>
             {
                 pageArray.map((pageNum, index) => {
-                    const whichClass = Number(pageNum) === Number(props.thisPage) ? styles.thisPage : styles.pageLink
+                    const whichClass = Number(pageNum) === Number(props.thisPage) ? styles.thisPage : styles.pageLink;
+                    const tagPart = props.tag ? `&tag=${props.tag}` : '';
                     return (
                         <div className={whichClass} key={index}>
                             {Number(pageNum) !== Number(props.thisPage) &&
-                                <Link to={`/commentary?page=${pageNum}`}>
+                                <Link to={`/commentary?page=${pageNum}${tagPart}`}>
                                     {pageNum}
                                 </Link>
                             }
