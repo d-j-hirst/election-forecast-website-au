@@ -53,6 +53,9 @@
 
 .seatOptions {
     padding: 2px !important;
+    display: flex !important;
+    flex-flow: row wrap;
+    justify-content: space-evenly;
     font-size: 17px;
     background-color: #E3E3E3 !important;
 }

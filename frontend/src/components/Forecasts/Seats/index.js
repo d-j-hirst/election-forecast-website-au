@@ -19,6 +19,7 @@ import TooltipWrapper from '../../General/TooltipWrapper';
 import { jsonMap, jsonMapReverse } from '../../../utils/jsonmap.js';
 import { deepCopy } from '../../../utils/deepcopy.js';
 import { getSeatUrl } from '../../../utils/seaturls.js';
+import { seatInRegion } from '../../../utils/seatregion.js';
 
 import styles from './Seats.module.css';
 import { standardiseParty } from 'utils/partyclass';
@@ -452,6 +453,7 @@ const Seats = props => {
     const [showExplainer, setShowExplainer] = useState(false);
     const [sortType, setSortType] = useState(SortTypeEnum.competitiveness);
     const [sortParty, setSortParty] = useState(0);
+    const [filter, setFilter] = useState("all");
 
     let sortedIndices = [];
     if (sortType === SortTypeEnum.competitiveness) {
@@ -501,7 +503,10 @@ const Seats = props => {
         sortedIndices = indexedChances.map((a, b) => a[0]);
     }
 
-    const title = (() => {
+    console.log(props.forecast);
+    sortedIndices = sortedIndices.filter(val => seatInRegion(props.forecast.seatNames[val], filter));
+
+    const sortTitle = (() => {
         let title = "Sort by: ";
         const partyAbbr = (() => {
             if (sortParty === -2) return "Emerging IND ";
@@ -513,6 +518,18 @@ const Seats = props => {
         else if (sortType === SortTypeEnum.alpTppMargin) title += "ALP TPP margin";
         else if (sortType === SortTypeEnum.lnpTppMargin) title += "LNP TPP margin";
         else if (sortType === SortTypeEnum.winChance) title += `${partyAbbr} win chance`;
+        return title;
+    })();
+
+    const isFederal = props.election.substring(4) === "fed";
+
+    const filterTitle = (() => {
+        let title = "Filter:";
+        if (filter === "all") {
+            title += " All seats";
+        } else {
+            title += " " + filter.toUpperCase() + " seats";
+        }
         return title;
     })();
 
@@ -536,6 +553,16 @@ const Seats = props => {
     const setSortEmergingIndWinChance = () => {setSortType(SortTypeEnum.winChance); setSortParty(-2)};
     const setSortEmergingPartyWinChance = () => {setSortType(SortTypeEnum.winChance); setSortParty(-3)};
 
+    const setFilterAll = () => {setFilter("all");};
+    const setFilterNsw = () => {setFilter("nsw");};
+    const setFilterVic = () => {setFilter("vic");};
+    const setFilterQld = () => {setFilter("qld");};
+    const setFilterWa = () => {setFilter("wa");};
+    const setFilterSa = () => {setFilter("sa");};
+    const setFilterTas = () => {setFilter("tas");};
+    const setFilterAct = () => {setFilter("act");};
+    const setFilterNt = () => {setFilter("nt");};
+
     return (
         <Card className={styles.summary}>
             <Card.Header className={styles.seatsTitle} id="seats">
@@ -549,7 +576,7 @@ const Seats = props => {
                 <StandardErrorBoundary>
                     <ListGroup className={styles.seatsList}>
                         <ListGroup.Item className={styles.seatOptions}>
-                            <DropdownButton id="sort-dropdown" title={title} variant="secondary">
+                            <DropdownButton id="sort-dropdown" title={sortTitle} variant="secondary">
                                 <Dropdown.Item as="button" onClick={setSortCompetitiveness}>Competitiveness</Dropdown.Item>
                                 <Dropdown.Item as="button" onClick={setSortAlphabetical}>Alphabetical order</Dropdown.Item>
                                 <Dropdown.Item as="button" onClick={setSortAlpTppMargin}>ALP TPP margin</Dropdown.Item>
@@ -571,6 +598,19 @@ const Seats = props => {
                                 <Dropdown.Item as="button" onClick={setSortEmergingIndWinChance}>Emerging IND win chance</Dropdown.Item>
                                 <Dropdown.Item as="button" onClick={setSortEmergingPartyWinChance}>Emerging party win chance</Dropdown.Item>
                             </DropdownButton>
+                            {isFederal &&
+                                <DropdownButton id="filter-dropdown" title={filterTitle} variant="secondary">
+                                    <Dropdown.Item as="button" onClick={setFilterAll}>All seats</Dropdown.Item>
+                                    <Dropdown.Item as="button" onClick={setFilterNsw}>NSW seats</Dropdown.Item>
+                                    <Dropdown.Item as="button" onClick={setFilterVic}>VIC seats</Dropdown.Item>
+                                    <Dropdown.Item as="button" onClick={setFilterQld}>QLD seats</Dropdown.Item>
+                                    <Dropdown.Item as="button" onClick={setFilterWa}>WA seats</Dropdown.Item>
+                                    <Dropdown.Item as="button" onClick={setFilterSa}>SA seats</Dropdown.Item>
+                                    <Dropdown.Item as="button" onClick={setFilterTas}>TAS seats</Dropdown.Item>
+                                    <Dropdown.Item as="button" onClick={setFilterAct}>ACT seats</Dropdown.Item>
+                                    <Dropdown.Item as="button" onClick={setFilterNt}>NT seats</Dropdown.Item>
+                                </DropdownButton>
+                            }
                         </ListGroup.Item>
                         {
                             sortedIndices.map(index =>
