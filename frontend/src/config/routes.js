@@ -3,10 +3,10 @@ import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
 
 import { HOME_URL, FORECAST_URL, BASIC_FORECAST_URL, DEFAULT_FORECAST_URL,
     SEAT_DETAILS_URL, ARCHIVE_LIST_URL, ARCHIVE_URL, ARCHIVE_SEAT_URL, 
-    GUIDE_URL, METHODOLOGY_URL, COMMENTARY_URL, COMMENTARY_SINGLE_URL, ABOUT_URL} from 'config/urls';
+    GUIDE_URL, GLOSSARY_URL, METHODOLOGY_URL, COMMENTARY_URL, COMMENTARY_SINGLE_URL, ABOUT_URL} from 'config/urls';
 
 import { Forecast, SeatDetails, ArchiveList, Archive, ArchiveSeat, 
-    Guide, Methodology, Commentary, CommentarySingle, About } from 'pages';
+    Guide, Glossary, Methodology, Commentary, CommentarySingle, About } from 'pages';
 
 const AllRoutes = () => {
 
@@ -20,6 +20,7 @@ const AllRoutes = () => {
                 <Route path={ARCHIVE_URL} element={<Archive />} />
                 <Route path={FORECAST_URL} element={<Forecast />} />
                 <Route path={GUIDE_URL} element={<Guide />} />
+                <Route path={GLOSSARY_URL} element={<Glossary />} />
                 <Route path={METHODOLOGY_URL} element={<Methodology />} />
                 <Route path={COMMENTARY_SINGLE_URL} element={<CommentarySingle />} />
                 <Route path={COMMENTARY_URL} element={<Commentary />} />

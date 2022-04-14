@@ -9,7 +9,7 @@ import Container from 'react-bootstrap/Container';
 import logo from './assets/logo.png'
 import styles from './Header.module.css';
 
-const SeparateBarThreshold = 750;
+const SeparateBarThreshold = 940;
 
 const PageNav = props => {
     const thisClass = props.activePage === props.page ? styles.navselected : styles.navitem;
@@ -33,6 +33,7 @@ const Header = props => (
                 <div className={styles.mainLinkArea}>
                     <PageNav text="Forecasts" page="forecast" activePage={props.page} />
                     <PageNav text="Guide" page="guide" activePage={props.page} />
+                    <PageNav text="Glossary" page="glossary" activePage={props.page} />
                     <PageNav text="Methodology" page="methodology" activePage={props.page} />
                     <PageNav text="Commentary" page="commentary" activePage={props.page} />
                     <PageNav text="About" page="about" activePage={props.page} />
@@ -48,6 +49,7 @@ const Header = props => (
                         <Navbar.Collapse id="basic-navbar-nav" className="justify-content-center">
                             <PageNav text="Forecasts" page="forecast" activePage={props.page} />
                             <PageNav text="Guide" page="guide" activePage={props.page} />
+                            <PageNav text="Glossary" page="glossary" activePage={props.page} />
                             <PageNav text="Methodology" page="methodology" activePage={props.page} />
                             <PageNav text="Commentary" page="commentary" activePage={props.page} />
                             <PageNav text="About" page="about" activePage={props.page} />
