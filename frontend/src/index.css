@@ -16,6 +16,9 @@ code {
 }
 
 :root {
+  --general-definition: #0000AA;
+  --site-definition: #00812A;
+
   --grey: #707070;
   --softblue: #4c92cacb;
   --alp: #dc3545;

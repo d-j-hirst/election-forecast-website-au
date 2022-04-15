@@ -1,0 +1,11 @@
+@import '../../../index.css';
+
+.generalDef {
+    color: var(--general-definition);
+    font-weight: 600;
+}
+
+.siteDef {
+    color: var(--site-definition);
+    font-weight: 600;
+}
