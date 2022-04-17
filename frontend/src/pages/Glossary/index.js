@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Header, Footer, GlossaryHeader, GlossaryIntro, GlossaryItem, StandardErrorBoundary } from 'components';
+import { Header, Footer, GlossaryHeader, GlossaryIntro, GlossaryItems, StandardErrorBoundary } from 'components';
 import { useWindowDimensions } from '../../utils/window.js';
 
 import styles from './Glossary.module.css';
@@ -17,8 +17,7 @@ const Glossary = () => {
                 <StandardErrorBoundary>
                     <div className={styles.mainText}>
                         <GlossaryIntro />
-                        <GlossaryItem type="general" title="General item">General item definition</GlossaryItem>
-                        <GlossaryItem type="site" title="Site item">Site item definition</GlossaryItem>
+                        <GlossaryItems />
                     </div>
                 </StandardErrorBoundary>
             </div>
