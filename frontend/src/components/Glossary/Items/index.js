@@ -75,6 +75,27 @@ const GlossaryItems = props => {
                     parties.
                 </p>
             </GlossaryItem>
+            <GlossaryItem type="general" title="Pollster">
+                <p>
+                    Also known as a <strong>polling house</strong>. A company or organisation that
+                    undertakes research into public attitudes. For the purposes of this site, the
+                    focus is on pollsters that attempt to measure voting intention. Most pollsters
+                    also perform other kinds of market research in addition to political polling.
+                </p>
+                <p>
+                    Pollsters may conduct polls for their own publicity, in partnership with media
+                    organisations, or for private customers (including parties and candidates).
+                    Polling for private customers is often treated with more suspicion as the
+                    customer may choose only to publish favourable polls, result in survivorship bias.
+                </p>
+                <p>
+                    The moodelling on this site assesses pollsters both on the lean of their results
+                    relative to the average ("house effects") and the level of confidence that can be
+                    held in their polling ("poll confidence rating"). These are reflections only of
+                    their voting intention specifically and do not reflect on their other
+                    market research or even political issues polling outside of voting intention.
+                </p>
+            </GlossaryItem>
             <GlossaryItem type="general" title="Preferential voting">
                 <p>
                     The system of voting that Australia uses for most lower house elections
