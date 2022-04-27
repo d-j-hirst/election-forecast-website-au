@@ -23,6 +23,7 @@ export { default as GuideNowcast } from './Guide/Nowcast';
 export { default as GuideTcpScenarios } from './Guide/TcpScenarios';
 export { default as GlossaryHeader } from './Glossary/Header';
 export { default as GlossaryIntro } from './Glossary/Intro';
+export { default as GlossaryIndex } from './Glossary/Index';
 export { default as GlossaryItems } from './Glossary/Items';
 export { default as MethodologyHeader } from './Methodology/Header';
 export { default as MethodologyIntro } from './Methodology/Intro';

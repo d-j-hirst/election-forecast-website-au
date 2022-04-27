@@ -1,3 +1,14 @@
+.indexGrid {
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.indexGridItem {
+    width: 260px;
+    min-width: 260px;
+    align-content: left;
+}
+
 .generalDef {
     color: var(--general-definition);
     font-weight: 600;

@@ -47,7 +47,7 @@ const GlossaryItems = props => {
             <GlossaryItem type="general" title="First preference vote">
                 <p>
                     Also known as the <strong>primary vote</strong>. The candidate that a
-                    voter gives their first preference to (marks with 1 on their ballot paper.)
+                    voter gives their first preference to (marks with 1 on their ballot paper).
                     Generally this is the voter's most preferred party (but
                     see <Link to="#tactical-voting">Tactical Voting</Link> for
                     why this might be otherwise).
@@ -281,23 +281,7 @@ const GlossaryItems = props => {
                     large <Link to="#swing">swings</Link> in first-preference votes.
                 </p>
             </GlossaryItem>
-            <GlossaryItem type="general" title="Sophomore surge">
-                <p>
-                    Incumbency is generally an advantage in Australian elections for various reasons. Among
-                    major parties the advantage is generally small, but it can be much larger for independents
-                    and <Link to="#minor-party">minor party</Link> members of parliament. When a party wins
-                    a <Link to="#seat">seats</Link> from an opposing party,
-                    that party gains incumbency and the opposing party loses it, typically resulting in a
-                    boost to the new incumbent known as a <strong>sophomore surge</strong>. On average, the size
-                    of this boost depends on the party of the new incumbent and whether the seat is urban or
-                    rural. In some cases the advantage is weaker or stronger depending on the personal vote of
-                    the old and new members, and may be overwhelmed by other factors so that it can't be seen for
-                    an individual seat. A milder form of sophomore surge also occurs when a member retires
-                    or otherwise does not recontest a seat, but their party still wins the seat with a different
-                    candidate: in this case the new incumbent gets a smaller boost on average.
-                </p>
-            </GlossaryItem>
-            <GlossaryItem type="general" title="Swing">
+            <GlossaryItem type="general" title="Redistribution">
                 <p>
                     Electoral commissions in Australia periodically
                     undertake <strong>redistributions</strong>, which are rearrangements of the
@@ -310,7 +294,7 @@ const GlossaryItems = props => {
                     forecast for the next election.
                 </p>
             </GlossaryItem>
-            <GlossaryItem type="site" title="Regular forecasts">
+            <GlossaryItem type="site" title="Regular forecast">
                 <p>
                     Each <strong>regular forecast</strong> on this site is intended to forecast the actual
                     election at the time it is held. The uncertainty (and some other parameters) in the
@@ -356,6 +340,22 @@ const GlossaryItems = props => {
                     a member of parliament (MP) using <Link to="#preferential-voting">preferential voting</Link>.
                     Seats may be considered as marginal (with a significant chance of changing hands) or
                     safe (if the seat changing party is very unlikely).
+                </p>
+            </GlossaryItem>
+            <GlossaryItem type="general" title="Sophomore surge">
+                <p>
+                    Incumbency is generally an advantage in Australian elections for various reasons. Among
+                    major parties the advantage is generally small, but it can be much larger for independents
+                    and <Link to="#minor-party">minor party</Link> members of parliament. When a party wins
+                    a <Link to="#seat">seats</Link> from an opposing party,
+                    that party gains incumbency and the opposing party loses it, typically resulting in a
+                    boost to the new incumbent known as a <strong>sophomore surge</strong>. On average, the size
+                    of this boost depends on the party of the new incumbent and whether the seat is urban or
+                    rural. In some cases the advantage is weaker or stronger depending on the personal vote of
+                    the old and new members, and may be overwhelmed by other factors so that it can't be seen for
+                    an individual seat. A milder form of sophomore surge also occurs when a member retires
+                    or otherwise does not recontest a seat, but their party still wins the seat with a different
+                    candidate: in this case the new incumbent gets a smaller boost on average.
                 </p>
             </GlossaryItem>
             <GlossaryItem type="general" title="Swing">
