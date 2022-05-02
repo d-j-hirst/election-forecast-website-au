@@ -503,7 +503,6 @@ const Seats = props => {
         sortedIndices = indexedChances.map((a, b) => a[0]);
     }
 
-    console.log(props.forecast);
     sortedIndices = sortedIndices.filter(val => seatInRegion(props.forecast.seatNames[val], filter));
 
     const sortTitle = (() => {

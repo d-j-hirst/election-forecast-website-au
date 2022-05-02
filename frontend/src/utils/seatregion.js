@@ -5,7 +5,7 @@ const seatRegions = {
     Ballarat: "vic",
     Banks: "nsw",
     Barker: "sa",
-    Barton: "sa",
+    Barton: "nsw",
     Bass: "tas",
     Bean: "act",
     Bendigo: "vic",
