@@ -166,6 +166,11 @@ const VoteTrendChart = props => {
             trendData[trendIndex]["pollDesc"] += `${pollster}, ${round1(pollVal)}`;
         }
 
+        // this will compress trend to most recent polls if desired
+
+        // trendData = trendData.slice(176);
+        // thisTrend = thisTrend.slice(176);
+
         maxVal = thisTrend.reduce((prev, spread) => {
             return Math.max(prev, spread[spread.length - 1]);
         }, 0);

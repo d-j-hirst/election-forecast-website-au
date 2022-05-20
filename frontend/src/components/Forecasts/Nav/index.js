@@ -47,6 +47,7 @@ const ForecastsNav = props => {
                             <ElectionNav text="Federal" election="2022fed" mode={effectiveMode} activeElection={props.election} />
                             <ElectionNav text="Victoria" election="2022vic" mode={effectiveMode} activeElection={props.election} />
                             <ElectionNav text="South Australia" election="2022sa" mode={effectiveMode} activeElection={props.election} />
+                            <ElectionNav text="Federal 2019" election="2019fed" mode={effectiveMode} activeElection={props.election} />
                     </Navbar.Collapse>
                 </Nav>
             </Container>
@@ -61,6 +62,12 @@ const ForecastsNav = props => {
                         <ModeNav text="Nowcast" election={props.election} mode="nowcast" activeMode={props.mode} />
                         <ModeNav text="Archives" election={props.election} mode="archives" activeMode={props.mode} />
                         {props.election === "2022sa" &&
+                            <ModeNav text="Live" election={props.election} mode="live" activeMode={props.mode} />
+                        }
+                        {props.election === "2019fed" &&
+                            <ModeNav text="Live" election={props.election} mode="live" activeMode={props.mode} />
+                        }
+                        {props.election === "2022fed" &&
                             <ModeNav text="Live" election={props.election} mode="live" activeMode={props.mode} />
                         }
                         

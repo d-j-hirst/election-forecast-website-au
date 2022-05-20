@@ -55,7 +55,7 @@ const GovernmentFormationChart = props => {
         const x = cx + radius * Math.cos(-midAngle * RADIAN);
         const y = cy + radius * Math.sin(-midAngle * RADIAN);
       
-        if (value < 4) return null;
+        if (value < 3.5) return null;
 
         const fillColor = brightness(colors[index]) > 130 ? "black" : "white";
       
