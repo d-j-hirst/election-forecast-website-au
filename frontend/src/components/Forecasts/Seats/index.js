@@ -79,7 +79,7 @@ const SeatRow = props => {
                         </>
                     }
                 </span>
-                {props.mode !== "live" && 
+                {(props.mode !== "live" || props.election !== "2022sa") && 
                     <>
                         {"  |  "}
                         <Link to={detailsLink}>
@@ -97,7 +97,8 @@ const SeatRow = props => {
         </ListGroup.Item>
         {
             showMore &&
-            <SeatMore index={props.index} forecast={props.forecast} windowWidth={props.windowWidth} mode={props.mode} />
+            <SeatMore index={props.index} forecast={props.forecast} windowWidth={props.windowWidth} mode={props.mode}
+            election={props.election} />
         }
         </>
     );
@@ -177,6 +178,9 @@ const SeatFpSection = props => {
 
 const SeatFpRow = props => {
     const partyAbbr = jsonMap(props.forecast.partyAbbr, props.freqSet[0]);
+    console.log(props.forecast.partyAbbr);
+    console.log(props.freqSet[0]);
+    console.log(partyAbbr);
     const thresholds = [[0,2,0],[2,4,1],[4,6,2],[6,8,3],[8,10,4],[10,12,5],[12,14,6]];
     return (
         <ListGroup.Item className={styles.seatsSubitem}>
@@ -396,7 +400,7 @@ const SeatMore = props => {
     return (
         <>
             <SeatWinsSection forecast={props.forecast} index={props.index} />
-            {props.mode !== "live" &&
+            {(props.mode !== "live" || props.election !== "2022sa") &&
                 <>
                     <SeatFpSection forecast={props.forecast} index={props.index} windowWidth={props.windowWidth} />
                     <SeatTcpSection forecast={props.forecast} index={props.index} windowWidth={props.windowWidth} />

@@ -399,6 +399,7 @@ const Seats = props => {
     const colourKey = jsonMap(colours, props.partyAbbr) ? props.partyAbbr : "OTH";
 
     const majorityLine = (() => {
+        if (props.election === "2019fed") return 75.5;
         if (props.election === "2022fed") return 75.5;
         if (props.election === "2022sa") return 23.5;
         if (props.election === "2022vic") return 44.5;
@@ -439,10 +440,11 @@ const Seats = props => {
 }
 
 const Chart = props => {
-    const unixDates = props.data.map(a => new Date(Number(a.date.substring(0, 4)),
+    let unixDates = props.data.map(a => new Date(Number(a.date.substring(0, 4)),
         Number(a.date.substring(5, 7)) - 1, Number(a.date.substring(8, 10)),
         Number(a.date.substring(11, 13)), Number(a.date.substring(14, 16)),
         Number(a.date.substring(17, 19))).getTime());
+    if (props.mode === "live") unixDates = unixDates.map(a => a - 5400000)
     const tempDates = unixDates.map(a => a / 86400000);
     const labels = props.data.map(a => a.label.length > 26 ? a.label.substring(0, 24) + "..." : a.label);
     const prevDate = Math.min.apply(Math, tempDates);
@@ -695,7 +697,7 @@ const History = props => {
                                     <Dropdown.Item as="button" onClick={setGraphGovernmentFormation}>Formation of government</Dropdown.Item>
                                     <Dropdown.Item as="button" onClick={setGraphAlpTpp}>ALP two-party-preferred</Dropdown.Item>
                                     <Dropdown.Item as="button" onClick={setGraphLnpTpp}>LNP two-party-preferred</Dropdown.Item>
-                                    {props.mode !== "live" && <>
+                                    {(props.mode !== "live" || props.election !== "2022sa") && <>
                                         <Dropdown.Item as="button" onClick={setGraphAlpFp}>ALP first preferences</Dropdown.Item>
                                         <Dropdown.Item as="button" onClick={setGraphLnpFp}>LNP first preferences</Dropdown.Item>
                                         <Dropdown.Item as="button" onClick={setGraphGrnFp}>GRN first preferences</Dropdown.Item>
