@@ -91,7 +91,7 @@ const Forecast = () => {
                                 <NowcastAlert forecast={forecast} code={code} />
                             }
                             {
-                                mode === "live" && code == "2022sa" &&
+                                mode === "live" && code === "2022sa" &&
                                 <LiveOldAlert forecast={forecast} code={code} />
                             }
                             <StandardErrorBoundary>

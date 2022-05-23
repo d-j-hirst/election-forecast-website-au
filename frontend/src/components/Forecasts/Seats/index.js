@@ -141,11 +141,15 @@ const SeatFpSection = props => {
     const seatName = props.forecast.seatNames[props.index];
     // create deep copy of the fp probability bands
     const fpFreqs = deepCopy(props.forecast.seatFpBands[props.index]);
-    const sortedFreqs = fpFreqs
+    let sortedFreqs = fpFreqs
         .filter(e => e[1][7] >= 1 || e[1][10] >= 20 || e[1][12] >= 30)
         .sort((el1, el2) => el2[1][7] - el1[1][7]);
     const maxFpTotal = Math.max(...sortedFreqs.map(el => Math.max(...el[1])));
     const someExcluded = sortedFreqs.length < fpFreqs.length;
+    
+    sortedFreqs = sortedFreqs.filter(
+        e => props.mode !== "live" || e[0] < 0 || e[0] > 1
+    )
     return (
         <>
             <ListGroup.Item className={styles.seatsSubheading}>
@@ -154,6 +158,12 @@ const SeatFpSection = props => {
             </ListGroup.Item>
             {
                 showExplainer && <FpExplainer seatName={seatName} />
+            }
+            {props.mode === "live" &&
+                <ListGroup.Item className={styles.seatsNote}>
+                    First preferences hidden for major parties as the estimates are indirect and
+                    likely to be inaccurate
+                </ListGroup.Item>
             }
             {
                 sortedFreqs.map((freqSet, index) =>
@@ -256,6 +266,7 @@ const TcpExplainer = props => {
 
 const SeatTcpSection = props => {
     const [showExplainer, setShowExplainer] = useState(false);
+    const hideTcps = (props.forecast.seatHideTcps !== undefined ? props.forecast.seatHideTcps[props.index] : false);
     const seatName = props.forecast.seatNames[props.index];
     const tcpFreqs = deepCopy(props.forecast.seatTcpBands[props.index]);
     const sortedTcpFreqs = tcpFreqs
@@ -265,25 +276,33 @@ const SeatTcpSection = props => {
     const someExcluded = sortedTcpFreqs.length < tcpFreqs.length;
     return (
         <>
-            <ListGroup.Item className={styles.seatsSubheading}>
-                <strong>Two-candidate preferred scenarios</strong> for {seatName}
-                &nbsp;<InfoIcon onClick={() => setShowExplainer(!showExplainer)} warning={true} />
-            </ListGroup.Item>
-            {
-                showExplainer && <TcpExplainer />
-            }
-            {
-                sortedTcpFreqs.map((freqSet, index) =>
-                    <SeatTcpRowPair forecast={props.forecast}
-                                    freqSet={freqSet}
-                                    key={`tcp${seatName}a${index}`}
-                                    windowWidth={props.windowWidth}
-                    />
-                )
-            }
-            {someExcluded &&
+            {!hideTcps && <>
+                <ListGroup.Item className={styles.seatsSubheading}>
+                    <strong>Two-candidate preferred scenarios</strong> for {seatName}
+                    &nbsp;<InfoIcon onClick={() => setShowExplainer(!showExplainer)} warning={true} />
+                </ListGroup.Item>
+                {
+                    showExplainer && <TcpExplainer />
+                }
+                {
+                    sortedTcpFreqs.map((freqSet, index) =>
+                        <SeatTcpRowPair forecast={props.forecast}
+                                        freqSet={freqSet}
+                                        key={`tcp${seatName}a${index}`}
+                                        windowWidth={props.windowWidth}
+                        />
+                    )
+                }
+                {someExcluded &&
+                    <ListGroup.Item className={styles.seatsNote}>
+                        This list is abbreviated to the most likely scenarios. Click "full detail" above to see others.
+                    </ListGroup.Item>
+                }
+            </>}
+            {hideTcps &&
                 <ListGroup.Item className={styles.seatsNote}>
-                    This list is abbreviated to the most likely scenarios. Click "full detail" above to see others.
+                    TCP projections are hidden for this seat as they are likely to be inaccurate.
+                    A manual override has been applied to the win chance based on human analysis.
                 </ListGroup.Item>
             }
         </>
@@ -402,7 +421,7 @@ const SeatMore = props => {
             <SeatWinsSection forecast={props.forecast} index={props.index} />
             {(props.mode !== "live" || props.election !== "2022sa") &&
                 <>
-                    <SeatFpSection forecast={props.forecast} index={props.index} windowWidth={props.windowWidth} />
+                    <SeatFpSection forecast={props.forecast} index={props.index} windowWidth={props.windowWidth} mode={props.mode} />
                     <SeatTcpSection forecast={props.forecast} index={props.index} windowWidth={props.windowWidth} />
                 </>
             }
