@@ -17,7 +17,6 @@
 .seatsBody {
     padding: 0px !important;
     background-color: #CCCCCC !important;
-    text-align: left;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -71,6 +70,7 @@
 .seatsNote {
     padding: 2px !important;
     font-size: 13px;
+    width: 100%;
     background-color: #FFFFFF !important;
 }
 

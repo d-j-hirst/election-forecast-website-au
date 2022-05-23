@@ -109,9 +109,13 @@ const SeatFpSection = props => {
     const seatName = props.forecast.seatNames[props.index];
     // create deep copy of the fp probability bands
     const fpFreqs = deepCopy(props.forecast.seatFpBands[props.index]);
-    const sortedFreqs = fpFreqs
+    let sortedFreqs = fpFreqs
         .sort((el1, el2) => el2[1][7] - el1[1][7]);
     const maxFpTotal = Math.max(...sortedFreqs.map(el => Math.max(...el[1])));
+
+    sortedFreqs = sortedFreqs.filter(
+        e => props.mode !== "live" || e[0] < 0 || e[0] > 1
+    )
     return (
         <>
             <ListGroup.Item className={styles.seatsSubheading}>
@@ -120,6 +124,12 @@ const SeatFpSection = props => {
             </ListGroup.Item>
             {
                 showExplainer && <FpExplainer seatName={seatName} />
+            }
+            {props.mode === "live" &&
+                <ListGroup.Item className={styles.seatsNote}>
+                    First preferences hidden for major parties as the estimates are indirect and
+                    likely to be inaccurate
+                </ListGroup.Item>
             }
             {
                 sortedFreqs.map((freqSet, index) =>
@@ -217,6 +227,7 @@ const TcpExplainer = props => {
 const SeatTcpSection = props => {
     const [showExplainer, setShowExplainer] = useState(false);
 
+    const hideTcps = (props.forecast.seatHideTcps !== undefined ? props.forecast.seatHideTcps[props.index] : false);
     const seatName = props.forecast.seatNames[props.index];
     const tcpFreqs = deepCopy(props.forecast.seatTcpBands[props.index]);
     const sortedTcpFreqs = tcpFreqs
@@ -224,22 +235,30 @@ const SeatTcpSection = props => {
         .sort((e1, e2) => e2[2] - e1[2]);
     return (
         <>
-            <ListGroup.Item className={styles.seatsSubheading}>
-                <strong>Two-candidate preferred scenarios</strong> for {seatName}
-                &nbsp;<InfoIcon onClick={() => setShowExplainer(!showExplainer)} warning={true} />
-            </ListGroup.Item>
-            {
-                showExplainer && <TcpExplainer seatName={seatName} />
-            }
-            {
-                sortedTcpFreqs.map((freqSet, index) =>
-                    <SeatTcpRowPair forecast={props.forecast}
-                                    freqSet={freqSet}
-                                    key={`tcpb${index}`}
-                                    index={`tcpb${index}`}
-                                    windowWidth={props.windowWidth}
-                    />
-                )
+            {!hideTcps && <>
+                <ListGroup.Item className={styles.seatsSubheading}>
+                    <strong>Two-candidate preferred scenarios</strong> for {seatName}
+                    &nbsp;<InfoIcon onClick={() => setShowExplainer(!showExplainer)} warning={true} />
+                </ListGroup.Item>
+                {
+                    showExplainer && <TcpExplainer seatName={seatName} />
+                }
+                {
+                    sortedTcpFreqs.map((freqSet, index) =>
+                        <SeatTcpRowPair forecast={props.forecast}
+                                        freqSet={freqSet}
+                                        key={`tcpb${index}`}
+                                        index={`tcpb${index}`}
+                                        windowWidth={props.windowWidth}
+                        />
+                    )
+                }
+            </>}
+            {hideTcps &&
+                <ListGroup.Item className={styles.seatsNote}>
+                    TCP projections are hidden for this seat as they are likely to be inaccurate.
+                    A manual override has been applied to the win chance based on human analysis.
+                </ListGroup.Item>
             }
         </>
     )
@@ -397,14 +416,16 @@ const SeatDetailBody = props => {
                                 index={props.index}
                     />
                 </StandardErrorBoundary>
-                <StandardErrorBoundary>
-                    <SeatFpSection forecast={props.forecast}
-                                election={props.election}
-                                mode={props.mode}
-                                index={props.index}
-                                windowWidth={props.windowWidth}
-                    />
-                </StandardErrorBoundary>
+                {(props.mode !== "live" || props.election !== "2022sa") &&
+                    <StandardErrorBoundary>
+                        <SeatFpSection forecast={props.forecast}
+                                    election={props.election}
+                                    mode={props.mode}
+                                    index={props.index}
+                                    windowWidth={props.windowWidth}
+                        />
+                    </StandardErrorBoundary>
+                }
                 <StandardErrorBoundary>
                     <SeatTcpSection forecast={props.forecast}
                                 election={props.election}
