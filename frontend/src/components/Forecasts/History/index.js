@@ -526,7 +526,7 @@ const Chart = props => {
 
     if (props.mode == "live" && props.eveningOnly) {
         const lowDate = Math.min.apply(Math, chartData.map(a => a.unixDate));
-        chartData = chartData.filter(a => a.unixDate < lowDate + 4320000); // 12-hour period after first result
+        chartData = chartData.filter(a => a.unixDate < lowDate + 43200000); // 12-hour period after first result
     }
 
     const partyAbbr = jsonMap(props.partyAbbr, props.party);
