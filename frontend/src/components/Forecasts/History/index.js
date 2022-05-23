@@ -492,7 +492,7 @@ const Chart = props => {
                                       jsonMap(a.seatCountFrequencies, props.party)[13]]
                                       : [0, 0, 0, 0, 0, 0, 0]);
 
-    const chartData = adjDates.map((date, index) => ({
+    let chartData = adjDates.map((date, index) => ({
         "date": date,
         "unixDate": unixDates[index],
         "label": labels[index],
@@ -523,6 +523,11 @@ const Chart = props => {
         "seats95-99": [seats[index][5], seats[index][6]],
         "seatsMedian": seats[index][3]
     }));
+
+    if (props.mode == "live" && props.eveningOnly) {
+        const lowDate = Math.min.apply(Math, chartData.map(a => a.unixDate));
+        chartData = chartData.filter(a => a.unixDate < lowDate + 4320000); // 12-hour period after first result
+    }
 
     const partyAbbr = jsonMap(props.partyAbbr, props.party);
 
@@ -594,6 +599,7 @@ const History = props => {
     const [historyValid, setHistoryValid] = useState(false);
     const [graphType, setGraphType] = useState(GraphTypeEnum.governmentFormation);
     const [graphParty, setGraphParty] = useState(0);
+    const [eveningOnly, setEveningOnly] = useState(true);
     // const windowDimensions = useWindowDimensions();
 
     useEffect(() => {
@@ -654,6 +660,13 @@ const History = props => {
         return title;
     })();
 
+    const eveningSetting = (() => {
+        let title = "Display: ";
+        if (eveningOnly) title += "Election night only";
+        else title += "Include late counting";
+        return title;
+    })();
+
     const grnIndex = jsonMapReverse(props.forecast.partyAbbr, "GRN");
     const indIndex = jsonMapReverse(props.forecast.partyAbbr, "IND", null, a => a >= 0);
     let onpIndex = jsonMapReverse(props.forecast.partyAbbr, "ONP");
@@ -676,6 +689,8 @@ const History = props => {
     const setGraphOnpSeats = () => {setGraphType(GraphTypeEnum.seats); setGraphParty(onpIndex);};
     const setGraphUapSeats = () => {setGraphType(GraphTypeEnum.seats); setGraphParty(uapIndex);};
     const setGraphIndSeats = () => {setGraphType(GraphTypeEnum.seats); setGraphParty(indIndex);};
+    const setIsEveningOnly = () => {setEveningOnly(true);};
+    const setNotEveningOnly = () => {setEveningOnly(false);};
 
     return (
         <Card className={styles.summary}>
@@ -693,7 +708,7 @@ const History = props => {
                     {historyValid &&
                         <StandardErrorBoundary>
                             <ListGroup.Item className={styles.historyOptions}>
-                                <DropdownButton id="sort-dropdown" title={title} variant="secondary">
+                                <DropdownButton id="type-dropdown" title={title} variant="secondary">
                                     <Dropdown.Item as="button" onClick={setGraphGovernmentFormation}>Formation of government</Dropdown.Item>
                                     <Dropdown.Item as="button" onClick={setGraphAlpTpp}>ALP two-party-preferred</Dropdown.Item>
                                     <Dropdown.Item as="button" onClick={setGraphLnpTpp}>LNP two-party-preferred</Dropdown.Item>
@@ -720,8 +735,15 @@ const History = props => {
                                     }
                                     <Dropdown.Item as="button" onClick={setGraphIndSeats}>IND seats</Dropdown.Item>
                                 </DropdownButton>
+                                {props.mode == "live" &&
+                                    <DropdownButton id="evening-dropdown" title={eveningSetting} variant="secondary">
+                                        <Dropdown.Item as="button" onClick={setIsEveningOnly}>Election night only</Dropdown.Item>
+                                        <Dropdown.Item as="button" onClick={setNotEveningOnly}>Include late counting</Dropdown.Item>
+                                    </DropdownButton>
+                                }
                             </ListGroup.Item>
-                            <Chart data={history} type={graphType} party={graphParty} partyAbbr={props.forecast.partyAbbr} election={props.election} mode={props.mode} />
+                            <Chart data={history} type={graphType} party={graphParty} partyAbbr={props.forecast.partyAbbr}
+                                   election={props.election} mode={props.mode} eveningOnly={eveningOnly} />
                         </StandardErrorBoundary>
                     }
                     {!historyValid &&
