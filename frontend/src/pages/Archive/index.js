@@ -34,7 +34,7 @@ const Archive = () => {
             getArchive().then(
                 data => {
                     setForecast(data.report);
-                    const modeNames = {FC: "general forecast", NC: "nowcast", LF: "live forecast"};
+                    const modeNames = {RF: "general forecast", NC: "nowcast", LF: "live forecast"};
                     document.title = `AEF - Archived ${data.report.electionName} ${modeNames[data.report.reportMode]}`;
                     setForecastValid(true);
                 }

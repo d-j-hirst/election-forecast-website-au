@@ -31,7 +31,7 @@ const Forecast = () => {
         }
 
         const fetchElectionSummary = () => {
-            const modeTitles = {FC: "General Forecast", NC: "Nowcast", LF: "Live Forecast"};
+            const modeTitles = {RF: "General Forecast", NC: "Nowcast", LF: "Live Forecast"};
             if (code === localStorage.getItem('cachedForecastCode')
                     && mode === localStorage.getItem('cachedForecastMode')) {
                 const tempForecast = JSON.parse(localStorage.getItem('cachedForecast'));
