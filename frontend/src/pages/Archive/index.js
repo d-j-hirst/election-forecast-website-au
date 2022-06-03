@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import { Helmet } from "react-helmet";
 
 import { Header, Footer, ForecastsNav, ForecastHeader, FormationOfGovernment,
     LoadingMarker, VoteTotals, SeatTotals, ArchiveAlert, Seats, StandardErrorBoundary } from 'components';
@@ -54,6 +55,9 @@ const Archive = () => {
 
     return (
         <div className={styles.site}>
+            <Helmet>
+                <meta name="robots" content="noindex" />
+            </Helmet>
             <Header windowWidth={windowDimensions.width} page={"archive"} />
             {/* Even though the archived forecast is still in some mode,
                 it's needed to set the mode to "other" here as that will

@@ -524,7 +524,7 @@ const Chart = props => {
         "seatsMedian": seats[index][3]
     }));
 
-    if (props.mode == "live" && props.eveningOnly) {
+    if (props.mode === "live" && props.eveningOnly) {
         const lowDate = Math.min.apply(Math, chartData.map(a => a.unixDate));
         chartData = chartData.filter(a => a.unixDate < lowDate + 43200000); // 12-hour period after first result
     }
@@ -735,7 +735,7 @@ const History = props => {
                                     }
                                     <Dropdown.Item as="button" onClick={setGraphIndSeats}>IND seats</Dropdown.Item>
                                 </DropdownButton>
-                                {props.mode == "live" &&
+                                {props.mode === "live" &&
                                     <DropdownButton id="evening-dropdown" title={eveningSetting} variant="secondary">
                                         <Dropdown.Item as="button" onClick={setIsEveningOnly}>Election night only</Dropdown.Item>
                                         <Dropdown.Item as="button" onClick={setNotEveningOnly}>Include late counting</Dropdown.Item>

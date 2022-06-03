@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import { Helmet } from "react-helmet";
 
 import { Header, Footer, ForecastsNav, ForecastHeader,
     LoadingMarker, ArchiveAlert, SeatDetailBody, StandardErrorBoundary } from 'components';
@@ -55,36 +56,39 @@ const SeatDetails = () => {
 
     return (
         <div className={styles.site}>
-          <Header windowWidth={windowDimensions.width} page={"archive"} />
-          {/* Even though the archived forecast is still in some mode,
-              it's needed to set the mode to "other" here as that will
-              keep the links clickable */}
-          <ForecastsNav election={code} mode="other" />
-          <div className={styles.content}>
-              {forecastValid && seatIndex >= 0 &&
-                  <>
-                      <ForecastHeader mode={mode} forecast={forecast} archive={true} />
-                      <ArchiveAlert forecast={forecast} code={code} mode={mode} showInitially={false} />
-                      <StandardErrorBoundary>
-                          <SeatDetailBody forecast={forecast}
-                                          election={code}
-                                          mode={mode}
-                                          index={seatIndex}
-                                          windowWidth={windowDimensions.width}
-                          />
-                      </StandardErrorBoundary>
-                  </>
-              }
-              {forecastValid && seatIndex === -1 &&
-                  <>
-                      Couldn't find a seat matching name: {seat}. Make sure the seat is spelled correctly and any groups of spaced and other special characters are replaced with single hyphens.
-                  </>
-              }
-              {!forecastValid &&
-                  <LoadingMarker />
-              }
-          </div>
-          <Footer />
+            <Helmet>
+                <meta name="robots" content="noindex" />
+            </Helmet>
+            <Header windowWidth={windowDimensions.width} page={"archive"} />
+            {/* Even though the archived forecast is still in some mode,
+                it's needed to set the mode to "other" here as that will
+                keep the links clickable */}
+            <ForecastsNav election={code} mode="other" />
+            <div className={styles.content}>
+                {forecastValid && seatIndex >= 0 &&
+                    <>
+                        <ForecastHeader mode={mode} forecast={forecast} archive={true} />
+                        <ArchiveAlert forecast={forecast} code={code} mode={mode} showInitially={false} />
+                        <StandardErrorBoundary>
+                            <SeatDetailBody forecast={forecast}
+                                            election={code}
+                                            mode={mode}
+                                            index={seatIndex}
+                                            windowWidth={windowDimensions.width}
+                            />
+                        </StandardErrorBoundary>
+                    </>
+                }
+                {forecastValid && seatIndex === -1 &&
+                    <>
+                        Couldn't find a seat matching name: {seat}. Make sure the seat is spelled correctly and any groups of spaced and other special characters are replaced with single hyphens.
+                    </>
+                }
+                {!forecastValid &&
+                    <LoadingMarker />
+                }
+            </div>
+            <Footer />
         </div>
     );
 };
