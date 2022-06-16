@@ -10,6 +10,9 @@ urlpatterns = [
     path('submit-timeseries-update',
          views.SubmitTimeseriesUpdateResponse.as_view(),  # type: ignore
          name='submit-timeseries-update'),
+    path('submit-results-update',
+         views.SubmitResultsUpdateResponse.as_view(),  # type: ignore
+         name='submit-results-update'),
     path('election-summary/<str:code>/<str:mode>',
          views.ElectionSummaryResponse.as_view(),  # type: ignore
          name='election-summary'),

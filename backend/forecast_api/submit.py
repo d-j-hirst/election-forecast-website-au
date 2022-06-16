@@ -3,6 +3,7 @@ from django.utils.timezone import make_aware
 from django.shortcuts import get_object_or_404
 from datetime import datetime
 from forecast_api.models import Election, Forecast
+from forecast_api.results import update_results
 from rest_framework.response import Response
 from rest_framework.permissions import BasePermission
 import json
@@ -97,3 +98,12 @@ def submit_timeseries_update(request: HttpRequest):
     election = get_object_or_404(Election, code=code)
     update_timeseries(election)
     return Response("Election timeseries successfully updated.")
+
+
+def submit_results_update(request: HttpRequest):
+    data_json = request.body.decode()
+    data = json.loads(data_json)
+    code = data['termCode']
+    election = get_object_or_404(Election, code=code)
+    update_results(election)
+    return Response("Election results successfully updated.")
