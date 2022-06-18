@@ -2,15 +2,6 @@ from forecast_api.models import Election
 import requests
 from bs4 import BeautifulSoup
 
-election_wiki_desc_dict = {
-    'fed': '_Australian_federal_election_(House_of_Representatives)',
-    'nsw': '_New_South_Wales_state_election_(Legislative_Assembly)',
-    'vic': '_Victorian_state_election_(Legislative_Assembly)',
-    'qld': '_Queenland_state_election',
-    'wa': '_Western_Australian_state_election_(Legislative_Assembly)',
-    'sa': '_South_Australian_state_election_(House_of_Assembly)',
-}
-
 party_convert = {
     '2022fed': {
         'Labor': 'ALP',
@@ -34,23 +25,36 @@ party_convert = {
     },
 }
 
-remove_from_overall_fp = {
-    '2022fed': {'CA', 'KAP', 'IND'},
-    '2022sa': {'IND'}
-}
+class OverallResults:
+    def __init__(self):
+        self.fp = {}
+        self.seats = {}
+        self.tpp = 0
 
-def update_results(election: Election):
+
+def fetch_overall_results(election: Election):
+    election_wiki_desc_dict = {
+        'fed': '_Australian_federal_election_(House_of_Representatives)',
+        'nsw': '_New_South_Wales_state_election_(Legislative_Assembly)',
+        'vic': '_Victorian_state_election_(Legislative_Assembly)',
+        'qld': '_Queenland_state_election',
+        'wa': '_Western_Australian_state_election_(Legislative_Assembly)',
+        'sa': '_South_Australian_state_election_(House_of_Assembly)',
+    }
+    remove_from_overall_fp = {
+        '2022fed': {'CA', 'KAP', 'IND'},
+        '2022sa': {'IND'}
+    }
+    overall_results = OverallResults()
     year = election.code[:4]
     region = election.code[4:]
-    url = f'https://en.wikipedia.org/wiki/Results_of_the_{year}{election_wiki_desc_dict[region]}'
+    url = ('https://en.wikipedia.org/wiki/Results_of_the_' +
+        f'{year}{election_wiki_desc_dict[region]}')
     r = requests.get(url)
     soup = BeautifulSoup(r.content, 'html.parser')
     table = soup.find(class_='mw-parser-output').find(class_='wikitable', recursive=False)
     rows = table.find_all('tr')
     doingTpp = False
-    overall_fp = {}
-    seats = {}
-    overall_tpp = 0
     for row in rows:
         if row.text.strip()[:19] == 'Two-party-preferred':
             doingTpp = True
@@ -64,23 +68,28 @@ def update_results(election: Election):
         if name == 'National' and region == 'wa': code = 'NP'
         vote_share = float(cols[3].text)
         if doingTpp and code == 'ALP':
-            overall_tpp = vote_share
+            overall_results.tpp = vote_share
         elif not doingTpp:
             seat_count = int(cols[5].text)
-            if code not in overall_fp:
-                overall_fp[code] = vote_share
-                seats[code] = seat_count
+            if code not in overall_results.fp:
+                overall_results.fp[code] = vote_share
+                overall_results.seats[code] = seat_count
             else:
-                overall_fp[code] += vote_share
-                seats[code] += seat_count
+                overall_results.fp[code] += vote_share
+                overall_results.seats[code] += seat_count
     total_fp = 0
-    for code, vote_share in list(overall_fp.items()):
+    for code, vote_share in list(overall_results.fp.items()):
         if code in remove_from_overall_fp[election.code]:
-            print(f'{code} seats: {seats[code]}')
-            del overall_fp[code]
+            del overall_results.fp[code]
             continue
         total_fp += vote_share
-        print(f'Overall {code} FP: {vote_share}%, seats: {seats[code]}')
-    overall_fp['OTH'] = 100 - total_fp
-    print(f'Overall OTH FP: {overall_fp["OTH"]}%')
-    print(f'Overall ALP TPP: {overall_tpp}%')
+    overall_results.fp['OTH'] = 100 - total_fp
+    return overall_results
+
+def update_results(election: Election):
+    overall_results = fetch_overall_results(election)
+    for code, vote_share in list(overall_results.fp.items()):
+        print(f'Overall {code} FP: {vote_share:.2f}%')
+    for code, seats in list(overall_results.seats.items()):
+        print(f'Overall {code} seats: {seats}')
+    print(f'Overall ALP TPP: {overall_results.tpp:.2f}%')
