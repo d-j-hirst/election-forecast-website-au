@@ -120,14 +120,43 @@ def collect_seat_names(election: Election):
             link = first_cell.find('a')
             if link is None: continue
             seat_specific = link["href"].strip()[6:]
+            seat_specific = seat_specific.replace('Electoral_', '')
             urls.append(f'https://en.wikipedia.org/wiki/Electoral_results_for_the_{seat_specific}')
     return urls
+
+
+def fetch_seat_results(election: Election, urls):
+    election_text_dict = {
+        'fed': 'Australian federal election',
+        'nsw': 'New South Wales state election',
+        'vic': 'Victorian state election',
+        'qld': 'Queenland state election',
+        'wa': 'Western Australian state election',
+        'sa': 'South Australian state election'
+    }
+    year = election.code[:4]
+    region = election.code[4:]
+    election_match = f'{year} {election_text_dict[region]}'
+    for url in urls:
+        r = requests.get(url)
+        soup = BeautifulSoup(r.content, 'html.parser')
+        tables = (soup.find(class_='mw-parser-output')
+                      .find_all(class_='wikitable'))
+        for table in tables:
+            caption = table.find('caption')
+            if caption is None: continue
+            caption_links = caption.find_all('a')
+            if len(caption_links) < 2: continue
+            election_text = caption_links[0].text.strip()
+            if election_text != election_match: continue
+            seat_text = caption_links[1].text.strip()
+            print(f'{caption_links[0].text} {caption_links[1].text}')
 
 
 def update_results(election: Election):
     overall_results = fetch_overall_results(election)
     urls = collect_seat_names(election)
-    collect_seat_names(election)
+    fetch_seat_results(election, urls)
     for code, vote_share in list(overall_results.fp.items()):
         print(f'Overall {code} FP: {vote_share:.2f}%')
     for code, seats in list(overall_results.seats.items()):
