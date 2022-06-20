@@ -1,5 +1,6 @@
 from forecast_api.models import Election
 import requests
+import threading
 from bs4 import BeautifulSoup
 
 
@@ -14,9 +15,11 @@ party_convert = {
         'Greens': 'GRN',
         'One Nation': 'ONP',
         'United Australia Party': 'UAP',
+        'United Australia': 'UAP',
         'Centre Alliance': 'CA',
         "Katter's Australian": 'KAP',
         'Independents': 'IND',
+        'Independent': 'IND',
     },
     '2022sa': {
         'Labor': 'ALP',
@@ -32,6 +35,12 @@ class OverallResults:
         self.fp = {}
         self.seats = {}
         self.tpp = 0
+
+
+class SeatResults:
+    def __init__(self):
+        self.fp = {}
+        self.tpp = {}
 
 
 def fetch_overall_results(election: Election):
@@ -56,10 +65,10 @@ def fetch_overall_results(election: Election):
     soup = BeautifulSoup(r.content, 'html.parser')
     table = soup.find(class_='mw-parser-output').find(class_='wikitable', recursive=False)
     rows = table.find_all('tr')
-    doingTpp = False
+    doing_tpp = False
     for row in rows:
         if row.text.strip()[:19] == 'Two-party-preferred':
-            doingTpp = True
+            doing_tpp = True
             continue
         cols = row.find_all('td')
         if len(cols) < 6: continue
@@ -69,9 +78,9 @@ def fetch_overall_results(election: Election):
         code = party_convert[election.code][name]
         if name == 'National' and region == 'wa': code = 'NP'
         vote_share = float(cols[3].text)
-        if doingTpp and code == 'ALP':
+        if doing_tpp and code == 'ALP':
             overall_results.tpp = vote_share
-        elif not doingTpp:
+        elif not doing_tpp:
             seat_count = int(cols[5].text)
             if code not in overall_results.fp:
                 overall_results.fp[code] = vote_share
@@ -137,8 +146,23 @@ def fetch_seat_results(election: Election, urls):
     year = election.code[:4]
     region = election.code[4:]
     election_match = f'{year} {election_text_dict[region]}'
-    for url in urls:
+
+    # Concurrently fetch results while maintaining order
+    responses = {url: None for url in urls}
+    threads = []
+    some_lock = threading.Lock()
+    def get_response(url):
         r = requests.get(url)
+        with some_lock:
+            responses[url]= r
+    for url in urls:
+        threads.append(threading.Thread(target=get_response, args=(url,)))
+        threads[-1].start()
+    for thread in threads:
+        thread.join()
+
+    all_seat_results = {}
+    for url, r in responses.items():
         soup = BeautifulSoup(r.content, 'html.parser')
         tables = (soup.find(class_='mw-parser-output')
                       .find_all(class_='wikitable'))
@@ -152,16 +176,62 @@ def fetch_seat_results(election: Election, urls):
             seat_text = caption_links[1].text.strip()
             print(f'{caption_links[0].text} {caption_links[1].text}')
 
+            seat_results = SeatResults()
+            doing_tcp = 0
+            rows = table.find_all('tr')
+            found_ind = 0
+            for row in rows:
+                if 'preferred' in row.text and 'Notional' not in row.text:
+                    doing_tcp = 1
+                    found_ind = 0
+                    continue
+                elif 'preferred' in row.text:
+                    doing_tcp = 2  # Notional count, don't record this
+                    continue
+                cols = row.find_all('td')
+                if len(cols) < 6: continue
+                name = cols[1].text.strip()
+                if name not in party_convert[election.code]: continue
+                if name == 'National' and region == 'sa': continue
+                code = party_convert[election.code][name]
+                if code == "IND":
+                    if found_ind == 0:
+                        found_ind = 1
+                    elif found_ind == 1:
+                        found_ind = 2
+                        code = 'IND*'
+                    else:
+                        continue  # will end up added to "Others"
+                if name == 'National' and region == 'wa': code = 'NP'
+                vote_share = float(cols[4].text)
+                if doing_tcp == 1:
+                    seat_results.tpp[code] = vote_share
+                elif doing_tcp == 0:
+                    if code not in seat_results.fp:
+                        seat_results.fp[code] = vote_share
+                    else:
+                        seat_results.fp[code] += vote_share
+            
+            total_fp = 0
+            for code, vote_share in list(seat_results.fp.items()):
+                total_fp += vote_share
+            others = max(0, round(100 - total_fp, 2))
+            if (others): seat_results.fp['OTH'] = others
+
+            print(seat_results.fp)
+            print(seat_results.tpp)
+            all_seat_results[caption_links[1].text] = seat_results
+            break
+    return all_seat_results
+
 
 def update_results(election: Election):
     overall_results = fetch_overall_results(election)
     urls = collect_seat_names(election)
-    fetch_seat_results(election, urls)
+    seat_results = fetch_seat_results(election, urls)
     for code, vote_share in list(overall_results.fp.items()):
         print(f'Overall {code} FP: {vote_share:.2f}%')
     for code, seats in list(overall_results.seats.items()):
         print(f'Overall {code} seats: {seats}')
     print(f'Overall ALP TPP: {overall_results.tpp:.2f}%')
-    print('Seat URLs')
-    for url in urls:
-        print(url)
+    print(seat_results)
