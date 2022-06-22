@@ -1,5 +1,4 @@
 from forecast_api.models import Election
-import json
 import requests
 import threading
 from bs4 import BeautifulSoup
@@ -225,8 +224,6 @@ def update_results(election: Election):
     full_results = {'code': election.code,
                     'overall': overall_results,
                     'seats': seat_results}
-    json_results = json.dumps(full_results)
-    # print(json_results)
-    election.results = json_results
+    election.results = full_results
     election.results_version += 1
     election.save()
