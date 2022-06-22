@@ -21,6 +21,10 @@ class Election(models.Model):
     timeseries_lf = models.JSONField(default=str)
 
     timeseries_lf_version = models.IntegerField(default=0)
+
+    results = models.JSONField(default=str)
+
+    results_version = models.IntegerField(default=0)
     
     def __str__(self):
         return self.code + " - " + self.name

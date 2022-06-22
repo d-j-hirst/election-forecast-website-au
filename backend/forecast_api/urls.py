@@ -30,5 +30,11 @@ urlpatterns = [
          name='election-timeseries'),
     path('election-timeseries/<str:code>/<str:mode>/<int:cached_version>/',
          views.ElectionTimeseriesResponse.as_view(),  # type: ignore
-         name='election-timeseries')
+         name='election-timeseries'),
+    path('election-results/<str:code>/',
+         views.ElectionResultsResponse.as_view(),  # type: ignore
+         name='election-results'),
+    path('election-results/<str:code>/<int:cached_version>/',
+         views.ElectionResultsResponse.as_view(),  # type: ignore
+         name='election-results')
 ]

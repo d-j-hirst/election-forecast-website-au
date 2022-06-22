@@ -1,4 +1,5 @@
 from forecast_api.models import Election
+import json
 import requests
 import threading
 from bs4 import BeautifulSoup
@@ -30,19 +31,6 @@ party_convert = {
 }
 
 
-class OverallResults:
-    def __init__(self):
-        self.fp = {}
-        self.seats = {}
-        self.tpp = 0
-
-
-class SeatResults:
-    def __init__(self):
-        self.fp = {}
-        self.tpp = {}
-
-
 def fetch_overall_results(election: Election):
     election_wiki_desc_dict = {
         'fed': '_Australian_federal_election_(House_of_Representatives)',
@@ -56,7 +44,7 @@ def fetch_overall_results(election: Election):
         '2022fed': {'CA', 'KAP', 'IND'},
         '2022sa': {'IND'}
     }
-    overall_results = OverallResults()
+    overall_results = {'fp': {}, 'seats': {}, 'tpp': 0}
     year = election.code[:4]
     region = election.code[4:]
     url = ('https://en.wikipedia.org/wiki/Results_of_the_' +
@@ -79,22 +67,22 @@ def fetch_overall_results(election: Election):
         if name == 'National' and region == 'wa': code = 'NP'
         vote_share = float(cols[3].text)
         if doing_tpp and code == 'ALP':
-            overall_results.tpp = vote_share
+            overall_results['tpp'] = vote_share
         elif not doing_tpp:
             seat_count = int(cols[5].text)
-            if code not in overall_results.fp:
-                overall_results.fp[code] = vote_share
-                overall_results.seats[code] = seat_count
+            if code not in overall_results['fp']:
+                overall_results['fp'][code] = vote_share
+                overall_results['seats'][code] = seat_count
             else:
-                overall_results.fp[code] += vote_share
-                overall_results.seats[code] += seat_count
+                overall_results['fp'][code] += vote_share
+                overall_results['seats'][code] += seat_count
     total_fp = 0
-    for code, vote_share in list(overall_results.fp.items()):
+    for code, vote_share in list(overall_results['fp'].items()):
         if code in remove_from_overall_fp[election.code]:
-            del overall_results.fp[code]
+            del overall_results['fp'][code]
             continue
         total_fp += vote_share
-    overall_results.fp['OTH'] = 100 - total_fp
+    overall_results['fp']['OTH'] = 100 - total_fp
     return overall_results
 
 
@@ -176,7 +164,7 @@ def fetch_seat_results(election: Election, urls):
             seat_text = caption_links[1].text.strip()
             print(f'{caption_links[0].text} {caption_links[1].text}')
 
-            seat_results = SeatResults()
+            seat_results = {'fp': {}, 'tpp': {}}
             doing_tcp = 0
             rows = table.find_all('tr')
             found_ind = 0
@@ -205,21 +193,21 @@ def fetch_seat_results(election: Election, urls):
                 if name == 'National' and region == 'wa': code = 'NP'
                 vote_share = float(cols[4].text)
                 if doing_tcp == 1:
-                    seat_results.tpp[code] = vote_share
+                    seat_results['tpp'][code] = vote_share
                 elif doing_tcp == 0:
-                    if code not in seat_results.fp:
-                        seat_results.fp[code] = vote_share
+                    if code not in seat_results['fp']:
+                        seat_results['fp'][code] = vote_share
                     else:
-                        seat_results.fp[code] += vote_share
+                        seat_results['fp'][code] += vote_share
             
             total_fp = 0
-            for code, vote_share in list(seat_results.fp.items()):
+            for code, vote_share in list(seat_results['fp'].items()):
                 total_fp += vote_share
             others = max(0, round(100 - total_fp, 2))
-            if (others): seat_results.fp['OTH'] = others
+            if (others): seat_results['fp']['OTH'] = others
 
-            print(seat_results.fp)
-            print(seat_results.tpp)
+            print(seat_results['fp'])
+            print(seat_results['tpp'])
             all_seat_results[caption_links[1].text] = seat_results
             break
     return all_seat_results
@@ -229,9 +217,16 @@ def update_results(election: Election):
     overall_results = fetch_overall_results(election)
     urls = collect_seat_names(election)
     seat_results = fetch_seat_results(election, urls)
-    for code, vote_share in list(overall_results.fp.items()):
-        print(f'Overall {code} FP: {vote_share:.2f}%')
-    for code, seats in list(overall_results.seats.items()):
-        print(f'Overall {code} seats: {seats}')
-    print(f'Overall ALP TPP: {overall_results.tpp:.2f}%')
-    print(seat_results)
+    # for code, vote_share in list(overall_results['fp'].items()):
+    #     print(f'Overall {code} FP: {vote_share:.2f}%')
+    # for code, seats in list(overall_results['seats'].items()):
+    #     print(f'Overall {code} seats: {seats}')
+    # print(f'Overall ALP TPP: {overall_results["tpp"]:.2f}%')
+    full_results = {'code': election.code,
+                    'overall': overall_results,
+                    'seats': seat_results}
+    json_results = json.dumps(full_results)
+    # print(json_results)
+    election.results = json_results
+    election.results_version += 1
+    election.save()

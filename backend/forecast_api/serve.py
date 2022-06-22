@@ -102,21 +102,40 @@ def serve_election_timeseries(code, mode, cached_version):
     except Election.DoesNotExist:
         raise Http404('Election does not exist')
     if mode == 'regular':
-        series = election.timeseries_fc
         version = election.timeseries_fc_version
     elif mode == 'nowcast':
-        series = election.timeseries_nc
         version = election.timeseries_nc_version
     elif mode == 'live':
-        series = election.timeseries_lf
         version = election.timeseries_lf_version
     else:
         raise Http404('Invalid mode')
     if version == cached_version:
         return Response({"new": False})
+    if mode == 'regular':
+        series = election.timeseries_fc
+    elif mode == 'nowcast':
+        series = election.timeseries_nc
+    elif mode == 'live':
+        series = election.timeseries_lf
     response = {"timeseries": series,
                 "code": code,
                 "mode": mode,
+                "version": version,
+                "new": True}
+    return Response(response)
+
+
+def serve_election_results(code, cached_version):
+    try:
+        election = Election.objects.get(code=code)
+    except Election.DoesNotExist:
+        raise Http404('Election does not exist')
+    results = election.results
+    version = election.results_version
+    if version == cached_version:
+        return Response({"new": False})
+    response = {"results": results,
+                "code": code,
                 "version": version,
                 "new": True}
     return Response(response)
