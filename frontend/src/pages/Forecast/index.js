@@ -86,7 +86,6 @@ const Forecast = () => {
 
             getElectionResults().then(
                 data => {
-                    console.log(results);
                     if (data.new && data.results.length === 0) {
                         // No results available
                         return;
@@ -144,7 +143,7 @@ const Forecast = () => {
                                 <FormationOfGovernment election={code} mode={mode} forecast={forecast} windowWidth={windowDimensions.width} />
                             </StandardErrorBoundary>
                             <StandardErrorBoundary>
-                                <VoteTotals election={code} mode={mode} forecast={forecast} windowWidth={windowDimensions.width} />
+                                <VoteTotals election={code} mode={mode} forecast={forecast} windowWidth={windowDimensions.width} results={resultsValid ? results : null} />
                             </StandardErrorBoundary>
                             <StandardErrorBoundary>
                                 <SeatTotals election={code} mode={mode} forecast={forecast} windowWidth={windowDimensions.width} />

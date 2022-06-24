@@ -1,5 +1,6 @@
 import React from 'react';
 
+import TooltipWrapper from '../TooltipWrapper'
 import ProbBar from '../ProbBar';
 
 const adjustFreqs = (freqs, thresholds) => {
@@ -77,6 +78,37 @@ const adjustFreqs = (freqs, thresholds) => {
     return finalObjs;
 }
 
+const ProbBarResult = props => {
+    const width = 6;
+    const leftVal = Math.floor((props.result - props.visualOffset) * props.scalingFactor - width / 2).toString() + 'px';
+    const widthVal = width.toString() + 'px';
+    const thisStyle = {
+        height: '20px',
+        width: widthVal,
+        left: leftVal,
+        top: '5px',
+        position: 'absolute',
+        background: 'black'
+    };
+    // this class and its div works around a difficulty in CSS: the tooltip is placed at the
+    // closest positioned ancestor, but an absolute-position div is not considered "positioned"
+    // for this purpose, so this style creates a "dummy" div that covers exactly the same area
+    // but with relative positioning that the tooltip can attach to
+    const tooltipHolderStyle = {
+        position: 'relative',
+        width: "100%",
+        height: "100%"
+    };
+    const tooltipText = 'some tooltip text';
+    return (
+        <div style={thisStyle}>
+            <TooltipWrapper tooltipText={tooltipText} placement="top">
+                <div style={tooltipHolderStyle} />
+            </TooltipWrapper>
+        </div>
+    )
+}
+
 const ProbBarDist = props => {
     const midThreshold = Math.floor(props.thresholds.length / 2);
     const chartWidth = props.width !== undefined ? props.width : 300;
@@ -123,6 +155,13 @@ const ProbBarDist = props => {
                                 key={index}
                        />
             })}
+            {
+                props.result !== null && props.result !== undefined &&
+                <ProbBarResult result={props.result}
+                               scalingFactor={scalingFactor}
+                               visualOffset={visualOffset}
+                />
+            }
         </div>
     )
 }

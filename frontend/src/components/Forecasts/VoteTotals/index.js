@@ -18,7 +18,6 @@ import styles from './VoteTotals.module.css';
 
 
 const VoteShareRow = props => {
-
     let partyAbbr = jsonMap(props.forecast.partyAbbr, props.freqSet[0]);
     const thresholds = [[0,2,0],[2,4,1],[4,6,2],[6,8,3],[8,10,4],[10,12,5],[12,14,6]];
     return (
@@ -38,6 +37,7 @@ const VoteShareRow = props => {
                          maxVoteTotal={props.maxVoteTotal}
                          thresholdLevels={props.forecast.voteTotalThresholds}
                          pluralNoun="vote totals"
+                         result={props.result === undefined ? null : props.result}
                          valType="percentage"
                          width={Math.min(props.windowWidth - 70, 450)}
             />
@@ -121,6 +121,8 @@ const TppRowSet = props => {
     const [showExplainer, setShowExplainer] = useState(false);
     const partyFreqs = [[0, props.forecast.tppFrequencies]];
     partyFreqs.push([1, partyFreqs[0][1].map(freq => 100 - freq).reverse()]);
+    const partyResults = props.results === undefined ? [null, null] :
+        [props.results.overall.tpp, 100 - props.results.overall.tpp];
     const maxVoteTotal = Math.max(Math.max(...partyFreqs[0][1]), Math.max(...partyFreqs[1][1]));
     const minVoteTotal = Math.min(Math.min(...partyFreqs[0][1]), Math.min(...partyFreqs[1][1]));
     const firstHigher = partyFreqs[0][1][7] > partyFreqs[1][1][7];
@@ -137,12 +139,14 @@ const TppRowSet = props => {
                           freqSet={partyFreqs[firstHigher ? 0 : 1]}
                           maxVoteTotal={maxVoteTotal}
                           minVoteTotal={minVoteTotal}
-                          windowWidth={props.windowWidth} />
+                          windowWidth={props.windowWidth}
+                          result={partyResults[firstHigher ? 0 : 1]} />
             <VoteShareRow forecast={props.forecast}
                           freqSet={partyFreqs[firstHigher ? 1 : 0]}
                           maxVoteTotal={maxVoteTotal}
                           minVoteTotal={minVoteTotal}
-                          windowWidth={props.windowWidth} />
+                          windowWidth={props.windowWidth}
+                          result={partyResults[firstHigher ? 1 : 0]} />
         </>
     )
 }
@@ -251,7 +255,7 @@ const VoteTotals = props => {
                         showExplainer && <MainExplainer />
                     }
                     <StandardErrorBoundary>
-                        <TppRowSet forecast={props.forecast} windowWidth={props.windowWidth} />
+                        <TppRowSet forecast={props.forecast} results={props.results} windowWidth={props.windowWidth} />
                     </StandardErrorBoundary>
                     {   
                         (props.mode !== "live" || props.code !== "2022sa") &&

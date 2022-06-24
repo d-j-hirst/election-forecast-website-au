@@ -33,7 +33,7 @@ const ProbBar = props => {
         left: leftVal,
         top: '10px',
         position: 'absolute'
-    }
+    };
     // this class and its div works around a difficulty in CSS: the tooltip is placed at the
     // closest positioned ancestor, but an absolute-position div is not considered "positioned"
     // for this purpose, so this style creates a "dummy" div that covers exactly the same area
@@ -42,7 +42,7 @@ const ProbBar = props => {
         position: 'relative',
         width: "100%",
         height: "100%"
-    }
+    };
     const offsetFromMid = pos - props.midThreshold;
     const barClass = jsonMap(classes, Math.abs(offsetFromMid));
 
