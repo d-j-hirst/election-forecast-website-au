@@ -74,6 +74,7 @@ const FpRowSet = props => {
     const freqs = props.forecast.fpFrequencies.sort((el1, el2) => {
         return el2[1][7] - el1[1][7];
     });
+    const results = freqs.map(freq => props.results.overall.fp[jsonMap(props.forecast.partyAbbr, freq[0])]);
     const maxVoteTotal = Math.max(...freqs.map(el => Math.max(...el[1])));
     return (
         <>
@@ -87,9 +88,10 @@ const FpRowSet = props => {
             {freqs.map((freqSet, index) => 
                 <VoteShareRow forecast={props.forecast}
                               freqSet={freqSet}
+                              key={index}
                               maxVoteTotal={maxVoteTotal}
                               minVoteTotal={0}
-                              key={index}
+                              result={results[index]}
                               windowWidth={props.windowWidth}
                 />)}
         </>
@@ -260,7 +262,7 @@ const VoteTotals = props => {
                     {   
                         (props.mode !== "live" || props.code !== "2022sa") &&
                         <StandardErrorBoundary>
-                            <FpRowSet forecast={props.forecast} windowWidth={props.windowWidth} />
+                            <FpRowSet forecast={props.forecast} results={props.results} windowWidth={props.windowWidth} />
                         </StandardErrorBoundary>
                     }
                     {

@@ -99,7 +99,8 @@ const ProbBarResult = props => {
         width: "100%",
         height: "100%"
     };
-    const tooltipText = 'some tooltip text';
+    const isPercentage = props.valType === undefined || props.valType === "percentage";
+    const tooltipText = `Final result: ${Number((props.result)).toFixed(isPercentage ? 2 : 0)}${isPercentage ? '%' : ''}`;
     return (
         <div style={thisStyle}>
             <TooltipWrapper tooltipText={tooltipText} placement="top">
@@ -145,20 +146,21 @@ const ProbBarDist = props => {
         <div style={voteDistStyle}>
             {bars.map((bar, index) => {
                 return <ProbBar bar={bar}
-                                partyAbbr={props.partyAbbr}
-                                scalingFactor={scalingFactor}
-                                visualOffset={visualOffset}
-                                midThreshold={midThreshold}
-                                pluralNoun={props.pluralNoun}
-                                valType={props.valType}
-                                thresholdLevels={props.thresholdLevels}
                                 key={index}
+                                midThreshold={midThreshold}
+                                partyAbbr={props.partyAbbr}
+                                pluralNoun={props.pluralNoun}
+                                scalingFactor={scalingFactor}
+                                thresholdLevels={props.thresholdLevels}
+                                valType={props.valType}
+                                visualOffset={visualOffset}
                        />
             })}
             {
                 props.result !== null && props.result !== undefined &&
                 <ProbBarResult result={props.result}
                                scalingFactor={scalingFactor}
+                               valType={props.valType}
                                visualOffset={visualOffset}
                 />
             }
