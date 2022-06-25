@@ -36,6 +36,7 @@ const partyCategory = (party, forecast) => {
 }
 
 const SeatRow = props => {
+
     const [ showMore, setShowMore] = useState(false);
 
     const moreHandler = () => setShowMore(!showMore);
@@ -97,7 +98,7 @@ const SeatRow = props => {
         </ListGroup.Item>
         {
             showMore &&
-            <SeatMore index={props.index} forecast={props.forecast} windowWidth={props.windowWidth} mode={props.mode}
+            <SeatMore index={props.index} forecast={props.forecast} windowWidth={props.windowWidth} mode={props.mode} result={props.result}
             election={props.election} />
         }
         </>
@@ -150,6 +151,10 @@ const SeatFpSection = props => {
     sortedFreqs = sortedFreqs.filter(
         e => props.mode !== "live" || e[0] < 0 || e[0] > 1
     )
+
+    const results = props.result === undefined ? undefined :
+        sortedFreqs.map(freq => props.result.fp[jsonMap(props.forecast.partyAbbr, freq[0])]);
+
     return (
         <>
             <ListGroup.Item className={styles.seatsSubheading}>
@@ -173,6 +178,7 @@ const SeatFpSection = props => {
                                 minVoteTotal={0}
                                 key={`fp${seatName}a${index}`}
                                 index={`fp${seatName}a${index}`}
+                                result={results[index]}
                                 windowWidth={props.windowWidth}
                     />
                 )
@@ -188,9 +194,6 @@ const SeatFpSection = props => {
 
 const SeatFpRow = props => {
     const partyAbbr = jsonMap(props.forecast.partyAbbr, props.freqSet[0]);
-    console.log(props.forecast.partyAbbr);
-    console.log(props.freqSet[0]);
-    console.log(partyAbbr);
     const thresholds = [[0,2,0],[2,4,1],[4,6,2],[6,8,3],[8,10,4],[10,12,5],[12,14,6]];
     return (
         <ListGroup.Item className={styles.seatsSubitem}>
@@ -209,6 +212,7 @@ const SeatFpRow = props => {
                          maxVoteTotal={props.maxVoteTotal}
                          thresholdLevels={props.forecast.voteTotalThresholds}
                          pluralNoun="vote totals"
+                         result={props.result}
                          valType="percentage"
                          width={Math.min(props.windowWidth - 70, 450)}
             />
@@ -421,7 +425,7 @@ const SeatMore = props => {
             <SeatWinsSection forecast={props.forecast} index={props.index} />
             {(props.mode !== "live" || props.election !== "2022sa") &&
                 <>
-                    <SeatFpSection forecast={props.forecast} index={props.index} windowWidth={props.windowWidth} mode={props.mode} />
+                    <SeatFpSection forecast={props.forecast} index={props.index} result={props.result} windowWidth={props.windowWidth} mode={props.mode} />
                     <SeatTcpSection forecast={props.forecast} index={props.index} windowWidth={props.windowWidth} />
                 </>
             }
@@ -636,13 +640,15 @@ const Seats = props => {
                         </ListGroup.Item>
                         {
                             sortedIndices.map(index =>
-                                <SeatRow forecast={props.forecast}
+                                <SeatRow 
+                                        archiveId={props.archiveId}
                                         election={props.election}
-                                        mode={props.mode}
+                                        forecast={props.forecast}
                                         index={index}
                                         key={props.forecast.seatNames[index]}
-                                        windowWidth={props.windowWidth}
-                                        archiveId={props.archiveId} />
+                                        mode={props.mode}
+                                        result={props.results.seats[props.forecast.seatNames[index]]}
+                                        windowWidth={props.windowWidth} />
                             )
                         }
                     </ListGroup>

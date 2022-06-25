@@ -10,6 +10,7 @@ party_convert = {
         'Liberal': 'LNP',
         'National': 'LNP',
         'Liberal National (Qld)': 'LNP',
+        'Liberal National': 'LNP',
         'Coalition': 'LNP',
         'Country Liberal (NT)': 'LNP',
         'Greens': 'GRN',

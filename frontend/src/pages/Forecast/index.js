@@ -152,7 +152,7 @@ const Forecast = () => {
                                 <History election={code} mode={mode} forecast={forecast} windowWidth={windowDimensions.width} />
                             </StandardErrorBoundary>
                             <StandardErrorBoundary>
-                                <Seats election={code} mode={mode} forecast={forecast} windowWidth={windowDimensions.width} />
+                                <Seats election={code} mode={mode} forecast={forecast} windowWidth={windowDimensions.width} results={resultsValid ? results : null} />
                             </StandardErrorBoundary>
                         </>
                     }
