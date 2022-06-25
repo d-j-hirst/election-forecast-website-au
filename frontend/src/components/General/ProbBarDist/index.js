@@ -79,17 +79,28 @@ const adjustFreqs = (freqs, thresholds) => {
 }
 
 const ProbBarResult = props => {
-    const width = 6;
-    const leftVal = Math.floor((props.result - props.visualOffset) * props.scalingFactor - width / 2).toString() + 'px';
+    const width = 2;
+    const left = Math.floor((props.result - props.visualOffset) * props.scalingFactor - width / 2);
+    const leftVal = left.toString() + 'px';
     const widthVal = width.toString() + 'px';
+    const altLeftVal = (left - 3).toString() + 'px';
+    const altWidthVal = (width + 6).toString() + 'px';
     const thisStyle = {
-        height: '20px',
+        height: '10px',
         width: widthVal,
         left: leftVal,
-        top: '5px',
+        top: '10px',
         position: 'absolute',
-        background: 'black'
+        backgroundColor: 'black',
+        border: '1px solid black'
     };
+    const topStyle = structuredClone(thisStyle);
+    topStyle.left = altLeftVal;
+    topStyle.width = altWidthVal;
+    topStyle.height = '6px';
+    topStyle.top = '4px';
+    const bottomStyle = structuredClone(topStyle);
+    bottomStyle.top = '20px';
     // this class and its div works around a difficulty in CSS: the tooltip is placed at the
     // closest positioned ancestor, but an absolute-position div is not considered "positioned"
     // for this purpose, so this style creates a "dummy" div that covers exactly the same area
@@ -102,11 +113,20 @@ const ProbBarResult = props => {
     const isPercentage = props.valType === undefined || props.valType === "percentage";
     const tooltipText = `Final result: ${Number((props.result)).toFixed(isPercentage ? 2 : 0)}${isPercentage ? '%' : ''}`;
     return (
+        <>
         <div style={thisStyle}>
+        </div>
+        <div style={topStyle}>
             <TooltipWrapper tooltipText={tooltipText} placement="top">
                 <div style={tooltipHolderStyle} />
             </TooltipWrapper>
         </div>
+        <div style={bottomStyle}>
+            <TooltipWrapper tooltipText={tooltipText} placement="bottom">
+                <div style={tooltipHolderStyle} />
+            </TooltipWrapper>
+        </div>
+        </>
     )
 }
 

@@ -17,11 +17,14 @@ import styles from './SeatTotals.module.css';
 const SeatsRow = props => {
     let partyAbbr = jsonMap(props.forecast.partyAbbr, props.freqSet[0]);
     const partyName = jsonMap(props.forecast.partyName, props.freqSet[0]);
+    let result = props.result;
     if (partyName === "Emerging Ind") {
         partyAbbr = "IndX";
+        result = undefined;
     }
     if (partyName === "Emerging Party") {
         partyAbbr = "EOth";
+        result = undefined;
     }
     const thresholds = [[0,2,0],[2,4,1],[4,6,2],[6,8,3],[8,10,4],[10,12,5],[12,14,6]];
     return (
@@ -41,6 +44,7 @@ const SeatsRow = props => {
                          maxVoteTotal={props.maxVoteTotal}
                          thresholdLevels={props.forecast.voteTotalThresholds}
                          pluralNoun="seat totals"
+                         result={result}
                          valType="integer"
                          adjust={true}
                          width={Math.min(props.windowWidth - 70, 350)}
@@ -54,15 +58,19 @@ const SeatsRowSet = props => {
         return el2[1][7] - el1[1][7];
     });
     freqs = freqs.filter(a => a[1][a[1].length-1] > 0);
+    console.log(freqs);
+    const results = props.results === undefined ? undefined :
+        freqs.map(freq => props.results.overall.seats[jsonMap(props.forecast.partyAbbr, freq[0])]);
     const maxVoteTotal = Math.max(...freqs.map(el => Math.max(...el[1])));
     return (
         <>
             {freqs.map((freqSet, index) => 
                 <SeatsRow forecast={props.forecast}
                           freqSet={freqSet}
+                          key={index}
                           maxVoteTotal={maxVoteTotal}
                           minVoteTotal={0}
-                          key={index}
+                          result={results[index]}
                           windowWidth={props.windowWidth}
                 />)}
         </>
@@ -144,7 +152,7 @@ const SeatTotals = props => {
                     }
                     <MajorityRow election={props.election} />
                     <StandardErrorBoundary>
-                        <SeatsRowSet forecast={props.forecast} windowWidth={props.windowWidth} />
+                        <SeatsRowSet forecast={props.forecast} results={props.results} windowWidth={props.windowWidth} />
                     </StandardErrorBoundary>
                 </ListGroup>
             </Card.Body>

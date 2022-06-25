@@ -19,19 +19,30 @@ function renderTooltip(props) {
     );
 }
 
-const TooltipWrapper = props => (
-    <>
-        <OverlayTrigger
-            delay={{ hide: 0, show: 250 }}
-            popperConfig={{tooltipText: props.tooltipText}}
-            overlay={renderTooltip}
-            placement={props.placement === undefined ? "top" : props.placement}
-        >
-        <span role="button">
-            {props.children}
-        </span>
-        </OverlayTrigger>
-    </>
-);
+const TooltipWrapper = props => {
+    const placement = props.placement === undefined ? "top" : props.placement;
+    const offset = placement === "top" ? [0, 2] : placement === "bottom" ? [0, 10] : [0, 0];
+    return (
+        <>
+            <OverlayTrigger
+                delay={{ hide: 0, show: 250 }}
+                popperConfig={{tooltipText: props.tooltipText, modifiers: [
+                    { // this offset is needed to avoid flickering when the cursor is on the edge of the element
+                    name: 'offset',
+                    options: {
+                        offset: offset,
+                    },
+                    },
+                ],}}
+                overlay={renderTooltip}
+                placement={props.placement === undefined ? "top" : props.placement}
+            >
+            <span role="button">
+                {props.children}
+            </span>
+            </OverlayTrigger>
+        </>
+    )
+};
 
 export default TooltipWrapper;

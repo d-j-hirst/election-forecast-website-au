@@ -74,7 +74,8 @@ const FpRowSet = props => {
     const freqs = props.forecast.fpFrequencies.sort((el1, el2) => {
         return el2[1][7] - el1[1][7];
     });
-    const results = freqs.map(freq => props.results.overall.fp[jsonMap(props.forecast.partyAbbr, freq[0])]);
+    const results = props.results === undefined ? undefined :
+        freqs.map(freq => props.results.overall.fp[jsonMap(props.forecast.partyAbbr, freq[0])]);
     const maxVoteTotal = Math.max(...freqs.map(el => Math.max(...el[1])));
     return (
         <>

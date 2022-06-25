@@ -13,16 +13,16 @@ const Archive = () => {
     const { code, id } = useParams();
     const [ forecast, setForecast] = useState({});
     const [ forecastValid, setForecastValid] = useState(false);
+    const [ results, setResults] = useState({});
+    const [ resultsValid, setResultsValid] = useState(false);
     const windowDimensions = useWindowDimensions();
-
-    
 
     useEffect(() => {
         setForecastValid(false);
+        setResultsValid(false);
 
         const getArchive = () => {
             const url = `forecast-api/election-archive/${code}/${id}`;
-            console.log(url);
             return getDirect(url).then(
                 resp => {
                     if (!resp.ok) throw Error("Couldn't find election data");
@@ -31,13 +31,54 @@ const Archive = () => {
             );
         }
 
+        const getElectionResults = () => {
+            let requestUri = `forecast-api/election-results/${code}`;
+            const cached_id = localStorage.getItem('cachedResultsVersion');
+            if (cached_id !== null) requestUri += `/${cached_id}`;
+            return getDirect(requestUri).then(
+                resp => {
+                    if (!resp.ok) throw Error("Couldn't find election results data");
+                    return resp.data;
+                }
+            );
+        }
+
         const fetchArchive = () => {
+
+            if (code === localStorage.getItem('cachedResultsCode')) {
+                const tempResults = JSON.parse(localStorage.getItem('cachedResults'));
+                setResults(tempResults);
+                setResultsValid(true);
+            }
+
             getArchive().then(
                 data => {
                     setForecast(data.report);
                     const modeNames = {RF: "general forecast", NC: "nowcast", LF: "live forecast"};
                     document.title = `AEF - Archived ${data.report.electionName} ${modeNames[data.report.reportMode]}`;
                     setForecastValid(true);
+                }
+            ).catch(
+                e => {
+                    console.log(e);
+                }
+            );
+
+            getElectionResults().then(
+                data => {
+                    if (data.new && data.results.length === 0) {
+                        // No results available
+                        return;
+                    }
+                    if (data.new === false) {
+                        data['results'] = JSON.parse(localStorage.getItem('cachedResults'));
+                    } else {
+                        localStorage.setItem('cachedResults', JSON.stringify(data.results));
+                        localStorage.setItem('cachedResultsVersion', String(data.version));
+                        localStorage.setItem('cachedResultsCode', String(code));
+                    }
+                    setResults(data.results);
+                    setResultsValid(true);
                 }
             ).catch(
                 e => {
@@ -72,7 +113,7 @@ const Archive = () => {
                             <FormationOfGovernment election={code} mode={mode} forecast={forecast} windowWidth={windowDimensions.width} />
                         </StandardErrorBoundary>
                         <StandardErrorBoundary>
-                            <VoteTotals election={code} mode={mode} forecast={forecast} windowWidth={windowDimensions.width} />
+                            <VoteTotals election={code} mode={mode} forecast={forecast} windowWidth={windowDimensions.width} results={resultsValid ? results : null} />
                         </StandardErrorBoundary>
                         <StandardErrorBoundary>
                             <SeatTotals election={code} mode={mode} forecast={forecast} windowWidth={windowDimensions.width} />
