@@ -13,6 +13,7 @@ party_convert = {
         'Liberal National': 'LNP',
         'Coalition': 'LNP',
         'Country Liberal (NT)': 'LNP',
+        'Country Liberal': 'LNP',
         'Greens': 'GRN',
         'One Nation': 'ONP',
         'United Australia Party': 'UAP',
@@ -164,7 +165,7 @@ def fetch_seat_results(election: Election, urls):
             seat_text = caption_links[1].text.strip()
             print(f'{caption_links[0].text} {caption_links[1].text}')
 
-            seat_results = {'fp': {}, 'tpp': {}}
+            seat_results = {'fp': {}, 'tcp': {}}
             doing_tcp = 0
             rows = table.find_all('tr')
             found_ind = 0
@@ -193,7 +194,7 @@ def fetch_seat_results(election: Election, urls):
                 if name == 'National' and region == 'wa': code = 'NP'
                 vote_share = float(cols[4].text)
                 if doing_tcp == 1:
-                    seat_results['tpp'][code] = vote_share
+                    seat_results['tcp'][code] = vote_share
                 elif doing_tcp == 0:
                     if code not in seat_results['fp']:
                         seat_results['fp'][code] = vote_share
@@ -207,7 +208,7 @@ def fetch_seat_results(election: Election, urls):
             if (others): seat_results['fp']['OTH'] = others
 
             print(seat_results['fp'])
-            print(seat_results['tpp'])
+            print(seat_results['tcp'])
             all_seat_results[caption_links[1].text] = seat_results
             break
     return all_seat_results

@@ -172,7 +172,7 @@ const SeatFpSection = props => {
             }
             {
                 sortedFreqs.map((freqSet, index) =>
-                    <SeatFpRow forecast={props.forecast}
+                    <SeatVoteRow forecast={props.forecast}
                                 freqSet={freqSet}
                                 maxVoteTotal={maxFpTotal}
                                 minVoteTotal={0}
@@ -192,7 +192,7 @@ const SeatFpSection = props => {
     )
 }
 
-const SeatFpRow = props => {
+const SeatVoteRow = props => {
     const partyAbbr = jsonMap(props.forecast.partyAbbr, props.freqSet[0]);
     const thresholds = [[0,2,0],[2,4,1],[4,6,2],[6,8,3],[8,10,4],[10,12,5],[12,14,6]];
     return (
@@ -273,11 +273,18 @@ const SeatTcpSection = props => {
     const hideTcps = (props.forecast.seatHideTcps !== undefined ? props.forecast.seatHideTcps[props.index] : false);
     const seatName = props.forecast.seatNames[props.index];
     const tcpFreqs = deepCopy(props.forecast.seatTcpBands[props.index]);
+    const tcp = props.result === undefined ? undefined : props.result.tcp;
+    const abbr = a => a >= 0 ? jsonMap(props.forecast.partyAbbr, a) : 'IND*';
+    const tcpMatch = (t, a) => Object.hasOwn(t, abbr(a[0])) && Object.hasOwn(t, abbr(a[1]));
     const sortedTcpFreqs = tcpFreqs
         .map((e, i) => e.concat(props.forecast.seatTcpScenarios[props.index][i][1]))
-        .filter(e => e[2] > 0.1)
+        .filter(e => e[2] > 0.1 || tcpMatch(tcp, e[0]))
         .sort((e1, e2) => e2[2] - e1[2]);
     const someExcluded = sortedTcpFreqs.length < tcpFreqs.length;
+
+    const results = props.result === undefined ? undefined : 
+        sortedTcpFreqs.map(a => tcpMatch(tcp, a[0]) ? tcp[abbr(a[0][0])] : null);
+        
     return (
         <>
             {!hideTcps && <>
@@ -292,6 +299,7 @@ const SeatTcpSection = props => {
                     sortedTcpFreqs.map((freqSet, index) =>
                         <SeatTcpRowPair forecast={props.forecast}
                                         freqSet={freqSet}
+                                        result={results[index]}
                                         key={`tcp${seatName}a${index}`}
                                         windowWidth={props.windowWidth}
                         />
@@ -325,6 +333,7 @@ const SeatTcpRowPair = props => {
     let partyAbbr1 = jsonMap(props.forecast.partyAbbr, freqSet1[0]);
     if (freqSet1[0] === -2) partyAbbr1 = "IndX";
     if (freqSet1[0] === -3) partyAbbr1 = "EOth";
+
     return (
         <>
             <ListGroup.Item className={styles.seatsTcpScenarioHeading}>
@@ -334,14 +343,16 @@ const SeatTcpRowPair = props => {
                 { } - probability this scenario occurs: { }
                 <strong><TooltipPercentage value={props.freqSet[2] * 100} /></strong>
             </ListGroup.Item>
-            <SeatFpRow forecast={props.forecast}
+            <SeatVoteRow forecast={props.forecast}
                     freqSet={freqSet0}
+                    result={props.result}
                     minVoteTotal={minVoteTotal}
                     maxVoteTotal={maxVoteTotal}
                     windowWidth={props.windowWidth}
             />
-            <SeatFpRow forecast={props.forecast}
+            <SeatVoteRow forecast={props.forecast}
                     freqSet={freqSet1}
+                    result={props.result !== null ? 100 - props.result : null}
                     minVoteTotal={minVoteTotal}
                     maxVoteTotal={maxVoteTotal}
                     windowWidth={props.windowWidth}
@@ -426,7 +437,7 @@ const SeatMore = props => {
             {(props.mode !== "live" || props.election !== "2022sa") &&
                 <>
                     <SeatFpSection forecast={props.forecast} index={props.index} result={props.result} windowWidth={props.windowWidth} mode={props.mode} />
-                    <SeatTcpSection forecast={props.forecast} index={props.index} windowWidth={props.windowWidth} />
+                    <SeatTcpSection forecast={props.forecast} index={props.index} result={props.result} windowWidth={props.windowWidth} />
                 </>
             }
         </>
