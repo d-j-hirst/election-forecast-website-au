@@ -18,14 +18,9 @@ const SeatsRow = props => {
     let partyAbbr = jsonMap(props.forecast.partyAbbr, props.freqSet[0]);
     const partyName = jsonMap(props.forecast.partyName, props.freqSet[0]);
     let result = props.result;
-    if (partyName === "Emerging Ind") {
-        partyAbbr = "IndX";
-        result = undefined;
-    }
-    if (partyName === "Emerging Party") {
-        partyAbbr = "EOth";
-        result = undefined;
-    }
+    if (partyName === "Emerging Ind") partyAbbr = "IndX";
+    if (partyName === "Emerging Party") partyAbbr = "EOth";
+    if (props.freqSet[0] < -1) result = null;
     const thresholds = [[0,2,0],[2,4,1],[4,6,2],[6,8,3],[8,10,4],[10,12,5],[12,14,6]];
     return (
         <ListGroup.Item className={styles.seatTotalsItem}>
@@ -58,7 +53,7 @@ const SeatsRowSet = props => {
         return el2[1][7] - el1[1][7];
     });
     freqs = freqs.filter(a => a[1][a[1].length-1] > 0);
-    const results = props.results === undefined ? undefined :
+    const results = props.results === null ? null :
         freqs.map(freq => props.results.overall.seats[jsonMap(props.forecast.partyAbbr, freq[0])]);
     const maxVoteTotal = Math.max(...freqs.map(el => Math.max(...el[1])));
     return (
@@ -69,7 +64,7 @@ const SeatsRowSet = props => {
                           key={index}
                           maxVoteTotal={maxVoteTotal}
                           minVoteTotal={0}
-                          result={results[index]}
+                          result={props.results === null ? null : results[index]}
                           windowWidth={props.windowWidth}
                 />)}
         </>

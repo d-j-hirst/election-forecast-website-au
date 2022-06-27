@@ -152,7 +152,7 @@ const SeatFpSection = props => {
         e => props.mode !== "live" || e[0] < 0 || e[0] > 1
     )
 
-    const results = props.result === undefined ? undefined :
+    const results = props.result === null ? null :
         sortedFreqs.map(freq => props.result.fp[jsonMap(props.forecast.partyAbbr, freq[0])]);
 
     return (
@@ -273,7 +273,7 @@ const SeatTcpSection = props => {
     const hideTcps = (props.forecast.seatHideTcps !== undefined ? props.forecast.seatHideTcps[props.index] : false);
     const seatName = props.forecast.seatNames[props.index];
     const tcpFreqs = deepCopy(props.forecast.seatTcpBands[props.index]);
-    const tcp = props.result === undefined ? undefined : props.result.tcp;
+    const tcp = props.result === null ? null : props.result.tcp;
     const abbr = a => a >= 0 ? jsonMap(props.forecast.partyAbbr, a) : 'IND*';
     const tcpMatch = (t, a) => Object.hasOwn(t, abbr(a[0])) && Object.hasOwn(t, abbr(a[1]));
     const sortedTcpFreqs = tcpFreqs
@@ -282,7 +282,7 @@ const SeatTcpSection = props => {
         .sort((e1, e2) => e2[2] - e1[2]);
     const someExcluded = sortedTcpFreqs.length < tcpFreqs.length;
 
-    const results = props.result === undefined ? undefined : 
+    const results = props.result === null ? null : 
         sortedTcpFreqs.map(a => tcpMatch(tcp, a[0]) ? tcp[abbr(a[0][0])] : null);
         
     return (

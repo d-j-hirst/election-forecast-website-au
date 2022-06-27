@@ -16,10 +16,13 @@ const SeatDetails = () => {
     const [ forecast, setForecast] = useState({});
     const [ seatIndex, setSeatIndex] = useState(-1);
     const [ forecastValid, setForecastValid] = useState(false);
+    const [ results, setResults] = useState({});
+    const [ resultsValid, setResultsValid] = useState(false);
     const windowDimensions = useWindowDimensions();
 
     useEffect(() => {
         setForecastValid(false);
+        setResultsValid(false);
 
         const getElectionSummary = () => {
             let requestUri = `forecast-api/election-summary/${code}/${mode}`;
@@ -28,6 +31,18 @@ const SeatDetails = () => {
             return getDirect(requestUri).then(
                 resp => {
                     if (!resp.ok) throw Error("Couldn't find election data");
+                    return resp.data;
+                }
+            );
+        }
+
+        const getElectionResults = () => {
+            let requestUri = `forecast-api/election-results/${code}`;
+            const cached_id = localStorage.getItem('cachedResultsVersion');
+            if (cached_id !== null) requestUri += `/${cached_id}`;
+            return getDirect(requestUri).then(
+                resp => {
+                    if (!resp.ok) throw Error("Couldn't find election results data");
                     return resp.data;
                 }
             );
@@ -64,13 +79,33 @@ const SeatDetails = () => {
                     console.log(e);
                 }
             );
+
+            getElectionResults().then(
+                data => {
+                    if (data.new && data.results.length === 0) {
+                        // No results available
+                        return;
+                    }
+                    if (data.new === false) {
+                        data['results'] = JSON.parse(localStorage.getItem('cachedResults'));
+                    } else {
+                        localStorage.setItem('cachedResults', JSON.stringify(data.results));
+                        localStorage.setItem('cachedResultsVersion', String(data.version));
+                        localStorage.setItem('cachedResultsCode', String(code));
+                    }
+                    setResults(data.results);
+                    setResultsValid(true);
+                }
+            ).catch(
+                e => {
+                    console.log(e);
+                }
+            );
         }
 
         fetchElectionSummary();
         window.scrollTo(0, 0)
     }, [code, mode, seat, seatIndex]);
-    
-    console.log(`forecastValid: ${forecastValid}`);
 
     return (
         <div className={styles.site}>
@@ -92,6 +127,7 @@ const SeatDetails = () => {
                                                 election={code}
                                                 mode={mode}
                                                 index={seatIndex}
+                                                results={resultsValid ? results : null}
                                                 windowWidth={windowDimensions.width}
                                 />
                             </StandardErrorBoundary>

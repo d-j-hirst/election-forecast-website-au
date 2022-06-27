@@ -91,7 +91,7 @@ const Archive = () => {
     }, [code, id]);
 
     
-    const modeNames = {FC: "regular", NC: "nowcast", LF: "live"};
+    const modeNames = {RF: "regular", NC: "nowcast", LF: "live"};
     const mode = forecastValid ? modeNames[forecast.reportMode] : ""
 
     return (
@@ -116,10 +116,10 @@ const Archive = () => {
                             <VoteTotals election={code} mode={mode} forecast={forecast} windowWidth={windowDimensions.width} results={resultsValid ? results : null} />
                         </StandardErrorBoundary>
                         <StandardErrorBoundary>
-                            <SeatTotals election={code} mode={mode} forecast={forecast} windowWidth={windowDimensions.width} />
+                            <SeatTotals election={code} mode={mode} forecast={forecast} windowWidth={windowDimensions.width} results={resultsValid ? results : null} />
                         </StandardErrorBoundary>
                         <StandardErrorBoundary>
-                            <Seats election={code} mode={mode} forecast={forecast} archiveId={id} windowWidth={windowDimensions.width} />
+                            <Seats election={code} mode={mode} forecast={forecast} archiveId={id} windowWidth={windowDimensions.width} results={resultsValid ? results : null} />
                         </StandardErrorBoundary>
                     </>
                 }

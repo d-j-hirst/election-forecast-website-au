@@ -116,6 +116,10 @@ const SeatFpSection = props => {
     sortedFreqs = sortedFreqs.filter(
         e => props.mode !== "live" || e[0] < 0 || e[0] > 1
     )
+
+    const results = props.result === null ? null :
+        sortedFreqs.map(freq => props.result.fp[jsonMap(props.forecast.partyAbbr, freq[0])]);
+
     return (
         <>
             <ListGroup.Item className={styles.seatsSubheading}>
@@ -133,13 +137,14 @@ const SeatFpSection = props => {
             }
             {
                 sortedFreqs.map((freqSet, index) =>
-                    <SeatFpRow forecast={props.forecast}
-                                freqSet={freqSet}
-                                maxVoteTotal={maxFpTotal}
-                                minVoteTotal={0}
-                                key={`fpb${index}`}
-                                index={`fpb${index}`}
-                                windowWidth={props.windowWidth}
+                    <SeatVoteRow forecast={props.forecast}
+                               freqSet={freqSet}
+                               key={`fpb${index}`}
+                               index={`fpb${index}`}
+                               maxVoteTotal={maxFpTotal}
+                               minVoteTotal={0}
+                               result={results !== null ? results[index] : null}
+                               windowWidth={props.windowWidth}
                     />
                 )
             }
@@ -147,10 +152,11 @@ const SeatFpSection = props => {
     )
 }
 
-const SeatFpRow = props => {
+const SeatVoteRow = props => {
     let partyAbbr = jsonMap(props.forecast.partyAbbr, props.freqSet[0]);
     if (props.freqSet[0] === -2) partyAbbr = "IndX";
     if (props.freqSet[0] === -3) partyAbbr = "EOth";
+    const result = props.freqSet[0] < -1 ? null : props.result;
     const thresholds = [[0,2,0],[2,4,1],[4,6,2],[6,8,3],[8,10,4],[10,12,5],[12,14,6]];
     return (
         <ListGroup.Item className={styles.seatsSubitem}>
@@ -169,6 +175,7 @@ const SeatFpRow = props => {
                         maxVoteTotal={props.maxVoteTotal}
                         thresholdLevels={props.forecast.voteTotalThresholds}
                         pluralNoun="vote totals"
+                        result={result}
                         valType="percentage"
                         width={Math.min(props.windowWidth - 70, 450)}
             />
@@ -230,9 +237,16 @@ const SeatTcpSection = props => {
     const hideTcps = (props.forecast.seatHideTcps !== undefined ? props.forecast.seatHideTcps[props.index] : false);
     const seatName = props.forecast.seatNames[props.index];
     const tcpFreqs = deepCopy(props.forecast.seatTcpBands[props.index]);
+    const tcp = props.result === null ? null : props.result.tcp;
+    const abbr = a => a >= 0 ? jsonMap(props.forecast.partyAbbr, a) : 'IND*';
+    const tcpMatch = (t, a) => Object.hasOwn(t, abbr(a[0])) && Object.hasOwn(t, abbr(a[1]));
     const sortedTcpFreqs = tcpFreqs
         .map((e, i) => e.concat(props.forecast.seatTcpScenarios[props.index][i][1]))
         .sort((e1, e2) => e2[2] - e1[2]);
+
+    const results = props.result === null ? null : 
+        sortedTcpFreqs.map(a => tcpMatch(tcp, a[0]) ? tcp[abbr(a[0][0])] : null);
+
     return (
         <>
             {!hideTcps && <>
@@ -248,7 +262,7 @@ const SeatTcpSection = props => {
                         <SeatTcpRowPair forecast={props.forecast}
                                         freqSet={freqSet}
                                         key={`tcpb${index}`}
-                                        index={`tcpb${index}`}
+                                        result={props.result === null ? null : results[index]}
                                         windowWidth={props.windowWidth}
                         />
                     )
@@ -285,19 +299,19 @@ const SeatTcpRowPair = props => {
                 { } - probability this scenario occurs: { }
                 <strong><TooltipPercentage value={props.freqSet[2] * 100} /></strong>
             </ListGroup.Item>
-            <SeatFpRow forecast={props.forecast}
+            <SeatVoteRow forecast={props.forecast}
                     freqSet={freqSet0}
+                    result={props.result}
                     minVoteTotal={minVoteTotal}
                     maxVoteTotal={maxVoteTotal}
                     windowWidth={props.windowWidth}
-                    index={`${props.index}b`}
             />
-            <SeatFpRow forecast={props.forecast}
+            <SeatVoteRow forecast={props.forecast}
                     freqSet={freqSet1}
+                    result={props.result === null ? null : 100 - props.result}
                     minVoteTotal={minVoteTotal}
                     maxVoteTotal={maxVoteTotal}
                     windowWidth={props.windowWidth}
-                    index={`${props.index}c`}
             />
         </>
     );
@@ -386,6 +400,7 @@ const SeatDetailBody = props => {
     const [showExplainer, setShowExplainer] = useState(false);
 
     const seatName = props.forecast.seatNames[props.index];
+    const result = props.results !== null ? props.results.seats[seatName] : null;
 
     return (
         <Card className={styles.summary}>
@@ -422,6 +437,7 @@ const SeatDetailBody = props => {
                                     election={props.election}
                                     mode={props.mode}
                                     index={props.index}
+                                    result={result}
                                     windowWidth={props.windowWidth}
                         />
                     </StandardErrorBoundary>
@@ -431,6 +447,7 @@ const SeatDetailBody = props => {
                                 election={props.election}
                                 mode={props.mode}
                                 index={props.index}
+                                result={result}
                                 windowWidth={props.windowWidth}
                     />
                 </StandardErrorBoundary>
