@@ -33,8 +33,9 @@ const partyCategory = (party, forecast) => {
 }
 
 const ReturnToMain = props => {
-    const linkUrl = (props.archiveId !== undefined ?
-        `/archive/${props.election}/${props.archiveId}#seats` :
+    
+    const linkUrl = (props.archive !== undefined ?
+        `/archive/${props.election}/${props.archive}#seats` :
         `/forecast/${props.election}/${props.mode}#seats`);
 
     return (
@@ -413,7 +414,8 @@ const SeatDetailBody = props => {
                     showExplainer && <MainExplainer seatName={seatName} />
                 }
                 <StandardErrorBoundary>
-                    <ReturnToMain election={props.election}
+                    <ReturnToMain archive={props.archive}
+                                  election={props.election}
                                   mode={props.mode} />
                 </StandardErrorBoundary>
                 <StandardErrorBoundary>
