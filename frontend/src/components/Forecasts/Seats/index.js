@@ -196,7 +196,10 @@ const SeatFpSection = props => {
 }
 
 const SeatVoteRow = props => {
-    const partyAbbr = jsonMap(props.forecast.partyAbbr, props.freqSet[0]);
+    let partyAbbr = jsonMap(props.forecast.partyAbbr, props.freqSet[0]);
+    if (props.freqSet[0] === -2) partyAbbr = "IndX";
+    if (props.freqSet[0] === -3) partyAbbr = "EOth";
+    const result = props.freqSet[0] < -1 ? null : props.result;
     const thresholds = [[0,2,0],[2,4,1],[4,6,2],[6,8,3],[8,10,4],[10,12,5],[12,14,6]];
     return (
         <ListGroup.Item className={styles.seatsSubitem}>
@@ -215,7 +218,7 @@ const SeatVoteRow = props => {
                          maxVoteTotal={props.maxVoteTotal}
                          thresholdLevels={props.forecast.voteTotalThresholds}
                          pluralNoun="vote totals"
-                         result={props.result}
+                         result={result}
                          valType="percentage"
                          width={Math.min(props.windowWidth - 70, 450)}
             />
