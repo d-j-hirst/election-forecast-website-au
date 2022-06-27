@@ -16,7 +16,7 @@ const WinnerBar = props => {
         left: leftVal,
         position: 'absolute',
         border: props.bar.eventualWinner ? '2px solid black' : 'none',
-        zIndex: props.bar.eventualWinner ? 1000 : 0
+        zIndex: props.bar.eventualWinner ? 1 : 0
     }
     // this class and its div works around a difficulty in CSS: the tooltip is placed at the
     // closest positioned ancestor, but an absolute-position div is not considered "positioned"
