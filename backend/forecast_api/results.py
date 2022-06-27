@@ -28,6 +28,7 @@ party_convert = {
         'Liberal': 'LNP',
         'Greens': 'GRN',
         'Independents': 'IND',
+        'Independent': 'IND',
     },
 }
 

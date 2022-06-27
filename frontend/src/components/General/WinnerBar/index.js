@@ -9,7 +9,6 @@ const WinnerBar = props => {
     const barClass = bgClass(props.bar.partyAbbr);
     const leftVal = Math.floor(lt).toString() + 'px';
     const widthVal = Math.floor(rt - lt).toString() + 'px';
-    console.log(props.bar);
     const thisStyle = {
         height: '20px',
         top: '5px',
