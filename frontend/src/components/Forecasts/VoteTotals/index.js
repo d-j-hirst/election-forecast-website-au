@@ -37,7 +37,7 @@ const VoteShareRow = props => {
                          maxVoteTotal={props.maxVoteTotal}
                          thresholdLevels={props.forecast.voteTotalThresholds}
                          pluralNoun="vote totals"
-                         result={props.result === undefined ? null : props.result}
+                         result={props.result}
                          valType="percentage"
                          width={Math.min(props.windowWidth - 70, 450)}
             />
@@ -74,7 +74,7 @@ const FpRowSet = props => {
     const freqs = props.forecast.fpFrequencies.sort((el1, el2) => {
         return el2[1][7] - el1[1][7];
     });
-    const results = props.results === undefined ? undefined :
+    const results = props.results === null ? null :
         freqs.map(freq => props.results.overall.fp[jsonMap(props.forecast.partyAbbr, freq[0])]);
     const maxVoteTotal = Math.max(...freqs.map(el => Math.max(...el[1])));
     return (
@@ -92,7 +92,7 @@ const FpRowSet = props => {
                               key={index}
                               maxVoteTotal={maxVoteTotal}
                               minVoteTotal={0}
-                              result={results[index]}
+                              result={results === null ? null : results[index]}
                               windowWidth={props.windowWidth}
                 />)}
         </>
@@ -124,7 +124,7 @@ const TppRowSet = props => {
     const [showExplainer, setShowExplainer] = useState(false);
     const partyFreqs = [[0, props.forecast.tppFrequencies]];
     partyFreqs.push([1, partyFreqs[0][1].map(freq => 100 - freq).reverse()]);
-    const partyResults = props.results === undefined ? [null, null] :
+    const partyResults = props.results === null ? [null, null] :
         [props.results.overall.tpp, 100 - props.results.overall.tpp];
     const maxVoteTotal = Math.max(Math.max(...partyFreqs[0][1]), Math.max(...partyFreqs[1][1]));
     const minVoteTotal = Math.min(Math.min(...partyFreqs[0][1]), Math.min(...partyFreqs[1][1]));

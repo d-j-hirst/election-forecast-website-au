@@ -107,6 +107,8 @@ const SeatDetails = () => {
         window.scrollTo(0, 0)
     }, [code, mode, seat, seatIndex]);
 
+    const effectiveResults = forecast.reportMode !== "NC" && resultsValid ? results : null;
+
     return (
         <div className={styles.site}>
             <Header windowWidth={windowDimensions.width} page={"forecast"} />
@@ -127,7 +129,7 @@ const SeatDetails = () => {
                                                 election={code}
                                                 mode={mode}
                                                 index={seatIndex}
-                                                results={resultsValid ? results : null}
+                                                results={effectiveResults}
                                                 windowWidth={windowDimensions.width}
                                 />
                             </StandardErrorBoundary>

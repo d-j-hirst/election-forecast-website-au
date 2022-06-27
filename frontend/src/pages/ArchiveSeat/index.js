@@ -90,6 +90,8 @@ const SeatDetails = () => {
     }, [code, id, seat]);
 
     const mode = forecastValid ? (forecast.reportMode === "NC" ? "nowcast" : "regular") : ""
+    
+    const effectiveResults = forecast.reportMode !== "NC" && resultsValid ? results : null;
 
     return (
         <div className={styles.site}>
@@ -111,7 +113,7 @@ const SeatDetails = () => {
                                             election={code}
                                             mode={mode}
                                             index={seatIndex}
-                                            results={resultsValid ? results : null}
+                                            results={effectiveResults}
                                             windowWidth={windowDimensions.width}
                             />
                         </StandardErrorBoundary>

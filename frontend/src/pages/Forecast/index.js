@@ -117,6 +117,7 @@ const Forecast = () => {
     if (forecast.reportMode !== undefined && modeNames[forecast.reportMode] !== mode) {
         showForecast = false;
     }
+    const effectiveResults = forecast.reportMode !== "NC" && resultsValid ? results : null;
 
     return (
         <div className={styles.site}>
@@ -143,16 +144,16 @@ const Forecast = () => {
                                 <FormationOfGovernment election={code} mode={mode} forecast={forecast} windowWidth={windowDimensions.width} />
                             </StandardErrorBoundary>
                             <StandardErrorBoundary>
-                                <VoteTotals election={code} mode={mode} forecast={forecast} windowWidth={windowDimensions.width} results={resultsValid ? results : null} />
+                                <VoteTotals election={code} mode={mode} forecast={forecast} windowWidth={windowDimensions.width} results={effectiveResults} />
                             </StandardErrorBoundary>
                             <StandardErrorBoundary>
-                                <SeatTotals election={code} mode={mode} forecast={forecast} windowWidth={windowDimensions.width} results={resultsValid ? results : null} />
+                                <SeatTotals election={code} mode={mode} forecast={forecast} windowWidth={windowDimensions.width} results={effectiveResults} />
                             </StandardErrorBoundary>
                             <StandardErrorBoundary>
                                 <History election={code} mode={mode} forecast={forecast} windowWidth={windowDimensions.width} />
                             </StandardErrorBoundary>
                             <StandardErrorBoundary>
-                                <Seats election={code} mode={mode} forecast={forecast} windowWidth={windowDimensions.width} results={resultsValid ? results : null} />
+                                <Seats election={code} mode={mode} forecast={forecast} windowWidth={windowDimensions.width} results={effectiveResults} />
                             </StandardErrorBoundary>
                         </>
                     }

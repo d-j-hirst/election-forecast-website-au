@@ -239,7 +239,7 @@ const SeatTcpSection = props => {
     const tcpFreqs = deepCopy(props.forecast.seatTcpBands[props.index]);
     const tcp = props.result === null ? null : props.result.tcp;
     const abbr = a => a >= 0 ? jsonMap(props.forecast.partyAbbr, a) : 'IND*';
-    const tcpMatch = (t, a) => Object.hasOwn(t, abbr(a[0])) && Object.hasOwn(t, abbr(a[1]));
+    const tcpMatch = (t, a) => t === null ? false : Object.hasOwn(t, abbr(a[0])) && Object.hasOwn(t, abbr(a[1]));
     const sortedTcpFreqs = tcpFreqs
         .map((e, i) => e.concat(props.forecast.seatTcpScenarios[props.index][i][1]))
         .sort((e1, e2) => e2[2] - e1[2]);

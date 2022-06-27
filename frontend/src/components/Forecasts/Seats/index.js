@@ -178,7 +178,7 @@ const SeatFpSection = props => {
                                 minVoteTotal={0}
                                 key={`fp${seatName}a${index}`}
                                 index={`fp${seatName}a${index}`}
-                                result={results[index]}
+                                result={results === null ? null : results[index]}
                                 windowWidth={props.windowWidth}
                     />
                 )
@@ -275,7 +275,7 @@ const SeatTcpSection = props => {
     const tcpFreqs = deepCopy(props.forecast.seatTcpBands[props.index]);
     const tcp = props.result === null ? null : props.result.tcp;
     const abbr = a => a >= 0 ? jsonMap(props.forecast.partyAbbr, a) : 'IND*';
-    const tcpMatch = (t, a) => Object.hasOwn(t, abbr(a[0])) && Object.hasOwn(t, abbr(a[1]));
+    const tcpMatch = (t, a) => t === null ? false : Object.hasOwn(t, abbr(a[0])) && Object.hasOwn(t, abbr(a[1]));
     const sortedTcpFreqs = tcpFreqs
         .map((e, i) => e.concat(props.forecast.seatTcpScenarios[props.index][i][1]))
         .filter(e => e[2] > 0.1 || tcpMatch(tcp, e[0]))
@@ -299,7 +299,7 @@ const SeatTcpSection = props => {
                     sortedTcpFreqs.map((freqSet, index) =>
                         <SeatTcpRowPair forecast={props.forecast}
                                         freqSet={freqSet}
-                                        result={results[index]}
+                                        result={results !== null ? results[index] : null}
                                         key={`tcp${seatName}a${index}`}
                                         windowWidth={props.windowWidth}
                         />
@@ -658,7 +658,7 @@ const Seats = props => {
                                         index={index}
                                         key={props.forecast.seatNames[index]}
                                         mode={props.mode}
-                                        result={props.results.seats[props.forecast.seatNames[index]]}
+                                        result={props.results !== null ? props.results.seats[props.forecast.seatNames[index]] : null}
                                         windowWidth={props.windowWidth} />
                             )
                         }
