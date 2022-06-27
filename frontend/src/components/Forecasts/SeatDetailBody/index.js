@@ -58,6 +58,8 @@ const SeatSummary = props => {
         return partyCategory(aName) - partyCategory(bName);
     });
 
+    const winner = props.result !== null ? Object.keys(props.result.tcp)[0] : null;
+
     // const thresholds = [[0,2,0],[2,4,1],[4,6,2],[6,8,3],[8,10,4],[10,12,5],[12,14,6]];
     return (
         <ListGroup.Item className={styles.seatsItem}>
@@ -66,6 +68,7 @@ const SeatSummary = props => {
             </div>
             <WinnerBarDist forecast={props.forecast}
                            freqSet={freqs}
+                           result={winner}
                            width={Math.min(props.windowWidth - 70, 300)}
             />
         </ListGroup.Item>
@@ -422,6 +425,7 @@ const SeatDetailBody = props => {
                     <SeatSummary forecast={props.forecast}
                                 election={props.election}
                                 mode={props.mode}
+                                result={result}
                                 index={props.index}
                                 windowWidth={props.windowWidth}
                     />

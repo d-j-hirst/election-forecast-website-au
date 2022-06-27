@@ -9,12 +9,15 @@ const WinnerBar = props => {
     const barClass = bgClass(props.bar.partyAbbr);
     const leftVal = Math.floor(lt).toString() + 'px';
     const widthVal = Math.floor(rt - lt).toString() + 'px';
+    console.log(props.bar);
     const thisStyle = {
         height: '20px',
         top: '5px',
         width: widthVal,
         left: leftVal,
-        position: 'absolute'
+        position: 'absolute',
+        border: props.bar.eventualWinner ? '2px solid black' : 'none',
+        zIndex: props.bar.eventualWinner ? 1000 : 0
     }
     // this class and its div works around a difficulty in CSS: the tooltip is placed at the
     // closest positioned ancestor, but an absolute-position div is not considered "positioned"
@@ -27,7 +30,8 @@ const WinnerBar = props => {
     }
 
     let tooltipText = "";
-    tooltipText = props.bar.partyName + " - " + Number(props.bar.winPercent).toFixed(1) + "% chance to win";
+    tooltipText = props.bar.partyName + " - " + Number(props.bar.winPercent).toFixed(1) + "% chance to win." +
+        (props.bar.eventualWinner ? " Ultimately won the seat." : "");
 
     return (
         <div style={thisStyle} className={barClass}>

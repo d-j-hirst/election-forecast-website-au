@@ -20,12 +20,14 @@ const WinnerBarDist = props => {
         const left = Math.ceil(chartWidth * currentPercent * 0.01);
         const width = Math.ceil(chartWidth * freq[1] * 0.01);
         currentPercent += freq[1];
+        const abbr = jsonMap(props.forecast.partyAbbr, freq[0]);
         return {
-            xLow: left,
-            xHigh: left + width,
-            partyAbbr: jsonMap(props.forecast.partyAbbr, freq[0]),
+            eventualWinner: props.result !== null ? props.result === abbr : false,
+            partyAbbr: abbr,
             partyName: jsonMap(props.forecast.partyName, freq[0]),
-            winPercent: freq[1]
+            winPercent: freq[1],
+            xHigh: left + width,
+            xLow: left
         }
     })
 
