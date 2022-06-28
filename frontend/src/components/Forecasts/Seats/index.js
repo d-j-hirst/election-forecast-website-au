@@ -158,7 +158,7 @@ const SeatFpSection = props => {
     const results = props.result === null ? null :
         sortedFreqs.map(freq => props.result.fp[jsonMap(props.forecast.partyAbbr, freq[0])]);
 
-    const forceXInd = (seatName === "Finniss" || seatName === "Hammond" || seatName == "Flinders" || seatName == "Frome") && props.election == "2022sa";
+    const forceXInd = (seatName === "Finniss" || seatName === "Hammond" || seatName === "Flinders" || seatName === "Frome") && props.election === "2022sa";
 
     return (
         <>
