@@ -29,6 +29,7 @@ party_convert = {
         'Greens': 'GRN',
         'Independents': 'IND',
         'Independent': 'IND',
+        'SA-Best' : 'SAB'
     },
 }
 
@@ -164,7 +165,6 @@ def fetch_seat_results(election: Election, urls):
             election_text = caption_links[0].text.strip()
             if election_text != election_match: continue
             seat_text = caption_links[1].text.strip()
-            print(f'{caption_links[0].text} {caption_links[1].text}')
 
             seat_results = {'fp': {}, 'tcp': {}}
             doing_tcp = 0
@@ -181,9 +181,10 @@ def fetch_seat_results(election: Election, urls):
                 cols = row.find_all('td')
                 if len(cols) < 6: continue
                 name = cols[1].text.strip()
-                if name not in party_convert[election.code]: continue
-                if name == 'National' and region == 'sa': continue
-                code = party_convert[election.code][name]
+                code = 'OTH'
+                if name in party_convert[election.code]:
+                    code = party_convert[election.code][name]
+                if name == 'National' and region == 'sa': code = 'OTH'
                 if code == "IND":
                     if found_ind == 0:
                         found_ind = 1
@@ -191,7 +192,7 @@ def fetch_seat_results(election: Election, urls):
                         found_ind = 2
                         code = 'IND*'
                     else:
-                        continue  # will end up added to "Others"
+                        code = 'OTH'
                 if name == 'National' and region == 'wa': code = 'NP'
                 vote_share = float(cols[4].text)
                 if doing_tcp == 1:
@@ -201,12 +202,42 @@ def fetch_seat_results(election: Election, urls):
                         seat_results['fp'][code] = vote_share
                     else:
                         seat_results['fp'][code] += vote_share
+
+            if (int(year) == 2022 and (region == 'fed' or region == 'sa')):
+                # For now, remove smaller emerging-inds
+                # and put them with others (e.g. Hughes, fed2022)
+                for code, fp in seat_results['fp'].items():
+                    if code == 'IND*' and fp < 8:
+                        if 'OTH' not in seat_results['fp']:
+                            seat_results['fp']['OTH'] = fp
+                        else:
+                            seat_results['fp']['OTH'] += fp
+                        del seat_results['fp']['IND*']
+                        break
+
+                # Also remove even smaller main-inds who probably
+                # aren't confirmed (e.g. Kennedy, fed2022)
+                for code, fp in seat_results['fp'].items():
+                    if code == 'IND' and fp < 5:
+                        if 'OTH' not in seat_results['fp']:
+                            seat_results['fp']['OTH'] = fp
+                        else:
+                            seat_results['fp']['OTH'] += fp
+                        del seat_results['fp']['IND']
+                        break
             
-            total_fp = 0
-            for code, vote_share in list(seat_results['fp'].items()):
-                total_fp += vote_share
-            others = max(0, round(100 - total_fp, 2))
-            if (others): seat_results['fp']['OTH'] = others
+            seat_results['fp'] = {a: round(b, 2) for a, b
+                                  in seat_results['fp'].items()}
+            seat_results['tcp'] = {a: round(b, 2) for a, b
+                                   in seat_results['tcp'].items()}
+            
+            total_fp = sum(seat_results['fp'].values())
+            total_tcp = sum(seat_results['tcp'].values())
+            if abs(100 - total_fp) > 0.1 or abs(100 - total_tcp) > 0.1:
+                print("Votes don't add to 100, potential error in source")
+            print(f'{caption_links[0].text} {caption_links[1].text}')
+            print(total_fp)
+            print(total_tcp)
 
             print(seat_results['fp'])
             print(seat_results['tcp'])
