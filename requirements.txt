@@ -67,6 +67,7 @@ openpyxl==3.0.7
 outcome==1.1.0
 pandas==1.2.5
 parso==0.5.2
+pbr==5.9.0
 pexpect==4.6.0
 pickleshare==0.7.5
 prompt-toolkit==2.0.10
@@ -108,6 +109,7 @@ soupsieve==2.3.2.post1
 sqlparse==0.4.2
 ssh-import-id==5.10
 systemd-python==234
+testresources==2.0.1
 threadpoolctl==2.1.0
 toml==0.10.2
 traitlets==4.3.3
