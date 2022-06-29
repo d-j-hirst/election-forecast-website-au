@@ -117,8 +117,10 @@ const SeatFpSection = props => {
         .sort((el1, el2) => el2[1][7] - el1[1][7]);
     const maxFpTotal = Math.max(...sortedFreqs.map(el => Math.max(...el[1])));
 
+    console.log(sortedFreqs);
+
     sortedFreqs = sortedFreqs.filter(
-        e => props.mode !== "live" || e[0] < 0 || e[0] > 1
+        e => (props.mode !== "live" || e[0] < 0 || e[0] > 1) && e[1][14] > 0
     )
 
     const results = props.result === null ? null :
