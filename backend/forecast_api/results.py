@@ -218,13 +218,27 @@ def fetch_seat_results(election: Election, urls):
                 # Also remove even smaller main-inds who probably
                 # aren't confirmed (e.g. Kennedy, fed2022)
                 for code, fp in seat_results['fp'].items():
-                    if code == 'IND' and fp < 5:
+                    if (code == 'IND' and fp < 5 and seat_text != 'Riverina'
+                        and seat_text != 'Wide Bay'):
                         if 'OTH' not in seat_results['fp']:
                             seat_results['fp']['OTH'] = fp
                         else:
                             seat_results['fp']['OTH'] += fp
                         del seat_results['fp']['IND']
                         break
+
+            if 'OTH' not in seat_results['fp']:
+                seat_results['fp']['OTH'] = 0
+
+            if election.code == '2022sa' and (seat_text == 'Finniss' or
+                    seat_text == 'Hammond' or seat_text == 'Flinders' or
+                    seat_text == 'Frome'):
+                # Match to the category forecast for this election
+                seat_results['fp']['IND*'] = seat_results['fp']['IND']
+                del seat_results['fp']['IND']
+                if 'IND' in seat_results['tcp']:
+                    seat_results['tcp']['IND*'] = seat_results['tcp']['IND']
+                    del seat_results['tcp']['IND']
             
             seat_results['fp'] = {a: round(b, 2) for a, b
                                   in seat_results['fp'].items()}
@@ -235,13 +249,13 @@ def fetch_seat_results(election: Election, urls):
             total_tcp = sum(seat_results['tcp'].values())
             if abs(100 - total_fp) > 0.1 or abs(100 - total_tcp) > 0.1:
                 print("Votes don't add to 100, potential error in source")
-            print(f'{caption_links[0].text} {caption_links[1].text}')
+            print(f'{caption_links[0].text} {seat_text}')
             print(total_fp)
             print(total_tcp)
 
             print(seat_results['fp'])
             print(seat_results['tcp'])
-            all_seat_results[caption_links[1].text] = seat_results
+            all_seat_results[seat_text] = seat_results
             break
     return all_seat_results
 
