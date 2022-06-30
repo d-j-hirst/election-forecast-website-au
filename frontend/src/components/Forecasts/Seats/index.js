@@ -204,8 +204,6 @@ const SeatVoteRow = props => {
     if (props.freqSet[0] === -2) partyAbbr = "IndX";
     if (props.freqSet[0] === -3) partyAbbr = "EOth";
     const result = props.freqSet[0] < -1 && !props.forceXInd ? null : props.result;
-    if (props.forceXInd) console.log(partyAbbr);
-    if (props.forceXInd) console.log(result);
     const thresholds = [[0,2,0],[2,4,1],[4,6,2],[6,8,3],[8,10,4],[10,12,5],[12,14,6]];
     return (
         <ListGroup.Item className={styles.seatsSubitem}>
