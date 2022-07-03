@@ -13,6 +13,9 @@ urlpatterns = [
     path('submit-results-update',
          views.SubmitResultsUpdateResponse.as_view(),  # type: ignore
          name='submit-results-update'),
+    path('submit-review',
+         views.SubmitReviewResponse.as_view(),  # type: ignore
+         name='submit-review'),
     path('election-summary/<str:code>/<str:mode>',
          views.ElectionSummaryResponse.as_view(),  # type: ignore
          name='election-summary'),

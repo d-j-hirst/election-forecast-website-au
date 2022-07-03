@@ -107,3 +107,11 @@ def submit_results_update(request: HttpRequest):
     election = get_object_or_404(Election, code=code)
     update_results(election)
     return Response("Election results successfully updated.")
+
+
+def submit_review(request: HttpRequest):
+    data_json = request.body.decode()
+    data = json.loads(data_json)
+    code = data['termCode']
+    election = get_object_or_404(Election, code=code)
+    return Response("Election review successfully completed.")

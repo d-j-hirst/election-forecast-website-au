@@ -12,6 +12,7 @@ from forecast_api.serve import serve_forecast, \
 from forecast_api.submit import submit_report, \
                                 submit_timeseries_update, \
                                 submit_results_update, \
+                                submit_review, \
                                 SubmitForecastPermission
 
 
@@ -31,6 +32,12 @@ class SubmitResultsUpdateResponse(ApiAuthMixin, ApiErrorsMixin, APIView):
     permission_classes = [IsAuthenticated&SubmitForecastPermission]
     def post(self, request: HttpRequest):
         return submit_results_update(request)
+
+
+class SubmitReviewResponse(ApiAuthMixin, ApiErrorsMixin, APIView):
+    permission_classes = [IsAuthenticated&SubmitForecastPermission]
+    def post(self, request: HttpRequest):
+        return submit_review(request)
 
 
 class ElectionSummaryResponse(APIView):
