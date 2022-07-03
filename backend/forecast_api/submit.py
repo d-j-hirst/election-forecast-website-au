@@ -2,8 +2,10 @@ from django.http.request import HttpRequest
 from django.utils.timezone import make_aware
 from django.shortcuts import get_object_or_404
 from datetime import datetime
+from django.http import Http404
 from forecast_api.models import Election, Forecast
 from forecast_api.results import update_results
+from forecast_api.review import perform_review
 from rest_framework.response import Response
 from rest_framework.permissions import BasePermission
 import json
@@ -114,4 +116,10 @@ def submit_review(request: HttpRequest):
     data = json.loads(data_json)
     code = data['termCode']
     election = get_object_or_404(Election, code=code)
+    forecasts = (election.forecast_set
+                         .filter(mode='FC')
+                         .order_by('-date'))
+    if forecasts is None:
+        raise Http404('No forecasts for this election!')
+    perform_review(election, forecasts)
     return Response("Election review successfully completed.")
