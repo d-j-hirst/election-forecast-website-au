@@ -31,3 +31,16 @@ def perform_review(election: Election, forecasts: List[Forecast]):
         print(this_party_abbr)
         print(fp_error)
         print(fp_position)
+    
+    forecast_seat_dist = forecast.report['seatCountFrequencies']
+    for partyIndex, seat_dist in forecast_seat_dist:
+        if partyIndex <= -2: continue
+        this_party_abbr = party_abbr[partyIndex]
+        if this_party_abbr not in election.results['overall']['seats']:
+            continue
+        result_seat = election.results['overall']['seats'][this_party_abbr]
+        seats_error = result_seat - seat_dist[7]
+        seats_position = find_position_in_dist(result_seat, seat_dist)
+        print(this_party_abbr)
+        print(seats_error)
+        print(seats_position)
