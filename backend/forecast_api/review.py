@@ -17,14 +17,16 @@ def perform_review(election: Election, forecasts: List[Forecast]):
     party_abbr = {a[0]: a[1] for a in forecast.report['partyAbbr']}
     party_index = {a[1]: a[0] for a in forecast.report['partyAbbr']
                    if a[0] >= -1}
+    party_index['IND*'] = -2
     seat_names = {i: a for i, a in
                   enumerate(forecast.report['seatNames'])}
     forecast_tpp_dist = forecast.report['tppFrequencies']
     results_tpp = election.results['overall']['tpp']
     tpp_error = results_tpp - forecast_tpp_dist[7]
     tpp_position = find_position_in_dist(results_tpp, forecast_tpp_dist)
-    print(tpp_error)
-    print(tpp_position)
+    # print(party_abbr)
+    # print(tpp_error)
+    # print(tpp_position)
     
     forecast_fp_dist = forecast.report['fpFrequencies']
     for partyIndex, fp_dist in forecast_fp_dist:
@@ -33,9 +35,9 @@ def perform_review(election: Election, forecasts: List[Forecast]):
         result_fp = election.results['overall']['fp'][this_party_abbr]
         fp_error = result_fp - fp_dist[7]
         fp_position = find_position_in_dist(result_fp, fp_dist)
-        print(this_party_abbr)
-        print(fp_error)
-        print(fp_position)
+        # print(this_party_abbr)
+        # print(fp_error)
+        # print(fp_position)
     
     forecast_seat_dist = forecast.report['seatCountFrequencies']
     for partyIndex, seat_dist in forecast_seat_dist:
@@ -46,24 +48,37 @@ def perform_review(election: Election, forecasts: List[Forecast]):
         result_seat = election.results['overall']['seats'][this_party_abbr]
         seats_error = result_seat - seat_dist[7]
         seats_position = find_position_in_dist(result_seat, seat_dist)
-        print(this_party_abbr)
-        print(seats_error)
-        print(seats_position)
+        # print(this_party_abbr)
+        # print(seats_error)
+        # print(seats_position)
     
     seat_winners = forecast.report['seatPartyWinFrequencies']
     seat_tcps = forecast.report['seatTcpBands']
+    seat_fps = forecast.report['seatFpBands']
     winners_by_name = {seat_names[i]: {party_abbr[b[0]]: b[1] for b in a}
                        for i, a in enumerate(seat_winners)}
     tcps_by_name = {seat_names[i]: 
                     {(b[0][0], b[0][1]): b[1] for b in a}
                     for i, a in enumerate(seat_tcps)}
-    print(tcps_by_name)
+    fps_by_name = {seat_names[i]: 
+                   {b[0]: b[1] for b in a}
+                   for i, a in enumerate(seat_fps)}
     seat_results = election.results['seats']
     log_score_sum = 0
     brier_score_sum = 0
     tcp_error_sum = 0
     tpp_error_sum = 0
     tpp_count = 0
+    fp_error_sum = 0
+    fp_count = 0
+    tcp_central_50pc = 0
+    tcp_central_90pc = 0
+    tcp_central_98pc = 0
+    tcp_central_998pc = 0
+    fp_central_50pc = 0
+    fp_central_90pc = 0
+    fp_central_98pc = 0
+    fp_central_998pc = 0
     for seat_name, seat_result in seat_results.items():
         winner = max(seat_result['tcp'], key=seat_result['tcp'].get)
         winner_chance = winners_by_name[seat_name][winner]
@@ -83,12 +98,39 @@ def perform_review(election: Election, forecasts: List[Forecast]):
         if tcp_scenario[0] > tcp_scenario[1]:
             tcp_scenario = (tcp_scenario[1], tcp_scenario[0])
             tcp_result = 100 - tcp_result
-        tcp_forecast = tcps_by_name[seat_name][tcp_scenario][7]
+        tcp_forecast_dist = tcps_by_name[seat_name][tcp_scenario]
+        tcp_forecast = tcp_forecast_dist[7]
         tcp_error = abs(tcp_forecast - tcp_result)
         tcp_error_sum += tcp_error
         if 0 in tcp_scenario and 1 in tcp_scenario:
             tpp_error_sum += tcp_error
             tpp_count += 1
+        tcp_position = find_position_in_dist(tcp_result, tcp_forecast_dist)
+        if tcp_position == 0: tcp_central_50pc += 1
+        if tcp_position <= 1: tcp_central_90pc += 1
+        if tcp_position <= 2: tcp_central_98pc += 1
+        if tcp_position <= 3: tcp_central_998pc += 1
+
+        fp_results = list(seat_result['fp'].items())
+        for party, fp_result in fp_results:
+            this_index = party_index[party]
+            if this_index not in fps_by_name[seat_name]: continue
+            # if this is uncommented it's to ignore results that
+            # were the result of the Others-bug
+            if fp_result == 0: continue
+            fp_forecast_dist = fps_by_name[seat_name][this_index]
+            fp_forecast = fp_forecast_dist[7]
+            fp_forecast_max = fp_forecast_dist[14]
+            if fp_forecast_max == 0: continue
+            fp_error = abs(fp_forecast - fp_result)
+            # print(f'{seat_name}, {party} ({this_index}) - forecast: {fp_forecast} (max {fp_forecast_max}), result: {fp_result}, error: {fp_error}')
+            fp_error_sum += fp_error
+            fp_count += 1
+            fp_position = find_position_in_dist(fp_result, fp_forecast_dist)
+            if fp_position == 0: fp_central_50pc += 1
+            if fp_position <= 1: fp_central_90pc += 1
+            if fp_position <= 2: fp_central_98pc += 1
+            if fp_position <= 3: fp_central_998pc += 1
     print(f'Log score sum: {log_score_sum}')
     num = len(seat_results)
     log_score_average = log_score_sum / num
@@ -101,3 +143,21 @@ def perform_review(election: Election, forecasts: List[Forecast]):
     print(f'Tcp error average: {tcp_error_average}')
     tpp_error_average = tpp_error_sum / tpp_count
     print(f'Tpp error average: {tpp_error_average}')
+    tcp_central_50pc /= num
+    tcp_central_90pc /= num
+    tcp_central_98pc /= num
+    tcp_central_998pc /= num
+    print(f'Tcp 50% range frequency: {tcp_central_50pc}')
+    print(f'Tcp 90% range frequency: {tcp_central_90pc}')
+    print(f'Tcp 98% range frequency: {tcp_central_98pc}')
+    print(f'Tcp 998% range frequency: {tcp_central_998pc}')
+    fp_error_average = fp_error_sum / fp_count
+    print(f'Fp error average: {fp_error_average}')
+    fp_central_50pc /= fp_count
+    fp_central_90pc /= fp_count
+    fp_central_98pc /= fp_count
+    fp_central_998pc /= fp_count
+    print(f'Fp 50% range frequency: {fp_central_50pc}')
+    print(f'Fp 90% range frequency: {fp_central_90pc}')
+    print(f'Fp 98% range frequency: {fp_central_98pc}')
+    print(f'Fp 998% range frequency: {fp_central_998pc}')
