@@ -70,6 +70,8 @@ def perform_review(election: Election, forecasts: List[Forecast]):
     tpp_error_sum = 0
     tpp_count = 0
     fp_error_sum = 0
+    fp_error_sum_party = {}
+    fp_count_party = {}
     fp_count = 0
     tcp_central_50pc = 0
     tcp_central_90pc = 0
@@ -79,6 +81,10 @@ def perform_review(election: Election, forecasts: List[Forecast]):
     fp_central_90pc = 0
     fp_central_98pc = 0
     fp_central_998pc = 0
+    fp_central_50pc_party = {}
+    fp_central_90pc_party = {}
+    fp_central_98pc_party = {}
+    fp_central_998pc_party = {}
     for seat_name, seat_result in seat_results.items():
         winner = max(seat_result['tcp'], key=seat_result['tcp'].get)
         winner_chance = winners_by_name[seat_name][winner]
@@ -126,11 +132,26 @@ def perform_review(election: Election, forecasts: List[Forecast]):
             # print(f'{seat_name}, {party} ({this_index}) - forecast: {fp_forecast} (max {fp_forecast_max}), result: {fp_result}, error: {fp_error}')
             fp_error_sum += fp_error
             fp_count += 1
+            fp_error_sum_party[party] = (
+                fp_error_sum_party.get(party, 0) + fp_error)
+            fp_count_party[party] = fp_count_party.get(party, 0) + 1
             fp_position = find_position_in_dist(fp_result, fp_forecast_dist)
-            if fp_position == 0: fp_central_50pc += 1
-            if fp_position <= 1: fp_central_90pc += 1
-            if fp_position <= 2: fp_central_98pc += 1
-            if fp_position <= 3: fp_central_998pc += 1
+            if fp_position == 0:
+                fp_central_50pc += 1
+                fp_central_50pc_party[party] = (
+                    fp_central_50pc_party.get(party, 0) + 1)
+            if fp_position <= 1:
+                fp_central_90pc += 1
+                fp_central_90pc_party[party] = (
+                    fp_central_90pc_party.get(party, 0) + 1)
+            if fp_position <= 2:
+                fp_central_98pc += 1
+                fp_central_98pc_party[party] = (
+                    fp_central_98pc_party.get(party, 0) + 1)
+            if fp_position <= 3:
+                fp_central_998pc += 1
+                fp_central_998pc_party[party] = (
+                    fp_central_998pc_party.get(party, 0) + 1)
     print(f'Log score sum: {log_score_sum}')
     num = len(seat_results)
     log_score_average = log_score_sum / num
@@ -161,3 +182,18 @@ def perform_review(election: Election, forecasts: List[Forecast]):
     print(f'Fp 90% range frequency: {fp_central_90pc}')
     print(f'Fp 98% range frequency: {fp_central_98pc}')
     print(f'Fp 998% range frequency: {fp_central_998pc}')
+    for party, fp_sum in fp_error_sum_party.items():
+        fp_average = fp_sum / fp_count_party[party]
+        print(f'Fp error average for {party}: {fp_average}')
+    for party, fp_sum in fp_central_50pc_party.items():
+        fp_average = fp_sum / fp_count_party[party]
+        print(f'Fp 50% range frequency for {party}: {fp_average}')
+    for party, fp_sum in fp_central_90pc_party.items():
+        fp_average = fp_sum / fp_count_party[party]
+        print(f'Fp 90% range frequency for {party}: {fp_average}')
+    for party, fp_sum in fp_central_98pc_party.items():
+        fp_average = fp_sum / fp_count_party[party]
+        print(f'Fp 98% range frequency for {party}: {fp_average}')
+    for party, fp_sum in fp_central_998pc_party.items():
+        fp_average = fp_sum / fp_count_party[party]
+        print(f'Fp 998% range frequency for {party}: {fp_average}')
