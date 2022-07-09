@@ -23,6 +23,11 @@ def perform_review(election: Election, forecasts: List[Forecast]):
         party_abbr = {a[0]: a[1] for a in forecast.report['partyAbbr']}
         party_index = {a[1]: a[0] for a in forecast.report['partyAbbr']
                     if a[0] >= -1}
+        # This fixes an issue with going LIB -> LNP part way through
+        # the SA election forecast
+        if election.code == '2022sa' and 'LIB' in party_index:
+            party_index['LNP'] = party_index['LIB']
+            party_abbr[1] = 'LNP'
         party_index['IND*'] = -2
         seat_names = {i: a for i, a in
                     enumerate(forecast.report['seatNames'])}
