@@ -121,5 +121,5 @@ def submit_review(request: HttpRequest):
                          .order_by('-date'))
     if forecasts is None:
         raise Http404('No forecasts for this election!')
-    perform_review(election, forecasts)
-    return Response("Election review successfully completed.")
+    response = perform_review(election, forecasts)
+    return Response(response)
