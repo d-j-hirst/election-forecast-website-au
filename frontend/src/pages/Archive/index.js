@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { Helmet } from "react-helmet";
 
 import { Header, Footer, ForecastsNav, ForecastHeader, FormationOfGovernment,
-    LoadingMarker, VoteTotals, SeatTotals, ArchiveAlert, Seats, StandardErrorBoundary } from 'components';
+    LoadingMarker, VoteTotals, SeatTotals, ForecastAlert, Seats, StandardErrorBoundary } from 'components';
 import { getDirect } from 'utils/sdk';
 import { useWindowDimensions } from '../../utils/window.js';
 
@@ -110,7 +110,7 @@ const Archive = () => {
                 {forecastValid &&
                     <>
                         <ForecastHeader mode={mode} forecast={forecast} archive={true} />
-                        <ArchiveAlert forecast={forecast} code={code} />
+                        <ForecastAlert forecast={forecast} code={code} isArchive={true} />
                         <StandardErrorBoundary>
                             <FormationOfGovernment election={code} mode={mode} forecast={forecast} windowWidth={windowDimensions.width} />
                         </StandardErrorBoundary>

@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { Header, Footer, ForecastsNav, ForecastHeader, FormationOfGovernment,
-    LoadingMarker, VoteTotals, SeatTotals, NowcastAlert, ForecastAlert,
-    LiveOldAlert, History, Seats, StandardErrorBoundary } from 'components';
+    LoadingMarker, VoteTotals, SeatTotals, ForecastAlert,
+    History, Seats, StandardErrorBoundary } from 'components';
 import { getDirect } from 'utils/sdk';
 import { useWindowDimensions } from '../../utils/window.js';
 
@@ -128,18 +128,7 @@ const Forecast = () => {
                     {forecastValid && showForecast &&
                         <>
                             <ForecastHeader mode={mode} forecast={forecast} />
-                            {
-                                mode === "regular" &&
-                                <ForecastAlert forecast={forecast} code={code} />
-                            }
-                            {
-                                mode === "nowcast" &&
-                                <NowcastAlert forecast={forecast} code={code} />
-                            }
-                            {
-                                mode === "live" && code === "2022sa" &&
-                                <LiveOldAlert forecast={forecast} code={code} />
-                            }
+                            <ForecastAlert forecast={forecast} code={code} />
                             <StandardErrorBoundary>
                                 <FormationOfGovernment election={code} mode={mode} forecast={forecast} windowWidth={windowDimensions.width} />
                             </StandardErrorBoundary>

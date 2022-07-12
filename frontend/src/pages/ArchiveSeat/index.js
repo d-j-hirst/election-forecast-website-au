@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { Helmet } from "react-helmet";
 
 import { Header, Footer, ForecastsNav, ForecastHeader,
-    LoadingMarker, ArchiveAlert, SeatDetailBody, StandardErrorBoundary } from 'components';
+    LoadingMarker, ForecastAlert, SeatDetailBody, StandardErrorBoundary } from 'components';
 
 import { getDirect } from 'utils/sdk';
 import { getIndexFromSeatUrl } from 'utils/seaturls';
@@ -107,7 +107,7 @@ const SeatDetails = () => {
                 {forecastValid && seatIndex >= 0 &&
                     <>
                         <ForecastHeader mode={mode} forecast={forecast} archive={true} />
-                        <ArchiveAlert forecast={forecast} code={code} mode={mode} showInitially={false} />
+                        <ForecastAlert forecast={forecast} code={code} mode={mode} showInitially={false} />
                         <StandardErrorBoundary>
                             <SeatDetailBody archive={id}
                                             forecast={forecast}

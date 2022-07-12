@@ -261,13 +261,13 @@ const VoteTotals = props => {
                         <TppRowSet forecast={props.forecast} results={props.results} windowWidth={props.windowWidth} />
                     </StandardErrorBoundary>
                     {   
-                        (props.mode !== "live" || props.code !== "2022sa") &&
+                        (props.mode !== "live" || props.election !== "2022sa") &&
                         <StandardErrorBoundary>
                             <FpRowSet forecast={props.forecast} results={props.results} windowWidth={props.windowWidth} />
                         </StandardErrorBoundary>
                     }
                     {
-                        (props.mode !== "live" || props.code !== "2022sa") && props.forecast.polls !== undefined &&
+                        (props.mode !== "live" || props.election !== "2022sa") && props.forecast.polls !== undefined &&
                         <StandardErrorBoundary>
                             <VoteTrendChartSet forecast={props.forecast} windowWidth={props.windowWidth} />
                         </StandardErrorBoundary>
