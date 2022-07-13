@@ -1,5 +1,6 @@
 from forecast_api.models import Election, Forecast
 from typing import List
+import datetime
 import math
 
 # Return whether the value is in the central 50% (0), central 90% (1),
@@ -18,7 +19,10 @@ def perform_review(election: Election, forecasts: List[Forecast]):
     for forecast in forecasts:
         print('========================================')
         label = forecast.report['reportLabel']
+        date = forecast.report['reportDate']
+        parsed_date = datetime.datetime.strptime(date, '%Y-%m-%dT%H:%M:%S')
         print(label)
+        print(parsed_date.timestamp())
         print('========================================')
         party_abbr = {a[0]: a[1] for a in forecast.report['partyAbbr']}
         party_index = {a[1]: a[0] for a in forecast.report['partyAbbr']
@@ -76,7 +80,9 @@ def perform_review(election: Election, forecasts: List[Forecast]):
                     for i, a in enumerate(seat_fps)}
         seat_results = election.results['seats']
         log_score_sum = 0
+        log_score_scaled_sum = 0
         brier_score_sum = 0
+        brier_score_scaled_sum = 0
         tcp_error_sum = 0
         tpp_error_sum = 0
         tpp_count = 0
@@ -106,7 +112,18 @@ def perform_review(election: Election, forecasts: List[Forecast]):
                 diff_sq = (chance * 0.01 - outcome) ** 2
                 brier_score += diff_sq
             log_score_sum += log_score
+            log_score_scaled_sum += log_score / -math.log(0.5) + 1
             brier_score_sum += brier_score
+            brier_score_scaled_sum += 1 - 4 * brier_score / 2
+
+            if seat_name == "Fowler":
+                pass
+                # print(winners_by_name[seat_name])
+                # print(log_score / -math.log(0.5) + 1)
+            elif log_score / -math.log(0.5) + 1 < -6:
+                print(seat_name)
+                print(winners_by_name[seat_name])
+                print(log_score / -math.log(0.5) + 1)
 
             tcp_results = list(seat_result['tcp'].items())
             tcp_scenario = (party_index[tcp_results[0][0]],
@@ -177,30 +194,30 @@ def perform_review(election: Election, forecasts: List[Forecast]):
         fp_central_98pc_party = dict(sorted(fp_central_98pc_party.items()))
         fp_central_998pc_party = dict(sorted(fp_central_998pc_party.items()))
         if forecast == forecasts[0]:
-            response += ('Forecast label,Log score average,Brier score'
-                        'normalised,Tcp error average,Tpp error average,'
-                        'Tcp central 50%,Tcp central 90%,Tcp central 98%,'
-                        'Tcp central 99.8%,Fp error average,Fp central 50%,'
-                        'Fp central 90%,Fp central 98%,Fp central 99.8%')
+            response += ('Forecast label,Date stamp,Log score average,'
+                         'Log score scaled,Brier score normalised,'
+                         'Brier score scaled,Tcp error average,'
+                         'Tpp error average,Tcp central 50%,'
+                         'Tcp central 90%,Tcp central 98%,Tcp central 99.8%,'
+                         'Fp error average,Fp central 50%,Fp central 90%,'
+                         'Fp central 98%,Fp central 99.8%')
             response += '\n'
         label = label.replace(',', ';') # Avoid issues when converting to CSV
         response += label
-        print(f'Log score sum: {log_score_sum}')
+        response += f',{int(parsed_date.timestamp())}'
         num = len(seat_results)
         log_score_average = log_score_sum / num
         response += f',{log_score_average}'
-        print(f'Log score average: {log_score_average}')
-        print(f'Brier score sum: {brier_score_sum}')
+        log_score_scaled = log_score_scaled_sum / num
+        response += f',{log_score_scaled}'
         brier_score_normalised = brier_score_sum / (2 * num)
         response += f',{brier_score_normalised}'
-        print(f'Final Brier score: {brier_score_normalised}')
-        print(f'Tcp error sum: {tcp_error_sum}')
+        brier_score_sum_normalised = brier_score_scaled_sum / num
+        response += f',{brier_score_sum_normalised}'
         tcp_error_average = tcp_error_sum / num
         response += f',{tcp_error_average}'
-        print(f'Tcp error average: {tcp_error_average}')
         tpp_error_average = tpp_error_sum / tpp_count
         response += f',{tpp_error_average}'
-        print(f'Tpp error average: {tpp_error_average}')
         tcp_central_50pc /= num
         tcp_central_90pc /= num
         tcp_central_98pc /= num
@@ -209,13 +226,8 @@ def perform_review(election: Election, forecasts: List[Forecast]):
         response += f',{tcp_central_90pc}'
         response += f',{tcp_central_98pc}'
         response += f',{tcp_central_998pc}'
-        print(f'Tcp 50% range frequency: {tcp_central_50pc}')
-        print(f'Tcp 90% range frequency: {tcp_central_90pc}')
-        print(f'Tcp 98% range frequency: {tcp_central_98pc}')
-        print(f'Tcp 998% range frequency: {tcp_central_998pc}')
         fp_error_average = fp_error_sum / fp_count
         response += f',{fp_error_average}'
-        print(f'Fp error average: {fp_error_average}')
         fp_central_50pc /= fp_count
         fp_central_90pc /= fp_count
         fp_central_98pc /= fp_count
@@ -224,24 +236,15 @@ def perform_review(election: Election, forecasts: List[Forecast]):
         response += f',{fp_central_90pc}'
         response += f',{fp_central_98pc}'
         response += f',{fp_central_998pc}'
-        print(f'Fp 50% range frequency: {fp_central_50pc}')
-        print(f'Fp 90% range frequency: {fp_central_90pc}')
-        print(f'Fp 98% range frequency: {fp_central_98pc}')
-        print(f'Fp 998% range frequency: {fp_central_998pc}')
         for party, fp_sum in fp_error_sum_party.items():
             fp_average = fp_sum / fp_count_party[party]
-            print(f'Fp error average for {party}: {fp_average}')
         for party, fp_sum in fp_central_50pc_party.items():
             fp_average = fp_sum / fp_count_party[party]
-            print(f'Fp 50% range frequency for {party}: {fp_average}')
         for party, fp_sum in fp_central_90pc_party.items():
             fp_average = fp_sum / fp_count_party[party]
-            print(f'Fp 90% range frequency for {party}: {fp_average}')
         for party, fp_sum in fp_central_98pc_party.items():
             fp_average = fp_sum / fp_count_party[party]
-            print(f'Fp 98% range frequency for {party}: {fp_average}')
         for party, fp_sum in fp_central_998pc_party.items():
             fp_average = fp_sum / fp_count_party[party]
-            print(f'Fp 998% range frequency for {party}: {fp_average}')
         response += '\n'
     return response
