@@ -201,6 +201,21 @@ def perform_review(election: Election, forecasts: List[Forecast]):
                          'Tcp central 90%,Tcp central 98%,Tcp central 99.8%,'
                          'Fp error average,Fp central 50%,Fp central 90%,'
                          'Fp central 98%,Fp central 99.8%')
+            for party in sorted(list(fp_error_sum_party.keys())):
+                if party in ['IND', 'IND*', 'SAB', 'CA', 'KAP']: continue
+                response += f',{party} fp error average'
+            for party in sorted(list(fp_error_sum_party.keys())):
+                if party in ['IND', 'IND*', 'SAB', 'CA', 'KAP']: continue
+                response += f',{party} fp central 50%'
+            for party in sorted(list(fp_error_sum_party.keys())):
+                if party in ['IND', 'IND*', 'SAB', 'CA', 'KAP']: continue
+                response += f',{party} fp central 90%'
+            for party in sorted(list(fp_error_sum_party.keys())):
+                if party in ['IND', 'IND*', 'SAB', 'CA', 'KAP']: continue
+                response += f',{party} fp central 98%'
+            for party in sorted(list(fp_error_sum_party.keys())):
+                if party in ['IND', 'IND*', 'SAB', 'CA', 'KAP']: continue
+                response += f',{party} fp central 99.8%'
             response += '\n'
         label = label.replace(',', ';') # Avoid issues when converting to CSV
         response += label
@@ -236,15 +251,25 @@ def perform_review(election: Election, forecasts: List[Forecast]):
         response += f',{fp_central_90pc}'
         response += f',{fp_central_98pc}'
         response += f',{fp_central_998pc}'
-        for party, fp_sum in fp_error_sum_party.items():
+        for party, fp_sum in sorted(list(fp_error_sum_party.items())):
+            if party in ['IND', 'IND*', 'SAB', 'CA', 'KAP']: continue
             fp_average = fp_sum / fp_count_party[party]
-        for party, fp_sum in fp_central_50pc_party.items():
+            response += f',{fp_average}'
+        for party, fp_sum in sorted(list(fp_central_50pc_party.items())):
+            if party in ['IND', 'IND*', 'SAB', 'CA', 'KAP']: continue
             fp_average = fp_sum / fp_count_party[party]
-        for party, fp_sum in fp_central_90pc_party.items():
+            response += f',{fp_average}'
+        for party, fp_sum in sorted(list(fp_central_90pc_party.items())):
+            if party in ['IND', 'IND*', 'SAB', 'CA', 'KAP']: continue
             fp_average = fp_sum / fp_count_party[party]
-        for party, fp_sum in fp_central_98pc_party.items():
+            response += f',{fp_average}'
+        for party, fp_sum in sorted(list(fp_central_98pc_party.items())):
+            if party in ['IND', 'IND*', 'SAB', 'CA', 'KAP']: continue
             fp_average = fp_sum / fp_count_party[party]
-        for party, fp_sum in fp_central_998pc_party.items():
+            response += f',{fp_average}'
+        for party, fp_sum in sorted(list(fp_central_998pc_party.items())):
+            if party in ['IND', 'IND*', 'SAB', 'CA', 'KAP']: continue
             fp_average = fp_sum / fp_count_party[party]
+            response += f',{fp_average}'
         response += '\n'
     return response
