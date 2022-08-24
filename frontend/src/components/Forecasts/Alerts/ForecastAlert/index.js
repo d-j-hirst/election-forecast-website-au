@@ -13,7 +13,7 @@ import styles from './ForecastAlert.module.css';
 const old_elections = ['2022sa', '2022fed']
 const old_elections_links = {
     '2022sa': 'https://www.ecsa.sa.gov.au/elections/2022-state-election/results',
-    '2022fed': 'https://tallyroom.aec.gov.au/HouseDivisionalResults-27966.htm'
+    '2022fed': 'https://results.aec.gov.au/27966/Website/HouseDefault-27966.htm'
 }
 const old_live_text = {
     '2022sa': 'at the end of election night',
