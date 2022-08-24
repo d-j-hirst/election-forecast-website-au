@@ -9,6 +9,14 @@ from forecast_api.review import perform_review
 from rest_framework.response import Response
 from rest_framework.permissions import BasePermission
 import json
+from django.core.cache import cache
+
+
+mode_conversion = {
+    'FC': 'regular',
+    'NC': 'nowcast',
+    'LF': 'live'
+}
 
 
 class SubmitForecastPermission(BasePermission):
@@ -41,7 +49,7 @@ def get_series_from_forecasts(forecasts):
             } for a in forecasts]
 
 
-def update_timeseries(election: Election):
+def update_timeseries(code: str, election: Election):
     fc_forecasts = Forecast.objects.filter(election=election, mode='FC').order_by('date')
     fc_series = get_series_from_forecasts(fc_forecasts)
     nc_forecasts = Forecast.objects.filter(election=election, mode='NC').order_by('date')
@@ -54,6 +62,9 @@ def update_timeseries(election: Election):
     election.timeseries_nc_version += 1
     election.timeseries_lf = lf_series
     election.timeseries_lf_version += 1
+    clear_timeseries_cache(code, 'FC')
+    clear_timeseries_cache(code, 'NC')
+    clear_timeseries_cache(code, 'LF')
     election.save()
 
 
@@ -89,7 +100,8 @@ def submit_report(request: HttpRequest):
     forecast.report = data
     forecast.flags = flags
     forecast.save()
-    update_timeseries(election)
+    clear_forecast_cache(code, mode)
+    update_timeseries(code, election)
     return Response("Forecast report successfully submitted.")
 
 
@@ -98,7 +110,7 @@ def submit_timeseries_update(request: HttpRequest):
     data = json.loads(data_json)
     code = data['termCode']
     election = get_object_or_404(Election, code=code)
-    update_timeseries(election)
+    update_timeseries(code, election)
     return Response("Election timeseries successfully updated.")
 
 
@@ -108,6 +120,7 @@ def submit_results_update(request: HttpRequest):
     code = data['termCode']
     election = get_object_or_404(Election, code=code)
     update_results(election)
+    clear_results_cache(code)
     return Response("Election results successfully updated.")
 
 
@@ -123,3 +136,22 @@ def submit_review(request: HttpRequest):
         raise Http404('No forecasts for this election!')
     response = perform_review(election, forecasts)
     return Response(response)
+
+
+def clear_forecast_cache(code, mode):
+    keys = [f'forecast_recent_id_{mode}_{code}',
+            f'forecast_recent_resp_{mode}_{code}',
+            f'forecast_archives_resp_{code}']
+    cache.delete_many(keys)
+
+
+def clear_timeseries_cache(code, mode):
+    keys = [f'timeseries_recent_id_{mode}_{code}'
+            f'timeseries_recent_resp_{mode}_{code}']
+    cache.delete_many(keys)
+
+
+def clear_results_cache(code):
+    keys = [f'results_recent_id_{code}'
+            f'results_recent_resp_{code}']
+    cache.delete_many(keys)
