@@ -132,13 +132,13 @@ def serve_election_timeseries(code, mode, cached_version):
     cached_int_id = cache.get(cache_int_id_key)
     if cached_int_id == cached_version:
         print(f'cached timeseries id, key: {cache_int_id_key}'
-              f'{cached_int_id} {cached_version}')
+              f' {cached_int_id} {cached_version}')
         return Response({"new": False})
     cache_response_key = f'timeseries_recent_resp_{modes[mode]}_{code}'
     cached_response = cache.get(cache_response_key)
     if cached_response is not None:
         print(f'cached forecast, key: {cache_response_key}'
-              f'{cached_int_id} {cached_version}')
+              f' {cached_int_id} {cached_version}')
         return Response(cached_response)
     
     # Cache not present, retrieve from database
@@ -155,8 +155,8 @@ def serve_election_timeseries(code, mode, cached_version):
     else:
         raise Http404('Invalid mode')
     if version == cached_version:
-        print(f'uncached version match: {cache_response_key}'
-              f'{version} {cached_version}')
+        print(f'uncached version match: {cache_int_id_key}'
+              f' {version} {cached_version}')
         return Response({"new": False})
     if mode == 'regular':
         series = election.timeseries_fc
@@ -170,7 +170,7 @@ def serve_election_timeseries(code, mode, cached_version):
                 "version": version,
                 "new": True}
     print(f'uncached version match: {cache_response_key}'
-            f'{version} {cached_version}')
+            f' {version} {cached_version}')
 
     # Set cache so that we can use it subsequently
     cache.set(cache_int_id_key, version)
