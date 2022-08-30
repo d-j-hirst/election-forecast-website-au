@@ -12,7 +12,7 @@ const MethodologyPollTrend = props => {
             <h5 id="poll-data-used">Poll data used</h5>
             <p>
                 Poll results have been collected from public sources
-                (principally the <ExtLink href="https://www.pollbludger.net/">Poll Bludger</ExtLink> archives and <ExtLink href="https://www.wikipedia.org/">Wikipedia</ExtLink>).
+                (principally the <ExtLink href="https://www.pollbludger.net/">Poll Bludger</ExtLink> archives with some additional historic data from <ExtLink href="https://www.wikipedia.org/">Wikipedia</ExtLink>).
                 Polls that require a paywall or personal contact to view, as well as any internal polling reports, are not included.
                 In addition, polls must:
             </p>
