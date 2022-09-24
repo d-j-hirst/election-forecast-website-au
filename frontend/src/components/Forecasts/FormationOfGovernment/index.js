@@ -40,7 +40,7 @@ const MinorityWinGovernmentRow = props => {
     let prob = jsonMap(props.forecast.minorityWinPc, party);
     if (prob === undefined) prob = 0;
     const bgClasses = `${styles['formationOfGovernmentSubItem']} ${xxLightBgClass(partyAbbr)}`;
-    const minorityTooltipText = "Parties expected to support this major party in a minority government. " + 
+    const minorityTooltipText = "In these scenarios, parties are expected to support this major party in a minority government. " + 
         "The Greens are expected to support the ALP; One Nation, United Australia Party and Katter's Australian Party " +
         "are expected to support the LNP; and Centre Alliance and all independents are considered to not support either " +
         "major party by default.";
@@ -157,7 +157,7 @@ const OthersExplainer = props => {
             </p>
             <hr />
             <p>
-                Click on "Show details" to show this probability broken down into the different possible winning parties,
+                Click on "Show details" above to show this probability broken down into the different possible winning parties,
                 including an "emerging party" option for parties that aren't prominent enough to be polled yet.
                 (This website does not assume any parties
                 to be supporting a minor party, so unlike for major parties there is no clear minority
@@ -254,7 +254,7 @@ const HungExplainer = props => {
             </p>
             <hr />
             <p>
-                Click on "Show details" to show this probability broken down by the party getting the most seats.
+                Click on "Show details" above to show this probability broken down by the party getting the most seats.
                 Note that the party with the most seats will not necessarily form government, but is more likely to
                 have the upper hand in any negotiations. The final entry shows the chance outcomes where two (or rarely more)
                 parties are exactly tied in the lead with the same number of seats.

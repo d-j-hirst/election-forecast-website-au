@@ -8,6 +8,8 @@ import Button from 'react-bootstrap/Button';
 import InfoIcon from '../../../General/InfoIcon';
 import { ExtLink } from '../../../../utils/extlink.js';
 
+import quantityMarkerExample from './assets/quantity-marker-example.png'
+import categoryMarkerExample from './assets/category-marker-example.png'
 import styles from './ForecastAlert.module.css';
 
 const old_elections = ['2022sa', '2022fed']
@@ -96,6 +98,23 @@ const ForecastAlert = props => {
                     </>
                     }
                 </div>
+                {props.results &&
+                <>
+                    <hr />
+                    <div>
+                        The <strong>final results</strong> for this election have been published, and to ease comparison,
+                        the elements below have been marked to indicate the final result.
+                        <br />
+                        For estimates of particular
+                        quantities (such as vote share or seat totals) this will take the form of a marker showing the position of
+                        the official results, for example: 
+                        <img src={quantityMarkerExample} alt='Quantity marker example' />
+                        <br />
+                        For categorical predictions (such as the winner of a seat) the final result is indicated by a thick border:
+                        <img src={categoryMarkerExample} alt='Category marker example' />
+                    </div>
+                </>
+                }
                 <hr />
                 <p>
                     This report {old ? 'was' : 'is'} based on publicly available election, polling, and candidate information,

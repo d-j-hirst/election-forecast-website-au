@@ -107,7 +107,7 @@ const SeatDetails = () => {
                 {forecastValid && seatIndex >= 0 &&
                     <>
                         <ForecastHeader mode={mode} forecast={forecast} archive={true} />
-                        <ForecastAlert forecast={forecast} code={code} mode={mode} showInitially={false} />
+                        <ForecastAlert forecast={forecast} code={code} mode={mode} showInitially={false} results={effectiveResults} />
                         <StandardErrorBoundary>
                             <SeatDetailBody archive={id}
                                             forecast={forecast}

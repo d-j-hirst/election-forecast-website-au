@@ -110,7 +110,7 @@ const Archive = () => {
                 {forecastValid &&
                     <>
                         <ForecastHeader mode={mode} forecast={forecast} archive={true} />
-                        <ForecastAlert forecast={forecast} code={code} isArchive={true} />
+                        <ForecastAlert forecast={forecast} code={code} isArchive={true} results={effectiveResults} />
                         <StandardErrorBoundary>
                             <FormationOfGovernment election={code} mode={mode} forecast={forecast} windowWidth={windowDimensions.width} />
                         </StandardErrorBoundary>

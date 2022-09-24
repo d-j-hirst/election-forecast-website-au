@@ -128,7 +128,7 @@ const Forecast = () => {
                     {forecastValid && showForecast &&
                         <>
                             <ForecastHeader mode={mode} forecast={forecast} />
-                            <ForecastAlert forecast={forecast} code={code} />
+                            <ForecastAlert forecast={forecast} code={code} results={effectiveResults} />
                             <StandardErrorBoundary>
                                 <FormationOfGovernment election={code} mode={mode} forecast={forecast} windowWidth={windowDimensions.width} />
                             </StandardErrorBoundary>
