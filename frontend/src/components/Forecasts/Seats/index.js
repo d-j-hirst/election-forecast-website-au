@@ -61,6 +61,12 @@ const SeatRow = props => {
         `/seat/${props.election}/${props.mode}/${getSeatUrl(seatName)}`);
     
     const winner = props.result !== null ? Object.keys(props.result.tcp)[0] : null;
+    
+    const marginTooltip = incumbentIndex === 0 || incumbentIndex === 1 ? 
+        "The margin of the seat. The two-party-preferred (TPP) margin is shown; " + 
+        "there may be a smaller margin against another party or independent."
+        : "The final two-candidate-preferred margin in the previous election."
+    
 
     // const thresholds = [[0,2,0],[2,4,1],[4,6,2],[6,8,3],[8,10,4],[10,12,5],[12,14,6]];
     return (
@@ -68,7 +74,10 @@ const SeatRow = props => {
         <ListGroup.Item className={styles.seatsItem}>
             <div className={styles.seatsLeft}>
                 <strong>{seatName}</strong>
-                {" - "}<SmartBadge party={incumbentAbbr} /> {Number(margin).toFixed(1)}%
+                {" - "}<SmartBadge party={incumbentAbbr} />{" "}
+                <TooltipWrapper tooltipText={marginTooltip} placement="bottom">
+                    {Number(margin).toFixed(1)}%
+                </TooltipWrapper>
                 <br/>
                 <span className={styles.seatsLink} onClick={moreHandler}>
                     {!showMore &&
