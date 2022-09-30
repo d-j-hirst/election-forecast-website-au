@@ -26,12 +26,6 @@ const ProbStatement = props => {
         if (struc && text !== undefined) text = text.toLowerCase();
     }
     
-    // const partyAbbr = standardiseParty(props.party, props.forecast);
-    // let text = props.text !== undefined && partyAbbr === "oth" ? props.text : undefined;
-    // const probPhrase = getProbPhrase(props.prob);
-    // const struc = probPhrase[1];
-    // text = interpretOth(text, 'An emerging party');
-    // if (struc && text !== undefined) text = text.toLowerCase();
     return (
         <>
             {struc || noParty ? "It is " : ""}
@@ -39,6 +33,7 @@ const ProbStatement = props => {
             {struc || noParty ? " that " : ""}
             {noParty ? "there " : ""}
             {!noParty && <SmartBadge party={partyAbbr} text={text} />}
+            {props.candidateName && " (" + props.candidateName + ")"}
             {struc || noParty ? "" : " " + getIsPhrase(props.forecast) + " "}
             <strong>{struc || noParty ? "" : probPhrase[0]}</strong>
             {struc || noParty ? "" : " to"}

@@ -29,7 +29,9 @@ const WinnerBar = props => {
     }
 
     let tooltipText = "";
-    tooltipText = props.bar.partyName + " - " + Number(props.bar.winPercent).toFixed(1) + "% chance to win." +
+    tooltipText = props.bar.partyName +
+        (props.bar.candidateName ? " (" + props.bar.candidateName + ")" : "") +
+         " - " + Number(props.bar.winPercent).toFixed(1) + "% chance to win." +
         (props.bar.eventualWinner ? " Ultimately won the seat." : "");
 
     return (
