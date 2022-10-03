@@ -19,6 +19,11 @@
     color: white;
   }
   
+  .indx-badge {
+    background-color: var(--indx);
+    color: white;
+  }
+  
   .kap-badge {
     background-color: var(--kap);
     color: white;

@@ -33,12 +33,13 @@ const SeatWinsSection = props => {
 
     const filterfunc = props.abbreviated ?
         a => a[1] >= 1 || a[0] === 0 || a[0] === 1 :
-        a => a;
+        a => a[1] > 0;
     
     const sortedFreqs = freqs
         .filter(filterfunc)
         .sort((a, b) => b[1] - a[1]);
     const anyOtherWinPc = sortedFreqs.reduce((p, c) => p - c[1], 100);
+    const namedIndependentExists = sortedFreqs.filter(a => jsonMap(props.forecast.partyAbbr, a[0]) === "IND").length > 1;
     return (
         <>
             <ListGroup.Item className={styles.seatsSubheading}>
@@ -55,7 +56,7 @@ const SeatWinsSection = props => {
                             let text = "Independent";
                             const party = a[0];
                             if (party === -3) text = "An emerging party";
-                            if (party === -2) text = "An emerging independent";
+                            if (party === -2) text = namedIndependentExists ? "Any other independent" : "Any independent";
                             const name = ("seatCandidateNames" in props.forecast ?
                                 (
                                     jsonMap(props.forecast.seatCandidateNames[props.index], party, null)

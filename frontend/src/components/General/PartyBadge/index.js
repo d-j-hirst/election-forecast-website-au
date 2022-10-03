@@ -24,20 +24,22 @@ export const GrnBadge = props => {
 
 export const IndBadge = props => {
     const classes = `${styles['party-badge']} ${styles['ind-badge']}`;
-    const text = props.text !== undefined ? props.text : 'IND';
-    const tooltipText = props.tooltipText === undefined ? "Established Independent - Independents who are either incumbents, gained significant vote previously or otherwise known to have a high profile"
-         : props.tooltipText;
+    const tooltipText = "Independent - This independent candidate has a sufficiently high profile to model their vote separately.";
     return (
         <TooltipWrapper tooltipText={tooltipText}>
-            <span className={classes}>{text}</span>
+            <span className={classes}>IND</span>
         </TooltipWrapper>
     )
 };
 
 export const IndXBadge = props => {
-    return <IndBadge text={props.text === undefined ? "IND*" : props.text}
-                     tooltipText="Emerging Independent - Independents who are not yet known to have a high profile"
-           />
+    const classes = `${styles['party-badge']} ${styles['indx-badge']}`;
+    const tooltipText = "Independent (unnamed) - Any independent candidate (current or future) for this seat not named elsewhere. This might be because they have a low profile, haven't announced their candidacy yet, or there is another more notable independent.";
+    return (
+        <TooltipWrapper tooltipText={tooltipText}>
+            <span className={classes}>IND*</span>
+        </TooltipWrapper>
+    )
 }
 
 export const KapBadge = props => {

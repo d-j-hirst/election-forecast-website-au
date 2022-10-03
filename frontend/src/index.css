@@ -69,6 +69,12 @@ code {
   --ind-xlight: #cec2ce;
   --ind-xxlight: #ddd3dd;
   --ind-xxxlight: #eee7ee;
+  --indx: #707083;
+  --indx-mid: #9594a5;
+  --indx-light: #acaab8;
+  --indx-xlight: #c3c2ce;
+  --indx-xxlight: #d4d3dd;
+  --indx-xxxlight: #e7e7ee;
 }
 
 .alp-bg {
@@ -108,6 +114,11 @@ code {
 
 .ind-bg {
   background-color: var(--ind) !important;
+  color: #212529 !important;
+}
+
+.indx-bg {
+  background-color: var(--indx) !important;
   color: #212529 !important;
 }
 
@@ -151,6 +162,11 @@ code {
   color: #212529 !important;
 }
 
+.indx-bg-mid {
+  background-color: var(--indx-mid) !important;
+  color: #212529 !important;
+}
+
 .alp-bg-light {
   background-color: var(--alp-light) !important;
   color: #212529 !important;
@@ -191,6 +207,11 @@ code {
   color: #212529 !important;
 }
 
+.indx-bg-light {
+  background-color: var(--indx-light) !important;
+  color: #212529 !important;
+}
+
 .alp-bg-xlight {
   background-color: var(--alp-xlight) !important;
   color: #212529 !important;
@@ -223,6 +244,11 @@ code {
 
 .ind-bg-xlight {
   background-color: var(--ind-xlight) !important;
+  color: #212529 !important;
+}
+
+.indx-bg-xlight {
+  background-color: var(--indx-xlight) !important;
   color: #212529 !important;
 }
 
@@ -271,6 +297,11 @@ code {
   color: #212529 !important;
 }
 
+.indx-bg-xxlight {
+  background-color: var(--indx-xxlight) !important;
+  color: #212529 !important;
+}
+
 .alp-bg-xxxlight {
   background-color: var(--alp-xxxlight) !important;
   color: #212529 !important;
@@ -308,5 +339,10 @@ code {
 
 .ind-bg-xxxlight {
   background-color: var(--ind-xxxlight) !important;
+  color: #212529 !important;
+}
+
+.indx-bg-xxxlight {
+  background-color: var(--indx-xxxlight) !important;
   color: #212529 !important;
 }
