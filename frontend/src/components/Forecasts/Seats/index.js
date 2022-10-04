@@ -239,8 +239,15 @@ const Seats = props => {
         sortedIndices = indexedMargins.map((a, b) => a[0]);
     }
     else if (sortType === SortTypeEnum.winChance) {
-        const indexedChances = props.forecast.seatPartyWinFrequencies.map(
-            (a, index) => [index, jsonMap(a, sortParty, 0)]);
+        let indexedChances = []
+        if (jsonMap(props.forecast.partyAbbr, sortParty) == "IND") {
+            indexedChances = props.forecast.seatPartyWinFrequencies.map(
+                (a, index) => [index, jsonMap(a, sortParty, 0) + jsonMap(a, -2, 0)]);
+        }
+        else {
+            indexedChances = props.forecast.seatPartyWinFrequencies.map(
+                (a, index) => [index, jsonMap(a, sortParty, 0)]);
+        }
         indexedChances.sort((a, b) => a[1] > b[1] ? -1 : 1);
         sortedIndices = indexedChances.map((a, b) => a[0]);
     }
@@ -291,7 +298,6 @@ const Seats = props => {
     const setSortIndWinChance = () => {setSortType(SortTypeEnum.winChance); setSortParty(indIndex)};
     const setSortOnpWinChance = () => {setSortType(SortTypeEnum.winChance); setSortParty(onpIndex)};
     const setSortUapWinChance = () => {setSortType(SortTypeEnum.winChance); setSortParty(uapIndex)};
-    const setSortEmergingIndWinChance = () => {setSortType(SortTypeEnum.winChance); setSortParty(-2)};
     const setSortEmergingPartyWinChance = () => {setSortType(SortTypeEnum.winChance); setSortParty(-3)};
 
     const setFilterAll = () => {setFilter("all");};
@@ -336,7 +342,6 @@ const Seats = props => {
                                 {uapIndex &&
                                     <Dropdown.Item as="button" onClick={setSortUapWinChance}>UAP win chance</Dropdown.Item>
                                 }
-                                <Dropdown.Item as="button" onClick={setSortEmergingIndWinChance}>Emerging IND win chance</Dropdown.Item>
                                 <Dropdown.Item as="button" onClick={setSortEmergingPartyWinChance}>Emerging party win chance</Dropdown.Item>
                             </DropdownButton>
                             {isFederal &&
