@@ -2,12 +2,14 @@ import React from 'react';
 
 import { HashLink as Link } from 'react-router-hash-link';
 
+import GlossaryAlert from '../Alert'
 import GlossaryItem from '../Item'
 
 const GlossaryItems = props => {
     return (
         <>
             <GlossaryItem type="site" title="Anchoring pollster">
+                <GlossaryAlert />
                 <p>
                     The <Link to="#poll-trend">poll trend</Link> that underlies forecasts on this
                     site includes the assumption that

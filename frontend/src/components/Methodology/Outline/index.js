@@ -1,5 +1,7 @@
 import React from 'react';
 
+import GlossaryLink from '../GlossaryLink';
+
 const GuideNowcast = props => {
     return (
         <>
@@ -12,11 +14,13 @@ const GuideNowcast = props => {
             </p>
             <ul>
                 <li>
-                    Find the most fitting trend in voting intention polling for the current election cycle,
-                    using publicly available opinion polls. This results in <i>poll trends</i> (including uncertainty levels)
-                    for both first-preference (FP) votes and two-party-preferred (TPP) votes that
+                    Find the most fitting trend in <GlossaryLink word="voting intention" /> polling for the
+                    current election cycle, using publicly available opinion <GlossaryLink word="polls" />. This
+                    results in <i><GlossaryLink word="poll trends" /></i> (including uncertainty levels)
+                    for both <GlossaryLink word="first-preference (FP)" /> votes
+                    and <GlossaryLink word="two-party-preferred (TPP)" /> votes that
                     track poll results while minimising the influence of sampling variation
-                    and differences between polling houses.
+                    and differences between <GlossaryLink word="polling houses" />.
                 </li>
                 <li>
                     After also creating poll trends for previous elections, study how previous poll trends correlated
@@ -29,7 +33,7 @@ const GuideNowcast = props => {
                 </li>
                 <li>
                     Aggregate those simulations into probabilities and/or probability distributions for different
-                    results (whole parliament results, overall vote shares, seat totals, and individual seat results).
+                    results (whole parliament results, overall vote shares, <GlossaryLink word="seat" /> totals, and individual seat results).
                 </li>
             </ul>
         </>
