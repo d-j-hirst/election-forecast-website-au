@@ -10,6 +10,10 @@ const GlossaryLink = props => {
     case 'first-preference vote':
     case 'first-preference votes':
     case 'first-preferences':
+    case 'first preference (fp)':
+    case 'first preference vote':
+    case 'first preference votes':
+    case 'first preferences':
         link = "first-preference-vote"
         break;
     case 'tpp':
@@ -39,6 +43,9 @@ const GlossaryLink = props => {
         break;
     case 'voting intention':
         link = "voting-intention"
+        break;
+    case 'major parties':
+        link = "major-parties"
         break;
     }
     if (link == "") return <strong>Invalid link</strong>
