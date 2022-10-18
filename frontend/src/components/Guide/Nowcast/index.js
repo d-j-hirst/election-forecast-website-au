@@ -10,9 +10,11 @@ const GuideNowcast = props => {
                 present time (or perhaps the immediate future) when it is not possible
                 to observe those conditions exactly. On this site, with regard to election
                 forecasting, it is used to represent a <strong>snapshot of public opinion
-                immediately after the last polling input to the model.</strong> To do this,
+                at about the present time.</strong> To do this,
                 the model is run exactly the same way as a regular forecast except that
-                it "pretends" that the election is only a day after the latest poll result.
+                it "pretends" that the election is set to at the current time. (To be precise,
+                it's either 4 days after the previous poll's fieldwork midpoint, or
+                a periodic update thereafter, whichever is later.)
             </p>
             <p>
                 Importantly, this means that the nowcast <strong>is not a forecast</strong> in

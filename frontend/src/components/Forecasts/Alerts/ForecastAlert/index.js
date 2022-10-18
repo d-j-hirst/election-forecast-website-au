@@ -69,7 +69,7 @@ const ForecastAlert = props => {
                             <strong>{isArchive ? 'archived ' : ''}nowcast</strong> report,
                             not a forecast for the actual election.
                             This means it {old ? 'was' : 'is'} an estimate of what the {props.forecast.electionName} might be
-                            like <strong>if it were held {old ? 'at that time' : 'the last time new polling data was published'}</strong>.
+                            like <strong>if it were held {old ? 'at that time' : 'now'}</strong>.
                             The election result {old ? 'might have been ' : 'may be '} quite different when it {old ? 'was' : 'is'} actually held.
                             See <Link to={"/guide#nowcast"}>this section of the forecast guide</Link> for more information.
                             (For a forecast for the election when it {old ? 'was' : 'is'} expected to be held, see the&nbsp;
