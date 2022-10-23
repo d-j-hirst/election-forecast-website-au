@@ -84,7 +84,7 @@ const MethodologyPollTrend = props => {
                 test their predictive effectiveness. This involves running the procedure repeatedly with a data point
                 left out, and determining how accurately the procedure predicts that data point, and is a measure's ability
                 to predict out-of-sample data. Fitted models such as these are often less accurate when working on new
-                "out-of-sample" data than the data that the model is trained on,and this validation checks that
+                "out-of-sample" data than the data that the model is trained on, and this validation checks that
                 the method still has predictive value.
             </p>
             <p>

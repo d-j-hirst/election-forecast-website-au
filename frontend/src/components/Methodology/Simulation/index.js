@@ -181,8 +181,8 @@ const MethodologyPollTrend = props => {
                 the election sampling, the seat FPs need to be adjusted to fit the original sample. While the actual process is
                 quite involved, mainly it proceeds by adjusting minor party votes proportionally up or down across all seats, and then
                 recalculating the major party TPPs for each seat. This process is repeated 5 times, at which point the difference
-                between the FP votes for the election sample and simulation are usually on average below 0.1% (though rare cases
-                where a minor party gets a much higher share of the FP vote will be higher than this). 
+                between the FP votes for the election sample and simulation are usually on average below 0.1% (though rare cases,
+                where a minor party gets a much higher share of the FP vote, will be higher than this). 
             </p>
             <p>
                 One detail is

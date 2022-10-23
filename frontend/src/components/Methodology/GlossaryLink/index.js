@@ -47,6 +47,12 @@ const GlossaryLink = props => {
     case 'major parties':
         link = "major-parties"
         break;
+    case 'house effect':
+        link = "house-effect"
+        break;
+    case 'bias':
+        link = "bias"
+        break;
     }
     if (link == "") return <strong>Invalid link</strong>
     return (

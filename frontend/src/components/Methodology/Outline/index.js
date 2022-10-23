@@ -18,14 +18,14 @@ const GuideNowcast = props => {
                     current election cycle, using publicly available opinion <GlossaryLink word="polls" />. This
                     results in <i><GlossaryLink word="poll trends" /></i> (including uncertainty levels)
                     for both <GlossaryLink word="first-preference (FP)" /> votes
-                    and <GlossaryLink word="two-party-preferred (TPP)" /> votes that
-                    track poll results while minimising the influence of sampling variation
-                    and differences between <GlossaryLink word="polling houses" />.
+                    and <GlossaryLink word="two-party-preferred (TPP)" /> votes. These
+                    track poll results over time while minimising the influence of sampling variation
+                    and differences between <GlossaryLink word="pollsters" />.
                 </li>
                 <li>
                     After also creating poll trends for previous elections, study how previous poll trends correlated
                     with their actual election results, and use these correlations to project the currently observed poll trends
-                    onto probability distributions of vote shares at a future election.
+                    to probability distributions of vote shares at a future election.
                 </li>
                 <li>
                     Randomly sample vote shares from these distributions to simulate various hypothetical election results,

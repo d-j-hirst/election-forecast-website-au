@@ -11,6 +11,10 @@ const GlossaryItems = props => {
             <GlossaryItem type="site" title="Anchoring pollster">
                 <GlossaryAlert />
                 <p>
+                    The method descibed in this section was replaced during September 2022
+                    and no longer applies to present forecasts.
+                </p>
+                <p>
                     The <Link to="#poll-trend">poll trend</Link> that underlies forecasts on this
                     site includes the assumption that
                     pollsters' <Link to="#house-effect">house effects</Link> sum
@@ -40,7 +44,7 @@ const GlossaryItems = props => {
                     This word is used in many contexts, but on this site it means the difference (including
                     direction) between the actual election result and a <Link to="#poll">poll</Link> or
                     average of polls. This is distinct from a <Link to="#house-effect">house effect</Link>,
-                    which measures the difference between pollsters.
+                    which measures the difference between pollsters without comparing to a final result.
                     Adjusting for bias is challenging as the actual bias of a poll can't be known until
                     the result is seen, and the bias can change from one election to another so past
                     elections are not a reliable guide. Using an average across a large
@@ -80,7 +84,7 @@ const GlossaryItems = props => {
                     on the party, this might be known as a pro-Labor, pro-Coalition, pro-Green house
                     effect, and so on.) It must be emphasised that a house effect is not the same
                     as <Link to="#bias">bias</Link>: a poll showing a house effect may in fact turn out to be accurate,
-                    in which cases the other polls would have a bias.
+                    in which case the other polls would have a bias.
                 </p>
                 <p>
                     House effects are typically a result of methodological differences between pollsters:
@@ -100,7 +104,7 @@ const GlossaryItems = props => {
                     House effect adjustment has the effect of adjusting poll results towards the average
                     of all pollsters, but that average can still have a significant error, as in for
                     example the 2019 federal election and the 2018 Victorian state election. Further
-                    adjustments may need to be made to account for both long-term collective bias in
+                    adjustments need to be made to account for both long-term collective bias in
                     polling and uncertainty in the collective error for a single election.
                 </p>
             </GlossaryItem>
@@ -188,12 +192,21 @@ const GlossaryItems = props => {
             <GlossaryItem type="site" title="Nowcast">
                 <p>
                     Each <strong>nowcast</strong> on this site is intended to forecast a hypothetical
-                    election held immediately after the last <Link to="#poll">poll</Link> was taken.
-                    Thus, despite the name, it only really represents "now" immediately after an
-                    update for a recent poll. It should not
+                    election at the present time (when the forecast was produced).. It should not
                     be used for any situation where a result at the actual election is desired, but
                     is valuable for assessing the current mood in the electorate and how that might translate
-                    to <Link to="#seat">seats</Link> in parliament.
+                    to <Link to="#seat">seats</Link> in parliament. Unlike the regular forecast, which
+                    is only updated when new information is available, the nowcast is updated at regular
+                    intervals to ensure that it takes into account the increased uncertainty in the present
+                    situation with the passage of time.
+                </p>
+                <p>
+                    (Note, for archived nowcasts published before
+                    18 October 2022, the nowcast was aligned to forecast
+                    election held immediately after the last <Link to="#poll">poll</Link> was taken,
+                    rather than at the present time. The change to the present format was made so
+                    that the wording is less misleading - despite the name, it had only really represented "now"
+                    immediately after an update for a recent poll.)
                 </p>
             </GlossaryItem>
             <GlossaryItem type="general" title="Poll">
@@ -311,7 +324,7 @@ const GlossaryItems = props => {
                     election at the time it is actually held. The uncertainty (and some other parameters) in the
                     regular forecast accounts for the length of time before the election.
                     This is in contrast with the <Link to="#nowcast">nowcast</Link>, which projects
-                    to a hypothetical election immediately after the most recent <Link to="#poll">poll</Link>.
+                    to a hypothetical election at the time it is made.
                 </p>
             </GlossaryItem>
             <GlossaryItem type="general" title="Respondent allocated preferences">
@@ -329,8 +342,8 @@ const GlossaryItems = props => {
                     (giving the Coalition a comfortable win). 
                 <p>
                 </p>
-                    There is little evidence that respondent-allocated preferences improve results
-                    vs previous election preferences, even in those elections where preferences do shift.
+                    There is little evidence that respondent-allocated preferences improve poll accuracy
+                    as opposed to previous election preferences, even in those elections where preferences do shift.
                     However they do have a place in <Link to="#seat">seat</Link> polls when
                     the <Link to="#two-candidate-preferred-vote">two-candidate-preferred</Link> vote
                     is not between the major parties - in that case there
