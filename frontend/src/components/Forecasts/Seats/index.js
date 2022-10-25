@@ -240,7 +240,7 @@ const Seats = props => {
     }
     else if (sortType === SortTypeEnum.winChance) {
         let indexedChances = []
-        if (jsonMap(props.forecast.partyAbbr, sortParty) == "IND") {
+        if (jsonMap(props.forecast.partyAbbr, sortParty) === "IND") {
             indexedChances = props.forecast.seatPartyWinFrequencies.map(
                 (a, index) => [index, jsonMap(a, sortParty, 0) + jsonMap(a, -2, 0)]);
         }

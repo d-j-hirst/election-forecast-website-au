@@ -73,7 +73,7 @@ const MethodologyPollTrend = props => {
                 The values of the above factors are collected for all elections since 1990
                 and <ExtLink href="https://en.wikipedia.org/wiki/Quantile_regression">quantile regression</ExtLink> is
                 used to find the best estimate for the conditional median of the party category's election vote share. 
-                (Quantile regression differs from standard linear regression in that it minimizes the average error rather than
+                (Quantile regression differs from standard (least-squares) linear regression in that it minimizes the average error rather than
                 the average squared error, and is therefore affected less by outliers.)
             </p>
             <p>
@@ -92,7 +92,7 @@ const MethodologyPollTrend = props => {
                 previous election result, averages of previous election results, and a simple 50-50 result for TPP.
                 The <ExtLink href="https://en.wikipedia.org/wiki/Root-mean-square_deviation">RMSE</ExtLink>,
                 mean absolute error and median absolute error are used to measure the accuracy.
-                The "fundamentals" projection was a significant improvement over the baseline is found
+                The "fundamentals" projection was a significant improvement over the baseline
                 for <i>state</i> election TPP and major party FP, as well as for "populist" minor parties. Little improvement
                 over the baseline is found for "constituency" parties or "others", but the results were not worse either.
             </p>
@@ -112,9 +112,9 @@ const MethodologyPollTrend = props => {
                 and mix them together as a weighted average to make the most accurate estimate possible.
                 The parameters for this process will depend on the vote type (the party and whether TPP or FP)
                 and the length of time until the election.
-                For this process all elections from 2004 onwards are used, and separate estimates of the parameters are
-                made at numerous time points ranging from immediately before the election to about 3 years out
-                (beyond that point there are too few elections to get a useful sample size). The following steps are
+                For this process all elections from 2004 onwards are used to determine the best parameters. Separate estimates
+                of the parameters are made at numerous time points ranging from immediately before the election to about 3 years out
+                (before that point there are too few elections with any polling to get a useful sample size). The following steps are
                 taken separately for each combination of vote type and time point.
             </p>
             <p>
@@ -163,8 +163,7 @@ const MethodologyPollTrend = props => {
                 data. Since one cannot simply run new elections to test this, cross-one-out validation is again used. For each
                 election for which a polling trend has been generated (i.e. 2004 Federal and afterwards) the above procedures to find
                 the election fundamentals and projection parameters are repeated <i>completely excluding any data from the 
-                election being tested for</i> (and for a range of different time points in the poll trend, from immediately
-                before the election to about 2.5 years before). This usually results in a slightly different set of parameters and fundamentals compared
+                election being tested for</i>. This usually results in a slightly different set of parameters and fundamentals compared
                 to those obtained when the election is included in the analyses.
             </p>
             <p>
@@ -206,8 +205,8 @@ const MethodologyPollTrend = props => {
                 So far, the fundamentals, poll trend and projection can be used to create a probability distribution for
                 each party's FP vote and also the TPP. But simulating an election requires the complete picture - all the
                 FP votes need to add to 100 and also need to match with the TPP. Doing this requires the creation of
-                an <i>election sample</i>, a complete description of the vote shares of the significant political parties,
-                including FP votes, the TPP and also the preference flows from each party (which will be subject to some
+                an <i>vote share sample</i>, a complete description of the vote shares of the significant political parties.
+                This includes FP votes, the TPP and also the preference flows from each party (which will be subject to some
                 random variation).
             </p>
             <p>
@@ -215,12 +214,14 @@ const MethodologyPollTrend = props => {
                 preference vote randomly selected from the probability distribution in their FP projection, as determined above.
             </p>
             <p>
-                In addition to the significant minor parties, some samples also have an "emerging party", representing the possibility
-                of a new party emerging and getting a sizeable percentage of the vote (as One Nation did significantly in 1998 QLD, and
-                to a lesser extent PUP in 2013 Federal). The probability of emergence and size of the vote are loosely extrapolated from
-                the few such events that have occurred in the past, and both are reduced as the election approaches. The rate of this
-                reduction over time is based on a subjective judgment as, while it is obvious that the chances of a new party
-                emerging should decrease as the election approaches, there is too little data on the matter to even roughly estimate how much.
+                In addition to the significant minor parties, some samples are also assigned to include an
+                "emerging party", representing the possibility of a new party emerging and getting a sizeable
+                percentage of the vote (as One Nation did significantly in 1998 QLD, and to a lesser extent PUP in 2013 Federal).
+                The probability of emergence and size of the emerging party's vote are loosely extrapolated from
+                the few such events that have occurred in the past; both are reduced over time as the election approaches.
+                The rate of this reduction over time is based on a subjective judgment as, while it is obvious that
+                the chances of a new party emerging should decrease as the election approaches, there is too
+                little data on the matter to even roughly estimate how much.
             </p>
             <p>
                 With the major parties, it is necessary to coordinate their FPs with the TPP so that the TPP can come from a reasonable
@@ -234,7 +235,7 @@ const MethodologyPollTrend = props => {
                     is equal to 100%, then each minor party is assigned a preference flow based on its preference flow at the
                     previous election (or, if that is not available, the most comparable election available), with random variance
                     according to the historic variability in that preference flow. From this a TPP is calculated and used in the
-                    election sample.
+                    vote share sample.
                 </li>
                 <li>
                     TPP-first: The TPP value is projected. Preference flows for the minor parties are calculated as for the FP-first approach,
@@ -243,7 +244,7 @@ const MethodologyPollTrend = props => {
                 </li>
             </ul>
             <p>
-                Once the major party and TPP vote shares have been determined, there is now a coherent election sample that
+                Once the major party and TPP vote shares have been determined, there is now a coherent vote share sample that
                 can be used as a basis for an election simulation. This process will be repeated many times over to generate the
                 overall conditions for each election simulation.
             </p>

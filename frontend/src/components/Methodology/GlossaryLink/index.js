@@ -53,8 +53,11 @@ const GlossaryLink = props => {
     case 'bias':
         link = "bias"
         break;
+    default:
+        // leave link as ""
+        break;
     }
-    if (link == "") return <strong>Invalid link</strong>
+    if (link === "") return <strong>Invalid link</strong>
     return (
         <Link to={`/glossary#${link}`}>{props.word}</Link>
     )
