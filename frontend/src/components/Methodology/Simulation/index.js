@@ -167,6 +167,18 @@ const MethodologyPollTrend = props => {
                 analysis</ExtLink> by Kevin Bonham). This also applies to certain quasi-independent candidates
                 who technically stand for a party but are largely running on their personal appeal.
             </p>
+            <p>
+                The performance of independents is not assumed to be (statistically) independent. Rather it is expected
+                there will be correlations, relative to expectations, in independents' performance, and these may occasionally be
+                quite strong.
+                That is, independents will collectively overperform expectations in some elections and underperform them in
+                others. For each simulation parameters are randomly chosen for a beta distribution that will then
+                (intentionally) bias the variable component of the independents' FP vote share. The distribution of the
+                parameters themselves is chosen so that the distribution of a single independent's FP share
+                is still very close to where it would be without any correlation. As a result, the overall simulated
+                performance of an individual independent is little changed by this step, but the distribution of
+                total independent seats across many simulations includes a much wider range of outcomes.
+            </p>
             <h6 id="fp-seat-">Greens</h6>
             <p>
                 As of September 2022, seat betting is also used to adjust Greens FP vote shares. Based on a
