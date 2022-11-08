@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
+import NavDropdown from 'react-bootstrap/NavDropdown';
 import Container from 'react-bootstrap/Container';
 import styles from './ForecastsNav.module.css';
 
@@ -16,6 +17,17 @@ const ElectionNav = props => {
                 {props.text}
             </div>
         </Nav.Link>
+    )
+}
+const ElectionNavDropdown = props => {
+    const thisClass = props.activeElection === props.election ? styles.navselected : styles.navitem;
+    const linkUrl = "/forecast/" + props.election + "/" + props.mode;
+    return (
+        <NavDropdown.Item as={Link} to={linkUrl}>
+            <div className={thisClass}>
+                {props.text}
+            </div>
+        </NavDropdown.Item>
     )
 }
 
@@ -45,8 +57,10 @@ const ForecastsNav = props => {
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
                             <ElectionNav text="Victoria" election="2022vic" mode={effectiveMode} activeElection={props.election} />
-                            <ElectionNav text="Federal" election="2022fed" mode={effectiveMode} activeElection={props.election} />
-                            <ElectionNav text="South Australia" election="2022sa" mode={effectiveMode} activeElection={props.election} />
+                            <NavDropdown title="Past Elections">
+                                <ElectionNavDropdown text="2022 Federal" election="2022fed" mode={effectiveMode} activeElection={props.election} />
+                                <ElectionNavDropdown text="2022 South Australia" election="2022sa" mode={effectiveMode} activeElection={props.election} />
+                            </NavDropdown>
                     </Navbar.Collapse>
                 </Nav>
             </Container>
