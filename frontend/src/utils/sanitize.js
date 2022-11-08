@@ -5,7 +5,7 @@ const defaultOptions = {
                   'ol', 'li', 'img' ],
     allowedAttributes: {
         'a': [ 'href' ],
-        'img': [ 'src', 'alt' ]
+        'img': [ 'src', 'alt', 'style' ]
     },
 };
 
