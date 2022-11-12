@@ -14,10 +14,12 @@ const WinnerBarDist = props => {
         margin: '0px auto',
     };
     
+    console.log(props.forecast);
+    console.log(props.forecast.seatCandidateNames[props.index]);
     const candidateNames = props.freqSet.map(
         e => ("seatCandidateNames" in props.forecast ?
             (
-                jsonMap(props.forecast.seatCandidateNames[props.index], e[0], null)
+                props.forecast.seatCandidateNames.length > 0 ? jsonMap(props.forecast.seatCandidateNames[props.index], e[0], null) : ''
             )
             : null
         )
