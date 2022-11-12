@@ -136,14 +136,18 @@ const SeatTcpRowPair = props => {
 
     const cand0Name = ("seatCandidateNames" in props.forecast ?
                                 (
-                                    jsonMap(props.forecast.seatCandidateNames[props.index], freqSet0[0], null)
+                                    props.forecast.seatCandidateNames.length > 0 ? 
+                                    jsonMap(props.forecast.seatCandidateNames[props.index], freqSet0[0], null) :
+                                    ''
                                 )
                                 : null
                         );
 
     const cand1Name = ("seatCandidateNames" in props.forecast ?
                                 (
-                                    jsonMap(props.forecast.seatCandidateNames[props.index], freqSet1[0], null)
+                                    props.forecast.seatCandidateNames.length > 0 ? 
+                                    jsonMap(props.forecast.seatCandidateNames[props.index], freqSet1[0], null) :
+                                    ''
                                 )
                                 : null
                         );

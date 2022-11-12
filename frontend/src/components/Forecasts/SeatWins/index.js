@@ -59,7 +59,9 @@ const SeatWinsSection = props => {
                             if (party === -2) text = namedIndependentExists ? "Any other independent" : "Any independent";
                             const name = ("seatCandidateNames" in props.forecast ?
                                 (
-                                    jsonMap(props.forecast.seatCandidateNames[props.index], party, null)
+                                    props.forecast.seatCandidateNames.length > 0 ?
+                                    jsonMap(props.forecast.seatCandidateNames[props.index], party, null) :
+                                    ''
                                 )
                                 : null
                             );
