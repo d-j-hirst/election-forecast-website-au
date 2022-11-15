@@ -9,6 +9,7 @@ import Alert from 'react-bootstrap/Alert';
 import SeatWinsSection from '../SeatWins';
 import SeatTcpSection from '../SeatTcp';
 import SeatFpSection from '../SeatFp';
+import SeatTcpSwingFactors from '../SwingFactors';
 
 import StandardErrorBoundary from '../../General/StandardErrorBoundary';
 import WinnerBarDist from '../../General/WinnerBarDist';
@@ -155,6 +156,18 @@ const SeatDetailBody = props => {
                                 windowWidth={props.windowWidth}
                     />
                 </StandardErrorBoundary>
+                {props.mode !== 'live' && props.forecast.hasOwnProperty('seatSwingFactors') &&
+                    <StandardErrorBoundary>
+                        <SeatTcpSwingFactors forecast={props.forecast}
+                                             election={props.election}
+                                             index={props.index}
+                                             result={props.result}
+                                             windowWidth={props.windowWidth}
+                                             mode={props.mode}
+                                             abbreviated={true}
+                        />
+                    </StandardErrorBoundary>
+                }
             </Card.Body>
         </Card>
     );

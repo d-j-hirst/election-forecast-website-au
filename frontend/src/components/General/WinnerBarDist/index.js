@@ -14,8 +14,6 @@ const WinnerBarDist = props => {
         margin: '0px auto',
     };
     
-    console.log(props.forecast);
-    console.log(props.forecast.seatCandidateNames[props.index]);
     const candidateNames = props.freqSet.map(
         e => ("seatCandidateNames" in props.forecast ?
             (
@@ -30,7 +28,6 @@ const WinnerBarDist = props => {
     let bars = undefined;
     let currentPercent = 0;
     const namedIndependentExists = props.freqSet.filter(a => jsonMap(props.forecast.partyAbbr, a[0]) === "IND").length > 1;
-    console.log(namedIndependentExists);
     bars = props.freqSet.map((freq, index) => {
         const left = Math.ceil(chartWidth * currentPercent * 0.01);
         const width = Math.ceil(chartWidth * freq[1] * 0.01);
@@ -38,7 +35,6 @@ const WinnerBarDist = props => {
         const abbr = freq[0] === -2 ? 'indx' : jsonMap(props.forecast.partyAbbr, freq[0]);
         const name = freq[0] === -2 ? (namedIndependentExists ? 'Any other independent' :'Any indepdendent') :
             jsonMap(props.forecast.partyName, freq[0]);
-        console.log(name);
         return {
             candidateName: candidateNames[index],
             eventualWinner: props.result !== null ? props.result === abbr : false,

@@ -66,7 +66,7 @@ const TcpExplainer = props => {
 
 const SeatTcpSection = props => {
     const [showExplainer, setShowExplainer] = useState(false);
-    const hideTcps = (props.forecast.seatHideTcps !== undefined ? props.forecast.seatHideTcps[props.index] : false);
+    const hideTcps = (props.forecast.seatHideTcps !== undefined ? props.forecast.seatHideTcps[props.index] === 1 : false);
     const seatName = props.forecast.seatNames[props.index];
     const tcpFreqs = deepCopy(props.forecast.seatTcpBands[props.index]);
     const tcp = props.result === null ? null : props.result.tcp;
@@ -112,10 +112,12 @@ const SeatTcpSection = props => {
                 }
             </>}
             {hideTcps &&
+                <>
                 <ListGroup.Item className={styles.seatsNote}>
                     TCP projections are hidden for this seat as they are likely to be inaccurate.
                     A manual override has been applied to the win chance based on human analysis.
                 </ListGroup.Item>
+                </>
             }
         </>
     )

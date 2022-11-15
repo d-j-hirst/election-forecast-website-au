@@ -10,6 +10,7 @@ import { HashLink as Link } from 'react-router-hash-link';
 import SeatWinsSection from '../SeatWins';
 import SeatTcpSection from '../SeatTcp';
 import SeatFpSection from '../SeatFp';
+import SeatTcpSwingFactors from '../SwingFactors';
 
 import StandardErrorBoundary from '../../General/StandardErrorBoundary';
 import WinnerBarDist from '../../General/WinnerBarDist';
@@ -125,7 +126,7 @@ const SeatMore = props => {
                              index={props.index}
                              abbreviated={true}
             />
-            {(props.mode !== "live" || props.election !== "2022sa") &&
+            {(props.mode !== 'live' || props.election !== '2022sa') &&
                 <>
                     <SeatFpSection forecast={props.forecast}
                                    election={props.election}
@@ -143,6 +144,16 @@ const SeatMore = props => {
                                     abbreviated={true}
                     />
                 </>
+            }
+            {props.mode !== 'live' && props.forecast.hasOwnProperty('seatSwingFactors') &&
+                <SeatTcpSwingFactors forecast={props.forecast}
+                                     election={props.election}
+                                     index={props.index}
+                                     result={props.result}
+                                     windowWidth={props.windowWidth}
+                                     mode={props.mode}
+                                     abbreviated={true}
+                />
             }
         </>
     )
