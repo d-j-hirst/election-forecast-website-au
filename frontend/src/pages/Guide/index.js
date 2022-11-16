@@ -1,6 +1,7 @@
 import React from 'react';
 
-import { Header, Footer, GuideHeader, GuideIntro, GuidePurpose, GuideNowcast, GuideTcpScenarios, StandardErrorBoundary } from 'components';
+import { Header, Footer, GuideHeader, GuideIntro, GuidePurpose, GuideNowcast, 
+         GuideTcpScenarios, GuideSwingFactors, StandardErrorBoundary } from 'components';
 import { useWindowDimensions } from '../../utils/window.js';
 
 import styles from './Guide.module.css';
@@ -20,6 +21,7 @@ const Guide = () => {
                         <GuidePurpose />
                         <GuideNowcast />
                         <GuideTcpScenarios />
+                        <GuideSwingFactors />
                     </div>
                 </StandardErrorBoundary>
             </div>

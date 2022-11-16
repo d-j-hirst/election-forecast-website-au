@@ -18,6 +18,7 @@ export { default as GuideIntro } from './Guide/Intro';
 export { default as GuidePurpose } from './Guide/Purpose';
 export { default as GuideNowcast } from './Guide/Nowcast';
 export { default as GuideTcpScenarios } from './Guide/TcpScenarios';
+export { default as GuideSwingFactors } from './Guide/SwingFactors';
 export { default as GlossaryHeader } from './Glossary/Header';
 export { default as GlossaryIntro } from './Glossary/Intro';
 export { default as GlossaryIndex } from './Glossary/Index';

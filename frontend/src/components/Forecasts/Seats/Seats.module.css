@@ -110,6 +110,10 @@
     margin: 0px !important;
 }
 
+.textLeft {
+    text-align: left;
+}
+
 .alert p {
     margin: 0px !important;
 }

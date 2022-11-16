@@ -29,13 +29,22 @@ const SortedTcpSwingRow = props => {
 
 const SwingFactorsExplainer = props => {
     return (
-        <Alert variant="info" className={styles.info}>
+        <Alert variant="info" className={styles.textLeft}>
         <p>
-            Paragraph 1
+            These are the key factors that the model is using to estimate the
+            two-party-preferred (TPP) swings in this region. These are applied
+            to the previous TPP margin to estimate the new TPP margin.
+            See <Link to="/guide#tpp-swing-factors">this section of the forecast guide</Link> for
+            explanations of the different factors that may be applied.
         </p>
         <hr/>
         <p>
-            Paragraph 2
+            There are some scaling and post-processing procecures in the simulations in
+            order to maintain consistency with the simulations, so the swings
+            may not line up exactly with the estimated margin. Additionally,
+            when some of the two-candidate-preferred (TCP) scenarios are not
+            TPP comparisons, the TPP margins shown as part of those scenarios
+            may not be representative of the underlying TPP in <i>all</i> scenarios.
         </p>
         </Alert>
     )
@@ -69,7 +78,8 @@ const SeatTcpSwingFactors = props => {
                 )
             }
             <ListGroup.Item className={styles.seatsNote}>
-                Explanatory note
+                Swing factors may not precisely add up to expected margins due to scaling
+                and post-processing of seat results.
             </ListGroup.Item>
         </>
     )
