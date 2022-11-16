@@ -7,8 +7,10 @@ const GuideSwingFactors = props => {
             <p>
                 The "two-party preferred swing factors" section for each individual seat
                 result shows what seat-specific factors are involved in forecasting
-                the TPP in that seat. Here is a list of the different factors that
-                are used:
+                the TPP in that seat. Below is a list of the different factors that
+                are used. (It is safe to assume that if a factor you're aware of
+                is <i>not</i> shown in the forecast, then it isn't being taken into account
+                for the TPP - adjust your expectations accordingly.)
             </p>
             <ul>
                 <li>

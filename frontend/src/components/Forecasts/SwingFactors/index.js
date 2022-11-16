@@ -7,10 +7,6 @@ import ListGroup from 'react-bootstrap/ListGroup';
 import TooltipPercentage from '../../General/TooltipPercentage';
 import { SmartBadge } from '../../General/PartyBadge';
 import InfoIcon from '../../General/InfoIcon';
-import TooltipWrapper from '../../General/TooltipWrapper';
-
-import { jsonMap } from '../../../utils/jsonmap.js';
-import { deepCopy } from '../../../utils/deepcopy.js';
 
 import styles from '../Seats/Seats.module.css';
 
