@@ -65,9 +65,9 @@ const SeatRow = props => {
     const winner = props.result !== null ? Object.keys(props.result.tcp)[0] : null;
     
     let marginTooltip = "";
-    if (incumbentIndex === 0) marginTooltip = "The two-party-preferred (TPP) margin against the Liberal/National Coalition.";
-    else if (incumbentIndex === 1) marginTooltip = "The two-party-preferred (TPP) margin against Labor.";
-    else marginTooltip = "The final two-candidate-preferred margin in the previous election.";
+    if (incumbentIndex === 0) marginTooltip = "The two-party-preferred (TPP) margin against the Liberal/National Coalition, after adjustment for redistributions.";
+    else if (incumbentIndex === 1) marginTooltip = "The two-party-preferred (TPP) margin against Labor, after adjustment for redistributions.";
+    else marginTooltip = "The final two-candidate-preferred margin in the previous election, after adjustment for redistributions.";
 
     // const thresholds = [[0,2,0],[2,4,1],[4,6,2],[6,8,3],[8,10,4],[10,12,5],[12,14,6]];
     return (
