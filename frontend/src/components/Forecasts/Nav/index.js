@@ -83,7 +83,9 @@ const ForecastsNav = props => {
                         {props.election === "2022fed" &&
                             <ModeNav text="Live" election={props.election} mode="live" activeMode={props.mode} />
                         }
-                        
+                        {props.election === "2022vic" &&
+                            <ModeNav text="Live" election={props.election} mode="live" activeMode={props.mode} />
+                        }
                     </Navbar.Collapse>
                 </Nav>
             </Container>
