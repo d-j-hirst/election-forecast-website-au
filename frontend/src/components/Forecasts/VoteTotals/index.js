@@ -244,6 +244,10 @@ const MainExplainer = props => {
 const VoteTotals = props => {
     const [showExplainer, setShowExplainer] = useState(false);
 
+    let showFpTotals = true;
+    if (props.mode === "live" && props.election === "2022sa") showFpTotals = false;
+    if (props.mode === "live" && props.election === "2022vic" && !props.isArchive) showFpTotals = false;
+
     return (
         <Card className={styles.summary}>
             <Card.Header className={styles.voteTotalsTitle}>
@@ -261,7 +265,7 @@ const VoteTotals = props => {
                         <TppRowSet forecast={props.forecast} results={props.results} windowWidth={props.windowWidth} />
                     </StandardErrorBoundary>
                     {   
-                        (props.mode !== "live" || props.election !== "2022sa") &&
+                        showFpTotals &&
                         <StandardErrorBoundary>
                             <FpRowSet forecast={props.forecast} results={props.results} windowWidth={props.windowWidth} />
                         </StandardErrorBoundary>

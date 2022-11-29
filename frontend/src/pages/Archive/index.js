@@ -115,7 +115,7 @@ const Archive = () => {
                             <FormationOfGovernment election={code} mode={mode} forecast={forecast} windowWidth={windowDimensions.width} />
                         </StandardErrorBoundary>
                         <StandardErrorBoundary>
-                            <VoteTotals election={code} mode={mode} forecast={forecast} windowWidth={windowDimensions.width} results={effectiveResults} />
+                            <VoteTotals election={code} mode={mode} forecast={forecast} windowWidth={windowDimensions.width} results={effectiveResults} isArchive={true} />
                         </StandardErrorBoundary>
                         <StandardErrorBoundary>
                             <SeatTotals election={code} mode={mode} forecast={forecast} windowWidth={windowDimensions.width} results={effectiveResults} />

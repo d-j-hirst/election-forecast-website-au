@@ -25,6 +25,7 @@ import { seatInRegion } from '../../../utils/seatregion.js';
 
 import styles from './Seats.module.css';
 import { standardiseParty } from 'utils/partyclass';
+import { propTypes } from 'react-bootstrap/esm/Image';
 
 const partyCategory = (party, forecast) => {
     const sp = standardiseParty(party).toLowerCase();
@@ -63,6 +64,9 @@ const SeatRow = props => {
         `/seat/${props.election}/${props.mode}/${getSeatUrl(seatName)}`);
     
     const winner = props.result !== null ? Object.keys(props.result.tcp)[0] : null;
+
+    let detailsAvailable = true;
+    if (props.archiveId === undefined && props.election === "2022vic" && props.mode === "live") detailsAvailable = false;
     
     let marginTooltip = "";
     if (incumbentIndex === 0) marginTooltip = "The two-party-preferred (TPP) margin against the Liberal/National Coalition, after adjustment for redistributions.";
@@ -80,28 +84,30 @@ const SeatRow = props => {
                     {Number(margin).toFixed(1)}%
                 </TooltipWrapper>
                 <br/>
-                <span className={styles.seatsLink} onClick={moreHandler}>
-                    {!showMore &&
+                {detailsAvailable && <>
+                    <span className={styles.seatsLink} onClick={moreHandler}>
+                        {!showMore &&
+                            <>
+                            &#9660;more
+                            </>
+                        }
+                        {showMore &&
+                            <>
+                            &#9650;less
+                            </>
+                        }
+                    </span>
+                    {(props.mode !== "live" || props.election !== "2022sa") && 
                         <>
-                        &#9660;more
+                            {"  |  "}
+                            <Link to={detailsLink}>
+                                <span className={styles.seatsLink}>
+                                    <strong>&#187;</strong>full detail
+                                </span>
+                            </Link>
                         </>
                     }
-                    {showMore &&
-                        <>
-                        &#9650;less
-                        </>
-                    }
-                </span>
-                {(props.mode !== "live" || props.election !== "2022sa") && 
-                    <>
-                        {"  |  "}
-                        <Link to={detailsLink}>
-                            <span className={styles.seatsLink}>
-                                <strong>&#187;</strong>full detail
-                            </span>
-                        </Link>
-                    </>
-                }
+                </>}
             </div>
             <WinnerBarDist forecast={props.forecast}
                            freqSet={freqs}
