@@ -25,7 +25,6 @@ import { seatInRegion } from '../../../utils/seatregion.js';
 
 import styles from './Seats.module.css';
 import { standardiseParty } from 'utils/partyclass';
-import { propTypes } from 'react-bootstrap/esm/Image';
 
 const partyCategory = (party, forecast) => {
     const sp = standardiseParty(party).toLowerCase();

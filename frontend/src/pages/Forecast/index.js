@@ -4,8 +4,9 @@ import { useParams } from 'react-router-dom';
 import { Header, Footer, ForecastsNav, ForecastHeader, FormationOfGovernment,
     LoadingMarker, VoteTotals, SeatTotals, ForecastAlert,
     History, Seats, StandardErrorBoundary } from 'components';
-import { getDirect } from 'utils/sdk';
+
 import { useWindowDimensions } from '../../utils/window.js';
+import { fetchLatestReport } from '../../utils/report_manager.js';
 
 import styles from './Forecast.module.css';
 
@@ -18,96 +19,14 @@ const Forecast = () => {
     const windowDimensions = useWindowDimensions();
 
     useEffect(() => {
-        setForecastValid(false);
-        setResultsValid(false);
-
-        const getElectionSummary = () => {
-            let requestUri = `forecast-api/election-summary/${code}/${mode}`;
-            const cached_id = localStorage.getItem('cachedForecastId');
-            if (cached_id !== null) requestUri += `/${cached_id}`;
-            return getDirect(requestUri).then(
-                resp => {
-                    if (!resp.ok) throw Error("Couldn't find election data");
-                    return resp.data;
-                }
-            );
-        }
-
-        const getElectionResults = () => {
-            let requestUri = `forecast-api/election-results/${code}`;
-            const cached_id = localStorage.getItem('cachedResultsVersion');
-            if (cached_id !== null) requestUri += `/${cached_id}`;
-            return getDirect(requestUri).then(
-                resp => {
-                    if (!resp.ok) throw Error("Couldn't find election results data");
-                    return resp.data;
-                }
-            );
-        }
-
-        const fetchElectionSummary = () => {
-            const modeTitles = {RF: "General Forecast", NC: "Nowcast", LF: "Live Forecast"};
-
-            if (code === localStorage.getItem('cachedForecastCode')
-                    && mode === localStorage.getItem('cachedForecastMode')) {
-                const tempForecast = JSON.parse(localStorage.getItem('cachedForecast'));
-                setForecast(tempForecast);
-                const modeTitle = modeTitles[tempForecast.reportMode];
-                document.title = `AEF - ${tempForecast.electionName} ${modeTitle}`;
-                setForecastValid(true);
-            }
-
-            if (code === localStorage.getItem('cachedResultsCode')) {
-                const tempResults = JSON.parse(localStorage.getItem('cachedResults'));
-                setResults(tempResults);
-                setResultsValid(true);
-            }
-
-            getElectionSummary().then(
-                data => {
-                    if (data.new === false) {
-                        data['report'] = JSON.parse(localStorage.getItem('cachedForecast'));
-                    } else {
-                        localStorage.setItem('cachedForecast', JSON.stringify(data.report));
-                        localStorage.setItem('cachedForecastId', String(data.id));
-                        localStorage.setItem('cachedForecastCode', String(code));
-                        localStorage.setItem('cachedForecastMode', String(mode));
-                    }
-                    setForecast(data.report);
-                    const modeTitle = modeTitles[data.report.reportMode];
-                    document.title = `AEF - ${data.report.electionName} ${modeTitle}`;
-                    setForecastValid(true);
-                }
-            ).catch(
-                e => {
-                    console.log(e);
-                }
-            );
-
-            getElectionResults().then(
-                data => {
-                    if (data.new && data.results.length === 0) {
-                        // No results available
-                        return;
-                    }
-                    if (data.new === false) {
-                        data['results'] = JSON.parse(localStorage.getItem('cachedResults'));
-                    } else {
-                        localStorage.setItem('cachedResults', JSON.stringify(data.results));
-                        localStorage.setItem('cachedResultsVersion', String(data.version));
-                        localStorage.setItem('cachedResultsCode', String(code));
-                    }
-                    setResults(data.results);
-                    setResultsValid(true);
-                }
-            ).catch(
-                e => {
-                    console.log(e);
-                }
-            );
-        }
-
-        fetchElectionSummary();
+        fetchLatestReport({
+            code: code,
+            mode: mode,
+            setForecast: setForecast,
+            setForecastValid: setForecastValid,
+            setResults: setResults,
+            setResultsValid: setResultsValid
+        });
     }, [code, mode]);
 
     // This section prevents the leftover UI from the previous forecast 
