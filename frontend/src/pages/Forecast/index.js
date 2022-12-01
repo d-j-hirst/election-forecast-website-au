@@ -6,7 +6,7 @@ import { Header, Footer, ForecastsNav, ForecastHeader, FormationOfGovernment,
     History, Seats, StandardErrorBoundary } from 'components';
 
 import { useWindowDimensions } from '../../utils/window.js';
-import { fetchLatestReport } from '../../utils/report_manager.js';
+import { fetchReport } from '../../utils/report_manager.js';
 
 import styles from './Forecast.module.css';
 
@@ -19,7 +19,7 @@ const Forecast = () => {
     const windowDimensions = useWindowDimensions();
 
     useEffect(() => {
-        fetchLatestReport({
+        fetchReport({
             code: code,
             mode: mode,
             setForecast: setForecast,

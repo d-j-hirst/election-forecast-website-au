@@ -4,9 +4,9 @@ import { useParams } from 'react-router-dom';
 import { Header, Footer, ForecastAlert, ForecastsNav, ForecastHeader,
     LoadingMarker, SeatDetailBody, StandardErrorBoundary } from 'components';
 
-import { getDirect } from 'utils/sdk';
 import { getIndexFromSeatUrl } from 'utils/seaturls';
 import { useWindowDimensions } from '../../utils/window.js';
+import { fetchReport } from '../../utils/report_manager.js';
 
 import styles from './SeatDetails.module.css';
 
@@ -14,101 +14,37 @@ import styles from './SeatDetails.module.css';
 const SeatDetails = () => {
     const { code, mode, seat } = useParams();
     const [ forecast, setForecast] = useState({});
-    const [ seatIndex, setSeatIndex] = useState(-1);
+    // -2 means "haven't got around to checking the forecast yet"
+    // -1 means "didn't find a matching seat"
+    const [ seatIndex, setSeatIndex] = useState(-2);
     const [ forecastValid, setForecastValid] = useState(false);
     const [ results, setResults] = useState({});
     const [ resultsValid, setResultsValid] = useState(false);
     const windowDimensions = useWindowDimensions();
 
     useEffect(() => {
-        setForecastValid(false);
-        setResultsValid(false);
+        fetchReport({
+            code: code,
+            mode: mode,
+            setForecast: setForecast,
+            setForecastValid: setForecastValid,
+            setResults: setResults,
+            setResultsValid: setResultsValid
+        });
+        window.scrollTo(0, 0);
+    }, [code, mode]);
 
-        const getElectionSummary = () => {
-            let requestUri = `forecast-api/election-summary/${code}/${mode}`;
-            const cached_id = localStorage.getItem('cachedForecastId');
-            if (cached_id !== null) requestUri += `/${cached_id}`;
-            return getDirect(requestUri).then(
-                resp => {
-                    if (!resp.ok) throw Error("Couldn't find election data");
-                    return resp.data;
-                }
-            );
+    useEffect(() => {
+        if (forecastValid) {
+            const tempSeatIndex = getIndexFromSeatUrl(forecast.seatNames, seat);
+            setSeatIndex(tempSeatIndex);
+            if (tempSeatIndex === -1) return;
+            document.title = `AEF - ${forecast.seatNames[tempSeatIndex]} ${forecast.electionName} ${forecast.reportMode === "NC" ? "nowcast" : "forecast"}`;
         }
-
-        const getElectionResults = () => {
-            let requestUri = `forecast-api/election-results/${code}`;
-            const cached_id = localStorage.getItem('cachedResultsVersion');
-            if (cached_id !== null) requestUri += `/${cached_id}`;
-            return getDirect(requestUri).then(
-                resp => {
-                    if (!resp.ok) throw Error("Couldn't find election results data");
-                    return resp.data;
-                }
-            );
-        }
-
-        const fetchElectionSummary = () => {
-            if (code === localStorage.getItem('cachedForecastCode')
-                    && mode === localStorage.getItem('cachedForecastMode')) {
-                const tempForecast = JSON.parse(localStorage.getItem('cachedForecast'));
-                setForecast(tempForecast);
-                const seatIndexTemp = getIndexFromSeatUrl(tempForecast.seatNames, seat);
-                setSeatIndex(seatIndexTemp);
-                document.title = `AEF - ${tempForecast.seatNames[seatIndexTemp]} ${tempForecast.electionName} ${tempForecast.reportMode === "NC" ? "nowcast" : "forecast"}`;
-                setForecastValid(true);
-            } 
-            getElectionSummary().then(
-                data => {
-                    if (data.new === false) {
-                        data['report'] = JSON.parse(localStorage.getItem('cachedForecast'));
-                    } else {
-                        localStorage.setItem('cachedForecast', JSON.stringify(data.report));
-                        localStorage.setItem('cachedForecastId', String(data.id));
-                        localStorage.setItem('cachedForecastCode', String(code));
-                        localStorage.setItem('cachedForecastMode', String(mode));
-                    }
-                    setForecast(data.report);
-                    const seatIndexTemp = getIndexFromSeatUrl(data.report.seatNames, seat);
-                    setSeatIndex(seatIndexTemp);
-                    document.title = `AEF - ${data.report.seatNames[seatIndexTemp]} ${data.report.electionName} ${data.report.reportMode === "NC" ? "nowcast" : "forecast"}`;
-                    setForecastValid(true);
-                }
-            ).catch(
-                e => {
-                    console.log(e);
-                }
-            );
-
-            getElectionResults().then(
-                data => {
-                    if (data.new && data.results.length === 0) {
-                        // No results available
-                        return;
-                    }
-                    if (data.new === false) {
-                        data['results'] = JSON.parse(localStorage.getItem('cachedResults'));
-                    } else {
-                        localStorage.setItem('cachedResults', JSON.stringify(data.results));
-                        localStorage.setItem('cachedResultsVersion', String(data.version));
-                        localStorage.setItem('cachedResultsCode', String(code));
-                    }
-                    setResults(data.results);
-                    setResultsValid(true);
-                }
-            ).catch(
-                e => {
-                    console.log(e);
-                }
-            );
-        }
-
-        fetchElectionSummary();
-        window.scrollTo(0, 0)
-    }, [code, mode, seat, seatIndex]);
+    }, [forecastValid, forecast, seat]);
 
     const effectiveResults = forecast.reportMode !== "NC" && resultsValid ? results : null;
-
+    
     return (
         <div className={styles.site}>
             <Header windowWidth={windowDimensions.width} page={"forecast"} />
@@ -138,6 +74,9 @@ const SeatDetails = () => {
                             Make sure the seat is spelled correctly and any groups of spaced and other
                             special characters are replaced with single hyphens.
                         </>
+                    }
+                    {forecastValid && seatIndex === -2 &&
+                      <LoadingMarker />
                     }
                     {!forecastValid &&
                       <LoadingMarker />

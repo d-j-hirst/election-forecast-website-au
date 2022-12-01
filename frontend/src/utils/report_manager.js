@@ -2,34 +2,32 @@ import { getDirect } from 'utils/sdk';
 
 const modeTitles = {RF: "General Forecast", NC: "Nowcast", LF: "Live Forecast"};
 
+const returnUsingData = (resp, settings) => {
+    if (!resp.ok) throw Error("Couldn't find election data");
+    return {
+        settings: settings,
+        data: resp.data
+    };
+}
+
 const getElectionSummary = settings => {
     let requestUri = `forecast-api/election-summary/${settings.code}/${settings.mode}`;
     const cached_id = localStorage.getItem('cachedForecastId');
     if (cached_id !== null) requestUri += `/${cached_id}`;
-    return getDirect(requestUri).then(
-        resp => {
-            if (!resp.ok) throw Error("Couldn't find election data");
-            return {
-                settings: settings,
-                data: resp.data
-            };
-        }
-    );
+    return getDirect(requestUri).then(a => returnUsingData(a, settings));
+};
+
+const getArchiveSummary = settings => {
+    // This is slightly simplified as archives can't be cached
+    const url = `forecast-api/election-archive/${settings.code}/${settings.archiveId}`;
+    return getDirect(url).then(a => returnUsingData(a, settings));
 };
 
 const getElectionResults = settings => {
     let requestUri = `forecast-api/election-results/${settings.code}`;
     const cached_id = localStorage.getItem('cachedResultsVersion');
     if (cached_id !== null) requestUri += `/${cached_id}`;
-    return getDirect(requestUri).then(
-        resp => {
-            if (!resp.ok) throw Error("Couldn't find election results data");
-            return {
-                settings: settings,
-                data: resp.data
-            };
-        }
-    );
+    return getDirect(requestUri).then(a => returnUsingData(a, settings));
 };
 
 const checkForCachedForecast = settings => {
@@ -72,13 +70,16 @@ const integrateNewResults = input => {
 const integrateNewForecast = input => {
     const settings = input.settings;
     const data = input.data;
-    if (data.new === false) {
-        data['report'] = JSON.parse(localStorage.getItem('cachedForecast'));
-    } else {
-        localStorage.setItem('cachedForecast', JSON.stringify(data.report));
-        localStorage.setItem('cachedForecastId', String(data.id));
-        localStorage.setItem('cachedForecastCode', String(settings.code));
-        localStorage.setItem('cachedForecastMode', String(settings.mode));
+    // No system currently set up to cache archived forecasts
+    if (data.archiveId === undefined) {
+        if (data.new === false) {
+            data['report'] = JSON.parse(localStorage.getItem('cachedForecast'));
+        } else {
+            localStorage.setItem('cachedForecast', JSON.stringify(data.report));
+            localStorage.setItem('cachedForecastId', String(data.id));
+            localStorage.setItem('cachedForecastCode', String(settings.code));
+            localStorage.setItem('cachedForecastMode', String(settings.mode));
+        }
     }
     settings.setForecast(data.report);
     const modeTitle = modeTitles[data.report.reportMode];
@@ -86,18 +87,27 @@ const integrateNewForecast = input => {
     settings.setForecastValid(true);
 };
 
-export const fetchLatestReport = (settings) => {
+export const fetchReport = settings => {
     
     settings.setForecastValid(false);
     settings.setResultsValid(false);
 
-    checkForCachedForecast(settings);
     checkForCachedResults(settings);
 
-    getElectionSummary(settings)
-        .then(integrateNewForecast)
-        .catch(e => {console.log(e);});
-
+    if (settings.archiveId !== undefined) {
+        getArchiveSummary(settings)
+            .then(integrateNewForecast)
+            .catch(e => {console.log(e);});
+    } else {
+        // Archived forecasts aren't currently cached,
+        // so only check if we're fetching the latest forecast
+        checkForCachedForecast(settings);
+    
+        getElectionSummary(settings)
+            .then(integrateNewForecast)
+            .catch(e => {console.log(e);});
+    }
+    
     getElectionResults(settings)
         .then(integrateNewResults)
         .catch(e => {console.log(e);});
