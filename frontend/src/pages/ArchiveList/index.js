@@ -59,7 +59,7 @@ const ArchiveList = () => {
     const [ electionName, setElectionName] = useState("");
     const [ archiveList, setArchiveList] = useState({});
     const [ archiveListValid, setArchiveListValid] = useState(false);
-    const [ filter, setFilter ] = useState(FilterEnum.all);
+    const [ filter, setFilter ] = useState(FilterEnum.regular);
     const windowDimensions = useWindowDimensions();
 
     useEffect(() => {
