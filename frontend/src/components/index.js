@@ -4,6 +4,7 @@ export { default as Header } from './Header';
 export { default as Footer } from './Footer';
 export { default as ForecastsNav } from './Forecasts/Nav';
 export { default as ForecastHeader } from './Forecasts/Header';
+export { default as ForecastLayout } from './Forecasts/Layout';
 export { default as FormationOfGovernment } from './Forecasts/FormationOfGovernment';
 export { default as VoteTotals } from './Forecasts/VoteTotals';
 export { default as History } from './Forecasts/History';
