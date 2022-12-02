@@ -46,7 +46,7 @@ const ForecastLayout = props => {
                     <meta name="robots" content="noindex" />
                 </Helmet>
             }
-            <Header windowWidth={windowDimensions.width} page={"archive"} />
+            <Header windowWidth={windowDimensions.width} page={props.isArchive ? "archive" : "forecast"} />
             {/* Even though the archived forecast is still in some mode,
                 it's needed to set the mode to "other" here as that will
                 keep the links clickable */}
