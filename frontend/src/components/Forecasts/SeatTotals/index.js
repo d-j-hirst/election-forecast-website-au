@@ -106,8 +106,7 @@ const MainExplainer = props => {
                 Further explanation for some categories below:
             </p>
             <ul>
-                <li><SmartBadge party="ind" /> covers independents that are already known - either they are incumbents, achieved a significant vote at the previous election, or have a significant campaign and public presence.</li>
-                <li><SmartBadge party="IndX" /> covers potential <i>emerging independents</i> that do not yet have a significant presence but may achieve one before the election.</li>
+                <li><SmartBadge party="ind" /> covers independents, including potential independent candidates that have not yet announced their intention to run.</li>
                 <li><SmartBadge party="EOth" /> covers potential <i>emerging parties</i> that either do not yet exist or are not appearing in public polls yet.</li>
             </ul>
         </Alert>

@@ -110,7 +110,7 @@ const TppExplainer = props => {
             <hr/>
             <p>
                 The two-party preferred is historically the most reliable overall indicator for
-                determining the winner of Australian elections. Parties that have the two-party
+                determining the winner of Australian elections. Parties that win the two-party
                 preferred usually also win the election, but exceptions can occur (when the
                 vote is distributed unevenly in certain ways, if third parties or independents win many
                 seats, or also historically in the case 
@@ -214,8 +214,8 @@ const MainExplainer = props => {
             </p>
             <hr/>
             <p>
-                Parties' possible vote shares are represented as text percentages and
-                using bars to represent more and less likely ranges for the vote.
+                Parties' possible vote shares are represented as text percentages along with
+                shaded bars to represent more and less likely ranges for the vote.
             </p>
             <hr/>
             <p>
