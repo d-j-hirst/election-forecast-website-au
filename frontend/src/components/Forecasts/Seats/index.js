@@ -387,7 +387,8 @@ const Seats = props => {
                                         index={index}
                                         key={props.forecast.seatNames[index]}
                                         mode={props.mode}
-                                        result={props.results !== null ? props.results.seats[props.forecast.seatNames[index]] : null}
+                                        result={props.results !== null && props.forecast.seatNames[index] in props.results.seats ?
+                                            props.results.seats[props.forecast.seatNames[index]] : null}
                                         windowWidth={props.windowWidth} />
                             )
                         }

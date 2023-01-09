@@ -31,6 +31,15 @@ party_convert = {
         'Independent': 'IND',
         'SA-Best' : 'SAB'
     },
+    '2022vic': {
+        'Labor': 'ALP',
+        'Liberal': 'LNP',
+        'National': 'LNP',
+        'Greens': 'GRN',
+        'Independents': 'IND',
+        'Independent': 'IND',
+        'SA-Best' : 'SAB'
+    },
 }
 
 
@@ -45,7 +54,8 @@ def fetch_overall_results(election: Election):
     }
     remove_from_overall_fp = {
         '2022fed': {'CA', 'KAP', 'IND'},
-        '2022sa': {'IND'}
+        '2022sa': {'IND'},
+        '2022vic': {'IND'}
     }
     overall_results = {'fp': {}, 'seats': {}, 'tpp': 0}
     year = election.code[:4]
@@ -54,6 +64,8 @@ def fetch_overall_results(election: Election):
         f'{year}{election_wiki_desc_dict[region]}')
     r = requests.get(url)
     soup = BeautifulSoup(r.content, 'html.parser')
+    print(election_wiki_desc_dict[region])
+    print(url)
     table = soup.find(class_='mw-parser-output').find(class_='wikitable', recursive=False)
     rows = table.find_all('tr')
     doing_tpp = False
@@ -121,6 +133,8 @@ def collect_seat_names(election: Election):
             if link is None: continue
             seat_specific = link["href"].strip()[6:]
             seat_specific = seat_specific.replace('Electoral_', '')
+            if 'Ringwood_(Victoria)' in seat_specific:
+                seat_specific = seat_specific.replace('Ringwood_(Victoria)', 'Ringwood')
             urls.append(f'https://en.wikipedia.org/wiki/Electoral_results_for_the_{seat_specific}')
     return urls
 
@@ -151,6 +165,7 @@ def fetch_seat_results(election: Election, urls):
         threads[-1].start()
     for thread in threads:
         thread.join()
+    
 
     all_seat_results = {}
     for url, r in responses.items():
@@ -165,6 +180,8 @@ def fetch_seat_results(election: Election, urls):
             election_text = caption_links[0].text.strip()
             if election_text != election_match: continue
             seat_text = caption_links[1].text.strip()
+            if '[' in seat_text:
+                seat_text = caption.text.split(": ")[1].split("[")[0].strip()
 
             seat_results = {'fp': {}, 'tcp': {}}
             doing_tcp = 0
@@ -247,9 +264,9 @@ def fetch_seat_results(election: Election, urls):
             
             total_fp = sum(seat_results['fp'].values())
             total_tcp = sum(seat_results['tcp'].values())
-            if abs(100 - total_fp) > 0.1 or abs(100 - total_tcp) > 0.1:
-                print("Votes don't add to 100, potential error in source")
             print(f'{caption_links[0].text} {seat_text}')
+            if abs(100 - total_fp) > 0.11 or abs(100 - total_tcp) > 0.11:
+                print("Votes don't add to 100, potential error in source")
             print(total_fp)
             print(total_tcp)
 
