@@ -43,10 +43,11 @@ const SeatRow = props => {
 
     const moreHandler = () => setShowMore(!showMore);
 
-    let seatName = props.forecast.seatNames[props.index];
-    if (seatName.length > 14) {
-        seatName = seatName.replace("North", "N").replace("South", "S");
-        seatName = seatName.replace("East", "E").replace("West", "W");
+    const seatName = props.forecast.seatNames[props.index];
+    let displayName = seatName;
+    if (displayName.length > 14) {
+        displayName = displayName.replace("North", "N").replace("South", "S");
+        displayName = displayName.replace("East", "E").replace("West", "W");
     }
     const incumbentIndex = props.forecast.seatIncumbents[props.index];
     const incumbentAbbr = jsonMap(props.forecast.partyAbbr, incumbentIndex);
@@ -77,7 +78,10 @@ const SeatRow = props => {
         <>
         <ListGroup.Item className={styles.seatsItem}>
             <div className={styles.seatsLeft}>
-                <strong>{seatName}</strong>
+                <strong>
+                    {displayName === seatName && displayName}
+                    {displayName !== seatName && <TooltipWrapper tooltipText={seatName}>{displayName}</TooltipWrapper>}
+                </strong>
                 {" - "}<SmartBadge party={incumbentAbbr} />{" "}
                 <TooltipWrapper tooltipText={marginTooltip} placement="bottom">
                     {Number(margin).toFixed(1)}%

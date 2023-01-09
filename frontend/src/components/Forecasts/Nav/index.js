@@ -56,8 +56,9 @@ const ForecastsNav = props => {
                     <Navbar.Text><div className={styles.title}>Elections</div></Navbar.Text>
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
-                            <ElectionNav text="Victoria" election="2022vic" mode={effectiveMode} activeElection={props.election} />
+                            <ElectionNav text="New South Wales" election="2023nsw" mode={effectiveMode} activeElection={props.election} />
                             <NavDropdown title="Past Elections">
+                                <ElectionNavDropdown text="2022 Victoria" election="2022vic" mode={effectiveMode} activeElection={props.election} />
                                 <ElectionNavDropdown text="2022 Federal" election="2022fed" mode={effectiveMode} activeElection={props.election} />
                                 <ElectionNavDropdown text="2022 South Australia" election="2022sa" mode={effectiveMode} activeElection={props.election} />
                             </NavDropdown>
