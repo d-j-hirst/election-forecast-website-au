@@ -5,7 +5,7 @@ import { useWindowDimensions } from '../../../utils/window.js';
 import { fetchReport } from '../../../utils/report_manager.js';
 
 import { Header, Footer, ForecastsNav, ForecastHeader, FormationOfGovernment,
-    LoadingMarker, VoteTotals, SeatTotals, ForecastAlert, Seats, StandardErrorBoundary } from 'components';
+    LoadingMarker, VoteTotals, SeatTotals, History, ForecastAlert, Seats, StandardErrorBoundary } from 'components';
     
 import styles from './Layout.module.css';
 
@@ -86,6 +86,12 @@ const ForecastLayout = props => {
                                             windowWidth={windowDimensions.width}
                                             results={effectiveResults}
                                 />
+                            </StandardErrorBoundary>
+                            <StandardErrorBoundary>
+                                <History election={code}
+                                         mode={mode}
+                                         forecast={forecast}
+                                         windowWidth={windowDimensions.width} />
                             </StandardErrorBoundary>
                             <StandardErrorBoundary>
                                 <Seats election={code}
