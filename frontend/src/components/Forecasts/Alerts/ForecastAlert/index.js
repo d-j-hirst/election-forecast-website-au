@@ -12,14 +12,16 @@ import quantityMarkerExample from './assets/quantity-marker-example.png'
 import categoryMarkerExample from './assets/category-marker-example.png'
 import styles from './ForecastAlert.module.css';
 
-const old_elections = ['2022sa', '2022fed']
+const old_elections = ['2022sa', '2022fed', '2022vic']
 const old_elections_links = {
     '2022sa': 'https://www.ecsa.sa.gov.au/elections/2022-state-election/results',
-    '2022fed': 'https://results.aec.gov.au/27966/Website/HouseDefault-27966.htm'
+    '2022fed': 'https://results.aec.gov.au/27966/Website/HouseDefault-27966.htm',
+    '2022vic': 'https://www.vec.vic.gov.au/results/state-election-results/2022-state-election-results'
 }
 const old_live_text = {
     '2022sa': 'at the end of election night',
-    '2022fed': 'after most (but not all) counting of votes'
+    '2022fed': 'after most (but not all) counting of votes',
+    '2022vic': 'after most (but not all) counting of votes'
 }
 
 const ForecastAlert = props => {
