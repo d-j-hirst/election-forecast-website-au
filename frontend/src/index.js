@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from 'config/app';
+import App from './config/app';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle';
 
@@ -10,12 +10,12 @@ import 'bootstrap/dist/js/bootstrap.bundle';
 // implementation to other files.
 
 ReactDOM.render(
-    // Strict mode helps with identifying various issues in development.
-    // Has no effect in production.
-    <React.StrictMode>
-        <App />
-    </React.StrictMode>,
-    // Standard line, specify the element that React should render
-    // the app into
-    document.getElementById('root')
+  // Strict mode helps with identifying various issues in development.
+  // Has no effect in production.
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+  // Standard line, specify the element that React should render
+  // the app into
+  document.getElementById('root')
 );
