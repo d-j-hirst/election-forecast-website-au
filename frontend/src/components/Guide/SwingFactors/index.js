@@ -39,8 +39,8 @@ const GuideSwingFactors = props => {
                 </li>
                 <li>
                     <i>Sophomore effect</i> - Accounts for the tendency for candidates and
-                    parties who win a seat, having not previously won it before, to get
-                    an increased vote in the next election related to gaining incumbency.
+                    parties who win a seat from a different incumbent to get
+                    an increased vote in the next election as a result of gaining incumbency.
                 </li>
                 <li>
                     <i>Retirement effect</i> - Accounts for the tendency for parties to

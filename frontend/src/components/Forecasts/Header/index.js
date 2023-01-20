@@ -33,7 +33,7 @@ const ForecastHeader = props => {
 ForecastHeader.propTypes = {
   forecast: PropTypes.object.isRequired,
   mode: PropTypes.string.isRequired,
-  archive: PropTypes.bool.isRequired,
+  archive: PropTypes.bool,
 };
 
 export default ForecastHeader;

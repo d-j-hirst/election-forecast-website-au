@@ -50,6 +50,7 @@
     width: 100%;
     background-color: #FFFFFF !important;
     justify-content: space-between;
+    padding: 8px 16px !important;
 }
 
 .seatOptions {
