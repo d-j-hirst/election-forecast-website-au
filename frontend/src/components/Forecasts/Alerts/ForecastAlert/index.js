@@ -85,8 +85,8 @@ const ForecastAlert = props => {
           {isNowcast && (
             <>
               <div>
-                This {old && (isArchive ? 'is an' : 'was the final')}
-                {!old && (isArchive ? 'is an' : 'is a')}
+                This {old && (isArchive ? 'is an ' : 'was the final ')}
+                {!old && (isArchive ? 'is an ' : 'is a ')}
                 <strong>{isArchive ? 'archived ' : ''}nowcast</strong> report,
                 not a forecast for the actual election. This means it{' '}
                 {old ? 'was' : 'is'} an estimate of what the{' '}
@@ -96,7 +96,7 @@ const ForecastAlert = props => {
                 different when it {old ? 'was' : 'is'} actually held. See{' '}
                 <Link to={'/guide#nowcast'}>
                   this section of the forecast guide
-                </Link>
+                </Link>{' '}
                 for more information. (For a forecast for the election when it{' '}
                 {old ? 'was' : 'is'} expected to be held, see the&nbsp;
                 <Link to={'/forecast/' + props.code + '/regular'}>
