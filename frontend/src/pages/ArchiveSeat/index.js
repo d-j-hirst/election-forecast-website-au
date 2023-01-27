@@ -1,14 +1,12 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import {useParams} from 'react-router-dom';
 
-import { SeatDetails } from 'components';
-
-
+import {SeatDetails} from 'components';
 
 const ArchiveSeatPage = () => {
-    const { code, id, seat } = useParams();
+  const {code, id, seat} = useParams();
 
-    return <SeatDetails code={code} id={id} seat={seat} isArchive={true} />
+  return <SeatDetails code={code} id={id} seat={seat} isArchive={true} />;
 };
 
 export default ArchiveSeatPage;

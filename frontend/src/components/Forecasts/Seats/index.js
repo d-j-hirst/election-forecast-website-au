@@ -238,7 +238,7 @@ const MainExplainer = props => {
       <p>
         Click on &quot;more&quot; or &quot;full detail&quot; to show more
         information about the model&apos;s forecast for each seat.
-        &quot;More&quot;will display an abbreviated set of results inline on
+        &quot;More&quot; will display an abbreviated set of results inline on
         this page, while &quot;full detail&quot; will show everything there is
         to see on a separate page.
       </p>

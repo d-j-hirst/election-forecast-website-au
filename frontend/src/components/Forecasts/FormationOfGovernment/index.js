@@ -37,7 +37,6 @@ const MajorityWinGovernmentRow = props => {
         forecast={props.forecast}
         party={party}
         prob={prob}
-        text={props.text}
         outcome={'have a majority'}
       />
     </ListGroup.Item>
@@ -46,7 +45,6 @@ const MajorityWinGovernmentRow = props => {
 MajorityWinGovernmentRow.propTypes = {
   forecast: PropTypes.object.isRequired,
   partyIndex: PropTypes.string.isRequired,
-  text: PropTypes.string.isRequired,
 };
 
 const MinorityWinGovernmentRow = props => {
@@ -70,7 +68,6 @@ const MinorityWinGovernmentRow = props => {
         forecast={props.forecast}
         party={party}
         prob={prob}
-        text={props.text}
         outcome={'have a clear path to minority government'}
         tooltipText={minorityTooltipText}
       />
@@ -80,7 +77,6 @@ const MinorityWinGovernmentRow = props => {
 MinorityWinGovernmentRow.propTypes = {
   forecast: PropTypes.object.isRequired,
   partyIndex: PropTypes.string.isRequired,
-  text: PropTypes.string.isRequired,
 };
 
 const MostSeatsRow = props => {
@@ -104,7 +100,6 @@ const MostSeatsRow = props => {
         forecast={props.forecast}
         party={party}
         prob={prob}
-        text={props.text}
         outcome={'have most seats in a hung parliament'}
         tooltipText={hungTooltipText}
       />
@@ -113,8 +108,7 @@ const MostSeatsRow = props => {
 };
 MostSeatsRow.propTypes = {
   forecast: PropTypes.object.isRequired,
-  partyIndex: PropTypes.string.isRequired,
-  text: PropTypes.string.isRequired,
+  partyIndex: PropTypes.number.isRequired,
 };
 
 const TiesRow = props => {

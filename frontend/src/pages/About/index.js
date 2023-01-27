@@ -1,30 +1,36 @@
 import React from 'react';
 
-import { Header, Footer, AboutHeader, AboutContent, StandardErrorBoundary } from 'components';
-import { useWindowDimensions } from '../../utils/window.js';
+import {
+  Header,
+  Footer,
+  AboutHeader,
+  AboutContent,
+  StandardErrorBoundary,
+} from 'components';
+import {useWindowDimensions} from '../../utils/window.js';
 
 import styles from './About.module.css';
 
 const About = () => {
-    const windowDimensions = useWindowDimensions();
-    document.title = `AEF - About`;
+  const windowDimensions = useWindowDimensions();
+  document.title = `AEF - About`;
 
-    return (
-        <div className={styles.site}>
-            <Header windowWidth={windowDimensions.width} page={"about"} />
-            <main className={styles.content}>
-                <StandardErrorBoundary>
-                    <AboutHeader />
-                    <div className={styles.mainText}>
-                        <StandardErrorBoundary>
-                            <AboutContent />
-                        </StandardErrorBoundary>   
-                    </div>
-                </StandardErrorBoundary>   
-            </main>
-            <Footer />
-        </div>
-    );
+  return (
+    <div className={styles.site}>
+      <Header windowWidth={windowDimensions.width} page="about" />
+      <main className={styles.content}>
+        <StandardErrorBoundary>
+          <AboutHeader />
+          <div className={styles.mainText}>
+            <StandardErrorBoundary>
+              <AboutContent />
+            </StandardErrorBoundary>
+          </div>
+        </StandardErrorBoundary>
+      </main>
+      <Footer />
+    </div>
+  );
 };
 
 export default About;

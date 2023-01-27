@@ -30,12 +30,12 @@ const TcpExplainer = props => {
       <hr />
       <p>
         Note that the reports for each TCP pair only include results for the
-        simulations where the that pair actually made the final TCP.
+        simulations where the that pair actually made the final TCP.{' '}
         <strong>
           This means that the results need to be interpreted with caution, and,
           in particular, conclusions should not be drawn by comparing different
           TCP pairs to each other.
-        </strong>
+        </strong>{' '}
         For a more thorough explanation with examples, see{' '}
         <Link to={'/guide#tcp-scenarios'}>
           {' '}
