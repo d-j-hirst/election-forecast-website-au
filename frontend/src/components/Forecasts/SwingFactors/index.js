@@ -16,7 +16,7 @@ const SortedTcpSwingRow = props => {
     <ListGroup.Item className={styles.seatsSubitem}>
       <div style={{width: '100%'}}>
         <strong>
-          <TooltipPercentage value={Math.abs(props.swing)} />
+          <TooltipPercentage value={Math.abs(props.swing)} label="" />
         </strong>{' '}
         to <SmartBadge party={props.swing > 0 ? 'alp' : 'lnp'} />
         {' -'} {props.description}

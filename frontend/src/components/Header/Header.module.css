@@ -5,7 +5,7 @@
   justify-content: space-between;
 }
 
-@media (max-width: 750px){
+@media (max-width: 939px){
   .pageWrapper {
     justify-content: center;
   }
@@ -29,35 +29,21 @@
   font-weight: bold;
 }
 
-@media (max-width: 800px){
-  .navlink {
-    padding: 0px 5px;
-  }
-}
-
-@media (min-width: 800px) and (max-width: 850px){
-  .navlink {
-    padding: 0px 10px;
-  }
-}
-
-@media (min-width: 850px){
-  .navlink {
-    padding: 0px 15px;
-  }
+.navlink {
+  padding: 0px 10px !important;
 }
 
 .navitem {
   color: #666666;
   font-size: 18px;
-  padding: 0px 5px;
+  padding: 0px 0px;
   text-align: center;
 }
 
 .navselected {
   color: #000000;
   font-size: 18px;
-  padding: 0px 5px;
+  padding: 0px 0px;
   background-color: #CCCCCC;
   border-radius: 5px !important;
   text-align: center;

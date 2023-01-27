@@ -4,7 +4,8 @@ import PropTypes from 'prop-types';
 import TooltipWrapper from '../TooltipWrapper';
 
 const TooltipPercentage = props => {
-  const label = props.label === undefined ? '' : props.label + ': ';
+  const label =
+    props.label === undefined || props.label === '' ? '' : props.label + ': ';
   const suffix = props.label === undefined ? ' of simulations' : '';
   const text = label + Number(props.value).toFixed(3) + '%' + suffix;
   return (
