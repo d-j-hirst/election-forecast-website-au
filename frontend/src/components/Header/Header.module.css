@@ -36,14 +36,14 @@
 .navitem {
   color: #666666;
   font-size: 18px;
-  padding: 0px 0px;
+  padding: 0px 5px;
   text-align: center;
 }
 
 .navselected {
   color: #000000;
   font-size: 18px;
-  padding: 0px 0px;
+  padding: 0px 5px;
   background-color: #CCCCCC;
   border-radius: 5px !important;
   text-align: center;
