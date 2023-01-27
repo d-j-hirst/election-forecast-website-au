@@ -13,7 +13,12 @@ const returnUsingData = (resp, settings) => {
 const getElectionSummary = settings => {
   let requestUri = `forecast-api/election-summary/${settings.code}/${settings.mode}`;
   const cached_id = localStorage.getItem('cachedForecastId');
-  if (cached_id !== null) requestUri += `/${cached_id}`;
+  if (
+    cached_id !== null &&
+    settings.code === localStorage.getItem('cachedForecastCode')
+  ) {
+    requestUri += `/${cached_id}`;
+  }
   return getDirect(requestUri).then(a => returnUsingData(a, settings));
 };
 
@@ -26,7 +31,12 @@ const getArchiveSummary = settings => {
 const getElectionResults = settings => {
   let requestUri = `forecast-api/election-results/${settings.code}`;
   const cached_id = localStorage.getItem('cachedResultsVersion');
-  if (cached_id !== null) requestUri += `/${cached_id}`;
+  if (
+    cached_id !== null &&
+    settings.code === localStorage.getItem('cachedResultsCode')
+  ) {
+    requestUri += `/${cached_id}`;
+  }
   return getDirect(requestUri).then(a => returnUsingData(a, settings));
 };
 
