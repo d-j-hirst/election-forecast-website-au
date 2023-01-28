@@ -34,7 +34,7 @@ const ForecastAlert = props => {
   const isLive = props.forecast.reportMode === 'LF';
   const isRegular = props.forecast.reportMode === 'RF';
   const isArchive = props.isArchive === true;
-  const old = isArchive || oldElections.includes(props.code);
+  const old = oldElections.includes(props.code);
   const isWarning = isNowcast || isLive || props.isArchive;
   const alertVariant = isWarning ? 'warning' : 'info';
   if (show) {
