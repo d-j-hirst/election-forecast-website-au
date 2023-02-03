@@ -102,13 +102,13 @@ const createTicks = (lowUnixDate, highUnixDate) => {
   if (numDays < 1) {
     return collectCustomTicks(ONE_HOUR * 3);
   } else if (numDays < 3) {
-    return collectCustomTicks(ONE_HOUR * 6);
-  } else if (numDays < 6) {
     return collectCustomTicks(ONE_HOUR * 12);
-  } else if (numDays < 12) {
+  } else if (numDays < 6) {
     return collectCustomTicks(ONE_DAY);
-  } else if (numDays < 24) {
+  } else if (numDays < 12) {
     return collectCustomTicks(ONE_DAY * 2);
+  } else if (numDays < 24) {
+    return collectCustomTicks(ONE_DAY * 4);
   }
   // for longer periods, we want the ticks to align with the start of each month
   for (let year = dateInfo.lowDateYear; year <= dateInfo.highDateYear; ++year) {
