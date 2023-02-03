@@ -87,11 +87,12 @@ const SeatFpSection = props => {
     props.result === null ? null : sortedFreqs.map(matchToResults);
 
   const forceXInd =
-    (seatName === 'Finniss' ||
+    ((seatName === 'Finniss' ||
       seatName === 'Hammond' ||
       seatName === 'Flinders' ||
       seatName === 'Frome') &&
-    props.election === '2022sa';
+      props.election === '2022sa') ||
+    (seatName == 'Narracan' && props.election == '2022vic');
 
   return (
     <>

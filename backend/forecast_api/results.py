@@ -120,6 +120,10 @@ def collect_seat_names(election: Election):
     soup = BeautifulSoup(r.content, 'html.parser')
     tables = soup.find(class_='mw-parser-output').find_all(class_='wikitable')
     urls = []
+    # Special case for Narracan supplementary election which is not included
+    # in Wikipedia's standard table format. But also need to include a check
+    # in case Wikipedia's list does include so it's not duplicated
+    found_narracan = False
     for table in tables:
         rows = table.find_all('tr')
         first_heading = rows[0].find('th')
@@ -135,7 +139,11 @@ def collect_seat_names(election: Election):
             seat_specific = seat_specific.replace('Electoral_', '')
             if 'Ringwood_(Victoria)' in seat_specific:
                 seat_specific = seat_specific.replace('Ringwood_(Victoria)', 'Ringwood')
+            if seat_specific == 'Narracan':
+                found_narracan = True
             urls.append(f'https://en.wikipedia.org/wiki/Electoral_results_for_the_{seat_specific}')
+    if election.code == '2022vic' and not found_narracan:
+        urls.append(f'https://en.wikipedia.org/wiki/Electoral_results_for_the_district_of_Narracan')
     return urls
 
 
@@ -174,14 +182,21 @@ def fetch_seat_results(election: Election, urls):
                       .find_all(class_='wikitable'))
         for table in tables:
             caption = table.find('caption')
+            print(caption)
             if caption is None: continue
+            print(caption.text)
+            supplementary = 'supplementary' in caption.text
+            print(supplementary)
             caption_links = caption.find_all('a')
-            if len(caption_links) < 2: continue
+            if len(caption_links) < 2 and not supplementary: continue
             election_text = caption_links[0].text.strip()
-            if election_text != election_match: continue
-            seat_text = caption_links[1].text.strip()
+            if election_text != election_match and not supplementary: continue
+            seat_text = caption_links[1 if not supplementary else 0].text.strip()
             if '[' in seat_text:
                 seat_text = caption.text.split(": ")[1].split("[")[0].strip()
+            if supplementary:
+                seat_text = seat_text.split(' ')[0]
+            print(seat_text)
 
             seat_results = {'fp': {}, 'tcp': {}}
             doing_tcp = 0
@@ -247,10 +262,13 @@ def fetch_seat_results(election: Election, urls):
             if 'OTH' not in seat_results['fp']:
                 seat_results['fp']['OTH'] = 0
 
-            if election.code == '2022sa' and (seat_text == 'Finniss' or
+            if (election.code == '2022sa' and (seat_text == 'Finniss' or
                     seat_text == 'Hammond' or seat_text == 'Flinders' or
-                    seat_text == 'Frome'):
+                    seat_text == 'Frome') or
+                    election.code == '2022vic' and seat_text == 'Narracan'):
                 # Match to the category forecast for this election
+                if 'IND*' in seat_results['fp']:
+                    seat_results['fp']['OTH'] += seat_results['fp']['IND*']
                 seat_results['fp']['IND*'] = seat_results['fp']['IND']
                 del seat_results['fp']['IND']
                 if 'IND' in seat_results['tcp']:

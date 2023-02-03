@@ -16,7 +16,9 @@ const SeatVoteRow = props => {
   if (props.freqSet[0] === -2) partyAbbr = 'IndX';
   if (props.freqSet[0] === -3) partyAbbr = 'EOth';
   const result =
-    props.freqSet[0] < -1 && !props.forceXInd ? null : props.result;
+    props.freqSet[0] >= -1 || (props.freqSet[0] == -2 && props.forceXInd)
+      ? props.result
+      : null;
   const thresholds = [
     [0, 2, 0],
     [2, 4, 1],

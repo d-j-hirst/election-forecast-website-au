@@ -189,8 +189,9 @@ const SeatTcpSection = props => {
         );
 
   const forceXInd =
-    (seatName === 'Finniss' || seatName === 'Flinders') &&
-    props.election === '2022sa';
+    ((seatName === 'Finniss' || seatName === 'Flinders') &&
+      props.election === '2022sa') ||
+    (seatName == 'Narracan' && props.election == '2022vic');
 
   return (
     <>
