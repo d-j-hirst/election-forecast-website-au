@@ -294,10 +294,10 @@ const VoteTrendChart = props => {
           variant="secondary"
         >
           <Dropdown.Item as="button" onClick={setAlpTpp}>
-            Party: ALP two-party vote
+            Party: ALP two-party preferred
           </Dropdown.Item>
           <Dropdown.Item as="button" onClick={setLnpTpp}>
-            Party: LNP two-party vote
+            Party: LNP two-party preferred
           </Dropdown.Item>
           <Dropdown.Item as="button" onClick={setAlpFp}>
             Party: ALP first preferences
