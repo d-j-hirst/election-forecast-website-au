@@ -75,11 +75,9 @@ const SeatRow = props => {
     displayName = displayName.replace('East', 'E').replace('West', 'W');
   }
   const asteriskCode = props.election + ';' + seatName;
-  const asterisk = seatAsterisks.hasOwnProperty(props.election + ';' + seatName)
-    ? seatAsterisks[props.election + ';' + seatName]
+  const asterisk = seatAsterisks.hasOwnProperty(asteriskCode)
+    ? seatAsterisks[asteriskCode]
     : '';
-  console.log(asteriskCode);
-  console.log(asterisk);
   const incumbentIndex = props.forecast.seatIncumbents[props.index];
   const incumbentAbbr = jsonMap(props.forecast.partyAbbr, incumbentIndex);
   const margin = props.forecast.seatMargins[props.index];

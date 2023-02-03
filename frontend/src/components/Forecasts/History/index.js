@@ -100,7 +100,7 @@ const createTicks = (lowUnixDate, highUnixDate) => {
     return customTicks;
   };
   if (numDays < 1) {
-    return collectCustomTicks(ONE_HOUR * 3);
+    return collectCustomTicks(ONE_HOUR);
   } else if (numDays < 3) {
     return collectCustomTicks(ONE_HOUR * 12);
   } else if (numDays < 6) {
@@ -714,6 +714,8 @@ const Chart = props => {
     );
     chartData = chartData.filter(a => a.unixDate < lowDate + 43200000); // 12-hour period after first result
   }
+  const effectiveMode =
+    props.mode === 'live' && !props.eveningOnly ? 'liveEx' : props.mode;
 
   const partyAbbr = jsonMap(props.partyAbbr, props.party);
 
@@ -722,20 +724,20 @@ const Chart = props => {
       {chartData !== undefined && (
         <>
           {props.type === GraphTypeEnum.governmentFormation && (
-            <GovernmentFormation data={chartData} mode={props.mode} />
+            <GovernmentFormation data={chartData} mode={effectiveMode} />
           )}
           {props.type === GraphTypeEnum.tpp && (
-            <Tpp data={chartData} partyAbbr={partyAbbr} mode={props.mode} />
+            <Tpp data={chartData} partyAbbr={partyAbbr} mode={effectiveMode} />
           )}
           {props.type === GraphTypeEnum.fp && (
-            <Fp data={chartData} partyAbbr={partyAbbr} mode={props.mode} />
+            <Fp data={chartData} partyAbbr={partyAbbr} mode={effectiveMode} />
           )}
           {props.type === GraphTypeEnum.seats && (
             <Seats
               data={chartData}
               partyAbbr={partyAbbr}
               election={props.election}
-              mode={props.mode}
+              mode={effectiveMode}
             />
           )}
         </>
