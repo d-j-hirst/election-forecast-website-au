@@ -41,26 +41,26 @@ const partyCategory = (party, forecast) => {
 const seatAsterisks = {
   '2023nsw;Bega':
     'This seat was won by Labor at a by-election with a margin of 5.1%. ' +
-    'However, historically general election results are a more reliable ' +
+    'However, general election results historically are a more reliable ' +
     'indicator of performance in these cases, so the 2019 election ' +
-    'margin of 6.9% to the Liberals is used for the forecast.',
+    'margin of 6.9% to the Liberals is used as the baseline for the forecast.',
   '2023nsw;Monaro':
     'This seat was won by the Nationals at a by-election with a margin of 5.2%. ' +
-    'However, historically general election results are a more reliable ' +
+    'However, general election results are historically a more reliable ' +
     'indicator of performance in these cases, so the 2019 election ' +
-    'margin of 11.6% to the Nationals is used for the forecast.',
+    'margin of 11.6% to the Nationals is used as the baseline for the forecast.',
   '2023nsw;Strathfield':
     'This seat was won by Labor at a by-election with a margin of 5.8%. ' +
-    'However, historically general election results are a more reliable ' +
+    'However, general election results are historically a more reliable ' +
     'indicator of performance in these cases, so the 2019 election ' +
-    'margin, adjusted for redistribution, of 5.2% to Labor is used for the ' +
-    'forecast.',
+    'margin, adjusted for redistribution, of 5.2% to Labor is used as the ' +
+    'baseline for the forecast.',
   '2023nsw;Upper Hunter':
     'This seat was won by the Nationals at a by-election with a margin of 5.8%. ' +
-    'However, historically general election results are a more reliable ' +
+    'However, general election results are historically a more reliable ' +
     'indicator of performance in these cases, so the 2019 election ' +
-    'margin, adjusted for redistribution, of 0.5% to the Nationals is used for the ' +
-    'forecast.',
+    'margin, adjusted for redistribution, of 0.5% to the Nationals is used as the ' +
+    'baseline for the forecast.',
 };
 
 const SeatRow = props => {
