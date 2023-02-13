@@ -57,6 +57,28 @@ const GuideSwingFactors = props => {
           candidate, and the recovery when in the following election their
           candidate is no longer disendorsed.
         </li>
+        <li>
+          <i>By-election result adjustment</i> - In general, for seats where a
+          by-election has been held since the previous general election, the
+          previous election margin is a more reliable indicator of the next
+          election&apos;s result than the by-election margin. However, it is
+          still not the ideal indicator - after accounting for other factors,
+          parties tend to do better in seats where they got a swing in a
+          by-election than elsewhere. As of writing, based on analysis of
+          historical results, about 29% of the by-election swing in a seat is
+          added to the projected swing in that seat. Whether the seat changed
+          party at the by-election was not found to make a significant
+          difference.
+        </li>
+        <li>
+          <i>Exhaustion from aligned non-major candidates</i> - This is an
+          adjustment that is applied occasionally to seats under optional
+          preferential voting (OPV). While centrist non-major candidates
+          generally attract voters from both parties in similar proportions,
+          some do attract much more from one major party than the other. In
+          these cases, the exhaustion of votes that would otherwise go to that
+          party results in a shift in the projected TPP towards the other party.
+        </li>
       </ul>
     </>
   );
