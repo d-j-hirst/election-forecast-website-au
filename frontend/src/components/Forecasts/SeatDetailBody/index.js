@@ -19,8 +19,9 @@ import InfoIcon from '../../General/InfoIcon';
 
 import {jsonMap} from '../../../utils/jsonmap.js';
 import {deepCopy} from '../../../utils/deepcopy.js';
+import {useWarning} from '../../../utils/seatwarnings.js';
 
-import styles from './SeatDetailBody.module.css';
+import styles from '../Seats/Seats.module.css';
 import {standardiseParty} from 'utils/partyclass';
 
 const partyCategory = (party, forecast) => {
@@ -140,34 +141,55 @@ const SeatDetailBody = props => {
       </Card.Header>
       <Card.Body className={styles.seatsBody}>
         {showExplainer && <MainExplainer seatName={seatName} />}
-        <StandardErrorBoundary>
-          <ReturnToMain
-            archive={props.archive}
-            election={props.election}
-            mode={props.mode}
-          />
-        </StandardErrorBoundary>
-        <StandardErrorBoundary>
-          <SeatSummary
-            forecast={props.forecast}
-            election={props.election}
-            mode={props.mode}
-            result={result}
-            index={props.index}
-            windowWidth={props.windowWidth}
-          />
-        </StandardErrorBoundary>
-        <StandardErrorBoundary>
-          <SeatWinsSection
-            forecast={props.forecast}
-            election={props.election}
-            mode={props.mode}
-            index={props.index}
-          />
-        </StandardErrorBoundary>
-        {(props.mode !== 'live' || props.election !== '2022sa"') && (
+        {useWarning(props.election, seatName) && (
+          <Alert variant="warning" className={styles.alert}>
+            <p>
+              <InfoIcon inactive={true} warning={true} /> This seat has unusual
+              circumstances which make it particularly difficult to model. Treat
+              this projection with extra caution.
+            </p>
+          </Alert>
+        )}
+        <ListGroup className={styles.seatsList}>
           <StandardErrorBoundary>
-            <SeatFpSection
+            <ReturnToMain
+              archive={props.archive}
+              election={props.election}
+              mode={props.mode}
+            />
+          </StandardErrorBoundary>
+          <StandardErrorBoundary>
+            <SeatSummary
+              forecast={props.forecast}
+              election={props.election}
+              mode={props.mode}
+              result={result}
+              index={props.index}
+              windowWidth={props.windowWidth}
+            />
+          </StandardErrorBoundary>
+          <StandardErrorBoundary>
+            <SeatWinsSection
+              forecast={props.forecast}
+              election={props.election}
+              mode={props.mode}
+              index={props.index}
+            />
+          </StandardErrorBoundary>
+          {(props.mode !== 'live' || props.election !== '2022sa"') && (
+            <StandardErrorBoundary>
+              <SeatFpSection
+                forecast={props.forecast}
+                election={props.election}
+                mode={props.mode}
+                index={props.index}
+                result={result}
+                windowWidth={props.windowWidth}
+              />
+            </StandardErrorBoundary>
+          )}
+          <StandardErrorBoundary>
+            <SeatTcpSection
               forecast={props.forecast}
               election={props.election}
               mode={props.mode}
@@ -176,30 +198,20 @@ const SeatDetailBody = props => {
               windowWidth={props.windowWidth}
             />
           </StandardErrorBoundary>
-        )}
-        <StandardErrorBoundary>
-          <SeatTcpSection
-            forecast={props.forecast}
-            election={props.election}
-            mode={props.mode}
-            index={props.index}
-            result={result}
-            windowWidth={props.windowWidth}
-          />
-        </StandardErrorBoundary>
-        {props.mode !== 'live' &&
-          props.forecast.hasOwnProperty('seatSwingFactors') && (
-            <StandardErrorBoundary>
-              <SeatTcpSwingFactors
-                forecast={props.forecast}
-                election={props.election}
-                index={props.index}
-                windowWidth={props.windowWidth}
-                mode={props.mode}
-                abbreviated={true}
-              />
-            </StandardErrorBoundary>
-          )}
+          {props.mode !== 'live' &&
+            props.forecast.hasOwnProperty('seatSwingFactors') && (
+              <StandardErrorBoundary>
+                <SeatTcpSwingFactors
+                  forecast={props.forecast}
+                  election={props.election}
+                  index={props.index}
+                  windowWidth={props.windowWidth}
+                  mode={props.mode}
+                  abbreviated={true}
+                />
+              </StandardErrorBoundary>
+            )}
+        </ListGroup>
       </Card.Body>
     </Card>
   );

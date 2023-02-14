@@ -202,8 +202,18 @@ SeatRow.propTypes = {
 };
 
 const SeatMore = props => {
+  const seatName = props.forecast.seatNames[props.index];
   return (
     <>
+      {useWarning(props.election, seatName) && (
+        <Alert variant="warning" className={styles.alert}>
+          <p>
+            <InfoIcon inactive={true} warning={true} /> This seat has unusual
+            circumstances which make it particularly difficult to model. Treat
+            this projection with extra caution.
+          </p>
+        </Alert>
+      )}
       <SeatWinsSection
         forecast={props.forecast}
         index={props.index}

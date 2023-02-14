@@ -34,7 +34,9 @@ const SeatVoteRow = props => {
         <div className={styles.rowParty}>
           <SmartBadge party={partyAbbr} />
         </div>
-        <div>{props.candidateName && ' (' + props.candidateName + ') '}</div>
+        <div className={styles.candidateName}>
+          {props.candidateName && ' (' + props.candidateName + ') '}
+        </div>
         <div className={styles.rowPercentage}>
           {' '}
           <TooltipPercentage
@@ -57,6 +59,9 @@ const SeatVoteRow = props => {
             label="95th percentile"
           />
         </div>
+      </div>
+      <div className={styles.altCandidateName}>
+        {props.candidateName && ' (' + props.candidateName + ') '}
       </div>
       <ProbBarDist
         freqSet={props.freqSet}
