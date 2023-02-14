@@ -23,6 +23,7 @@ import {jsonMap, jsonMapReverse} from '../../../utils/jsonmap.js';
 import {deepCopy} from '../../../utils/deepcopy.js';
 import {getSeatUrl} from '../../../utils/seaturls.js';
 import {seatInRegion} from '../../../utils/seatregion.js';
+import {useWarning} from '../../../utils/seatwarnings.js';
 
 import styles from './Seats.module.css';
 import {standardiseParty} from 'utils/partyclass';
@@ -139,6 +140,16 @@ const SeatRow = props => {
           <TooltipWrapper tooltipText={marginTooltip} placement="bottom">
             {Number(margin).toFixed(1)}%
           </TooltipWrapper>
+          {useWarning(props.election, seatName) && (
+            <>
+              {' '}
+              <InfoIcon
+                warning={true}
+                noToggle={true}
+                tooltipText="This seat has unusual circumstances which make it particularly difficult to model. Treat with caution."
+              />
+            </>
+          )}
           <br />
           {detailsAvailable && (
             <>

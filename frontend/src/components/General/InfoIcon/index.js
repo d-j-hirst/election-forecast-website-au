@@ -39,6 +39,7 @@ const InfoIcon = props => {
   }
 
   const clickAction = () => {
+    if (props.noToggle) return;
     setHighlight(!highlight);
     if (props.onClick() !== undefined) props.onClick();
   };
@@ -54,6 +55,7 @@ const InfoIcon = props => {
 InfoIcon.propTypes = {
   warning: PropTypes.bool,
   inactive: PropTypes.bool,
+  noToggle: PropTypes.bool,
   size: PropTypes.string,
   tooltipText: PropTypes.string,
   onClick: PropTypes.func,
