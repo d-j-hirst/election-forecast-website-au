@@ -21,8 +21,10 @@ const MethodologyPollTrend = props => {
         sources (principally the{' '}
         <ExtLink href="https://www.pollbludger.net/">Poll Bludger</ExtLink>{' '}
         archives with some additional historical data from{' '}
-        <ExtLink href="https://www.wikipedia.org/">Wikipedia</ExtLink>). Polls
-        that require a paywall or personal contact to view, as well as any
+        <ExtLink href="https://www.wikipedia.org/">Wikipedia</ExtLink>); where
+        possible the figures have been verified in original sources, often via
+        the <ExtLink href="https://archive.org/web/">Wayback Machine</ExtLink>.{' '}
+        Polls that require a paywall or personal contact to view, as well as any
         internal polling reports, are not included. In addition, polls must:
       </p>
       <ul>
@@ -93,7 +95,7 @@ const MethodologyPollTrend = props => {
         <ExtLink href="https://pystan.readthedocs.io/en/latest/">
           pystan
         </ExtLink>
-        . This approach is inspired by the
+        . This approach is inspired by the{' '}
         <ExtLink href="https://marktheballot.blogspot.com/p/the.html">
           work
         </ExtLink>{' '}
@@ -101,7 +103,13 @@ const MethodologyPollTrend = props => {
         <ExtLink href="https://marktheballot.blogspot.com/">
           Mark the Ballot
         </ExtLink>
-        , whose posts introduced the author to the technique.
+        , whose posts introduced the author to the technique. It was (to my
+        knowledge) first used, in Australian politics, for analysis of the 2004
+        federal election in{' '}
+        <ExtLink href="http://dx.doi.org/10.1080/10361140500302472">
+          Jackman (2005)
+        </ExtLink>
+        .
       </p>
       <p>
         A detailed treatment of this method is quite technical and beyond the
