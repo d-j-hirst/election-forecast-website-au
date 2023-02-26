@@ -4,6 +4,7 @@ export const useWarning = (election, seatName) => {
     (seatName === 'Kiama' ||
       seatName === 'Orange' ||
       seatName === 'Murray' ||
-      seatName == 'Barwon')
+      seatName == 'Barwon' ||
+      seatName == 'Balmain')
   );
 };
