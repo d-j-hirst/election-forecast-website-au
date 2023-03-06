@@ -45,3 +45,19 @@ export const parseDateStringAsUTC = raw => {
   const date = new Date(raw.split('Z')[0] + '.000Z');
   return toShortIsoString(date).split('.')[0].replace('T', ' ');
 };
+
+export const utcDateToLocal = utc => {
+  utc.setSeconds(utc.getSeconds() - utc.getTimezoneOffset() * 60);
+  return utc;
+};
+export const unixDateToStr = unixDate =>
+  toShortIsoString(utcDateToLocal(new Date(unixDate))).slice(0, 10);
+export const unixTimeToStr = unixDate => {
+  console.log(new Date(unixDate));
+  console.log(utcDateToLocal(new Date(unixDate)));
+  console.log(toShortIsoString(utcDateToLocal(new Date(unixDate))));
+  console.log(
+    toShortIsoString(utcDateToLocal(new Date(unixDate))).slice(11, 16)
+  );
+  return toShortIsoString(utcDateToLocal(new Date(unixDate))).slice(11, 16);
+};

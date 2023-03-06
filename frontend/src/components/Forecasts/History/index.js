@@ -26,6 +26,7 @@ import {getDirect} from 'utils/sdk';
 
 import styles from './History.module.css';
 import {jsonMap, jsonMapReverse} from '../../../utils/jsonmap.js';
+import {unixDateToStr, unixTimeToStr} from '../../../utils/date.js';
 
 const colours = [
   ['ALP', ['#FF0000', '#FF4444', '#FF9999', '#FFCCCC']],
@@ -38,10 +39,6 @@ const colours = [
 ];
 
 const tieColour = '#885588';
-
-const unixDateToStr = unixDate => new Date(unixDate).toISOString().slice(0, 10);
-const unixTimeToStr = unixDate =>
-  new Date(unixDate - 9000000).toISOString().slice(11, 16);
 
 const round2 = num => Math.round(num * 100) / 100;
 
@@ -601,7 +598,7 @@ Seats.propTypes = {
 };
 
 const Chart = props => {
-  let unixDates = props.data.map(a =>
+  const unixDates = props.data.map(a =>
     new Date(
       Number(a.date.substring(0, 4)),
       Number(a.date.substring(5, 7)) - 1,
@@ -611,7 +608,6 @@ const Chart = props => {
       Number(a.date.substring(17, 19))
     ).getTime()
   );
-  if (props.mode === 'live') unixDates = unixDates.map(a => a - 5400000);
   const tempDates = unixDates.map(a => a / 86400000);
   const labels = props.data.map(a =>
     a.label.length > 26 ? a.label.substring(0, 24) + '...' : a.label
