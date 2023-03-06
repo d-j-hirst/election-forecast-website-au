@@ -79,6 +79,16 @@ const GuideSwingFactors = props => {
           these cases, the exhaustion of votes that would otherwise go to that
           party results in a shift in the projected TPP towards the other party.
         </li>
+        <li>
+          <i>Extraordinary factors</i> - As a rule, the forecasts do not include
+          factors such as candidate quality or local issues as there is no way
+          to objectively measure them. However, some exceptional situations
+          occasionally require some sort of adjustment to account for the fact
+          that the usual methods simply cannot be effectively used. In these
+          cases this adjustment may be used. (As of writing, the only case where
+          this has been implemented is in the NSW seat of Kiama in the 2023
+          state election.)
+        </li>
       </ul>
     </>
   );
