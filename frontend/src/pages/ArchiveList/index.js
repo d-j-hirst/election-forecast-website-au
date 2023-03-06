@@ -47,7 +47,6 @@ ArchiveRow.propTypes = {
   item: PropTypes.object.isRequired,
   code: PropTypes.string.isRequired,
   id: PropTypes.number,
-  seat: PropTypes.string.isRequired,
   isArchive: PropTypes.bool,
 };
 

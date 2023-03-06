@@ -52,12 +52,5 @@ export const utcDateToLocal = utc => {
 };
 export const unixDateToStr = unixDate =>
   toShortIsoString(utcDateToLocal(new Date(unixDate))).slice(0, 10);
-export const unixTimeToStr = unixDate => {
-  console.log(new Date(unixDate));
-  console.log(utcDateToLocal(new Date(unixDate)));
-  console.log(toShortIsoString(utcDateToLocal(new Date(unixDate))));
-  console.log(
-    toShortIsoString(utcDateToLocal(new Date(unixDate))).slice(11, 16)
-  );
-  return toShortIsoString(utcDateToLocal(new Date(unixDate))).slice(11, 16);
-};
+export const unixTimeToStr = unixDate =>
+  toShortIsoString(utcDateToLocal(new Date(unixDate))).slice(11, 16);

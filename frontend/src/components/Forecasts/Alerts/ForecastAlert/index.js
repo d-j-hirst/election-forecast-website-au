@@ -30,11 +30,12 @@ const ForecastAlert = props => {
   const [show, setShow] = useState(
     props.showInitially === undefined || props.showInitially
   );
-  const isNowcast = props.forecast.reportMode === 'NC';
-  const isLive = props.forecast.reportMode === 'LF';
-  const isRegular = props.forecast.reportMode === 'RF';
+  const isNowcast = props.mode === 'nowcast';
+  const isLive = props.mode === 'live';
+  const isRegular = props.mode === 'regular';
   const isArchive = props.isArchive === true;
-  const old = oldElections.includes(props.code);
+  const oldElec = oldElections.includes(props.code);
+  const current = !(oldElec || isArchive);
   const isWarning = isNowcast || isLive || props.isArchive;
   const alertVariant = isWarning ? 'warning' : 'info';
   if (show) {
@@ -50,17 +51,17 @@ const ForecastAlert = props => {
           {isRegular && (
             <>
               <div>
-                This {old && (isArchive ? 'is an ' : 'was the final ')}
-                {!old && (isArchive ? 'is an ' : 'is a ')}
+                This {oldElec && (isArchive ? 'is an ' : 'was the final ')}
+                {!oldElec && (isArchive ? 'is an ' : 'is a ')}
                 <strong>
                   {isArchive ? 'archived ' : ''}general forecast
                 </strong>{' '}
                 report for the {props.forecast.electionName}. It estimate
-                {old ? 'd' : 's'} how the election might{' '}
-                {old ? 'have turned' : 'turn'} out{' '}
-                <strong>when it {old ? 'was' : 'is'} held</strong>
-                {old ? ' based on information available at the time' : ''}.
-                {!old && (
+                {!current ? 'd' : 's'} how the election might{' '}
+                {oldElec ? 'have turned' : 'turn'} out{' '}
+                <strong>when it {oldElec ? 'was' : 'is'} held</strong>
+                {oldElec ? ' based on information available at the time' : ''}.
+                {current && (
                   <>
                     {' '}
                     For an estimate of how the election would appear if held
@@ -71,7 +72,7 @@ const ForecastAlert = props => {
                     .
                   </>
                 )}
-                {old && (
+                {oldElec && (
                   <>
                     {' '}
                     View the official results{' '}
@@ -85,39 +86,50 @@ const ForecastAlert = props => {
           {isNowcast && (
             <>
               <div>
-                This {old && (isArchive ? 'is an ' : 'was the final ')}
-                {!old && (isArchive ? 'is an ' : 'is a ')}
+                This {oldElec && (isArchive ? 'is an ' : 'was the final ')}
+                {!oldElec && (isArchive ? 'is an ' : 'is a ')}
                 <strong>{isArchive ? 'archived ' : ''}nowcast</strong> report,
                 not a forecast for the actual election. This means it{' '}
-                {old ? 'was' : 'is'} an estimate of what the{' '}
-                {props.forecast.electionName} might be like{' '}
-                <strong>if it were held {old ? 'at that time' : 'now'}</strong>.
-                The election result {old ? 'might have been ' : 'may be '} quite
-                different when it {old ? 'was' : 'is'} actually held. See{' '}
+                {oldElec ? 'was' : 'is'} an estimate of what the{' '}
+                {props.forecast.electionName} might
+                {!current ? ' have been' : ' be'} like{' '}
+                <strong>
+                  if it were held {!current ? 'at that time' : 'now'}
+                </strong>
+                . The election result {oldElec ? 'might have been ' : 'may be '}{' '}
+                quite different when it {oldElec ? 'was' : 'is'} actually held.
+                See{' '}
                 <Link to={'/guide#nowcast'}>
                   this section of the forecast guide
                 </Link>{' '}
-                for more information. (For a forecast for the election when it{' '}
-                {old ? 'was' : 'is'} expected to be held, see the&nbsp;
-                <Link to={'/forecast/' + props.code + '/regular'}>
-                  regular forecast
-                </Link>
-                .)
+                for more information.
+                {current && (
+                  <>
+                    {' '}
+                    (For a forecast of the actual election when it
+                    {oldElec ? ' was ' : ' is '}
+                    expected to be held, see the&nbsp;
+                    <Link to={'/forecast/' + props.code + '/regular'}>
+                      regular forecast
+                    </Link>
+                    .)
+                  </>
+                )}
               </div>
             </>
           )}
           {isLive && (
             <>
               <div>
-                This {old ? 'was' : 'is'} an{' '}
+                This {oldElec ? 'was' : 'is'} an{' '}
                 {isArchive ? <strong>archived</strong> : ''} experimental{' '}
                 <strong>live forecast</strong> of the{' '}
                 {props.forecast.electionName}, incorporating official election
-                results as they {old ? 'were' : 'are'} reported. Please be aware
-                that the development of this live forecasting process is
+                results as they {oldElec ? 'were' : 'are'} reported. Please be
+                aware that the development of this live forecasting process is
                 incomplete, and as a result it may contain significant
                 inaccuracies.
-                {old && !isArchive && (
+                {oldElec && !isArchive && (
                   <>
                     <hr />
                     This was the the final such forecast made{' '}
@@ -153,11 +165,11 @@ const ForecastAlert = props => {
         )}
         <hr />
         <p>
-          This report {old ? 'was' : 'is'} based on publicly available election,
-          polling, and candidate information, and {old ? 'was' : 'is'} this
-          site&apos;s best guess as to the probability of eventual election
-          results based on this information. For more information on how these
-          forecasts are constructed, check the{' '}
+          This report {oldElec ? 'was' : 'is'} based on publicly available
+          election, polling, and candidate information, and{' '}
+          {oldElec ? 'was' : 'is'} this site&apos;s best guess as to the
+          probability of eventual election results based on this information.
+          For more information on how these forecasts are constructed, check the{' '}
           <Link to={'/guide'}>forecast guide</Link>, the{' '}
           <Link to={'/methodology'}>methodology&nbsp;page</Link> or the{' '}
           <ExtLink href="https://github.com/d-j-hirst/aus-polling-analyser">
@@ -186,6 +198,7 @@ const ForecastAlert = props => {
 };
 ForecastAlert.propTypes = {
   code: PropTypes.string.isRequired,
+  mode: PropTypes.string.isRequired,
   forecast: PropTypes.object.isRequired,
   results: PropTypes.object,
   isArchive: PropTypes.bool,

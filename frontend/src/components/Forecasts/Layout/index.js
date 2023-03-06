@@ -55,9 +55,9 @@ const ForecastLayout = props => {
     <div className={styles.site}>
       {props.isArchive && (
         <Helmet>
-          {/* Archived forecasts shouldn't be indexed by search engines etc., they're
-            for people specifically looking at the history performance of the AEF forecast
-            and not for more general searches */}
+          {/* Archived forecasts shouldn't be indexed by search engines etc.,
+            they're for people specifically looking at the history performance
+            of the AEF forecast and not for more general searches */}
           <meta name="robots" content="noindex" />
         </Helmet>
       )}
@@ -81,6 +81,7 @@ const ForecastLayout = props => {
               <ForecastAlert
                 forecast={forecast}
                 code={code}
+                mode={mode}
                 isArchive={props.isArchive}
                 results={effectiveResults}
               />
@@ -142,7 +143,7 @@ ForecastLayout.propTypes = {
   isArchive: PropTypes.bool,
   code: PropTypes.string.isRequired,
   id: PropTypes.number,
-  mode: PropTypes.string.isRequired,
+  mode: PropTypes.string,
 };
 
 export default ForecastLayout;

@@ -6,7 +6,7 @@ import {ForecastLayout} from 'components';
 const Archive = () => {
   const {code, id} = useParams();
 
-  return <ForecastLayout code={code} id={id} isArchive={true} />;
+  return <ForecastLayout code={code} id={Number(id)} isArchive={true} />;
 };
 
 export default Archive;
