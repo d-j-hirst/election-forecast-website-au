@@ -64,6 +64,15 @@ ModeNav.propTypes = {
   mode: PropTypes.string.isRequired,
 };
 
+const live_elections = [
+  '2023nsw',
+  '2022vic',
+  '2022fed',
+  '2022sa',
+  '2019nsw',
+  '2019fed',
+];
+
 const ForecastsNav = props => {
   // This determines the type of forecast we get from switching elections
   let effectiveMode = props.mode;
@@ -147,31 +156,7 @@ const ForecastsNav = props => {
                 mode="archives"
                 activeMode={props.mode}
               />
-              {props.election === '2022sa' && (
-                <ModeNav
-                  text="Live"
-                  election={props.election}
-                  mode="live"
-                  activeMode={props.mode}
-                />
-              )}
-              {props.election === '2019fed' && (
-                <ModeNav
-                  text="Live"
-                  election={props.election}
-                  mode="live"
-                  activeMode={props.mode}
-                />
-              )}
-              {props.election === '2022fed' && (
-                <ModeNav
-                  text="Live"
-                  election={props.election}
-                  mode="live"
-                  activeMode={props.mode}
-                />
-              )}
-              {props.election === '2022vic' && (
+              {live_elections.includes(props.election) && (
                 <ModeNav
                   text="Live"
                   election={props.election}

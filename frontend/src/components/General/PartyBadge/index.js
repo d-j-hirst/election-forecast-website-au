@@ -136,14 +136,26 @@ export const UapBadge = props => {
   );
 };
 
+export const SsfBadge = props => {
+  const classes = `${styles['party-badge']} ${styles['kap-badge']}`;
+  console.log('SSF badge');
+  return (
+    <TooltipWrapper tooltipText="Shooters, Fishers and Farmers">
+      <span className={classes}>SFF</span>
+    </TooltipWrapper>
+  );
+};
+
 export const SmartBadge = props => {
   const partyName = props.party.toLowerCase();
+  console.log(partyName);
   if (partyName === 'alp') return <AlpBadge />;
   if (partyName === 'grn') return <GrnBadge />;
   if (partyName === 'ind')
     return <IndBadge text={props.text} tooltipText={props.tooltipText} />;
   if (partyName === 'indx') return <IndXBadge text={props.text} />;
   if (partyName === 'kap') return <KapBadge />;
+  if (partyName === 'sff') return <SsfBadge />;
   if (partyName === 'ca') return <CaBadge />;
   if (partyName === 'sab') return <SabBadge />;
   if (partyName === 'lnp' || partyName === 'lib') return <LnpBadge />;

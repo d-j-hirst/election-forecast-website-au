@@ -11,6 +11,7 @@ const isKnownParty = party => {
     'uap',
     'ca',
     'sab',
+    'sff',
     'ind',
     'indx',
   ].some(el => el === party.toLowerCase());
@@ -27,6 +28,7 @@ export const partyColorClass = (party, forecast) => {
   let sParty = standardiseParty(party);
   if (sParty === 'ca') sParty = 'onp';
   if (sParty === 'sab') sParty = 'onp';
+  if (sParty === 'sff') sParty = 'kap';
   return sParty;
 };
 

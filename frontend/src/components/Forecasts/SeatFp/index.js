@@ -66,8 +66,11 @@ const SeatFpSection = props => {
   const maxFpTotal = Math.max(...sortedFreqs.map(el => Math.max(...el[1])));
   const someExcluded = sortedFreqs.length < fpFreqs.length;
 
+  const hideMajorParties =
+    props.mode === 'live' && props.election !== '2019nsw';
+
   sortedFreqs = sortedFreqs.filter(
-    e => props.mode !== 'live' || e[0] < 0 || e[0] > 1
+    e => !hideMajorParties || e[0] < 0 || e[0] > 1
   );
 
   const candidateNames = sortedFreqs.map(e =>
@@ -102,7 +105,7 @@ const SeatFpSection = props => {
         <InfoIcon onClick={() => setShowExplainer(!showExplainer)} />
       </ListGroup.Item>
       {showExplainer && <FpExplainer seatName={seatName} />}
-      {props.mode === 'live' && (
+      {hideMajorParties && (
         <ListGroup.Item className={styles.seatsNote}>
           First preferences hidden for major parties as the estimates are
           indirect and likely to be inaccurate
