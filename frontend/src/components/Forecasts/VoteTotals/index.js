@@ -345,6 +345,8 @@ const VoteTotals = props => {
     showFpTotals = false;
   if (props.mode === 'live' && props.election === '2022vic' && !props.isArchive)
     showFpTotals = false;
+  if (props.mode === 'live' && props.election === '2023nsw')
+    showFpTotals = false;
 
   return (
     <Card className={styles.summary}>
