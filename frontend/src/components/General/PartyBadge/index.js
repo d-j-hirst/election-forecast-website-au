@@ -148,7 +148,6 @@ export const SsfBadge = props => {
 
 export const SmartBadge = props => {
   const partyName = props.party.toLowerCase();
-  console.log(partyName);
   if (partyName === 'alp') return <AlpBadge />;
   if (partyName === 'grn') return <GrnBadge />;
   if (partyName === 'ind')

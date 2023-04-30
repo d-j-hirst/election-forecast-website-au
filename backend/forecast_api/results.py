@@ -37,8 +37,16 @@ party_convert = {
         'National': 'LNP',
         'Greens': 'GRN',
         'Independents': 'IND',
+        'Independent': 'IND'
+    },
+    '2023nsw': {
+        'Labor': 'ALP',
+        'Liberal': 'LNP',
+        'National': 'LNP',
+        'Greens': 'GRN',
+        'Independents': 'IND',
         'Independent': 'IND',
-        'SA-Best' : 'SAB'
+        '': 'IND'
     },
 }
 
@@ -55,7 +63,8 @@ def fetch_overall_results(election: Election):
     remove_from_overall_fp = {
         '2022fed': {'CA', 'KAP', 'IND'},
         '2022sa': {'IND'},
-        '2022vic': {'IND'}
+        '2022vic': {'IND'},
+        '2023nsw': {'IND'}
     }
     overall_results = {'fp': {}, 'seats': {}, 'tpp': 0}
     year = election.code[:4]
@@ -182,11 +191,8 @@ def fetch_seat_results(election: Election, urls):
                       .find_all(class_='wikitable'))
         for table in tables:
             caption = table.find('caption')
-            print(caption)
             if caption is None: continue
-            print(caption.text)
             supplementary = 'supplementary' in caption.text
-            print(supplementary)
             caption_links = caption.find_all('a')
             if len(caption_links) < 2 and not supplementary: continue
             election_text = caption_links[0].text.strip()
@@ -196,7 +202,6 @@ def fetch_seat_results(election: Election, urls):
                 seat_text = caption.text.split(": ")[1].split("[")[0].strip()
             if supplementary:
                 seat_text = seat_text.split(' ')[0]
-            print(seat_text)
 
             seat_results = {'fp': {}, 'tcp': {}}
             doing_tcp = 0
@@ -259,13 +264,39 @@ def fetch_seat_results(election: Election, urls):
                         del seat_results['fp']['IND']
                         break
 
+            # Remove smaller emerging inds
+            # Can reverse these on a case-by-case basis
+            # for seats where an ind was expected to poll strongly
+            # but didn't
+            if (int(year) >= 2023):
+                for code, fp in seat_results['fp'].items():
+                    if code == 'IND*' and fp < 8:
+                        if 'OTH' not in seat_results['fp']:
+                            seat_results['fp']['OTH'] = fp
+                        else:
+                            seat_results['fp']['OTH'] += fp
+                        del seat_results['fp'][code]
+                        break
+
+                for code, fp in seat_results['fp'].items():
+                    if code == 'IND' and fp < 8:
+                        if 'OTH' not in seat_results['fp']:
+                            seat_results['fp']['OTH'] = fp
+                        else:
+                            seat_results['fp']['OTH'] += fp
+                        del seat_results['fp'][code]
+                        break
+
+
             if 'OTH' not in seat_results['fp']:
                 seat_results['fp']['OTH'] = 0
 
             if (election.code == '2022sa' and (seat_text == 'Finniss' or
                     seat_text == 'Hammond' or seat_text == 'Flinders' or
                     seat_text == 'Frome') or
-                    election.code == '2022vic' and seat_text == 'Narracan'):
+                    election.code == '2022vic' and seat_text == 'Narracan' or
+                    election.code == '2023nsw' and (seat_text == 'Tamworth' or
+                    seat_text == 'Shellharbour')):
                 # Match to the category forecast for this election
                 if 'IND*' in seat_results['fp']:
                     seat_results['fp']['OTH'] += seat_results['fp']['IND*']

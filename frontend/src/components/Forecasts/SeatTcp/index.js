@@ -170,7 +170,8 @@ const SeatTcpSection = props => {
   const seatName = props.forecast.seatNames[props.index];
   const tcpFreqs = deepCopy(props.forecast.seatTcpBands[props.index]);
   const tcp = props.result === null ? null : props.result.tcp;
-  const abbr = a => (a === -2 ? 'IND*' : jsonMap(props.forecast.partyAbbr, a));
+  const abbr = a =>
+    a === -2 ? 'IND*' : a === -3 ? 'OTH' : jsonMap(props.forecast.partyAbbr, a);
   const tcpMatch = (t, a) =>
     t === null
       ? false
@@ -188,10 +189,19 @@ const SeatTcpSection = props => {
           tcpMatch(tcp, a[0]) ? tcp[abbr(a[0][0])] : null
         );
 
-  const forceXInd =
-    ((seatName === 'Finniss' || seatName === 'Flinders') &&
-      props.election === '2022sa') ||
-    (seatName == 'Narracan' && props.election == '2022vic');
+  const forcedInds = [
+    ['2022sa', 'Finniss'],
+    ['2022sa', 'Flinders'],
+    ['2022vic', 'Narracan'],
+    ['2023nsw', 'Tamworth'],
+    ['2023nsw', 'Shellharbour'],
+    ['2023nsw', 'Cessnock'],
+  ];
+
+  const pair = [props.election, seatName];
+  const forceXInd = forcedInds
+    .map(a => JSON.stringify(a))
+    .includes(JSON.stringify([props.election, seatName]));
 
   return (
     <>
