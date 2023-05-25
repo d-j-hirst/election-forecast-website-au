@@ -15,7 +15,7 @@ party_convert = {
         'Country Liberal (NT)': 'LNP',
         'Country Liberal': 'LNP',
         'Greens': 'GRN',
-        'One Nation': 'ONP',
+        'One Nation': 'ON',
         'United Australia Party': 'UAP',
         'United Australia': 'UAP',
         'Centre Alliance': 'CA',

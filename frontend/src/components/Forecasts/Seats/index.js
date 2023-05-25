@@ -34,7 +34,7 @@ const partyCategory = (party, forecast) => {
   if (sp === 'alp') return -1;
   if (sp === 'kap') return 1;
   if (sp === 'lnp') return 2;
-  if (sp === 'onp') return 3;
+  if (sp === 'on') return 3;
   if (sp === 'uap') return 3;
   return 0;
 };
@@ -421,12 +421,12 @@ const Seats = props => {
     null,
     a => a >= 0
   );
-  let onpIndex = jsonMapReverse(props.forecast.partyAbbr, 'ONP');
+  let onIndex = jsonMapReverse(props.forecast.partyAbbr, 'ON');
   if (
-    onpIndex &&
-    jsonMap(props.forecast.seatCountFrequencies, onpIndex)[14] === 0
+    onIndex &&
+    jsonMap(props.forecast.seatCountFrequencies, onIndex)[14] === 0
   )
-    onpIndex = null;
+    onIndex = null;
   let uapIndex = jsonMapReverse(props.forecast.partyAbbr, 'UAP');
   if (
     uapIndex &&
@@ -462,9 +462,9 @@ const Seats = props => {
     setSortType(SortTypeEnum.winChance);
     setSortParty(indIndex);
   };
-  const setSortOnpWinChance = () => {
+  const setSortOnWinChance = () => {
     setSortType(SortTypeEnum.winChance);
-    setSortParty(onpIndex);
+    setSortParty(onIndex);
   };
   const setSortUapWinChance = () => {
     setSortType(SortTypeEnum.winChance);
@@ -547,9 +547,9 @@ const Seats = props => {
                     IND win chance
                   </Dropdown.Item>
                 )}
-                {onpIndex && (
-                  <Dropdown.Item as="button" onClick={setSortOnpWinChance}>
-                    ONP win chance
+                {onIndex && (
+                  <Dropdown.Item as="button" onClick={setSortOnWinChance}>
+                    ON win chance
                   </Dropdown.Item>
                 )}
                 {uapIndex && (

@@ -6,7 +6,7 @@ const isKnownParty = party => {
     'grn',
     'kap',
     'lnp',
-    'onp',
+    'on',
     'oth',
     'uap',
     'ca',
@@ -26,8 +26,8 @@ export const standardiseParty = (party, forecast) => {
 
 export const partyColorClass = (party, forecast) => {
   let sParty = standardiseParty(party);
-  if (sParty === 'ca') sParty = 'onp';
-  if (sParty === 'sab') sParty = 'onp';
+  if (sParty === 'ca') sParty = 'on';
+  if (sParty === 'sab') sParty = 'on';
   if (sParty === 'sff') sParty = 'kap';
   return sParty;
 };

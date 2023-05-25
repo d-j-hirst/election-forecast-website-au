@@ -44,7 +44,7 @@ const MajorityWinGovernmentRow = props => {
 };
 MajorityWinGovernmentRow.propTypes = {
   forecast: PropTypes.object.isRequired,
-  partyIndex: PropTypes.string.isRequired,
+  partyIndex: PropTypes.number.isRequired,
 };
 
 const MinorityWinGovernmentRow = props => {

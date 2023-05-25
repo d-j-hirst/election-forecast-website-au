@@ -30,7 +30,7 @@ const partyCategory = (party, forecast) => {
   if (sp === 'alp') return -1;
   if (sp === 'kap') return 1;
   if (sp === 'lnp') return 2;
-  if (sp === 'onp') return 3;
+  if (sp === 'on') return 3;
   if (sp === 'uap') return 3;
   return 0;
 };

@@ -43,7 +43,7 @@ const colours = [
   ['ALP', ['#FF0000', '#FF4444', '#FFAAAA', '#FFCCCC']],
   ['LNP', ['#0000FF', '#4444FF', '#AAAAFF', '#CCCCFF']],
   ['GRN', ['#008800', '#22CC00', '#66FF44', '#BBFF99']],
-  ['ONP', ['#AA6600', '#FF7F00', '#FFAB58', '#FFC388']],
+  ['ON', ['#AA6600', '#FF7F00', '#FFAB58', '#FFC388']],
   ['UAP', ['#886600', '#C2B615', '#EBDF43', '#F0E87C']],
   ['SAB', ['#886600', '#C2B615', '#EBDF43', '#F0E87C']],
   ['OTH', ['#777777', '#999999', '#C5C5C5', '#E0E0E0']],
@@ -256,8 +256,8 @@ const VoteTrendChart = props => {
   const setGrnFp = () => {
     setGenericFp('GRN');
   };
-  const setOnpFp = () => {
-    setGenericFp('ONP');
+  const setOnFp = () => {
+    setGenericFp('ON');
   };
   const setUapFp = () => {
     setGenericFp('UAP');
@@ -308,9 +308,9 @@ const VoteTrendChart = props => {
           <Dropdown.Item as="button" onClick={setGrnFp}>
             Party: GRN first preferences
           </Dropdown.Item>
-          {partyHasFpTrend('ONP') && (
-            <Dropdown.Item as="button" onClick={setOnpFp}>
-              Party: ONP first preferences
+          {partyHasFpTrend('ON') && (
+            <Dropdown.Item as="button" onClick={setOnFp}>
+              Party: ON first preferences
             </Dropdown.Item>
           )}
           {partyHasFpTrend('UAP') && (

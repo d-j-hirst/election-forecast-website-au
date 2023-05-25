@@ -67,11 +67,11 @@ export const LnpBadge = props => {
   );
 };
 
-export const OnpBadge = props => {
-  const classes = `${styles['party-badge']} ${styles['onp-badge']}`;
+export const OnBadge = props => {
+  const classes = `${styles['party-badge']} ${styles['on-badge']}`;
   return (
     <TooltipWrapper tooltipText="One Nation">
-      <span className={classes}>ONP</span>
+      <span className={classes}>ON</span>
     </TooltipWrapper>
   );
 };
@@ -110,7 +110,7 @@ EOthBadge.propTypes = {
 };
 
 export const CaBadge = props => {
-  const classes = `${styles['party-badge']} ${styles['onp-badge']}`;
+  const classes = `${styles['party-badge']} ${styles['on-badge']}`;
   return (
     <TooltipWrapper tooltipText="Centre Alliance">
       <span className={classes}>CA</span>
@@ -119,7 +119,7 @@ export const CaBadge = props => {
 };
 
 export const SabBadge = props => {
-  const classes = `${styles['party-badge']} ${styles['onp-badge']}`;
+  const classes = `${styles['party-badge']} ${styles['on-badge']}`;
   return (
     <TooltipWrapper tooltipText="SA Best">
       <span className={classes}>SAB</span>
@@ -158,7 +158,7 @@ export const SmartBadge = props => {
   if (partyName === 'ca') return <CaBadge />;
   if (partyName === 'sab') return <SabBadge />;
   if (partyName === 'lnp' || partyName === 'lib') return <LnpBadge />;
-  if (partyName === 'onp') return <OnpBadge />;
+  if (partyName === 'on') return <OnBadge />;
   if (partyName === 'uap') return <UapBadge />;
   if (partyName === 'eoth') return <EOthBadge text={props.text} />;
   return <OthBadge text={props.text} tooltipText={props.tooltipText} />;

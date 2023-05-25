@@ -51,12 +51,12 @@ code {
   --uap-xlight: #fcf7b1;
   --uap-xxlight: #fcf9d7;
   --uap-xxxlight: #fcf9e1;
-  --onp: #ff7f00;
-  --onp-mid: #ffab58;
-  --onp-light: #ffc388;
-  --onp-xlight: #ffd5aa;
-  --onp-xxlight: #fde6ce;
-  --onp-xxxlight: #faeee0;
+  --on: #ff7f00;
+  --on-mid: #ffab58;
+  --on-light: #ffc388;
+  --on-xlight: #ffd5aa;
+  --on-xxlight: #fde6ce;
+  --on-xxxlight: #faeee0;
   --kap: #9a593a;
   --kap-mid: #be8c75;
   --kap-light: #cfab9a;
@@ -97,8 +97,8 @@ code {
   color: #212529 !important;
 }
 
-.onp-bg {
-  background-color: var(--onp) !important;
+.on-bg {
+  background-color: var(--on) !important;
   color: #212529 !important;
 }
 
@@ -142,8 +142,8 @@ code {
   color: #212529 !important;
 }
 
-.onp-bg-mid {
-  background-color: var(--onp-mid) !important;
+.on-bg-mid {
+  background-color: var(--on-mid) !important;
   color: #212529 !important;
 }
 
@@ -187,8 +187,8 @@ code {
   color: #212529 !important;
 }
 
-.onp-bg-light {
-  background-color: var(--onp-light) !important;
+.on-bg-light {
+  background-color: var(--on-light) !important;
   color: #212529 !important;
 }
 
@@ -232,8 +232,8 @@ code {
   color: #212529 !important;
 }
 
-.onp-bg-xlight {
-  background-color: var(--onp-xlight) !important;
+.on-bg-xlight {
+  background-color: var(--on-xlight) !important;
   color: #212529 !important;
 }
 
@@ -277,8 +277,8 @@ code {
   color: #212529 !important;
 }
 
-.onp-bg-xxlight {
-  background-color: var(--onp-xxlight) !important;
+.on-bg-xxlight {
+  background-color: var(--on-xxlight) !important;
   color: #212529 !important;
 }
 
@@ -322,8 +322,8 @@ code {
   color: #212529 !important;
 }
 
-.onp-bg-xxxlight {
-  background-color: var(--onp-xxxlight) !important;
+.on-bg-xxxlight {
+  background-color: var(--on-xxxlight) !important;
   color: #212529 !important;
 }
 

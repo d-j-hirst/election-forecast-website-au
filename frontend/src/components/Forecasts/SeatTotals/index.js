@@ -174,6 +174,12 @@ const MajorityRow = props => {
     if (props.election === '2022sa') return 24;
     if (props.election === '2022vic') return 45;
     if (props.election === '2023nsw') return 47;
+    if (props.election === '2024qld') return 47;
+    if (props.election === '2025wa') return 30;
+    if (props.election === '2025fed') return 76;
+    if (props.election === '2026sa') return 24;
+    if (props.election === '2026vic') return 45;
+    if (props.election === '2027nsw') return 47;
   })();
 
   return (

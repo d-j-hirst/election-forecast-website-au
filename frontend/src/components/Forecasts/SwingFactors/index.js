@@ -44,11 +44,12 @@ const SwingFactorsExplainer = props => {
       <hr />
       <p>
         There are some scaling and post-processing procecures in the simulations
-        in order to maintain consistency with the simulations, so the swings may
-        not line up exactly with the estimated margin. Additionally, when some
-        of the two-candidate-preferred (TCP) scenarios are not TPP comparisons,
-        the TPP margins shown as part of those scenarios may not be
-        representative of the underlying TPP in <i>all</i> scenarios.
+        in order to maintain consistency between the indiviual seats and the
+        overall forecasts, so these swing factors may not line up exactly with
+        the estimated margin. Additionally, when some of the
+        two-candidate-preferred (TCP) scenarios are not TPP comparisons, the TPP
+        margins shown as part of those scenarios may not be representative of
+        the underlying TPP in <i>all</i> scenarios.
       </p>
     </Alert>
   );

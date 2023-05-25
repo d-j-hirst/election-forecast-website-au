@@ -32,7 +32,7 @@ const colours = [
   ['ALP', ['#FF0000', '#FF4444', '#FF9999', '#FFCCCC']],
   ['LNP', ['#0000FF', '#4444FF', '#9999FF', '#CCCCFF']],
   ['GRN', ['#008800', '#22CC00', '#66FF44', '#BBFF99']],
-  ['ONP', ['#AA6600', '#FF7F00', '#FFAB58', '#FFC388']],
+  ['ON', ['#AA6600', '#FF7F00', '#FFAB58', '#FFC388']],
   ['UAP', ['#886600', '#C2B615', '#EBDF43', '#F0E87C']],
   ['SAB', ['#886600', '#C2B615', '#EBDF43', '#F0E87C']],
   ['OTH', ['#777777', '#999999', '#C5C5C5', '#E0E0E0']],
@@ -886,12 +886,12 @@ const History = props => {
     null,
     a => a >= 0
   );
-  let onpIndex = jsonMapReverse(props.forecast.partyAbbr, 'ONP');
+  let onIndex = jsonMapReverse(props.forecast.partyAbbr, 'ON');
   if (
-    onpIndex &&
-    jsonMap(props.forecast.seatCountFrequencies, onpIndex)[14] === 0
+    onIndex &&
+    jsonMap(props.forecast.seatCountFrequencies, onIndex)[14] === 0
   )
-    onpIndex = null;
+    onIndex = null;
   let uapIndex = jsonMapReverse(props.forecast.partyAbbr, 'UAP');
   if (
     uapIndex &&
@@ -922,9 +922,9 @@ const History = props => {
     setGraphType(GraphTypeEnum.fp);
     setGraphParty(grnIndex);
   };
-  const setGraphOnpFp = () => {
+  const setGraphOnFp = () => {
     setGraphType(GraphTypeEnum.fp);
-    setGraphParty(onpIndex);
+    setGraphParty(onIndex);
   };
   const setGraphUapFp = () => {
     setGraphType(GraphTypeEnum.fp);
@@ -946,9 +946,9 @@ const History = props => {
     setGraphType(GraphTypeEnum.seats);
     setGraphParty(grnIndex);
   };
-  const setGraphOnpSeats = () => {
+  const setGraphOnSeats = () => {
     setGraphType(GraphTypeEnum.seats);
-    setGraphParty(onpIndex);
+    setGraphParty(onIndex);
   };
   const setGraphUapSeats = () => {
     setGraphType(GraphTypeEnum.seats);
@@ -1007,9 +1007,9 @@ const History = props => {
                       <Dropdown.Item as="button" onClick={setGraphGrnFp}>
                         GRN first preferences
                       </Dropdown.Item>
-                      {onpIndex && (
-                        <Dropdown.Item as="button" onClick={setGraphOnpFp}>
-                          ONP first preferences
+                      {onIndex && (
+                        <Dropdown.Item as="button" onClick={setGraphOnFp}>
+                          ON first preferences
                         </Dropdown.Item>
                       )}
                       {uapIndex && (
@@ -1031,9 +1031,9 @@ const History = props => {
                   <Dropdown.Item as="button" onClick={setGraphGrnSeats}>
                     GRN seats
                   </Dropdown.Item>
-                  {onpIndex && (
-                    <Dropdown.Item as="button" onClick={setGraphOnpSeats}>
-                      ONP seats
+                  {onIndex && (
+                    <Dropdown.Item as="button" onClick={setGraphOnSeats}>
+                      ON seats
                     </Dropdown.Item>
                   )}
                   {uapIndex && (

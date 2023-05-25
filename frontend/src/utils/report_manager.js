@@ -2,6 +2,17 @@ import {getDirect} from 'utils/sdk';
 
 const modeTitles = {RF: 'General Forecast', NC: 'Nowcast', LF: 'Live Forecast'};
 
+const partyReplace = (array, oldItem, newItem) => {
+  const onPos = array.partyAbbr.findIndex(e => e[1] === oldItem);
+  if (onPos !== -1) {
+    array.partyAbbr[onPos][1] = newItem;
+  }
+  if (array.polls[oldItem] !== undefined) {
+    array.polls[newItem] = array.polls[oldItem];
+    delete array.polls[oldItem];
+  }
+};
+
 const returnUsingData = (resp, settings) => {
   if (!resp.ok) throw Error("Couldn't find election data");
   return {
@@ -82,6 +93,7 @@ const integrateNewResults = input => {
 const integrateNewForecast = input => {
   const settings = input.settings;
   const data = input.data;
+  partyReplace(data.report, 'ONP', 'ON');
   // No system currently set up to cache archived forecasts
   if (data.archiveId === undefined) {
     if (data.new === false) {
