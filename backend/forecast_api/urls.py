@@ -16,6 +16,9 @@ urlpatterns = [
     path('submit-review',
          views.SubmitReviewResponse.as_view(),  # type: ignore
          name='submit-review'),
+    path('reset-cache',
+         views.ResetCache.as_view(),  # type: ignore
+         name='reset-cache'),
     path('election-summary/<str:code>/<str:mode>',
          views.ElectionSummaryResponse.as_view(),  # type: ignore
          name='election-summary'),
@@ -39,5 +42,5 @@ urlpatterns = [
          name='election-results'),
     path('election-results/<str:code>/<int:cached_version>/',
          views.ElectionResultsResponse.as_view(),  # type: ignore
-         name='election-results')
+         name='election-results'),
 ]

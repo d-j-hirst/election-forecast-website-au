@@ -155,3 +155,8 @@ def clear_results_cache(code):
     keys = [f'results_recent_id_{code}',
             f'results_recent_resp_{code}']
     cache.delete_many(keys)
+
+
+def reset_cache():
+    cache.clear()
+    return Response("Successfully reset cache.")

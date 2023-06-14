@@ -13,6 +13,7 @@ from forecast_api.submit import submit_report, \
                                 submit_timeseries_update, \
                                 submit_results_update, \
                                 submit_review, \
+                                reset_cache, \
                                 SubmitForecastPermission
 
 
@@ -38,6 +39,12 @@ class SubmitReviewResponse(ApiAuthMixin, ApiErrorsMixin, APIView):
     permission_classes = [IsAuthenticated&SubmitForecastPermission]
     def post(self, request: HttpRequest):
         return submit_review(request)
+
+
+class ResetCache(ApiAuthMixin, ApiErrorsMixin, APIView):
+    permission_classes = [IsAuthenticated&SubmitForecastPermission]
+    def post(self, request: HttpRequest):
+        return reset_cache()
 
 
 class ElectionSummaryResponse(APIView):
