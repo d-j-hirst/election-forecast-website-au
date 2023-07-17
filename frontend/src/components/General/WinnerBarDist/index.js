@@ -38,7 +38,7 @@ const WinnerBarDist = props => {
       freq[0] === -2
         ? namedIndependentExists
           ? 'Any other independent'
-          : 'Any indepdendent'
+          : 'Any independent'
         : jsonMap(props.forecast.partyName, freq[0]);
     return {
       candidateName: candidateNames[index],
