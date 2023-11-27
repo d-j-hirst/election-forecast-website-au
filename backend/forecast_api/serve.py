@@ -59,6 +59,8 @@ def serve_forecast(code, mode, cached_id):
                 .filter(mode=mode_val)
                 .order_by('-date')
                 .first())
+    if forecast is None:
+        raise Http404("Election does not have a forecast for this mode.")
     if forecast.id == cached_id:
         return Response({"new": False})
     response = {"report": forecast.report,
