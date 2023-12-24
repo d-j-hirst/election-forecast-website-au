@@ -13,22 +13,22 @@ const AboutContent = () => {
         Statistical methods are used to analyse past trends in election results
         and use them to project likely and possible outcomes for future
         elections. This project began as an Excel spreadsheet for the 2010
-        Federal Election and has been adjusted and improved over the years,
+        federal election and has been adjusted and improved over the years,
         finally published in 2022. The approach to forecasting is along these
         lines:
       </p>
       <ul>
         <li>
           The forecasts are <i>probabilistic</i>. This site doesn&apos;t try to
-          predict exact outcomes, but it will instead show likely and unlikely
-          possibilities.
+          predict exact outcomes, but it will instead indicate likely and
+          unlikely possibilities.
         </li>
         <li>
-          The forecasts aim to be <i>objective</i> where possible, using past
-          results and quantifiable present data to inform future projections.
-          For some areas where past history has little to say, judgment calls
-          may be necessary about how to design the forecast, but these are kept
-          to a minimum.
+          The aim is for forecasts to be <i>objective</i> where possible, using
+          past results and quantifiable present data to inform future
+          projections. For some areas where past history has little to say,
+          judgment calls may be necessary about how to design the forecast, but
+          these are kept to a minimum.
         </li>
         <li>
           The forecasts aim to be as <i>comprehensive</i> as practical. Results
@@ -37,7 +37,7 @@ const AboutContent = () => {
           parties appearing and winning seats, are accounted for (with a
           suitably low probability). Furthermore, where possible, forecasting
           will begin well ahead of future elections. Even though present
-          indicators (such as polling) may not be verypredictive a long way out
+          indicators (such as polling) may not be very predictive a long way out
           from an election, this site will aim to show that through the numbers
           - and use whatever predictive power there is as well as it can.
         </li>
