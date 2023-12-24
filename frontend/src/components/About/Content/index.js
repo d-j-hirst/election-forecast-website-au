@@ -59,7 +59,8 @@ const AboutContent = () => {
           <ExtLink href="https://github.com/d-j-hirst/election-forecast-website-au">
             website
           </ExtLink>
-          These contain all the information required to replicate the forecasts.
+          . These contain all the information required to replicate the
+          forecasts.
         </li>
       </ul>
       <p>
@@ -73,10 +74,10 @@ const AboutContent = () => {
         as well as forecasting in various disciplines, and has a PhD in
         biochemistry. He has never been a member of, or associated with, a
         political party, but tends to vote for parties to the left of the
-        political centre, and is an occasional commenter on political sites
-        under the nickname &quot;dendrite&quot;. If you have any questions about
-        website, forecasting or Australian political system in general, feel
-        free to <Email>email</Email> him.
+        political centre, and has been an occasional commenter on political
+        sites under the nickname &quot;dendrite&quot;. If you have any questions
+        about the website, forecasting or the Australian political system in
+        general, feel free to <Email>email</Email> him.
       </p>
       <h4 id="introduction">Acknowledgements</h4>
       <p>
