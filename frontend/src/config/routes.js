@@ -42,10 +42,10 @@ const AllRoutes = () => {
         <Route path={ARCHIVE_SEAT_URL} element={<ArchiveSeat />} />
         <Route path={ARCHIVE_URL} element={<Archive />} />
         {/* Keep this last so that other pages don't get replaced by it */}
-        <Route
+        {/* <Route
           path={'forecast/2025fed/regular'}
           element={<Navigate replace to={'forecast/2025fed/nowcast'} />}
-        />
+        /> */}
         <Route path={FORECAST_URL} element={<Forecast />} />
         <Route path={GUIDE_URL} element={<Guide />} />
         <Route path={GLOSSARY_URL} element={<Glossary />} />
