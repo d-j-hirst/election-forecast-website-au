@@ -969,7 +969,8 @@ const History = props => {
     <Card className={styles.summary}>
       <Card.Header className={styles.historyTitle}>
         <strong>
-          Forecast History&nbsp;
+          {props.mode === nowcast ? 'Nowcast' : 'Forecast'}
+          History&nbsp;
           <InfoIcon onClick={() => setShowExplainer(!showExplainer)} />
         </strong>
       </Card.Header>

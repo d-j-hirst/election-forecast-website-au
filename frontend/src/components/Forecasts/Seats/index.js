@@ -62,6 +62,18 @@ const seatAsterisks = {
     'indicator of performance in these cases, so the 2019 election ' +
     'margin, adjusted for redistribution, of 0.5% to the Nationals is used as the ' +
     'baseline for the forecast.',
+  '2024qld;Ipswich West':
+    'This seat was won by the LNP at a by-election with a margin of 3.5%. ' +
+    'However, general election results are historically a more reliable ' +
+    'indicator of performance in these cases, so the 2020 election ' +
+    'margin of 14.35% to Labor is used as the ' +
+    'baseline for the forecast.',
+  '2024qld;Inala':
+    'This seat was won by Labor at a by-election with a margin of 6.7%. ' +
+    'However, general election results are historically a more reliable ' +
+    'indicator of performance in these cases, so the 2020 election ' +
+    'margin of 28.2% to Labor is used as the ' +
+    'baseline for the forecast.',
 };
 
 const SeatRow = props => {
@@ -110,10 +122,10 @@ const SeatRow = props => {
   let marginTooltip = '';
   if (incumbentIndex === 0) {
     marginTooltip =
-      'The two-party-preferred (TPP) margin against the Liberal/National Coalition, after adjustment for redistributions.';
+      'The two-party-preferred (2PP) margin against the Liberal/National Coalition, after adjustment for redistributions.';
   } else if (incumbentIndex === 1) {
     marginTooltip =
-      'The two-party-preferred (TPP) margin against Labor, after adjustment for redistributions.';
+      'The two-party-preferred (2PP) margin against Labor, after adjustment for redistributions.';
   } else {
     marginTooltip =
       'The final two-candidate-preferred margin in the previous election, after adjustment for redistributions.';
@@ -395,8 +407,8 @@ const Seats = props => {
     if (sortType === SortTypeEnum.competitiveness) title += 'Competitiveness';
     else if (sortType === SortTypeEnum.alphabetical)
       title += 'Alphabetical order';
-    else if (sortType === SortTypeEnum.alpTppMargin) title += 'ALP TPP margin';
-    else if (sortType === SortTypeEnum.lnpTppMargin) title += 'LNP TPP margin';
+    else if (sortType === SortTypeEnum.alpTppMargin) title += 'ALP 2PP margin';
+    else if (sortType === SortTypeEnum.lnpTppMargin) title += 'LNP 2PP margin';
     else if (sortType === SortTypeEnum.winChance)
       title += `${partyAbbr} win chance`;
     return title;
@@ -526,10 +538,10 @@ const Seats = props => {
                   Alphabetical order
                 </Dropdown.Item>
                 <Dropdown.Item as="button" onClick={setSortAlpTppMargin}>
-                  ALP TPP margin
+                  ALP 2PP margin
                 </Dropdown.Item>
                 <Dropdown.Item as="button" onClick={setSortLnpTppMargin}>
-                  LNP TPP margin
+                  LNP 2PP margin
                 </Dropdown.Item>
                 <Dropdown.Item as="button" onClick={setSortAlpWinChance}>
                   ALP win chance

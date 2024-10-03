@@ -19,7 +19,7 @@ const GlossaryLink = props => {
       break;
     case 'tpp':
     case 'two-party-preferred':
-    case 'two-party-preferred (tpp)':
+    case 'two-party-preferred (2pp)':
     case 'two-party-preferred vote':
     case 'two-party-preferred votes':
       link = 'two-party-preferred-vote';

@@ -3,14 +3,14 @@ import React from 'react';
 const GuideSwingFactors = props => {
   return (
     <>
-      <h4 id="tpp-swing-factors">Two-party-preferred (TPP) swing factors</h4>
+      <h4 id="tpp-swing-factors">Two-party-preferred (2PP) swing factors</h4>
       <p>
         The &quot;two-party preferred swing factors&quot; section for each
         individual seat result shows what seat-specific factors are involved in
-        forecasting the TPP in that seat. Below is a list of the different
+        forecasting the 2PP in that seat. Below is a list of the different
         factors that are used. (It is safe to assume that if a factor
         you&apos;re aware of is <i>not</i> shown in the forecast, then it
-        isn&apos;t being taken into account for the TPP - adjust your
+        isn&apos;t being taken into account for the 2PP - adjust your
         expectations accordingly.)
       </p>
       <ul>
@@ -18,7 +18,7 @@ const GuideSwingFactors = props => {
           <i>Base region swing</i> - this is the overall swing across the
           election, modified by state or regional differences where breakdowns
           for those are available. Note that this factor is typically a little
-          larger for seats with small TPP margins than large ones, due to the
+          larger for seats with small 2PP margins than large ones, due to the
           scaling used.
         </li>
         <li>
@@ -77,7 +77,7 @@ const GuideSwingFactors = props => {
           generally attract voters from both parties in similar proportions,
           some do attract much more from one major party than the other. In
           these cases, the exhaustion of votes that would otherwise go to that
-          party results in a shift in the projected TPP towards the other party.
+          party results in a shift in the projected 2PP towards the other party.
         </li>
         <li>
           <i>Extraordinary factors</i> - As a rule, the forecasts do not include

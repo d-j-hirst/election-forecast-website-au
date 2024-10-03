@@ -48,6 +48,37 @@ party_convert = {
         'Independent': 'IND',
         '': 'IND'
     },
+    '2024qld': {
+        'Labor': 'ALP',
+        'Liberal National': 'LNP',
+        'Coalition': 'LNP',
+        'Greens': 'GRN',
+        'One Nation': 'ON',
+        'United Australia Party': 'UAP',
+        'United Australia': 'UAP',
+        'Centre Alliance': 'CA',
+        "Katter's Australian": 'KAP',
+        'Independents': 'IND',
+        'Independent': 'IND',
+    },
+    '2025fed': {
+        'Labor': 'ALP',
+        'Liberal': 'LNP',
+        'National': 'LNP',
+        'Liberal National (Qld)': 'LNP',
+        'Liberal National': 'LNP',
+        'Coalition': 'LNP',
+        'Country Liberal (NT)': 'LNP',
+        'Country Liberal': 'LNP',
+        'Greens': 'GRN',
+        'One Nation': 'ON',
+        'United Australia Party': 'UAP',
+        'United Australia': 'UAP',
+        'Centre Alliance': 'CA',
+        "Katter's Australian": 'KAP',
+        'Independents': 'IND',
+        'Independent': 'IND',
+    },
 }
 
 
@@ -64,7 +95,9 @@ def fetch_overall_results(election: Election):
         '2022fed': {'CA', 'KAP', 'IND'},
         '2022sa': {'IND'},
         '2022vic': {'IND'},
-        '2023nsw': {'IND'}
+        '2023nsw': {'IND'},
+        '2024qld': {'KAP', 'IND'},
+        '2025fed': {'CA', 'KAP', 'IND'}
     }
     overall_results = {'fp': {}, 'seats': {}, 'tpp': 0}
     year = election.code[:4]
@@ -334,7 +367,7 @@ def update_results(election: Election):
     #     print(f'Overall {code} FP: {vote_share:.2f}%')
     # for code, seats in list(overall_results['seats'].items()):
     #     print(f'Overall {code} seats: {seats}')
-    # print(f'Overall ALP TPP: {overall_results["tpp"]:.2f}%')
+    # print(f'Overall ALP 2PP: {overall_results["tpp"]:.2f}%')
     full_results = {'code': election.code,
                     'overall': overall_results,
                     'seats': seat_results}

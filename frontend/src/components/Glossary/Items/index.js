@@ -19,7 +19,7 @@ const GlossaryItems = props => {
           on this site includes the assumption that pollsters&apos;{' '}
           <Link to="#house-effect">house effects</Link> sum to zero for the{' '}
           <Link to="#two-party-preferred-vote">two-party-preferred</Link> vote
-          and each party&apos;s
+          and each party&apos;s{' '}
           <Link to="#first-preference-vote">first-preference vote</Link>. (Note
           that the forecast as a whole is not assuming the combined{' '}
           <Link to="#bias">bias</Link> of <Link to="#poll">polls</Link>{' '}
@@ -27,12 +27,12 @@ const GlossaryItems = props => {
           collective bias in a later step.) This assumption is necessary in
           order to create a standardised polling trend analysis method that can
           be compared and analysed across elections. However, not all{' '}
-          <Link to="#pollster">pollsters</Link> are madeequal and some have more
-          transparency, more experience, or a more substantial track record that
-          gives more confidence in their results having little or no systemic
-          bias across multiple elections. As a result, in each election certain
-          pollsters are assignedto be <i>anchoring pollsters</i> based on their
-          confidence rating (more details on the{' '}
+          <Link to="#pollster">pollsters</Link> are made equal and some have
+          more transparency, more experience, or a more substantial track record
+          that gives more confidence in their results having little or no
+          systemic bias across multiple elections. As a result, in each election
+          certain pollsters are assignedto be <i>anchoring pollsters</i> based
+          on their confidence rating (more details on the{' '}
           <Link to="/methodology#poll-data-used">methodology page</Link>). The
           forecast calibrates the calculation of the poll trend such that the
           anchoring pollsters&apos; house effects sum to zero, effectively{' '}
@@ -75,7 +75,7 @@ const GlossaryItems = props => {
           then they will be elected. However, with fewer than 50% they can still
           lose, even if they have more first preference votes than any other
           party, because other parties can overtake them by getting more
-          preferences(see{' '}
+          preferences (see{' '}
           <Link to="#preferential-voting">Preferential Voting</Link>).
         </p>
       </GlossaryItem>
@@ -398,7 +398,7 @@ const GlossaryItems = props => {
           place in <Link to="#seat">seat</Link> polls when the{' '}
           <Link to="#two-candidate-preferred-vote">
             two-candidate-preferred
-          </Link>
+          </Link>{' '}
           vote is not between the major parties - in that case there are often
           no usable historic results and using respondent allocated preferencing
           is the only way to estimate a result.
@@ -452,7 +452,7 @@ const GlossaryItems = props => {
           <Link to="#first-preference-vote">first preference</Link> vote or{' '}
           <Link to="#two-candidate-preferred-vote">
             two-candidate-preferred
-          </Link>
+          </Link>{' '}
           vote.
         </p>
       </GlossaryItem>
@@ -490,7 +490,7 @@ const GlossaryItems = props => {
           results in the Coalition winning 55-45% over Labor in the{' '}
           <Link to="#two-candidate-preferred-vote">
             two-candidate-preferred
-          </Link>
+          </Link>{' '}
           vote.
         </p>
         <p>
@@ -545,8 +545,8 @@ const GlossaryItems = props => {
       </GlossaryItem>
       <GlossaryItem type="general" title="Two-party-preferred vote">
         <p>
-          Often abbreviated to <strong>TPP</strong>. Refers to the proportion of
-          voters who give a higher preference to one{' '}
+          Often abbreviated to <strong>2PP</strong> or <strong>TPP</strong>.
+          Refers to the proportion of voters who give a higher preference to one{' '}
           <Link to="#major-party">major party</Link> than the other. This is
           useful on an election-wide basis as it indicates the likely size of{' '}
           <Link to="#swing">swings</Link> in the large number of{' '}
@@ -556,7 +556,7 @@ const GlossaryItems = props => {
           identical to the{' '}
           <Link to="#two-candidate-preferred-vote">
             two-candidate-preferred
-          </Link>
+          </Link>{' '}
           vote; however, in seats where one or (rarely) both of the candidates
           in the final two is not from the major parties the two-party-preferred
           vote for that particular seat indicates the underlying support for the
@@ -577,11 +577,11 @@ const GlossaryItems = props => {
           totals for <Link to="#first-preference-vote">first preferences</Link>.
           Voting intention polling may also attempt to estimate the{' '}
           <Link to="#two-party-preferred-vote">two-party-preferred</Link> vote
-          by either asking for a voter&apos;s preference directly ({' '}
+          by either asking for a voter&apos;s preference directly (
           <Link to="#respondent-allocated-preferences">
             respondent allocated preferences
           </Link>
-          ) or using rates observed in previous elections ({' '}
+          ) or using rates observed in previous elections (
           <Link to="#previous-election-preferences">
             previous election preferences
           </Link>

@@ -35,7 +35,7 @@ import {
 const AllRoutes = () => {
   return (
     // Based on the current route, use the appropriate component
-    // for the page: either login or home page
+    // for the page
     <BrowserRouter>
       <Routes>
         <Route path={ARCHIVE_LIST_URL} element={<ArchiveList />} />

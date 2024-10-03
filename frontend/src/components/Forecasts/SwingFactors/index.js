@@ -34,8 +34,8 @@ const SwingFactorsExplainer = props => {
     <Alert variant="info" className={styles.textLeft}>
       <p>
         These are the key factors that the model is using to estimate the
-        two-party-preferred (TPP) swings in this region. These are applied to
-        the previous TPP margin to estimate the new TPP margin. See{' '}
+        two-party-preferred (2PP) swings in this region. These are applied to
+        the previous 2PP margin to estimate the new 2PP margin. See{' '}
         <Link to="/guide#tpp-swing-factors">
           this section of the forecast guide
         </Link>{' '}
@@ -47,9 +47,9 @@ const SwingFactorsExplainer = props => {
         in order to maintain consistency between the indiviual seats and the
         overall forecasts, so these swing factors may not line up exactly with
         the estimated margin. Additionally, when some of the
-        two-candidate-preferred (TCP) scenarios are not TPP comparisons, the TPP
+        two-candidate-preferred (TCP) scenarios are not 2PP comparisons, the 2PP
         margins shown as part of those scenarios may not be representative of
-        the underlying TPP in <i>all</i> scenarios.
+        the underlying 2PP in <i>all</i> scenarios.
       </p>
     </Alert>
   );
