@@ -103,7 +103,7 @@ const ForecastsNav = props => {
               <ElectionNav
                 text="Federal"
                 election="2025fed"
-                mode={effectiveMode}
+                mode={'nowcast'}
                 activeElection={props.election}
               />
               <NavDropdown title="Past Elections">
