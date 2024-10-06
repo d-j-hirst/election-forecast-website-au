@@ -20,6 +20,7 @@ const seatRegions = {
   Brand: 'wa',
   Brisbane: 'qld',
   Bruce: 'vic',
+  Bullwinkel: 'wa',
   Burt: 'wa',
   Calare: 'nsw',
   Calwell: 'vic',
