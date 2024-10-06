@@ -138,7 +138,6 @@ export const UapBadge = props => {
 
 export const SsfBadge = props => {
   const classes = `${styles['party-badge']} ${styles['kap-badge']}`;
-  console.log('SSF badge');
   return (
     <TooltipWrapper tooltipText="Shooters, Fishers and Farmers">
       <span className={classes}>SFF</span>

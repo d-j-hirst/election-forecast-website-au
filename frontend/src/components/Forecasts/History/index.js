@@ -965,11 +965,13 @@ const History = props => {
     setEveningOnly(false);
   };
 
+  console.log([props.mode]);
+
   return (
     <Card className={styles.summary}>
       <Card.Header className={styles.historyTitle}>
         <strong>
-          {props.mode === nowcast ? 'Nowcast' : 'Forecast'}
+          {props.mode === 'nowcast' ? 'Nowcast' : 'Forecast'}
           History&nbsp;
           <InfoIcon onClick={() => setShowExplainer(!showExplainer)} />
         </strong>

@@ -15,7 +15,6 @@ const ElectionNav = props => {
       ? styles.navselected
       : styles.navitem;
   const linkUrl = '/forecast/' + props.election + '/' + props.mode;
-  console.log(linkUrl);
   return (
     <Nav.Link as={Link} to={linkUrl}>
       <div className={thisClass}>{props.text}</div>
@@ -80,8 +79,6 @@ const ForecastsNav = props => {
   if (props.mode === 'other') effectiveMode = 'regular';
   if (props.mode === 'live') effectiveMode = 'regular';
   if (props.mode === '') effectiveMode = 'regular';
-  console.log(props.mode);
-  console.log(effectiveMode);
   return (
     <>
       <Navbar bg="light" expand="sm" className={styles.navbar}>
