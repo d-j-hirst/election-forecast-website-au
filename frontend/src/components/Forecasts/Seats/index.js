@@ -579,7 +579,7 @@ const Seats = props => {
                     UAP win chance
                   </Dropdown.Item>
                 )}
-                {uapIndex && (
+                {kapIndex && (
                   <Dropdown.Item as="button" onClick={setSortKapWinChance}>
                     KAP win chance
                   </Dropdown.Item>
