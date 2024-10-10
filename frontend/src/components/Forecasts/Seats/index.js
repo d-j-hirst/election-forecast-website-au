@@ -445,6 +445,12 @@ const Seats = props => {
     jsonMap(props.forecast.seatCountFrequencies, uapIndex)[14] === 0
   )
     uapIndex = null;
+  let kapIndex = jsonMapReverse(props.forecast.partyAbbr, 'KAP');
+  if (
+    kapIndex &&
+    jsonMap(props.forecast.seatCountFrequencies, kapIndex)[14] === 0
+  )
+    kapIndex = null;
 
   const setSortCompetitiveness = () => {
     setSortType(SortTypeEnum.competitiveness);
@@ -481,6 +487,10 @@ const Seats = props => {
   const setSortUapWinChance = () => {
     setSortType(SortTypeEnum.winChance);
     setSortParty(uapIndex);
+  };
+  const setSortKapWinChance = () => {
+    setSortType(SortTypeEnum.winChance);
+    setSortParty(kapIndex);
   };
   const setSortEmergingPartyWinChance = () => {
     setSortType(SortTypeEnum.winChance);
@@ -567,6 +577,11 @@ const Seats = props => {
                 {uapIndex && (
                   <Dropdown.Item as="button" onClick={setSortUapWinChance}>
                     UAP win chance
+                  </Dropdown.Item>
+                )}
+                {uapIndex && (
+                  <Dropdown.Item as="button" onClick={setSortKapWinChance}>
+                    KAP win chance
                   </Dropdown.Item>
                 )}
                 <Dropdown.Item
