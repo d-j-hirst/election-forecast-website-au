@@ -181,7 +181,7 @@ const MethodologyPollTrend = props => {
           are used for polls less than four months old and over eight months old
           respectively, with polls in between those times using a linear mix of
           both house effects. These two house effects are loosely assumed to be
-          similar but are allowed to differ quiten substantially if the evidence
+          similar but are allowed to differ quite substantially if the evidence
           indicates.
         </li>
         <li>
@@ -320,7 +320,7 @@ const MethodologyPollTrend = props => {
         result actually being recorded—thus it can be (and is) calculated for
         the election being forecast. Also, since the value is a measure of the
         deviation of the pollster&apos;s polls from the trend, a lower number
-        indicates the poll is more accurate <i>as an indicator of the trend</i>
+        indicates the poll is more accurate <i>as an indicator of the trend</i>{' '}
         (but not necessarily a better indicator of the &quot;true&quot; voting
         intention). It&apos;s important to be cautious in the interpretation of
         this variable—a low value may be as a result of the pollster herding, or
@@ -338,7 +338,7 @@ const MethodologyPollTrend = props => {
         polls gives a higher weighting). In addition to the actual results, this
         weighted average includes an &quot;initial&quot;election (not a real
         result) that is functionally similar to (but mathematically different
-        to) a Bayesian prior or regularization paramter—it allows for a default
+        to) a Bayesian prior or regularization parameter—it allows for a default
         expectation of poll behaviour when there is little or no empirical data
         available. This default election is equivalant to the performance of a
         quite erratic pollster that recorded about seven polls. As the pollster
@@ -377,8 +377,9 @@ const MethodologyPollTrend = props => {
         two-party-preferred vote is 53%, the final value of the poll trend is
         52%, and our pollster has an average house effect of 2% across all its
         polls in that election. Then the pollster&apos;s final result estimate
-        is 52+2=54% (regardless of what their final poll says!) and thus their
-        bias for that election is 54 - 53 = +1%.
+        is 52&nbsp;+&nbsp;2&nbsp;=&nbsp;54% (regardless of what their final poll
+        says!) and thus their bias for that election is
+        54&nbsp;-&nbsp;53&nbsp;=&nbsp;+1%.
       </p>
       <p>
         The calculation of the typical bias for a pollster is then a weighted
