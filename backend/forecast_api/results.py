@@ -87,7 +87,7 @@ def fetch_overall_results(election: Election):
         'fed': '_Australian_federal_election_(House_of_Representatives)',
         'nsw': '_New_South_Wales_state_election_(Legislative_Assembly)',
         'vic': '_Victorian_state_election_(Legislative_Assembly)',
-        'qld': '_Queenland_state_election',
+        'qld': '_Queensland_state_election',
         'wa': '_Western_Australian_state_election_(Legislative_Assembly)',
         'sa': '_South_Australian_state_election_(House_of_Assembly)',
     }
@@ -108,7 +108,7 @@ def fetch_overall_results(election: Election):
     soup = BeautifulSoup(r.content, 'html.parser')
     print(election_wiki_desc_dict[region])
     print(url)
-    table = soup.find(class_='mw-parser-output').find(class_='wikitable', recursive=False)
+    table = soup.find(class_='mw-parser-output').find(class_='wikitable', recursive=True)
     rows = table.find_all('tr')
     doing_tpp = False
     for row in rows:
@@ -150,7 +150,7 @@ def collect_seat_names(election: Election):
         'fed': '_Australian_federal_election',
         'nsw': '_New_South_Wales_state_election',
         'vic': '_Victorian_state_election',
-        'qld': '_Queenland_state_election',
+        'qld': '_Queensland_state_election',
         'wa': '_Western_Australian_state_election',
         'sa': '_South_Australian_state_election'
     }
@@ -194,7 +194,7 @@ def fetch_seat_results(election: Election, urls):
         'fed': 'Australian federal election',
         'nsw': 'New South Wales state election',
         'vic': 'Victorian state election',
-        'qld': 'Queenland state election',
+        'qld': 'Queensland state election',
         'wa': 'Western Australian state election',
         'sa': 'South Australian state election'
     }
