@@ -108,7 +108,16 @@ def fetch_overall_results(election: Election):
     soup = BeautifulSoup(r.content, 'html.parser')
     print(election_wiki_desc_dict[region])
     print(url)
-    table = soup.find(class_='mw-parser-output').find(class_='wikitable', recursive=True)
+    table = soup.find(class_='mw-parser-output').find_all(
+        lambda tag: 
+            (
+                tag.has_attr('class')
+                and 'wikitable' in tag['class']
+                and 'ib-legis-elect-results' not in tag['class']
+            )
+        , recursive=True
+    )[0]
+    print(table.get('class'))
     rows = table.find_all('tr')
     doing_tpp = False
     for row in rows:
@@ -122,7 +131,7 @@ def fetch_overall_results(election: Election):
         if name == 'National' and region == 'sa': continue
         code = party_convert[election.code][name]
         if name == 'National' and region == 'wa': code = 'NP'
-        vote_share = float(cols[3].text)
+        vote_share = float(cols[3].text.replace('%', ''))
         if doing_tpp and code == 'ALP':
             overall_results['tpp'] = vote_share
         elif not doing_tpp:
