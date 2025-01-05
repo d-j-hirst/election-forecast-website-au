@@ -181,6 +181,8 @@ def collect_seat_names(election: Election):
             seat_specific = seat_specific.replace('Electoral_', '')
             if 'Ringwood_(Victoria)' in seat_specific:
                 seat_specific = seat_specific.replace('Ringwood_(Victoria)', 'Ringwood')
+            if 'Maryborough_(Queensland)' in seat_specific:
+                seat_specific = seat_specific.replace('Maryborough_(Queensland)', 'Maryborough')
             if seat_specific == 'Narracan':
                 found_narracan = True
             urls.append(f'https://en.wikipedia.org/wiki/Electoral_results_for_the_{seat_specific}')
@@ -215,7 +217,6 @@ def fetch_seat_results(election: Election, urls):
         threads[-1].start()
     for thread in threads:
         thread.join()
-    
 
     all_seat_results = {}
     for url, r in responses.items():
