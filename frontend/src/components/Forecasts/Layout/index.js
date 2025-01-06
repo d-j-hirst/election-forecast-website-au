@@ -7,18 +7,19 @@ import {useWindowDimensions} from '../../../utils/window.js';
 import {fetchReport} from '../../../utils/report_manager.js';
 
 import {
-  Header,
   Footer,
+  ForecastAlert,
   ForecastsNav,
   ForecastHeader,
   FormationOfGovernment,
-  LoadingMarker,
-  VoteTotals,
-  SeatTotals,
+  Header,
   History,
-  ForecastAlert,
+  LoadingMarker,
+  OnPrefsAlert,
   Seats,
+  SeatTotals,
   StandardErrorBoundary,
+  VoteTotals,
 } from 'components';
 
 import styles from './Layout.module.css';
@@ -74,60 +75,65 @@ const ForecastLayout = props => {
           {forecastValid && (
             <>
               <ForecastHeader
-                mode={mode}
-                forecast={forecast}
                 archive={props.isArchive}
+                forecast={forecast}
+                mode={mode}
               />
               <ForecastAlert
-                forecast={forecast}
                 code={code}
-                mode={mode}
+                forecast={forecast}
                 isArchive={props.isArchive}
+                mode={mode}
                 results={effectiveResults}
+              />
+              <OnPrefsAlert
+                code={code}
+                isArchive={props.isArchive}
+                mode={mode}
               />
               <StandardErrorBoundary>
                 <FormationOfGovernment
                   election={code}
-                  mode={mode}
                   forecast={forecast}
+                  mode={mode}
                   windowWidth={windowDimensions.width}
                 />
               </StandardErrorBoundary>
               <StandardErrorBoundary>
                 <VoteTotals
                   election={code}
-                  mode={mode}
                   forecast={forecast}
-                  windowWidth={windowDimensions.width}
-                  results={effectiveResults}
                   isArchive={props.isArchive}
+                  mode={mode}
+                  results={effectiveResults}
+                  windowWidth={windowDimensions.width}
                 />
               </StandardErrorBoundary>
               <StandardErrorBoundary>
                 <SeatTotals
                   election={code}
-                  mode={mode}
                   forecast={forecast}
-                  windowWidth={windowDimensions.width}
+                  mode={mode}
                   results={effectiveResults}
+                  windowWidth={windowDimensions.width}
                 />
               </StandardErrorBoundary>
               <StandardErrorBoundary>
                 <History
                   election={code}
-                  mode={mode}
                   forecast={forecast}
+                  mode={mode}
                   windowWidth={windowDimensions.width}
                 />
               </StandardErrorBoundary>
               <StandardErrorBoundary>
                 <Seats
-                  election={code}
-                  mode={mode}
-                  forecast={forecast}
                   archiveId={id}
-                  windowWidth={windowDimensions.width}
+                  election={code}
+                  forecast={forecast}
+                  mode={mode}
                   results={effectiveResults}
+                  windowWidth={windowDimensions.width}
                 />
               </StandardErrorBoundary>
             </>
