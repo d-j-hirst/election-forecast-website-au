@@ -20,7 +20,7 @@ const OnPrefsAlert = props => {
     return (
       <Alert
         variant="info"
-        className={styles.OnPrefsAlert}
+        className={styles.onPrefsAlert}
         dismissible={true}
         onClose={() => setShow(false)}
       >
@@ -50,4 +50,4 @@ OnPrefsAlert.propTypes = {
   showInitially: PropTypes.bool,
 };
 
-export default ForecastAlert;
+export default OnPrefsAlert;
