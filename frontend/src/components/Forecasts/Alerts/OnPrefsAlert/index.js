@@ -50,4 +50,4 @@ OnPrefsAlert.propTypes = {
   showInitially: PropTypes.bool,
 };
 
-export default ForecastAlert;
+export default OnPrefsAlert;
