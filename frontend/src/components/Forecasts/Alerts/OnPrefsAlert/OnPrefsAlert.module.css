@@ -1,0 +1,27 @@
+.onPrefsAlert {
+  text-align: center;
+  max-width: 710px;
+  /*width: 710px !important;*/
+  margin: auto;
+  border-color: #CCCCCC;
+  border-radius: 20px 20px 2px 2px !important;
+}
+
+.onPrefsAlert p {
+  margin: 0px;
+}
+
+.firstPara {
+  display: flex;
+  flex: row;
+}
+
+.largeInfo {
+  width: 36px;
+  height: 36px;
+  margin: 1px;
+}
+
+.infoIcon {
+  width: 22px;
+}

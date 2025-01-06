@@ -15,6 +15,7 @@ export {default as Seats} from './Forecasts/Seats';
 export {default as LoadingMarker} from './General/LoadingMarker';
 export {default as StandardErrorBoundary} from './General/StandardErrorBoundary';
 export {default as ForecastAlert} from './Forecasts/Alerts/ForecastAlert';
+export {default as OnPrefsAlert} from './Forecasts/Alerts/OnPrefsAlert';
 export {default as GuideHeader} from './Guide/Header';
 export {default as GuideIntro} from './Guide/Intro';
 export {default as GuidePurpose} from './Guide/Purpose';
