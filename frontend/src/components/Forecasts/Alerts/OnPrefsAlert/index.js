@@ -6,7 +6,7 @@ import Button from 'react-bootstrap/Button';
 
 import InfoIcon from '../../../General/InfoIcon';
 
-import styles from './ForecastAlert.module.css';
+import styles from './OnPrefsAlert.module.css';
 
 const OnPrefsAlert = props => {
   const [show, setShow] = useState(
