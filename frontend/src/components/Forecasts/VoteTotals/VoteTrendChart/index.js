@@ -18,6 +18,7 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import ListGroup from 'react-bootstrap/ListGroup';
 
+import {coalitionAbbreviation} from '../../../../utils/coalition.js';
 import {colours} from '../../../../utils/GraphPartyColours.js';
 import {jsonMap, jsonMapReverse} from '../../../../utils/jsonmap.js';
 import {deepCopy} from '../../../../utils/deepcopy.js';

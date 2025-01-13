@@ -284,9 +284,9 @@ const GovernmentFormation = props => {
         {genericChartArea('alpMost', 'ALP', 2)}
         {genericChartArea('ties', 'tie', 0)}
         {genericChartArea('othLeads', 'OTH', 1)}
-        {genericChartArea('lnpMost', coalitionAbbreviation(props.termCode), 2)}
-        {genericChartArea('lnpMin', coalitionAbbreviation(props.termCode), 1)}
-        {genericChartArea('lnpMaj', coalitionAbbreviation(props.termCode), 0)}
+        {genericChartArea('lnpMost', 'LNP', 2)}
+        {genericChartArea('lnpMin', 'LNP', 1)}
+        {genericChartArea('lnpMaj', 'LNP', 0)}
         <Tooltip
           content={
             <GovernmentFormationTooltip
