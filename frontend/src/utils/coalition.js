@@ -15,6 +15,7 @@ export const coalitionName = termCode => {
 export const coalitionAbbreviation = termCode => {
   if (!termCode) return 'L–NC';
   const state = termCode.slice(4);
+  const year = parseInt(termCode.slice(0, 4));
   if (state === 'wa' && year >= 2025) {
     return 'L/NP';
   } else if (state === 'wa') {
