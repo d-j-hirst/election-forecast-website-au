@@ -25,18 +25,9 @@ import LoadingMarker from '../../General/LoadingMarker';
 import {getDirect} from 'utils/sdk';
 
 import styles from './History.module.css';
+import {colours} from '../../../utils/GraphPartyColours.js';
 import {jsonMap, jsonMapReverse} from '../../../utils/jsonmap.js';
 import {unixDateToStr, unixTimeToStr} from '../../../utils/date.js';
-
-const colours = [
-  ['ALP', ['#FF0000', '#FF4444', '#FF9999', '#FFCCCC']],
-  ['LNP', ['#0000FF', '#4444FF', '#9999FF', '#CCCCFF']],
-  ['GRN', ['#008800', '#22CC00', '#66FF44', '#BBFF99']],
-  ['ON', ['#AA6600', '#FF7F00', '#FFAB58', '#FFC388']],
-  ['UAP', ['#886600', '#C2B615', '#EBDF43', '#F0E87C']],
-  ['SAB', ['#886600', '#C2B615', '#EBDF43', '#F0E87C']],
-  ['OTH', ['#777777', '#999999', '#C5C5C5', '#E0E0E0']],
-];
 
 const tieColour = '#885588';
 
