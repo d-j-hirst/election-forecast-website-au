@@ -173,7 +173,7 @@ const genericChartArea = (dataKey, colourKey, num, stroke) => {
   );
 };
 
-const GovernmentFormationTooltip = ({active, payload, label, mode}) => {
+const GovernmentFormationTooltip = ({active, payload, mode, termCode}) => {
   if (active && payload && payload.length) {
     const date = payload[0].payload.unixDate;
     const thisDate =
@@ -209,17 +209,17 @@ const GovernmentFormationTooltip = ({active, payload, label, mode}) => {
           <Val text="Exact Ties" high={p.ties[1]} low={p.alpMost[1]} />
           <Val text="Other party leads" high={p.othLeads[1]} low={p.ties[1]} />
           <Val
-            text={`${coalitionAbbreviation(props.termCode)} most seats`}
+            text={`${coalitionAbbreviation(termCode)} most seats`}
             high={p.lnpMost[1]}
             low={p.othLeads[1]}
           />
           <Val
-            text={`${coalitionAbbreviation(props.termCode)} minority`}
+            text={`${coalitionAbbreviation(termCode)} minority`}
             high={p.lnpMin[1]}
             low={p.lnpMost[1]}
           />
           <Val
-            text={`${coalitionAbbreviation(props.termCode)} majority`}
+            text={`${coalitionAbbreviation(termCode)} majority`}
             high={p.lnpMaj[1]}
             low={p.lnpMin[1]}
           />
@@ -233,7 +233,6 @@ const GovernmentFormationTooltip = ({active, payload, label, mode}) => {
 GovernmentFormationTooltip.propTypes = {
   payload: PropTypes.array,
   active: PropTypes.bool,
-  label: PropTypes.number,
   mode: PropTypes.string.isRequired,
   termCode: PropTypes.string,
 };
