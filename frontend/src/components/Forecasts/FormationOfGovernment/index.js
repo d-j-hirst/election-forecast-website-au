@@ -55,12 +55,15 @@ const MinorityWinGovernmentRow = props => {
   const bgClasses = `${styles.formationOfGovernmentSubItem} ${xxLightBgClass(
     partyAbbr
   )}`;
-  const minorityTooltipText =
-    'In these scenarios, parties are expected to support this major party ' +
-    'in a minority government. The Greens are expected to support the ALP; ' +
-    "One Nation, United Australia Party and Katter's Australian Party " +
-    'are expected to support the LNP; and Centre Alliance and all ' +
-    'independents are considered to not support either major party by default.';
+  const minorityTooltipText = {
+    alp: 'In these scenarios, the Greens are expected to support the ALP.',
+    lib:
+      "In these scenarios, The Nationals, One Nation, United Australia Party and Katter's Australian Party " +
+      'are expected to support the Liberal Party.',
+    lnp:
+      "In these scenarios, One Nation, United Australia Party and Katter's Australian Party " +
+      'are expected to support the Coalition.',
+  }[partyAbbr];
   return (
     <ListGroup.Item className={bgClasses}>
       &nbsp;&bull;&nbsp;
@@ -88,11 +91,9 @@ const MostSeatsRow = props => {
     partyAbbr
   )}`;
   const hungTooltipText =
-    'While the term hung parliament is often used to indicate any parliament ' +
-    'where no party can form a majority, here it is used in a narrower sense ' +
-    'to count only those situations where neither major party would be ' +
-    'expected to form a minority government with the support of minor parties ' +
-    'aligned with it.';
+    'While "hung parliament" often refers to any parliament where no party holds a majority' +
+    ', here it specifically means cases where neither major party is likely to form a' +
+    ' minority government with support from aligned minor parties.';
   return (
     <ListGroup.Item className={bgClasses}>
       &nbsp;&bull;&nbsp;
@@ -146,8 +147,8 @@ const MajorPartyExplainer = props => {
   return (
     <Alert variant="info" className={styles.alert}>
       <p>
-        This row shows the probability, as simulated by the model, that{' '}
-        {partyName} will have a clear path to government, either with a{' '}
+        This row shows the share of model simulations in which {partyName} will
+        have a clear path to government, either with a{' '}
         <a href="https://en.wikipedia.org/wiki/Majority_government">majority</a>
         , or as a{' '}
         <a href="https://en.wikipedia.org/wiki/Minority_government">
@@ -159,7 +160,7 @@ const MajorPartyExplainer = props => {
       </p>
       <hr />
       <p>
-        Clicking on &quot;show detail&quot; shows this probability broken down
+        Clicking on &quot;show detail&quot; shows these simulations broken down
         into majority or minority scenarios.
       </p>
       <hr />
@@ -187,17 +188,17 @@ const OthersExplainer = props => {
   return (
     <Alert variant="warning" className={styles.alert}>
       <p>
-        This row shows the probability, as simulated by the model, that some
-        party other than the two traditional majors gains a majority. Note that:
+        This row shows the share of model simulations in which some party other
+        than the two traditional majors gains a majority. Note that:
       </p>
       <ul>
         <li>
           Such an outcome would be unprecedented in modern Australian history.
         </li>
         <li>
-          The probability for such an event is extrapolated from a small sample
-          of historic results where third parties were still far from gaining a
-          majority.
+          The share of simulations in which such an event occurs is extrapolated
+          from a small sample of historic results where third parties were still
+          far from gaining a majority.
         </li>
       </ul>
       <p>
@@ -213,7 +214,7 @@ const OthersExplainer = props => {
       </p>
       <hr />
       <p>
-        Click on &quot;Show details&quot; above to show this probability broken
+        Click on &quot;Show details&quot; above to show these simulations broken
         down into the different possible winning parties, including an
         &quot;emerging party&quot; option for parties that aren&apos;t prominent
         enough to be polled yet. (This website does not assume any parties to be
@@ -324,8 +325,7 @@ const HungExplainer = props => {
   return (
     <Alert variant="info" className={styles.alert}>
       <p>
-        This row shows the probability, as simulated by the model, that no party
-        gets a{' '}
+        This row shows the share of model simulations in which no party gets a{' '}
         <a href="https://en.wikipedia.org/wiki/Majority_government">majority</a>
         , and additionally no major party can form{' '}
         <a href="https://en.wikipedia.org/wiki/Minority_government">
@@ -338,7 +338,7 @@ const HungExplainer = props => {
       </p>
       <hr />
       <p>
-        Click on &quot;Show details&quot; above to show this probability broken
+        Click on &quot;Show details&quot; above to show these simulations broken
         down by the party getting the most seats. Note that the party with the
         most seats will not necessarily form government, but is more likely to
         have the upper hand in any negotiations. The final entry shows the

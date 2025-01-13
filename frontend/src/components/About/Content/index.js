@@ -21,7 +21,9 @@ const AboutContent = () => {
         <li>
           The forecasts are <i>probabilistic</i>. This site doesn&apos;t try to
           predict exact outcomes, but it will instead indicate likely and
-          unlikely possibilities.
+          unlikely possibilities. This is done by simulating many possible
+          outcomes, based on assumptions about voter behaviour, and then
+          displaying the share of simulations in which each outcome occurs.
         </li>
         <li>
           The aim is for forecasts to be <i>objective</i> where possible, using
@@ -34,8 +36,8 @@ const AboutContent = () => {
           The forecasts aim to be as <i>comprehensive</i> as practical. Results
           for all significant candidates and prominent independents are forecast
           for each seat. Unlikely but plausible events, such as new minor
-          parties appearing and winning seats, are accounted for (with a
-          suitably low probability). Furthermore, where possible, forecasting
+          parties appearing and winning seats, are accounted for (in a suitably
+          low share of simulations). Furthermore, where possible, forecasting
           will begin well ahead of future elections. Even though present
           indicators (such as polling) may not be very predictive a long way out
           from an election, this site will aim to show that through the numbers
