@@ -97,9 +97,9 @@ const ForecastsNav = props => {
               className="justify-content-end"
             >
               <ElectionNav
-                text="Queensland"
-                election="2024qld"
-                mode={effectiveMode}
+                text="Western Australia"
+                election="2025wa"
+                mode={'nowcast'}
                 activeElection={props.election}
               />
               <ElectionNav
@@ -109,6 +109,12 @@ const ForecastsNav = props => {
                 activeElection={props.election}
               />
               <NavDropdown title="Past Elections">
+                <ElectionNavDropdown
+                  text="2024 Queensland"
+                  election="2024qld"
+                  mode={effectiveMode}
+                  activeElection={props.election}
+                />
                 <ElectionNavDropdown
                   text="2023 New South Wales"
                   election="2023nsw"

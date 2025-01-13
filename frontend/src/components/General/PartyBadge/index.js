@@ -67,6 +67,24 @@ export const LnpBadge = props => {
   );
 };
 
+export const LibBadge = props => {
+  const classes = `${styles['party-badge']} ${styles['lib-badge']}`;
+  return (
+    <TooltipWrapper tooltipText="Liberal Party">
+      <span className={classes}>LNP</span>
+    </TooltipWrapper>
+  );
+};
+
+export const NatBadge = props => {
+  const classes = `${styles['party-badge']} ${styles['nat-badge']}`;
+  return (
+    <TooltipWrapper tooltipText="National Party">
+      <span className={classes}>LNP</span>
+    </TooltipWrapper>
+  );
+};
+
 export const OnBadge = props => {
   const classes = `${styles['party-badge']} ${styles['on-badge']}`;
   return (
@@ -156,7 +174,9 @@ export const SmartBadge = props => {
   if (partyName === 'sff') return <SsfBadge />;
   if (partyName === 'ca') return <CaBadge />;
   if (partyName === 'sab') return <SabBadge />;
-  if (partyName === 'lnp' || partyName === 'lib') return <LnpBadge />;
+  if (partyName === 'lnp') return <LnpBadge />;
+  if (partyName === 'lib') return <LibBadge />;
+  if (partyName === 'nat') return <NatBadge />;
   if (partyName === 'on') return <OnBadge />;
   if (partyName === 'uap') return <UapBadge />;
   if (partyName === 'eoth') return <EOthBadge text={props.text} />;

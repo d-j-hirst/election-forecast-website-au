@@ -33,6 +33,12 @@ code {
   --lnp-xlight: #abcaf0;
   --lnp-xxlight: #d6e6fa;
   --lnp-xxxlight: #ecf5ff;
+  --nat: #184d16;
+  --nat-mid: #5aa357;
+  --nat-light: #7bc079;
+  --nat-xlight: #a3e0a2;
+  --nat-xxlight: #c9f0c8;
+  --nat-xxxlight: #e2fae2;
   --grn: #68a800;
   --grn-mid: #8dc237;
   --grn-light: #b2d875;
@@ -97,6 +103,11 @@ code {
   color: #212529 !important;
 }
 
+.nat-bg {
+  background-color: var(--nat) !important;
+  color: #212529 !important;
+}
+
 .on-bg {
   background-color: var(--on) !important;
   color: #212529 !important;
@@ -139,6 +150,11 @@ code {
 
 .lnp-bg-mid {
   background-color: var(--lnp-mid) !important;
+  color: #212529 !important;
+}
+
+.nat-bg-mid {
+  background-color: var(--nat-mid) !important;
   color: #212529 !important;
 }
 
@@ -187,6 +203,11 @@ code {
   color: #212529 !important;
 }
 
+.nat-bg-light {
+  background-color: var(--nat-light) !important;
+  color: #212529 !important;
+}
+
 .on-bg-light {
   background-color: var(--on-light) !important;
   color: #212529 !important;
@@ -229,6 +250,11 @@ code {
 
 .lnp-bg-xlight {
   background-color: var(--lnp-xlight) !important;
+  color: #212529 !important;
+}
+
+.nat-bg-xlight {
+  background-color: var(--nat-xlight) !important;
   color: #212529 !important;
 }
 
@@ -277,6 +303,11 @@ code {
   color: #212529 !important;
 }
 
+.nat-bg-xxlight {
+  background-color: var(--nat-xxlight) !important;
+  color: #212529 !important;
+}
+
 .on-bg-xxlight {
   background-color: var(--on-xxlight) !important;
   color: #212529 !important;
@@ -319,6 +350,11 @@ code {
 
 .lnp-bg-xxxlight {
   background-color: var(--lnp-xxxlight) !important;
+  color: #212529 !important;
+}
+
+.nat-bg-xxxlight {
+  background-color: var(--nat-xxxlight) !important;
   color: #212529 !important;
 }
 

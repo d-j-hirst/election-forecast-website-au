@@ -34,6 +34,16 @@
     color: white;
   }
   
+  .lib-badge {
+    background-color: var(--lnp);
+    color: white;
+  }
+  
+  .nat-badge {
+    background-color: var(--nat);
+    color: white;
+  }
+  
   .on-badge {
     background-color: var(--on);
     color: black;
