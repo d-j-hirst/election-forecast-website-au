@@ -124,10 +124,11 @@ const SeatTcpRowPair = props => {
     <>
       <ListGroup.Item className={styles.seatsTcpScenarioHeading}>
         <SmartBadge party={partyAbbr0} /> vs <SmartBadge party={partyAbbr1} /> -{' '}
-        probability this scenario occurs:{' '}
+        occurs in{' '}
         <strong>
           <TooltipPercentage value={props.freqSet[2] * 100} />
-        </strong>
+        </strong>{' '}
+        of simulations
       </ListGroup.Item>
       <SeatVoteRow
         candidateName={cand0Name}
