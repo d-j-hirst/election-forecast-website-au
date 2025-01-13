@@ -870,6 +870,24 @@ const History = props => {
     return title;
   })();
 
+  let lnpIndex = jsonMapReverse(props.forecast.partyAbbr, 'LNP');
+  if (
+    lnpIndex &&
+    jsonMap(props.forecast.seatCountFrequencies, lnpIndex)[14] === 0
+  )
+    lnpIndex = null;
+  let libIndex = jsonMapReverse(props.forecast.partyAbbr, 'LIB');
+  if (
+    libIndex &&
+    jsonMap(props.forecast.seatCountFrequencies, libIndex)[14] === 0
+  )
+    libIndex = null;
+  let natIndex = jsonMapReverse(props.forecast.partyAbbr, 'NAT');
+  if (
+    natIndex &&
+    jsonMap(props.forecast.seatCountFrequencies, natIndex)[14] === 0
+  )
+    natIndex = null;
   const grnIndex = jsonMapReverse(props.forecast.partyAbbr, 'GRN');
   const indIndex = jsonMapReverse(
     props.forecast.partyAbbr,
@@ -907,7 +925,15 @@ const History = props => {
   };
   const setGraphLnpFp = () => {
     setGraphType(GraphTypeEnum.fp);
-    setGraphParty(1);
+    setGraphParty(lnpIndex);
+  };
+  const setGraphLibFp = () => {
+    setGraphType(GraphTypeEnum.fp);
+    setGraphParty(libIndex);
+  };
+  const setGraphNatFp = () => {
+    setGraphType(GraphTypeEnum.fp);
+    setGraphParty(natIndex);
   };
   const setGraphGrnFp = () => {
     setGraphType(GraphTypeEnum.fp);
@@ -931,7 +957,15 @@ const History = props => {
   };
   const setGraphLnpSeats = () => {
     setGraphType(GraphTypeEnum.seats);
-    setGraphParty(1);
+    setGraphParty(lnpIndex);
+  };
+  const setGraphLibSeats = () => {
+    setGraphType(GraphTypeEnum.seats);
+    setGraphParty(libIndex);
+  };
+  const setGraphNatSeats = () => {
+    setGraphType(GraphTypeEnum.seats);
+    setGraphParty(natIndex);
   };
   const setGraphGrnSeats = () => {
     setGraphType(GraphTypeEnum.seats);
@@ -993,9 +1027,21 @@ const History = props => {
                       <Dropdown.Item as="button" onClick={setGraphAlpFp}>
                         ALP first preferences
                       </Dropdown.Item>
-                      <Dropdown.Item as="button" onClick={setGraphLnpFp}>
-                        LNP first preferences
-                      </Dropdown.Item>
+                      {lnpIndex && (
+                        <Dropdown.Item as="button" onClick={setGraphLnpFp}>
+                          LNP first preferences
+                        </Dropdown.Item>
+                      )}
+                      {libIndex && (
+                        <Dropdown.Item as="button" onClick={setGraphLibFp}>
+                          LIB first preferences
+                        </Dropdown.Item>
+                      )}
+                      {natIndex && (
+                        <Dropdown.Item as="button" onClick={setGraphNatFp}>
+                          NAT first preferences
+                        </Dropdown.Item>
+                      )}
                       <Dropdown.Item as="button" onClick={setGraphGrnFp}>
                         GRN first preferences
                       </Dropdown.Item>
@@ -1017,9 +1063,21 @@ const History = props => {
                   <Dropdown.Item as="button" onClick={setGraphAlpSeats}>
                     ALP seats
                   </Dropdown.Item>
-                  <Dropdown.Item as="button" onClick={setGraphLnpSeats}>
-                    LNP seats
-                  </Dropdown.Item>
+                  {lnpIndex && (
+                    <Dropdown.Item as="button" onClick={setGraphLnpSeats}>
+                      LNP seats
+                    </Dropdown.Item>
+                  )}
+                  {libIndex && (
+                    <Dropdown.Item as="button" onClick={setGraphLibSeats}>
+                      LIB seats
+                    </Dropdown.Item>
+                  )}
+                  {natIndex && (
+                    <Dropdown.Item as="button" onClick={setGraphNatSeats}>
+                      NAT seats
+                    </Dropdown.Item>
+                  )}
                   <Dropdown.Item as="button" onClick={setGraphGrnSeats}>
                     GRN seats
                   </Dropdown.Item>
