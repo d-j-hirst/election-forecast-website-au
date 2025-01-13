@@ -104,6 +104,11 @@ code {
   color: #212529 !important;
 }
 
+.lib-bg {
+  background-color: var(--lib) !important;
+  color: #212529 !important;
+}
+
 .lnp-bg {
   background-color: var(--lnp) !important;
   color: #212529 !important;
@@ -151,6 +156,11 @@ code {
 
 .kap-bg-mid {
   background-color: var(--kap-mid) !important;
+  color: #212529 !important;
+}
+
+.lib-bg-mid {
+  background-color: var(--lib-mid) !important;
   color: #212529 !important;
 }
 
@@ -204,11 +214,15 @@ code {
   color: #212529 !important;
 }
 
+.lib-bg-light {
+  background-color: var(--lib-light) !important;
+  color: #212529 !important;
+}
+
 .lnp-bg-light {
   background-color: var(--lnp-light) !important;
   color: #212529 !important;
 }
-
 .nat-bg-light {
   background-color: var(--nat-light) !important;
   color: #212529 !important;
@@ -251,6 +265,11 @@ code {
 
 .kap-bg-xlight {
   background-color: var(--kap-xlight) !important;
+  color: #212529 !important;
+}
+
+.lib-bg-xlight {
+  background-color: var(--lib-xlight) !important;
   color: #212529 !important;
 }
 
@@ -304,6 +323,11 @@ code {
   color: #212529 !important;
 }
 
+.lib-bg-xxlight {
+  background-color: var(--lib-xxlight) !important;
+  color: #212529 !important;
+}
+
 .lnp-bg-xxlight {
   background-color: var(--lnp-xxlight) !important;
   color: #212529 !important;
@@ -351,6 +375,11 @@ code {
 
 .kap-bg-xxxlight {
   background-color: var(--kap-xxxlight) !important;
+  color: #212529 !important;
+}
+
+.lib-bg-xxxlight {
+  background-color: var(--lib-xxxlight) !important;
   color: #212529 !important;
 }
 
