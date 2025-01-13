@@ -35,7 +35,7 @@ const SeatsRow = props => {
     <ListGroup.Item className={styles.seatTotalsItem}>
       <div className={styles.rowLeftSection}>
         <div className={styles.rowParty}>
-          <SmartBadge party={partyAbbr} />
+          <SmartBadge party={partyAbbr} termCode={props.forecast.termCode} />
         </div>
         <div className={styles.rowNumber}>
           <TooltipWrapper tooltipText="5th percentile">

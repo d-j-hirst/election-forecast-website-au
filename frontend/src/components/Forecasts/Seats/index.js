@@ -19,14 +19,15 @@ import {SmartBadge} from '../../General/PartyBadge';
 import InfoIcon from '../../General/InfoIcon';
 import TooltipWrapper from '../../General/TooltipWrapper';
 
-import {jsonMap, jsonMapReverse} from '../../../utils/jsonmap.js';
+import {coalitionAbbreviation} from '../../../utils/coalition.js';
 import {deepCopy} from '../../../utils/deepcopy.js';
+import {jsonMap, jsonMapReverse} from '../../../utils/jsonmap.js';
+import {standardiseParty} from '../../../utils/partyclass.js';
 import {getSeatUrl} from '../../../utils/seaturls.js';
 import {seatInRegion} from '../../../utils/seatregion.js';
 import {useWarning} from '../../../utils/seatwarnings.js';
 
 import styles from './Seats.module.css';
-import {standardiseParty} from 'utils/partyclass';
 
 const partyCategory = (party, forecast) => {
   const sp = standardiseParty(party).toLowerCase();
@@ -148,7 +149,10 @@ const SeatRow = props => {
             <TooltipWrapper tooltipText={asterisk}>*</TooltipWrapper>
           )}
           {' - '}
-          <SmartBadge party={incumbentAbbr} />{' '}
+          <SmartBadge
+            party={incumbentAbbr}
+            termCode={props.forecast.termCode}
+          />{' '}
           <TooltipWrapper tooltipText={marginTooltip} placement="bottom">
             {Number(margin).toFixed(1)}%
           </TooltipWrapper>
@@ -408,7 +412,8 @@ const Seats = props => {
     else if (sortType === SortTypeEnum.alphabetical)
       title += 'Alphabetical order';
     else if (sortType === SortTypeEnum.alpTppMargin) title += 'ALP 2PP margin';
-    else if (sortType === SortTypeEnum.lnpTppMargin) title += 'LNP 2PP margin';
+    else if (sortType === SortTypeEnum.lnpTppMargin)
+      title += `${coalitionAbbreviation(props.election)} 2PP margin`;
     else if (sortType === SortTypeEnum.winChance)
       title += `${partyAbbr} win chance`;
     return title;
@@ -433,6 +438,18 @@ const Seats = props => {
     null,
     a => a >= 0
   );
+  let libIndex = jsonMapReverse(props.forecast.partyAbbr, 'LIB');
+  if (
+    libIndex &&
+    jsonMap(props.forecast.seatCountFrequencies, libIndex)[14] === 0
+  )
+    libIndex = null;
+  let natIndex = jsonMapReverse(props.forecast.partyAbbr, 'NAT');
+  if (
+    natIndex &&
+    jsonMap(props.forecast.seatCountFrequencies, natIndex)[14] === 0
+  )
+    natIndex = null;
   let onIndex = jsonMapReverse(props.forecast.partyAbbr, 'ON');
   if (
     onIndex &&
@@ -469,6 +486,14 @@ const Seats = props => {
     setSortParty(0);
   };
   const setSortLnpWinChance = () => {
+    setSortType(SortTypeEnum.winChance);
+    setSortParty(1);
+  };
+  const setSortLibWinChance = () => {
+    setSortType(SortTypeEnum.winChance);
+    setSortParty(1);
+  };
+  const setSortNatWinChance = () => {
     setSortType(SortTypeEnum.winChance);
     setSortParty(1);
   };
@@ -551,17 +576,27 @@ const Seats = props => {
                   ALP 2PP margin
                 </Dropdown.Item>
                 <Dropdown.Item as="button" onClick={setSortLnpTppMargin}>
-                  LNP 2PP margin
+                  {coalitionAbbreviation(props.election)} 2PP margin
                 </Dropdown.Item>
                 <Dropdown.Item as="button" onClick={setSortAlpWinChance}>
                   ALP win chance
                 </Dropdown.Item>
                 <Dropdown.Item as="button" onClick={setSortLnpWinChance}>
-                  LNP win chance
+                  {coalitionAbbreviation(props.election)} win chance
                 </Dropdown.Item>
                 {grnIndex && (
                   <Dropdown.Item as="button" onClick={setSortGrnWinChance}>
                     GRN win chance
+                  </Dropdown.Item>
+                )}
+                {libIndex && (
+                  <Dropdown.Item as="button" onClick={setSortLibWinChance}>
+                    LIB win chance
+                  </Dropdown.Item>
+                )}
+                {natIndex && (
+                  <Dropdown.Item as="button" onClick={setSortNatWinChance}>
+                    NAT win chance
                   </Dropdown.Item>
                 )}
                 {indIndex && (

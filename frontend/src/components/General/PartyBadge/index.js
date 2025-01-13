@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 
 import TooltipWrapper from '../TooltipWrapper';
 
+import {coalitionAbbreviation} from '../../../utils/coalition.js';
+
 import styles from './PartyBadge.module.css';
 
 export const AlpBadge = props => {
@@ -62,9 +64,12 @@ export const LnpBadge = props => {
   const classes = `${styles['party-badge']} ${styles['lnp-badge']}`;
   return (
     <TooltipWrapper tooltipText="Liberal/National Coalition">
-      <span className={classes}>LNP</span>
+      <span className={classes}>{coalitionAbbreviation(props.termCode)}</span>
     </TooltipWrapper>
   );
+};
+LnpBadge.propTypes = {
+  termCode: PropTypes.string,
 };
 
 export const LibBadge = props => {
@@ -174,7 +179,7 @@ export const SmartBadge = props => {
   if (partyName === 'sff') return <SsfBadge />;
   if (partyName === 'ca') return <CaBadge />;
   if (partyName === 'sab') return <SabBadge />;
-  if (partyName === 'lnp') return <LnpBadge />;
+  if (partyName === 'lnp') return <LnpBadge termCode={props.termCode} />;
   if (partyName === 'lib') return <LibBadge />;
   if (partyName === 'nat') return <NatBadge />;
   if (partyName === 'on') return <OnBadge />;
@@ -184,6 +189,7 @@ export const SmartBadge = props => {
 };
 SmartBadge.propTypes = {
   party: PropTypes.string.isRequired,
+  termCode: PropTypes.string,
   text: PropTypes.string,
   tooltipText: PropTypes.string,
 };

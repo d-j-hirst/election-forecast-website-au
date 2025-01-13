@@ -294,14 +294,16 @@ const VoteTrendChart = props => {
             Party: ALP two-party preferred
           </Dropdown.Item>
           <Dropdown.Item as="button" onClick={setLnpTpp}>
-            Party: LNP two-party preferred
+            Party: {coalitionAbbreviation(props.forecast.termCode)} two-party
+            preferred
           </Dropdown.Item>
           <Dropdown.Item as="button" onClick={setAlpFp}>
             Party: ALP first preferences
           </Dropdown.Item>
           {partyHasFpTrend('LNP') && (
             <Dropdown.Item as="button" onClick={setLnpFp}>
-              Party: LNP first preferences
+              Party: {coalitionAbbreviation(props.forecast.termCode)} first
+              preferences
             </Dropdown.Item>
           )}
           {partyHasFpTrend('LIB') && (

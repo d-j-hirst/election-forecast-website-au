@@ -31,7 +31,7 @@ const SeatVoteRow = props => {
     <ListGroup.Item className={styles.seatsSubitem}>
       <div className={styles.rowLeftSection}>
         <div className={styles.rowParty}>
-          <SmartBadge party={partyAbbr} />
+          <SmartBadge party={partyAbbr} termCode={props.forecast.termCode} />
         </div>
         <div className={styles.candidateName}>
           {props.candidateName && ' (' + props.candidateName + ') '}

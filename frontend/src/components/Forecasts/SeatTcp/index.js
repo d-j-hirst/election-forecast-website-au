@@ -123,7 +123,8 @@ const SeatTcpRowPair = props => {
   return (
     <>
       <ListGroup.Item className={styles.seatsTcpScenarioHeading}>
-        <SmartBadge party={partyAbbr0} /> vs <SmartBadge party={partyAbbr1} /> -{' '}
+        <SmartBadge party={partyAbbr0} termCode={props.forecast.termCode} /> vs{' '}
+        <SmartBadge party={partyAbbr1} termCode={props.forecast.termCode} /> -{' '}
         occurs in{' '}
         <strong>
           <TooltipPercentage value={props.freqSet[2] * 100} />

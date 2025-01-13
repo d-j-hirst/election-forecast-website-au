@@ -18,15 +18,20 @@ const SortedTcpSwingRow = props => {
         <strong>
           <TooltipPercentage value={Math.abs(props.swing)} label="" />
         </strong>{' '}
-        to <SmartBadge party={props.swing > 0 ? 'alp' : 'lnp'} />
+        to{' '}
+        <SmartBadge
+          party={props.swing > 0 ? 'alp' : 'lnp'}
+          termCode={props.forecast.termCode}
+        />
         {' -'} {props.description}
       </div>
     </ListGroup.Item>
   );
 };
 SortedTcpSwingRow.propTypes = {
-  swing: PropTypes.number.isRequired,
   description: PropTypes.string.isRequired,
+  forecast: PropTypes.object.isRequired,
+  swing: PropTypes.number.isRequired,
 };
 
 const SwingFactorsExplainer = props => {
@@ -77,7 +82,12 @@ const SeatTcpSwingFactors = props => {
       {showExplainer && <SwingFactorsExplainer />}
 
       {sortedSwingFactors.map(a => (
-        <SortedTcpSwingRow description={a[0]} swing={a[1]} key={a[0]} />
+        <SortedTcpSwingRow
+          description={a[0]}
+          forecast={props.forecast}
+          key={a[0]}
+          swing={a[1]}
+        />
       ))}
       <ListGroup.Item className={styles.seatsNote}>
         Swing factors may not precisely add up to expected margins due to

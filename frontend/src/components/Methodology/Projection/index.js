@@ -36,10 +36,7 @@ const MethodologyPollTrend = props => {
       <ul>
         <li>Two-party-preferred vote</li>
         <li>ALP first preference vote</li>
-        <li>
-          LNP first preference vote (including combination of both parties&apos;
-          vote in WA state elections)
-        </li>
+        <li>L/NP combined first preference vote</li>
         <li>
           &quot;Constituency minors&quot; - minor parties that represent a
           fairly well-defined ideology or section of the community, e.g. Greens,

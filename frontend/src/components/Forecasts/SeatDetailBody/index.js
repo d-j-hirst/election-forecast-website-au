@@ -77,7 +77,8 @@ const SeatSummary = props => {
   return (
     <ListGroup.Item className={styles.seatsItem}>
       <div className={styles.seatsTopLeft}>
-        Held by <SmartBadge party={incumbentAbbr} /> with margin{' '}
+        Held by{' '}
+        <SmartBadge party={incumbentAbbr} termCode={props.forecast.termCode} />{' '}
         {Number(margin).toFixed(1)}%
       </div>
       <WinnerBarDist

@@ -32,7 +32,7 @@ const VoteShareRow = props => {
     <ListGroup.Item className={styles.voteTotalsItem}>
       <div className={styles.rowLeftSection}>
         <div className={styles.rowParty}>
-          <SmartBadge party={partyAbbr} />
+          <SmartBadge party={partyAbbr} termCode={props.forecast.termCode} />
         </div>
         <div className={styles.rowPercentage}>
           {' '}

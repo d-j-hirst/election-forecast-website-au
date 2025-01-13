@@ -25,6 +25,7 @@ import LoadingMarker from '../../General/LoadingMarker';
 import {getDirect} from 'utils/sdk';
 
 import styles from './History.module.css';
+import {coalitionAbbreviation} from '../../../utils/coalition.js';
 import {colours} from '../../../utils/GraphPartyColours.js';
 import {jsonMap, jsonMapReverse} from '../../../utils/jsonmap.js';
 import {unixDateToStr, unixTimeToStr} from '../../../utils/date.js';
@@ -207,9 +208,21 @@ const GovernmentFormationTooltip = ({active, payload, label, mode}) => {
           <Val text="ALP most seats" high={p.alpMost[1]} low={p.alpMin[1]} />
           <Val text="Exact Ties" high={p.ties[1]} low={p.alpMost[1]} />
           <Val text="Other party leads" high={p.othLeads[1]} low={p.ties[1]} />
-          <Val text="LNP most seats" high={p.lnpMost[1]} low={p.othLeads[1]} />
-          <Val text="LNP minority" high={p.lnpMin[1]} low={p.lnpMost[1]} />
-          <Val text="LNP majority" high={p.lnpMaj[1]} low={p.lnpMin[1]} />
+          <Val
+            text={`${coalitionAbbreviation(props.termCode)} most seats`}
+            high={p.lnpMost[1]}
+            low={p.othLeads[1]}
+          />
+          <Val
+            text={`${coalitionAbbreviation(props.termCode)} minority`}
+            high={p.lnpMin[1]}
+            low={p.lnpMost[1]}
+          />
+          <Val
+            text={`${coalitionAbbreviation(props.termCode)} majority`}
+            high={p.lnpMaj[1]}
+            low={p.lnpMin[1]}
+          />
         </p>
       </div>
     );
@@ -222,6 +235,7 @@ GovernmentFormationTooltip.propTypes = {
   active: PropTypes.bool,
   label: PropTypes.number,
   mode: PropTypes.string.isRequired,
+  termCode: PropTypes.string,
 };
 
 const GovernmentFormation = props => {
@@ -270,11 +284,16 @@ const GovernmentFormation = props => {
         {genericChartArea('alpMost', 'ALP', 2)}
         {genericChartArea('ties', 'tie', 0)}
         {genericChartArea('othLeads', 'OTH', 1)}
-        {genericChartArea('lnpMost', 'LNP', 2)}
-        {genericChartArea('lnpMin', 'LNP', 1)}
-        {genericChartArea('lnpMaj', 'LNP', 0)}
+        {genericChartArea('lnpMost', coalitionAbbreviation(props.termCode), 2)}
+        {genericChartArea('lnpMin', coalitionAbbreviation(props.termCode), 1)}
+        {genericChartArea('lnpMaj', coalitionAbbreviation(props.termCode), 0)}
         <Tooltip
-          content={<GovernmentFormationTooltip mode={props.mode} />}
+          content={
+            <GovernmentFormationTooltip
+              mode={props.mode}
+              termCode={props.termCode}
+            />
+          }
           isAnimationActive={false}
         />
       </ComposedChart>
@@ -284,6 +303,7 @@ const GovernmentFormation = props => {
 GovernmentFormation.propTypes = {
   data: PropTypes.array.isRequired,
   mode: PropTypes.string.isRequired,
+  termCode: PropTypes.string,
 };
 
 const RangeTooltip = ({active, payload, label, mode, obsLabel, dataKey}) => {
@@ -711,7 +731,11 @@ const Chart = props => {
       {chartData !== undefined && (
         <>
           {props.type === GraphTypeEnum.governmentFormation && (
-            <GovernmentFormation data={chartData} mode={effectiveMode} />
+            <GovernmentFormation
+              data={chartData}
+              mode={effectiveMode}
+              termCode={props.election}
+            />
           )}
           {props.type === GraphTypeEnum.tpp && (
             <Tpp data={chartData} partyAbbr={partyAbbr} mode={effectiveMode} />
@@ -1023,7 +1047,7 @@ const History = props => {
                     ALP two-party-preferred
                   </Dropdown.Item>
                   <Dropdown.Item as="button" onClick={setGraphLnpTpp}>
-                    LNP two-party-preferred
+                    {coalitionAbbreviation(props.election)} two-party-preferred
                   </Dropdown.Item>
                   {(props.mode !== 'live' || props.election !== '2022sa') && (
                     <>
@@ -1032,7 +1056,8 @@ const History = props => {
                       </Dropdown.Item>
                       {lnpIndex && (
                         <Dropdown.Item as="button" onClick={setGraphLnpFp}>
-                          LNP first preferences
+                          {coalitionAbbreviation(props.election)} first
+                          preferences
                         </Dropdown.Item>
                       )}
                       {libIndex && (
@@ -1068,7 +1093,7 @@ const History = props => {
                   </Dropdown.Item>
                   {lnpIndex && (
                     <Dropdown.Item as="button" onClick={setGraphLnpSeats}>
-                      LNP seats
+                      {coalitionAbbreviation(props.election)} seats
                     </Dropdown.Item>
                   )}
                   {libIndex && (

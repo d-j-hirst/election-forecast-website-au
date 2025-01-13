@@ -40,7 +40,13 @@ const ProbStatement = props => {
       <strong>{struc || noParty ? probPhrase[0] : ''}</strong>
       {struc || noParty ? ' that ' : ''}
       {noParty ? 'there ' : ''}
-      {!noParty && <SmartBadge party={partyAbbr} text={text} />}
+      {!noParty && (
+        <SmartBadge
+          party={partyAbbr}
+          text={text}
+          termCode={props.forecast.termCode}
+        />
+      )}
       {props.candidateName && ' (' + props.candidateName + ')'}
       {struc || noParty ? '' : ' ' + getIsPhrase(props.forecast) + ' '}
       <strong>{struc || noParty ? '' : probPhrase[0]}</strong>
