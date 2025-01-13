@@ -33,7 +33,13 @@ code {
   --lnp-xlight: #abcaf0;
   --lnp-xxlight: #d6e6fa;
   --lnp-xxxlight: #ecf5ff;
-  --nat: #184d16;
+  --lib: #1467CC;
+  --lib-mid: #5792da;
+  --lib-light: #87b2e7;
+  --lib-xlight: #abcaf0;
+  --lib-xxlight: #d6e6fa;
+  --lib-xxxlight: #ecf5ff;
+  --nat: #247422;
   --nat-mid: #5aa357;
   --nat-light: #7bc079;
   --nat-xlight: #a3e0a2;

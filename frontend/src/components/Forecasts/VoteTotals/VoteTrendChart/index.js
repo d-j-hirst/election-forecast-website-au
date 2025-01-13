@@ -256,6 +256,9 @@ const VoteTrendChart = props => {
   const setGrnFp = () => {
     setGenericFp('GRN');
   };
+  const setNatFp = () => {
+    setGenericFp('NAT');
+  };
   const setOnFp = () => {
     setGenericFp('ON');
   };
@@ -308,6 +311,11 @@ const VoteTrendChart = props => {
           <Dropdown.Item as="button" onClick={setGrnFp}>
             Party: GRN first preferences
           </Dropdown.Item>
+          {partyHasFpTrend('NAT') && (
+            <Dropdown.Item as="button" onClick={setNatFp}>
+              Party: NAT first preferences
+            </Dropdown.Item>
+          )}
           {partyHasFpTrend('ON') && (
             <Dropdown.Item as="button" onClick={setOnFp}>
               Party: ON first preferences
