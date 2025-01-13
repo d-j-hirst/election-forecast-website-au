@@ -6,6 +6,8 @@ const isKnownParty = party => {
     'grn',
     'kap',
     'lnp',
+    'nat',
+    'lib',
     'on',
     'oth',
     'uap',
@@ -19,7 +21,6 @@ const isKnownParty = party => {
 
 export const standardiseParty = (party, forecast) => {
   if (typeof party !== 'string') party = jsonMap(forecast.partyAbbr, party);
-  if (party.toLowerCase() === 'lib') party = 'lnp';
   if (!isKnownParty(party)) party = 'oth';
   return party.toLowerCase();
 };

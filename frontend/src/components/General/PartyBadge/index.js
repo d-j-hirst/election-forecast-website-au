@@ -71,7 +71,7 @@ export const LibBadge = props => {
   const classes = `${styles['party-badge']} ${styles['lib-badge']}`;
   return (
     <TooltipWrapper tooltipText="Liberal Party">
-      <span className={classes}>LNP</span>
+      <span className={classes}>LIB</span>
     </TooltipWrapper>
   );
 };
@@ -80,7 +80,7 @@ export const NatBadge = props => {
   const classes = `${styles['party-badge']} ${styles['nat-badge']}`;
   return (
     <TooltipWrapper tooltipText="National Party">
-      <span className={classes}>LNP</span>
+      <span className={classes}>NAT</span>
     </TooltipWrapper>
   );
 };
