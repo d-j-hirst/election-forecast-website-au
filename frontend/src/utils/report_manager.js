@@ -93,6 +93,7 @@ const integrateNewResults = input => {
 const integrateNewForecast = input => {
   const settings = input.settings;
   const data = input.data;
+  if (data.new === false) return;
   partyReplace(data.report, 'ONP', 'ON');
   // No system currently set up to cache archived forecasts
   if (data.archiveId === undefined) {
