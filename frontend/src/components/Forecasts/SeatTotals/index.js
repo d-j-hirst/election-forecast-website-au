@@ -16,7 +16,10 @@ import {jsonMap} from '../../../utils/jsonmap.js';
 import styles from './SeatTotals.module.css';
 
 const SeatsRow = props => {
-  let partyAbbr = jsonMap(props.forecast.partyAbbr, props.freqSet[0]);
+  let partyAbbr =
+    props.freqSet[0] === null
+      ? 'LNP'
+      : jsonMap(props.forecast.partyAbbr, props.freqSet[0]);
   const partyName = jsonMap(props.forecast.partyName, props.freqSet[0]);
   let result = props.result;
   if (partyName === 'Emerging Ind') partyAbbr = 'IndX';
@@ -85,6 +88,20 @@ const SeatsRowSet = props => {
     return el2[1][7] - el1[1][7];
   });
   freqs = freqs.filter(a => a[1][a[1].length - 1] > 0);
+  if (
+    showExplainer &&
+    props.forecast.coalitionSeatCountFrequencies.length > 0
+  ) {
+    //
+    freqs = freqs.filter(el => {
+      const partyAbbr = jsonMap(props.forecast.partyAbbr, el[0]);
+      return partyAbbr !== 'LIB' && partyAbbr !== 'NAT' && partyAbbr !== 'LNP';
+    });
+    freqs.push([null, props.forecast.coalitionSeatCountFrequencies]);
+    freqs.sort((el1, el2) => {
+      return el2[1][7] - el1[1][7];
+    });
+  }
   const results =
     props.results === null
       ? null
