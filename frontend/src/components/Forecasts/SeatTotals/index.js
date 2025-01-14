@@ -216,7 +216,7 @@ const CoalitionRow = props => {
   return (
     <ListGroup.Item className={styles.seatTotalsNote}>
       <input type="checkbox" checked={props.value} onChange={props.onChange} />
-      Combine {coalitionParty(props.termCode)}
+      Combine {coalitionName(props.termCode)}
     </ListGroup.Item>
   );
 };
