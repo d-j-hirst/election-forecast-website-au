@@ -44,8 +44,13 @@ def get_series_from_forecasts(forecasts):
                 'overallWinPc': a.report['overallWinPc'],
                 'tppFrequencies': a.report['tppFrequencies'],
                 'fpFrequencies': (a.report['fpFrequencies'] 
-                    if 'fpFrequencies' in a.report else []) ,
-                'seatCountFrequencies': a.report['seatCountFrequencies']
+                    if 'fpFrequencies' in a.report else []),
+                'coalitionFpFrequencies': (a.report['coalitionFpFrequencies'] 
+                    if 'coalitionFpFrequencies' in a.report else []),
+                'seatCountFrequencies': a.report['seatCountFrequencies'],
+                'coalitionSeatCountFrequencies': (a.report['coalitionSeatCountFrequencies'] 
+                    if 'coalitionSeatCountFrequencies' in a.report else [])
+
             } for a in forecasts]
 
 
