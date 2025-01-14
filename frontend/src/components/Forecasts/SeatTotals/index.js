@@ -89,7 +89,7 @@ const SeatsRowSet = props => {
   });
   freqs = freqs.filter(a => a[1][a[1].length - 1] > 0);
   if (
-    useCoalition === true &&
+    props.useCoalition === true &&
     props.forecast.coalitionSeatCountFrequencies.length > 0
   ) {
     //
