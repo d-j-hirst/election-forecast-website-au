@@ -19,7 +19,10 @@ import {jsonMap} from '../../../utils/jsonmap.js';
 import styles from './VoteTotals.module.css';
 
 const VoteShareRow = props => {
-  let partyAbbr = jsonMap(props.forecast.partyAbbr, props.freqSet[0]);
+  let partyAbbr =
+    props.freqSet[0] === None
+      ? 'LNP'
+      : jsonMap(props.forecast.partyAbbr, props.freqSet[0]);
   const thresholds = [
     [0, 2, 0],
     [2, 4, 1],
@@ -121,7 +124,7 @@ const FpRowSet = props => {
       const partyAbbr = jsonMap(props.forecast.partyAbbr, el[0]);
       return partyAbbr !== 'LIB' && partyAbbr !== 'NAT' && partyAbbr !== 'LNP';
     });
-    freqs.push(...props.forecast.coalitionFpFrequencies);
+    freqs.push([None, props.forecast.coalitionFpFrequencies]);
     freqs.sort((el1, el2) => {
       return el2[1][7] - el1[1][7];
     });
