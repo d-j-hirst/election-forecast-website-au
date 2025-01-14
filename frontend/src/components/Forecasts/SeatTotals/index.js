@@ -11,7 +11,7 @@ import {SmartBadge} from '../../General/PartyBadge';
 import InfoIcon from '../../General/InfoIcon';
 import TooltipWrapper from '../../General/TooltipWrapper';
 
-import {coalitionParty} from '../../../utils/coalitionParty.js';
+import {coalitionParty} from '../../../utils/coalition.js';
 import {jsonMap} from '../../../utils/jsonmap.js';
 
 import styles from './SeatTotals.module.css';
