@@ -20,7 +20,7 @@ import styles from './VoteTotals.module.css';
 
 const VoteShareRow = props => {
   let partyAbbr =
-    props.freqSet[0] === None
+    props.freqSet[0] === null
       ? 'LNP'
       : jsonMap(props.forecast.partyAbbr, props.freqSet[0]);
   const thresholds = [
@@ -124,7 +124,7 @@ const FpRowSet = props => {
       const partyAbbr = jsonMap(props.forecast.partyAbbr, el[0]);
       return partyAbbr !== 'LIB' && partyAbbr !== 'NAT' && partyAbbr !== 'LNP';
     });
-    freqs.push([None, props.forecast.coalitionFpFrequencies]);
+    freqs.push([null, props.forecast.coalitionFpFrequencies]);
     freqs.sort((el1, el2) => {
       return el2[1][7] - el1[1][7];
     });
