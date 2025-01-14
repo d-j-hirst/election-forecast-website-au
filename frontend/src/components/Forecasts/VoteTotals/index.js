@@ -112,9 +112,21 @@ const FpExplainer = props => {
 
 const FpRowSet = props => {
   const [showExplainer, setShowExplainer] = useState(false);
-  const freqs = props.forecast.fpFrequencies.sort((el1, el2) => {
+  let freqs = props.forecast.fpFrequencies.sort((el1, el2) => {
     return el2[1][7] - el1[1][7];
   });
+  if (showExplainer && props.forecast.coalitionFpFrequencies.length > 0) {
+    //
+    freqs = freqs.filter(el => {
+      const partyAbbr = jsonMap(props.forecast.partyAbbr, el[0]);
+      return partyAbbr !== 'LIB' && partyAbbr !== 'NAT' && partyAbbr !== 'LNP';
+    });
+    freqs.push(...props.forecast.coalitionFpFrequencies);
+    freqs.sort((el1, el2) => {
+      return el2[1][7] - el1[1][7];
+    });
+  }
+
   const results =
     props.results === null
       ? null

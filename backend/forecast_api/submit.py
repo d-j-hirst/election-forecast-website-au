@@ -36,22 +36,28 @@ def first(iterable, condition = lambda x: True):
 
 def get_series_from_forecasts(forecasts):
     return [{
-                'date': str(a.date),
-                'label': str(a.label),
-                'majorityWinPc': a.report['majorityWinPc'],
-                'minorityWinPc': a.report['minorityWinPc'],
-                'mostSeatsWinPc': a.report['mostSeatsWinPc'],
-                'overallWinPc': a.report['overallWinPc'],
-                'tppFrequencies': a.report['tppFrequencies'],
-                'fpFrequencies': (a.report['fpFrequencies'] 
-                    if 'fpFrequencies' in a.report else []),
-                'coalitionFpFrequencies': (a.report['coalitionFpFrequencies'] 
-                    if 'coalitionFpFrequencies' in a.report else []),
-                'seatCountFrequencies': a.report['seatCountFrequencies'],
-                'coalitionSeatCountFrequencies': (a.report['coalitionSeatCountFrequencies'] 
-                    if 'coalitionSeatCountFrequencies' in a.report else [])
+        'date': str(a.date),
+        'label': str(a.label),
+        'majorityWinPc': a.report['majorityWinPc'],
+        'minorityWinPc': a.report['minorityWinPc'],
+        'mostSeatsWinPc': a.report['mostSeatsWinPc'],
+        'overallWinPc': a.report['overallWinPc'],
+        'tppFrequencies': a.report['tppFrequencies'],
+        'fpFrequencies': (
+            a.report['fpFrequencies'] 
+            if 'fpFrequencies' in a.report else []
+        ),
+        'coalitionFpFrequencies': (
+            a.report['coalitionFpFrequencies'] 
+            if 'coalitionFpFrequencies' in a.report else []
+        ),
+        'seatCountFrequencies': a.report['seatCountFrequencies'],
+        'coalitionSeatCountFrequencies': (
+            a.report['coalitionSeatCountFrequencies'] 
+            if 'coalitionSeatCountFrequencies' in a.report else []
+        )
 
-            } for a in forecasts]
+    } for a in forecasts]
 
 
 def update_timeseries(code: str, election: Election):
