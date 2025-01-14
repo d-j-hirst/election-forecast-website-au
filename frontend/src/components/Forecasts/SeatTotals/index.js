@@ -215,8 +215,13 @@ MajorityRow.propTypes = {
 const CoalitionRow = props => {
   return (
     <ListGroup.Item className={styles.seatTotalsNote}>
-      <input type="checkbox" checked={props.value} onChange={props.onChange} />
-      Combine {coalitionName(props.termCode)}
+      <input
+        type="checkbox"
+        checked={props.value}
+        onChange={props.onChange}
+        className={styles.coalitionCheckbox}
+      />
+      {'  '}Combine {coalitionName(props.termCode)} seat totals
     </ListGroup.Item>
   );
 };
