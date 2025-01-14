@@ -90,6 +90,7 @@ const SeatsRowSet = props => {
   freqs = freqs.filter(a => a[1][a[1].length - 1] > 0);
   if (
     props.useCoalition === true &&
+    Object.hasOwn(props.forecast, 'coalitionSeatCountFrequencies') &&
     props.forecast.coalitionSeatCountFrequencies.length > 0
   ) {
     //

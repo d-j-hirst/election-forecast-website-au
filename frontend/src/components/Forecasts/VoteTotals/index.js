@@ -118,7 +118,11 @@ const FpRowSet = props => {
   let freqs = props.forecast.fpFrequencies.sort((el1, el2) => {
     return el2[1][7] - el1[1][7];
   });
-  if (showExplainer && props.forecast.coalitionFpFrequencies.length > 0) {
+  if (
+    showExplainer &&
+    Object.hasOwn(props.forecast, 'coalitionFpFrequencies') &&
+    props.forecast.coalitionFpFrequencies.length > 0
+  ) {
     //
     freqs = freqs.filter(el => {
       const partyAbbr = jsonMap(props.forecast.partyAbbr, el[0]);
