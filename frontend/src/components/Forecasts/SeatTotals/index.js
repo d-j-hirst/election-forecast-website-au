@@ -11,6 +11,7 @@ import {SmartBadge} from '../../General/PartyBadge';
 import InfoIcon from '../../General/InfoIcon';
 import TooltipWrapper from '../../General/TooltipWrapper';
 
+import {coalitionParty} from '../../../utils/coalitionParty.js';
 import {jsonMap} from '../../../utils/jsonmap.js';
 
 import styles from './SeatTotals.module.css';
@@ -211,8 +212,26 @@ MajorityRow.propTypes = {
   election: PropTypes.string.isRequired,
 };
 
+const CoalitionRow = props => {
+  return (
+    <ListGroup.Item className={styles.seatTotalsNote}>
+      <input type="checkbox" checked={props.value} onChange={props.onChange} />
+      Combine {coalitionParty(props.termCode)}
+    </ListGroup.Item>
+  );
+};
+CoalitionRow.propTypes = {
+  onChange: PropTypes.func.isRequired,
+  termCode: PropTypes.string.isRequired,
+  value: PropTypes.bool.isRequired,
+};
+
 const SeatTotals = props => {
+  const canShowCoalition =
+    Object.hasOwn(props.forecast, 'coalitionSeatCountFrequencies') &&
+    props.forecast.coalitionSeatCountFrequencies.length > 0;
   const [showExplainer, setShowExplainer] = useState(false);
+  const [showCoalition, setShowCoalition] = useState(canShowCoalition);
 
   return (
     <Card className={styles.summary}>
@@ -226,11 +245,18 @@ const SeatTotals = props => {
         <ListGroup className={styles.seatTotalsList}>
           {showExplainer && <MainExplainer />}
           <MajorityRow election={props.election} />
+          {canShowCoalition && (
+            <CoalitionRow
+              onChange={() => setShowCoalition(!showCoalition)}
+              termCode={props.forecast.termCode}
+              value={showCoalition}
+            />
+          )}
           <StandardErrorBoundary>
             <SeatsRowSet
               forecast={props.forecast}
               results={props.results}
-              useCoalition={showExplainer}
+              useCoalition={showCoalition}
               windowWidth={props.windowWidth}
             />
           </StandardErrorBoundary>
