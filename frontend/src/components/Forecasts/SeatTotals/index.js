@@ -75,12 +75,12 @@ const SeatsRow = props => {
   );
 };
 SeatsRow.propTypes = {
-  freqSet: PropTypes.array.isRequired,
   forecast: PropTypes.object.isRequired,
-  result: PropTypes.number,
-  windowWidth: PropTypes.number.isRequired,
+  freqSet: PropTypes.array.isRequired,
   minVoteTotal: PropTypes.number.isRequired,
   maxVoteTotal: PropTypes.number.isRequired,
+  result: PropTypes.number,
+  windowWidth: PropTypes.number.isRequired,
 };
 
 const SeatsRowSet = props => {
@@ -89,7 +89,7 @@ const SeatsRowSet = props => {
   });
   freqs = freqs.filter(a => a[1][a[1].length - 1] > 0);
   if (
-    showExplainer &&
+    useCoalition === true &&
     props.forecast.coalitionSeatCountFrequencies.length > 0
   ) {
     //
@@ -131,6 +131,7 @@ const SeatsRowSet = props => {
 SeatsRowSet.propTypes = {
   forecast: PropTypes.object.isRequired,
   results: PropTypes.object,
+  useCoalition: PropTypes.bool,
   windowWidth: PropTypes.number.isRequired,
 };
 
@@ -228,6 +229,7 @@ const SeatTotals = props => {
             <SeatsRowSet
               forecast={props.forecast}
               results={props.results}
+              useCoalition={showExplainer}
               windowWidth={props.windowWidth}
             />
           </StandardErrorBoundary>
