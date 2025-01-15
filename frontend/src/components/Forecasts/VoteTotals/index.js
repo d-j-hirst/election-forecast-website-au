@@ -113,17 +113,31 @@ const FpExplainer = props => {
   );
 };
 
+const CoalitionRow = props => {
+  return (
+    <ListGroup.Item className={styles.voteTotalsNote}>
+      <input type="checkbox" checked={props.value} onChange={props.onChange} />
+      {'  '}Combine {coalitionName(props.termCode)} seat totals
+    </ListGroup.Item>
+  );
+};
+CoalitionRow.propTypes = {
+  onChange: PropTypes.func.isRequired,
+  termCode: PropTypes.string.isRequired,
+  value: PropTypes.bool.isRequired,
+};
+
 const FpRowSet = props => {
+  const canShowCoalition =
+    Object.hasOwn(props.forecast, 'coalitionFpFrequencies') &&
+    props.forecast.coalitionFpFrequencies.length > 0;
+  const [showCoalition, setShowCoalition] = useState(canShowCoalition);
   const [showExplainer, setShowExplainer] = useState(false);
+
   let freqs = props.forecast.fpFrequencies.sort((el1, el2) => {
     return el2[1][7] - el1[1][7];
   });
-  if (
-    showExplainer &&
-    Object.hasOwn(props.forecast, 'coalitionFpFrequencies') &&
-    props.forecast.coalitionFpFrequencies.length > 0
-  ) {
-    //
+  if (showCoalition) {
     freqs = freqs.filter(el => {
       const partyAbbr = jsonMap(props.forecast.partyAbbr, el[0]);
       return partyAbbr !== 'LIB' && partyAbbr !== 'NAT' && partyAbbr !== 'LNP';
@@ -149,6 +163,13 @@ const FpRowSet = props => {
         <InfoIcon onClick={() => setShowExplainer(!showExplainer)} />
       </ListGroup.Item>
       {showExplainer && <FpExplainer />}
+      {canShowCoalition && (
+        <CoalitionRow
+          onChange={() => setShowCoalition(!showCoalition)}
+          termCode={props.forecast.termCode}
+          value={showCoalition}
+        />
+      )}
       {freqs.map((freqSet, index) => (
         <VoteShareRow
           forecast={props.forecast}

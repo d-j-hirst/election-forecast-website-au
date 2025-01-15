@@ -44,6 +44,13 @@
     justify-content: space-between;
 }
 
+.voteTotalsNote {
+    text-align: center;
+    padding: 2px !important;
+    font-size: 15px;
+    background-color: #FFFFFF !important;
+}
+
 @supports (-webkit-touch-callout: none) {
     .voteTotalsItem {
         font-size: 15px;
