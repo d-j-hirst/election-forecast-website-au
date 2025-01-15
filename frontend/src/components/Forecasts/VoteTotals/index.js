@@ -124,7 +124,7 @@ const CoalitionRow = props => {
   return (
     <ListGroup.Item className={styles.voteTotalsNote}>
       <input type="checkbox" checked={props.value} onChange={props.onChange} />
-      {'  '}Combine {coalitionName(props.termCode)} seat totals
+      {'  '}Combine {coalitionName(props.termCode)} vote totals
     </ListGroup.Item>
   );
 };
@@ -254,16 +254,18 @@ const TppRowSet = props => {
         freqSet={partyFreqs[firstHigher ? 0 : 1]}
         maxVoteTotal={maxVoteTotal}
         minVoteTotal={minVoteTotal}
-        windowWidth={props.windowWidth}
+        showCoalition={true} // Make it use coalition badge
         result={partyResults[firstHigher ? 0 : 1]}
+        windowWidth={props.windowWidth}
       />
       <VoteShareRow
         forecast={props.forecast}
         freqSet={partyFreqs[firstHigher ? 1 : 0]}
         maxVoteTotal={maxVoteTotal}
         minVoteTotal={minVoteTotal}
-        windowWidth={props.windowWidth}
+        showCoalition={true} // Make it use coalition badge
         result={partyResults[firstHigher ? 1 : 0]}
+        windowWidth={props.windowWidth}
       />
     </>
   );

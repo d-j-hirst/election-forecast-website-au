@@ -14,6 +14,7 @@ import {brightness} from '../../../../utils/brightness.js';
 import {jsonMap} from '../../../../utils/jsonmap.js';
 
 import styles from './GovernmentFormationChart.module.css';
+import {coalitionAbbreviation} from 'utils/coalition.js';
 
 const round1 = num =>
   num === null || num === undefined ? 0 : Math.round(num * 10) / 10;
@@ -39,7 +40,9 @@ const GovernmentFormationChart = props => {
     0,
     partyOneVals[0] - partyOneVals[1] - partyOneVals[2] - partyOneVals[3]
   );
-  const partyTwoName = jsonMap(props.forecast.partyAbbr, 1);
+  let partyTwoName = jsonMap(props.forecast.partyAbbr, 1);
+  if (partyTwoName === 'LNP')
+    partyTwoName = coalitionAbbreviation(props.forecast.termCode);
   let partyTwoVals = [
     jsonMap(props.forecast.overallWinPc, 1),
     jsonMap(props.forecast.majorityWinPc, 1),
