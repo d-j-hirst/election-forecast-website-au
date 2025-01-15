@@ -78,12 +78,13 @@ const SeatWinsSection = props => {
             <React.Fragment key={`a${index}`}>
               <div className={styles.seatsWinStatement}>
                 <ProbStatement
-                  forecast={props.forecast}
-                  party={a[0]}
                   candidateName={name}
+                  forecast={props.forecast}
+                  outcome={'win ' + seatName}
+                  party={a[0]}
                   prob={a[1]}
                   text={text}
-                  outcome={'win ' + seatName}
+                  useLiberals={true}
                 />
               </div>
             </React.Fragment>

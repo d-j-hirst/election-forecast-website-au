@@ -28,6 +28,12 @@ const ProbStatement = props => {
   let partyAbbr = '';
   if (!noParty) {
     partyAbbr = standardiseParty(props.party, props.forecast);
+    if (
+      props.useLiberals &&
+      props.forecast.coalitionSeatCountFrequencies &&
+      partyAbbr === 'lnp'
+    )
+      partyAbbr = 'lib';
     if (props.party === -2) partyAbbr = 'indx';
     if (props.party === -3) partyAbbr = 'eoth';
     text = interpretOth(props.text, 'An emerging party');
@@ -68,13 +74,14 @@ const ProbStatement = props => {
   );
 };
 ProbStatement.propTypes = {
-  prob: PropTypes.number.isRequired,
-  party: PropTypes.any,
-  forecast: PropTypes.object.isRequired,
-  text: PropTypes.string,
   candidateName: PropTypes.string,
-  tooltipText: PropTypes.string,
+  forecast: PropTypes.object.isRequired,
   outcome: PropTypes.string,
+  party: PropTypes.any,
+  prob: PropTypes.number.isRequired,
+  text: PropTypes.string,
+  tooltipText: PropTypes.string,
+  useLiberals: PropTypes.bool,
 };
 
 export default ProbStatement;
