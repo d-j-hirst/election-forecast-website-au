@@ -13,7 +13,7 @@ import VoteTrendChart from './VoteTrendChart';
 import {SmartBadge} from '../../General/PartyBadge';
 import InfoIcon from '../../General/InfoIcon';
 
-import {coalitionAbbreviation} from '../../../utils/coalition.js';
+import {coalitionName} from '../../../utils/coalition.js';
 import {jsonMap} from '../../../utils/jsonmap.js';
 
 import styles from './VoteTotals.module.css';
