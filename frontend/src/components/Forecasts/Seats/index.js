@@ -93,7 +93,11 @@ const SeatRow = props => {
     ? seatAsterisks[asteriskCode]
     : '';
   const incumbentIndex = props.forecast.seatIncumbents[props.index];
-  const incumbentAbbr = jsonMap(props.forecast.partyAbbr, incumbentIndex);
+  const tempAbbr = jsonMap(props.forecast.partyAbbr, incumbentIndex);
+  const incumbentAbbr =
+    props.forecast.coalitionSeatCountFrequencies && tempAbbr === 'LNP'
+      ? 'LIB'
+      : tempAbbr;
   const margin = props.forecast.seatMargins[props.index];
 
   const freqs = deepCopy(props.forecast.seatPartyWinFrequencies[props.index]);
@@ -449,6 +453,12 @@ const Seats = props => {
     jsonMap(props.forecast.seatCountFrequencies, libIndex)[14] === 0
   )
     libIndex = null;
+  let lnpIndex = jsonMapReverse(props.forecast.partyAbbr, 'LNP');
+  if (
+    lnpIndex &&
+    jsonMap(props.forecast.seatCountFrequencies, lnpIndex)[14] === 0
+  )
+    libIndex = null;
   let natIndex = jsonMapReverse(props.forecast.partyAbbr, 'NAT');
   if (
     natIndex &&
@@ -586,9 +596,11 @@ const Seats = props => {
                 <Dropdown.Item as="button" onClick={setSortAlpWinChance}>
                   ALP win chance
                 </Dropdown.Item>
-                <Dropdown.Item as="button" onClick={setSortLnpWinChance}>
-                  {coalitionAbbreviation(props.election)} win chance
-                </Dropdown.Item>
+                {lnpIndex && (
+                  <Dropdown.Item as="button" onClick={setSortLnpWinChance}>
+                    {coalitionAbbreviation(props.election)} win chance
+                  </Dropdown.Item>
+                )}
                 {grnIndex && (
                   <Dropdown.Item as="button" onClick={setSortGrnWinChance}>
                     GRN win chance

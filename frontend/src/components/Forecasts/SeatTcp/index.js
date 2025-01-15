@@ -98,6 +98,11 @@ const SeatTcpRowPair = props => {
   if (freqSet1[0] === -2) partyAbbr1 = 'IndX';
   if (freqSet1[0] === -3) partyAbbr1 = 'EOth';
 
+  if (props.forecast.coalitionSeatCountFrequencies) {
+    if (partyAbbr0 === 'LNP') partyAbbr0 = 'LIB';
+    if (partyAbbr1 === 'LNP') partyAbbr1 = 'LIB';
+  }
+
   const cand0Name =
     'seatCandidateNames' in props.forecast
       ? props.forecast.seatCandidateNames.length > 0

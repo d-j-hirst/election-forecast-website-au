@@ -15,6 +15,8 @@ const SeatVoteRow = props => {
   let partyAbbr = jsonMap(props.forecast.partyAbbr, props.freqSet[0]);
   if (props.freqSet[0] === -2) partyAbbr = 'IndX';
   if (props.freqSet[0] === -3) partyAbbr = 'EOth';
+  if (props.forecast.coalitionSeatCountFrequencies && partyAbbr === 'LNP')
+    partyAbbr = 'LIB';
   const result =
     props.freqSet[0] >= -1 || props.forceXInd ? props.result : null;
 

@@ -51,6 +51,12 @@ const SeatWinsSection = props => {
       {showExplainer && <WinsExplainer seatName={seatName} />}
       <ListGroup.Item className={styles.seatsMore}>
         {sortedFreqs.map((a, index) => {
+          let partyAbbr = jsonMap(props.forecast.partyAbbr, a[0]);
+          if (
+            props.forecast.coalitionSeatCountFrequencies &&
+            partyAbbr === 'LNP'
+          )
+            partyAbbr = 'LIB';
           let text = 'Independent';
           const party = a[0];
           if (party === -3) text = 'An emerging party';
