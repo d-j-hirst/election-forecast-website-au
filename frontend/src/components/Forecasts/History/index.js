@@ -953,6 +953,10 @@ const History = props => {
     jsonMap(props.forecast.seatCountFrequencies, libIndex)[14] === 0
   )
     libIndex = null;
+  if (props.forecast.coalitionSeatCountFrequencies && lnpIndex) {
+    libIndex = lnpIndex;
+    lnpIndex = null;
+  }
   let natIndex = jsonMapReverse(props.forecast.partyAbbr, 'NAT');
   if (
     natIndex &&
@@ -992,6 +996,7 @@ const History = props => {
   };
   const setGraphCoalitionFp = () => {
     setGraphType(GraphTypeEnum.coalitionFp);
+    setGraphParty(1);
   };
   const setGraphAlpFp = () => {
     setGraphType(GraphTypeEnum.fp);
@@ -1027,6 +1032,7 @@ const History = props => {
   };
   const setGraphCoalitionSeats = () => {
     setGraphType(GraphTypeEnum.coalitionSeats);
+    setGraphParty(1);
   };
   const setGraphAlpSeats = () => {
     setGraphType(GraphTypeEnum.seats);

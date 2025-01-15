@@ -500,7 +500,7 @@ const Seats = props => {
   };
   const setSortNatWinChance = () => {
     setSortType(SortTypeEnum.winChance);
-    setSortParty(1);
+    setSortParty(natIndex);
   };
   const setSortGrnWinChance = () => {
     setSortType(SortTypeEnum.winChance);
