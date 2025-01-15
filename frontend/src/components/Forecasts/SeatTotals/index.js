@@ -21,6 +21,12 @@ const SeatsRow = props => {
     props.freqSet[0] === null
       ? 'LNP'
       : jsonMap(props.forecast.partyAbbr, props.freqSet[0]);
+  const canShowCoalition =
+    Object.hasOwn(props.forecast, 'coalitionSeatCountFrequencies') &&
+    props.forecast.coalitionSeatCountFrequencies.length > 0;
+  if (canShowCoalition && partyAbbr === 'LNP') {
+    partyAbbr = 'LIB';
+  }
   const partyName = jsonMap(props.forecast.partyName, props.freqSet[0]);
   let result = props.result;
   if (partyName === 'Emerging Ind') partyAbbr = 'IndX';
@@ -101,13 +107,6 @@ const SeatsRowSet = props => {
     freqs.push([null, props.forecast.coalitionSeatCountFrequencies]);
     freqs.sort((el1, el2) => {
       return el2[1][7] - el1[1][7];
-    });
-  } else if (canShowCoalition) {
-    freqs = freqs.map(el => {
-      if (el[0] === 'LNP') {
-        el[0] = 'LIB';
-      }
-      return el;
     });
   }
 
