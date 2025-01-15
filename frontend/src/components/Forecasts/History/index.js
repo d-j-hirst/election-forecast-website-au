@@ -688,8 +688,8 @@ const Chart = props => {
   }
 
   let seats = props.data.map(a =>
-    a.seatCountFrequencies !== null
-      ? thresholds.map(t => a.seatCountFrequencies[t])
+    jsonMap(a.seatCountFrequencies, props.party, null) !== null
+      ? thresholds.map(t => jsonMap(a.seatCountFrequencies, props.party)[t])
       : thresholds.map(t => 0)
   );
 
