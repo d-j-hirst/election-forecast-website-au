@@ -923,13 +923,13 @@ const History = props => {
     return title;
   })();
 
-  const lastForecast = history.slice(-1)[0];
+  const lastHistoryItem = history.slice(-1)[0];
   const coalitionFpAvailable =
-    Object.hasOwn(lastForecast, 'coalitionFpFrequencies') &&
-    lastForecast.coalitionFpFrequencies.length > 0;
+    Object.hasOwn(lastHistoryItem, 'coalitionFpFrequencies') &&
+    lastHistoryItem.coalitionFpFrequencies.length > 0;
   const coalitionSeatsAvailable =
-    Object.hasOwn(lastForecast, 'coalitionSeatCountFrequencies') &&
-    lastForecast.coalitionSeatCountFrequencies.length > 0;
+    Object.hasOwn(lastHistoryItem, 'coalitionSeatCountFrequencies') &&
+    lastHistoryItem.coalitionSeatCountFrequencies.length > 0;
 
   let lnpIndex = jsonMapReverse(props.forecast.partyAbbr, 'LNP');
   // Some reports have LNP = -4 because of the current treatment of coalition partners, but
