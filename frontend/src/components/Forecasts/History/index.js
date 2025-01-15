@@ -681,15 +681,15 @@ const Chart = props => {
 
   if (props.type === GraphTypeEnum.coalitionFp) {
     fp = props.data.map(a =>
-      jsonMap(a.coalitionFpFrequencies, props.party, null) !== null
-        ? thresholds.map(t => jsonMap(a.coalitionFpFrequencies, props.party)[t])
+      a.coalitionFpFrequencies !== null
+        ? thresholds.map(t => a.coalitionFpFrequencies[t])
         : thresholds.map(t => 0)
     );
   }
 
   let seats = props.data.map(a =>
-    jsonMap(a.seatCountFrequencies, props.party, null) !== null
-      ? thresholds.map(t => jsonMap(a.seatCountFrequencies, props.party)[t])
+    a.seatCountFrequencies !== null
+      ? thresholds.map(t => a.seatCountFrequencies[t])
       : thresholds.map(t => 0)
   );
 

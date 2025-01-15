@@ -23,7 +23,10 @@ const VoteShareRow = props => {
     props.freqSet[0] === null
       ? 'LNP'
       : jsonMap(props.forecast.partyAbbr, props.freqSet[0]);
-  if (props.showCoalition && partyAbbr === 'LNP') {
+  const canShowCoalition =
+    Object.hasOwn(props.forecast, 'coalitionFpFrequencies') &&
+    props.forecast.coalitionFpFrequencies.length > 0;
+  if (canShowCoalition && !props.showCoalition && partyAbbr === 'LNP') {
     partyAbbr = 'LIB';
   }
   const thresholds = [
