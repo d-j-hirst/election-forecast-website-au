@@ -23,10 +23,7 @@ const VoteShareRow = props => {
     props.freqSet[0] === null
       ? 'LNP'
       : jsonMap(props.forecast.partyAbbr, props.freqSet[0]);
-  const canShowCoalition =
-    Object.hasOwn(props.forecast, 'coalitionFpFrequencies') &&
-    props.forecast.coalitionFpFrequencies.length > 0;
-  if (canShowCoalition && partyAbbr === 'LNP') {
+  if (showCoalition && partyAbbr === 'LNP') {
     partyAbbr = 'LIB';
   }
   const thresholds = [
@@ -86,8 +83,9 @@ VoteShareRow.propTypes = {
   forecast: PropTypes.object.isRequired,
   freqSet: PropTypes.array.isRequired,
   result: PropTypes.number,
-  minVoteTotal: PropTypes.number.isRequired,
+  showCoalition: PropTypes.bool,
   maxVoteTotal: PropTypes.number.isRequired,
+  minVoteTotal: PropTypes.number.isRequired,
   windowWidth: PropTypes.number.isRequired,
 };
 
@@ -185,6 +183,7 @@ const FpRowSet = props => {
           key={index}
           maxVoteTotal={maxVoteTotal}
           minVoteTotal={0}
+          showCoalition={showCoalition}
           result={results === null ? null : results[index]}
           windowWidth={props.windowWidth}
         />

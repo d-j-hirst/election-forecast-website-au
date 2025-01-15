@@ -841,7 +841,7 @@ const MainExplainer = props => {
 
 const History = props => {
   const [showExplainer, setShowExplainer] = useState(false);
-  const [history, setHistory] = useState({});
+  const [history, setHistory] = useState([]);
   const [historyValid, setHistoryValid] = useState(false);
   const [graphType, setGraphType] = useState(GraphTypeEnum.governmentFormation);
   const [graphParty, setGraphParty] = useState(0);
@@ -923,11 +923,13 @@ const History = props => {
     return title;
   })();
 
-  const lastHistoryItem = history.slice(-1)[0];
+  const lastHistoryItem = history.length > 0 ? history.slice(-1)[0] : null;
   const coalitionFpAvailable =
+    lastHistoryItem &&
     Object.hasOwn(lastHistoryItem, 'coalitionFpFrequencies') &&
     lastHistoryItem.coalitionFpFrequencies.length > 0;
   const coalitionSeatsAvailable =
+    lastHistoryItem &&
     Object.hasOwn(lastHistoryItem, 'coalitionSeatCountFrequencies') &&
     lastHistoryItem.coalitionSeatCountFrequencies.length > 0;
 

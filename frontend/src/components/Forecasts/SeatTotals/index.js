@@ -84,9 +84,10 @@ const SeatsRow = props => {
 SeatsRow.propTypes = {
   forecast: PropTypes.object.isRequired,
   freqSet: PropTypes.array.isRequired,
-  minVoteTotal: PropTypes.number.isRequired,
   maxVoteTotal: PropTypes.number.isRequired,
+  minVoteTotal: PropTypes.number.isRequired,
   result: PropTypes.number,
+  showCoalition: PropTypes.bool,
   windowWidth: PropTypes.number.isRequired,
 };
 
@@ -98,7 +99,7 @@ const SeatsRowSet = props => {
   const canShowCoalition =
     Object.hasOwn(props.forecast, 'coalitionSeatCountFrequencies') &&
     props.forecast.coalitionSeatCountFrequencies.length > 0;
-  if (props.useCoalition === true && canShowCoalition) {
+  if (props.showCoalition === true && canShowCoalition) {
     //
     freqs = freqs.filter(el => {
       const partyAbbr = jsonMap(props.forecast.partyAbbr, el[0]);
@@ -130,6 +131,7 @@ const SeatsRowSet = props => {
           maxVoteTotal={maxVoteTotal}
           minVoteTotal={0}
           result={props.results === null ? null : results[index]}
+          showCoalition={props.showCoalition}
           windowWidth={props.windowWidth}
         />
       ))}
@@ -139,7 +141,7 @@ const SeatsRowSet = props => {
 SeatsRowSet.propTypes = {
   forecast: PropTypes.object.isRequired,
   results: PropTypes.object,
-  useCoalition: PropTypes.bool,
+  showCoalition: PropTypes.bool,
   windowWidth: PropTypes.number.isRequired,
 };
 
@@ -264,7 +266,7 @@ const SeatTotals = props => {
             <SeatsRowSet
               forecast={props.forecast}
               results={props.results}
-              useCoalition={showCoalition}
+              showCoalition={showCoalition}
               windowWidth={props.windowWidth}
             />
           </StandardErrorBoundary>
