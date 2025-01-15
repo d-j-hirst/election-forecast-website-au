@@ -21,12 +21,10 @@ const SeatsRow = props => {
     props.freqSet[0] === null
       ? 'LNP'
       : jsonMap(props.forecast.partyAbbr, props.freqSet[0]);
-  const canShowCoalition =
-    Object.hasOwn(props.forecast, 'coalitionSeatCountFrequencies') &&
-    props.forecast.coalitionSeatCountFrequencies.length > 0;
-  if (canShowCoalition && partyAbbr === 'LNP') {
+  if (props.showCoalition && partyAbbr === 'LNP') {
     partyAbbr = 'LIB';
   }
+
   const partyName = jsonMap(props.forecast.partyName, props.freqSet[0]);
   let result = props.result;
   if (partyName === 'Emerging Ind') partyAbbr = 'IndX';
