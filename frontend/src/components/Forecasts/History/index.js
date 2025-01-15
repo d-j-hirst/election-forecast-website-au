@@ -544,8 +544,6 @@ const Seats = props => {
     props.data.map(a => a.unixDate)
   );
 
-  const customTicks = createTicks(lowDate, highDate);
-
   const colourKey = jsonMap(colours, props.partyAbbr) ? props.partyAbbr : 'OTH';
 
   const majorityLine = (() => {
@@ -553,6 +551,10 @@ const Seats = props => {
     if (props.election === '2022fed') return 75.5;
     if (props.election === '2022sa') return 23.5;
     if (props.election === '2022vic') return 44.5;
+    if (props.election === '2023nsw') return 46.5;
+    if (props.election === '2024qld') return 46.5;
+    if (props.election === '2025wa') return 29.5;
+    if (props.election === '2025fed') return 75.5;
   })();
 
   return (
@@ -911,6 +913,10 @@ const History = props => {
       title += `${partyAbbr} first preferences`;
     } else if (graphType === GraphTypeEnum.seats) {
       title += `${partyAbbr} seats`;
+    } else if (graphType === GraphTypeEnum.coalitionFp) {
+      title += `${coalitionAbbreviation(props.election)} first preferences`;
+    } else if (graphType === GraphTypeEnum.coalitionSeats) {
+      title += `${coalitionAbbreviation(props.election)} seats`;
     }
     return title;
   })();

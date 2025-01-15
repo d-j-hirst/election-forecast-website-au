@@ -1,6 +1,8 @@
 export const colours = [
   ['ALP', ['#FF0000', '#FF4444', '#FFAAAA', '#FFCCCC']],
   ['LNP', ['#0000FF', '#4444FF', '#AAAAFF', '#CCCCFF']],
+  ['L/NP', ['#0000FF', '#4444FF', '#AAAAFF', '#CCCCFF']],
+  ['L–NC', ['#0000FF', '#4444FF', '#AAAAFF', '#CCCCFF']],
   ['LIB', ['#0000FF', '#4444FF', '#AAAAFF', '#CCCCFF']],
   ['NAT', ['#5AA357', '#7BC079', '#A3E0A2', '#C9F0C8']],
   ['GRN', ['#008800', '#22CC00', '#66FF44', '#BBFF99']],
