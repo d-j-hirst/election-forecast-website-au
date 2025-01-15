@@ -945,7 +945,8 @@ const History = props => {
   let lnpIndex = jsonMapReverse(props.forecast.partyAbbr, 'LNP');
   // Some reports have LNP = -4 because of the current treatment of coalition partners, but
   // that index doesn't exist for the seat count frequencies, so we need to ignore it
-  if (lnpIndex < 0) jsonMapReverse(props.forecast.partyAbbr.slice(1), 'LNP');
+  if (lnpIndex < 0)
+    lnpIndex = jsonMapReverse(props.forecast.partyAbbr.slice(1), 'LNP');
   if (
     lnpIndex &&
     jsonMap(props.forecast.seatCountFrequencies, lnpIndex)[14] === 0

@@ -454,6 +454,8 @@ const Seats = props => {
   )
     libIndex = null;
   let lnpIndex = jsonMapReverse(props.forecast.partyAbbr, 'LNP');
+  if (lnpIndex < 0)
+    lnpIndex = jsonMapReverse(props.forecast.partyAbbr.slice(1), 'LNP');
   if (
     lnpIndex &&
     jsonMap(props.forecast.seatCountFrequencies, lnpIndex)[14] === 0
