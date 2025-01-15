@@ -337,6 +337,19 @@ const Seats = props => {
   const [sortParty, setSortParty] = useState(0);
   const [filter, setFilter] = useState('all');
 
+  const getIndexedMargins = () => {
+    return props.forecast.seatMargins.map((a, index) => [
+      index,
+      a,
+      jsonMap(
+        props.forecast.partyAbbr,
+        props.forecast.seatIncumbents[index]
+      ) === 'NAT'
+        ? 1
+        : props.forecast.seatIncumbents[index],
+    ]);
+  };
+
   let sortedIndices = [];
   if (sortType === SortTypeEnum.competitiveness) {
     const indexedSeats = props.forecast.seatPartyWinFrequencies.map(
@@ -351,11 +364,7 @@ const Seats = props => {
     indexedNames.sort((a, b) => (a[1] < b[1] ? -1 : 1));
     sortedIndices = indexedNames.map((a, b) => a[0]);
   } else if (sortType === SortTypeEnum.alpTppMargin) {
-    const indexedMargins = props.forecast.seatMargins.map((a, index) => [
-      index,
-      a,
-      props.forecast.seatIncumbents[index],
-    ]);
+    const indexedMargins = getIndexedMargins();
     indexedMargins.sort((a, b) => {
       if (a[2] <= 1 && b[2] >= 2) return -1;
       if (a[2] >= 2 && b[2] <= 1) return 1;
@@ -367,11 +376,7 @@ const Seats = props => {
     });
     sortedIndices = indexedMargins.map((a, b) => a[0]);
   } else if (sortType === SortTypeEnum.lnpTppMargin) {
-    const indexedMargins = props.forecast.seatMargins.map((a, index) => [
-      index,
-      a,
-      props.forecast.seatIncumbents[index],
-    ]);
+    const indexedMargins = getIndexedMargins();
     indexedMargins.sort((a, b) => {
       if (a[2] <= 1 && b[2] >= 2) return -1;
       if (a[2] >= 2 && b[2] <= 1) return 1;
