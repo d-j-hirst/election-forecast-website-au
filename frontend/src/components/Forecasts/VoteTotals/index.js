@@ -131,7 +131,9 @@ const FpRowSet = props => {
   const canShowCoalition =
     Object.hasOwn(props.forecast, 'coalitionFpFrequencies') &&
     props.forecast.coalitionFpFrequencies.length > 0;
-  const [showCoalition, setShowCoalition] = useState(canShowCoalition);
+  const [showCoalition, setShowCoalition] = useState(
+    canShowCoalition && props.forecast.termCode.slice(4) !== 'wa'
+  );
   const [showExplainer, setShowExplainer] = useState(false);
 
   let freqs = props.forecast.fpFrequencies.sort((el1, el2) => {

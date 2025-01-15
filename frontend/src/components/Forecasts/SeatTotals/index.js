@@ -231,7 +231,9 @@ const SeatTotals = props => {
     Object.hasOwn(props.forecast, 'coalitionSeatCountFrequencies') &&
     props.forecast.coalitionSeatCountFrequencies.length > 0;
   const [showExplainer, setShowExplainer] = useState(false);
-  const [showCoalition, setShowCoalition] = useState(canShowCoalition);
+  const [showCoalition, setShowCoalition] = useState(
+    canShowCoalition && props.forecast.termCode.slice(4) !== 'wa'
+  );
 
   return (
     <Card className={styles.summary}>
