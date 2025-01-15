@@ -41,6 +41,8 @@ const GraphTypeEnum = Object.freeze({
   tpp: 2,
   fp: 3,
   seats: 4,
+  coalitionFp: 5,
+  coalitionSeats: 6,
 });
 
 const TickIntervalEnum = Object.freeze({
@@ -515,6 +517,7 @@ Fp.propTypes = {
   data: PropTypes.array.isRequired,
   mode: PropTypes.string.isRequired,
   partyAbbr: PropTypes.string.isRequired,
+  type: PropTypes.number.isRequired,
 };
 
 const Seats = props => {
@@ -605,6 +608,7 @@ Seats.propTypes = {
   mode: PropTypes.string.isRequired,
   partyAbbr: PropTypes.string.isRequired,
   election: PropTypes.string.isRequired,
+  type: PropTypes.number.isRequired,
 };
 
 const Chart = props => {
@@ -669,17 +673,35 @@ const Chart = props => {
       : null;
   if (props.party === 1) tpp = tpp.map(a => a.reverse().map(b => 100 - b));
 
-  const fp = props.data.map(a =>
+  let fp = props.data.map(a =>
     jsonMap(a.fpFrequencies, props.party, null) !== null
       ? thresholds.map(t => jsonMap(a.fpFrequencies, props.party)[t])
       : thresholds.map(t => 0)
   );
 
-  const seats = props.data.map(a =>
+  if (props.type === GraphTypeEnum.coalitionFp) {
+    fp = props.data.map(a =>
+      jsonMap(a.coalitionFpFrequencies, props.party, null) !== null
+        ? thresholds.map(t => jsonMap(a.coalitionFpFrequencies, props.party)[t])
+        : thresholds.map(t => 0)
+    );
+  }
+
+  let seats = props.data.map(a =>
     jsonMap(a.seatCountFrequencies, props.party, null) !== null
       ? thresholds.map(t => jsonMap(a.seatCountFrequencies, props.party)[t])
       : thresholds.map(t => 0)
   );
+
+  if (props.type === GraphTypeEnum.coalitionSeats) {
+    seats = props.data.map(a =>
+      jsonMap(a.coalitionSeatCountFrequencies, props.party, null) !== null
+        ? thresholds.map(
+            t => jsonMap(a.coalitionSeatCountFrequencies, props.party)[t]
+          )
+        : thresholds.map(t => 0)
+    );
+  }
 
   let chartData = adjDates.map((date, index) => ({
     date: date,
@@ -739,15 +761,23 @@ const Chart = props => {
           {props.type === GraphTypeEnum.tpp && (
             <Tpp data={chartData} partyAbbr={partyAbbr} mode={effectiveMode} />
           )}
-          {props.type === GraphTypeEnum.fp && (
-            <Fp data={chartData} partyAbbr={partyAbbr} mode={effectiveMode} />
+          {(props.type === GraphTypeEnum.fp ||
+            props.type === GraphTypeEnum.coalitionFp) && (
+            <Fp
+              data={chartData}
+              partyAbbr={partyAbbr}
+              mode={effectiveMode}
+              type={props.type}
+            />
           )}
-          {props.type === GraphTypeEnum.seats && (
+          {(props.type === GraphTypeEnum.seats ||
+            props.type === GraphTypeEnum.coalitionSeats) && (
             <Seats
               data={chartData}
               partyAbbr={partyAbbr}
               election={props.election}
               mode={effectiveMode}
+              type={props.type}
             />
           )}
         </>
@@ -893,6 +923,13 @@ const History = props => {
     return title;
   })();
 
+  const coalitionFpAvailable =
+    Object.hasOwn(history, 'coalitionFpFrequencies') &&
+    history.coalitionFpFrequencies.length > 0;
+  const coalitionSeatsAvailable =
+    Object.hasOwn(history, 'coalitionSeatCountFrequencies') &&
+    history.coalitionSeatCountFrequencies.length > 0;
+
   let lnpIndex = jsonMapReverse(props.forecast.partyAbbr, 'LNP');
   // Some reports have LNP = -4 because of the current treatment of coalition partners, but
   // that index doesn't exist for the seat count frequencies, so we need to ignore it
@@ -945,6 +982,9 @@ const History = props => {
     setGraphType(GraphTypeEnum.tpp);
     setGraphParty(1);
   };
+  const setGraphCoalitionFp = () => {
+    setGraphType(GraphTypeEnum.coalitionFp);
+  };
   const setGraphAlpFp = () => {
     setGraphType(GraphTypeEnum.fp);
     setGraphParty(0);
@@ -976,6 +1016,9 @@ const History = props => {
   const setGraphOthFp = () => {
     setGraphType(GraphTypeEnum.fp);
     setGraphParty(-1);
+  };
+  const setGraphCoalitionSeats = () => {
+    setGraphType(GraphTypeEnum.coalitionSeats);
   };
   const setGraphAlpSeats = () => {
     setGraphType(GraphTypeEnum.seats);
@@ -1053,6 +1096,15 @@ const History = props => {
                       <Dropdown.Item as="button" onClick={setGraphAlpFp}>
                         ALP first preferences
                       </Dropdown.Item>
+                      {coalitionFpAvailable && (
+                        <Dropdown.Item
+                          as="button"
+                          onClick={setGraphCoalitionFp}
+                        >
+                          {coalitionAbbreviation(props.election)} first
+                          preferences
+                        </Dropdown.Item>
+                      )}
                       {lnpIndex && (
                         <Dropdown.Item as="button" onClick={setGraphLnpFp}>
                           {coalitionAbbreviation(props.election)} first
@@ -1090,6 +1142,11 @@ const History = props => {
                   <Dropdown.Item as="button" onClick={setGraphAlpSeats}>
                     ALP seats
                   </Dropdown.Item>
+                  {coalitionSeatsAvailable && (
+                    <Dropdown.Item as="button" onClick={setGraphCoalitionSeats}>
+                      {coalitionAbbreviation(props.election)} seats
+                    </Dropdown.Item>
+                  )}
                   {lnpIndex && (
                     <Dropdown.Item as="button" onClick={setGraphLnpSeats}>
                       {coalitionAbbreviation(props.election)} seats

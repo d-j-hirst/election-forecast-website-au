@@ -280,8 +280,12 @@ const VoteTrendChart = props => {
   };
   const currentPollTypeDesc = () => pollTypeDesc(pollType);
 
-  const dropdownTitle =
-    'Party: ' + party + (isFp ? ' first preferences' : ' two-party preferred');
+  const partyAbbr =
+    party === 'LNP' ? coalitionAbbreviation(props.forecast.termCode) : party;
+  let dropdownTitle =
+    'Party: ' +
+    partyAbbr +
+    (isFp ? ' first preferences' : ' two-party preferred');
 
   return (
     <>

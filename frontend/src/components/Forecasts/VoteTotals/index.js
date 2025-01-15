@@ -148,6 +148,13 @@ const FpRowSet = props => {
     freqs.sort((el1, el2) => {
       return el2[1][7] - el1[1][7];
     });
+  } else if (canShowCoalition) {
+    freqs = freqs.map(el => {
+      if (el[0] === 'LNP') {
+        el[0] = 'LIB';
+      }
+      return el;
+    });
   }
 
   const results =

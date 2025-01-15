@@ -89,11 +89,10 @@ const SeatsRowSet = props => {
     return el2[1][7] - el1[1][7];
   });
   freqs = freqs.filter(a => a[1][a[1].length - 1] > 0);
-  if (
-    props.useCoalition === true &&
+  const canShowCoalition =
     Object.hasOwn(props.forecast, 'coalitionSeatCountFrequencies') &&
-    props.forecast.coalitionSeatCountFrequencies.length > 0
-  ) {
+    props.forecast.coalitionSeatCountFrequencies.length > 0;
+  if (props.useCoalition === true && canShowCoalition) {
     //
     freqs = freqs.filter(el => {
       const partyAbbr = jsonMap(props.forecast.partyAbbr, el[0]);
@@ -103,7 +102,15 @@ const SeatsRowSet = props => {
     freqs.sort((el1, el2) => {
       return el2[1][7] - el1[1][7];
     });
+  } else if (canShowCoalition) {
+    freqs = freqs.map(el => {
+      if (el[0] === 'LNP') {
+        el[0] = 'LIB';
+      }
+      return el;
+    });
   }
+
   const results =
     props.results === null
       ? null
