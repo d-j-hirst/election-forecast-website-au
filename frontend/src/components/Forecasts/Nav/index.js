@@ -96,12 +96,12 @@ const ForecastsNav = props => {
               id="basic-navbar-nav"
               className="justify-content-end"
             >
-              <ElectionNav
+              {/* <ElectionNav
                 text="Western Australia"
                 election="2025wa"
                 mode={'nowcast'}
                 activeElection={props.election}
-              />
+              /> */}
               <ElectionNav
                 text="Federal"
                 election="2025fed"
