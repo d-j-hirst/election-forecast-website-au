@@ -548,6 +548,17 @@ const MainExplainer = props => {
 const FormationOfGovernment = props => {
   const [showExplainer, setShowExplainer] = useState(false);
 
+  const partyProb = party => {
+    let probMajority = jsonMap(props.forecast.majorityWinPc, party);
+    let probMinority = jsonMap(props.forecast.minorityWinPc, party);
+    if (probMajority === undefined) probMajority = 0;
+    if (probMinority === undefined) probMinority = 0;
+    return probMajority + probMinority;
+  };
+
+  const higherProbParty = partyProb(0) > partyProb(1) ? '0' : '1';
+  const lowerProbParty = higherProbParty === '0' ? '1' : '0';
+
   return (
     <Card className={styles.summary}>
       <Card.Header className={styles.formationOfGovernmentTitle}>
@@ -561,11 +572,11 @@ const FormationOfGovernment = props => {
           <ListGroup className={styles.formationOfGovernmentTopList}>
             {showExplainer && <MainExplainer />}
             <MajorPartyCollapsibleRows
-              partyIndex="0"
+              partyIndex={higherProbParty}
               forecast={props.forecast}
             />
             <MajorPartyCollapsibleRows
-              partyIndex="1"
+              partyIndex={lowerProbParty}
               forecast={props.forecast}
             />
             <OthersCollapsibleRows forecast={props.forecast} />
