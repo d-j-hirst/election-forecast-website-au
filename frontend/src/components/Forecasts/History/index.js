@@ -408,11 +408,12 @@ const Tpp = props => {
       >
         {genericXAxis(lowDate, highDate, props.mode)}
         <YAxis
-          type="number"
+          allowDecimals={false}
           domain={[lowTpp, highTpp]}
           interval="preserveStartEnd"
-          allowDecimals={false}
+          scale="linear"
           tickCount={numTicks}
+          type="number"
           width={25}
         />
         <ReferenceLine y={50} stroke="black" />
@@ -497,12 +498,13 @@ const Fp = props => {
       >
         {genericXAxis(lowDate, highDate, props.mode)}
         <YAxis
-          type="number"
-          domain={[lowFp, highFp]}
-          width={25}
-          interval="preserveStartEnd"
           allowDecimals={false}
+          domain={[lowFp, highFp]}
+          interval="preserveStartEnd"
+          scale="linear"
           tickCount={numTicks}
+          type="number"
+          width={25}
         />
         {genericChartArea('fp1-5', props.partyAbbr, 3, 'none')}
         {genericChartArea('fp5-25', props.partyAbbr, 2, 'none')}
@@ -601,12 +603,13 @@ const Seats = props => {
       >
         {genericXAxis(lowDate, highDate, props.mode)}
         <YAxis
-          type="number"
-          domain={[lowSeats, highSeats]}
-          width={25}
-          interval="preserveStartEnd"
           allowDecimals={false}
+          domain={[lowSeats, highSeats]}
+          interval="preserveStartEnd"
+          scale="linear"
           tickCount={numTicks}
+          type="number"
+          width={25}
         />
         {genericChartArea('seats1-5', colourKey, 3, 'none')}
         {genericChartArea('seats5-25', colourKey, 2, 'none')}
