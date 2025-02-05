@@ -363,7 +363,7 @@ const Tpp = props => {
   const modifiedLowTpp = Math.min.apply(
     Math,
     props.data.map(a =>
-      a.unixDate > 1718668800 && a.unixDate < 1721347200
+      a.unixDate > 1718668800000 && a.unixDate < 1721347200000
         ? 100
         : Math.floor(a['tpp1-5'][0])
     )
@@ -374,7 +374,7 @@ const Tpp = props => {
   const modifiedHighTpp = Math.max.apply(
     Math,
     props.data.map(a =>
-      a.unixDate > 1718668800 && a.unixDate < 1721347200
+      a.unixDate > 1718668800000 && a.unixDate < 1721347200000
         ? 0
         : Math.floor(a['tpp95-99'][1]) + 1
     )
@@ -454,7 +454,7 @@ const Fp = props => {
   const modifiedLowFp = Math.min.apply(
     Math,
     props.data.map(a =>
-      a.unixDate > 1718668800 && a.unixDate < 1721347200
+      a.unixDate > 1718668800000 && a.unixDate < 1721347200000
         ? 100
         : Math.floor(a['fp1-5'][0])
     )
@@ -464,7 +464,7 @@ const Fp = props => {
   const modifiedHighFp = Math.max.apply(
     Math,
     props.data.map(a =>
-      a.unixDate > 1718668800 && a.unixDate < 1721347200
+      a.unixDate > 1718668800000 && a.unixDate < 1721347200000
         ? 0
         : Math.floor(a['fp95-99'][1]) + 1
     )
@@ -543,7 +543,7 @@ const Seats = props => {
   const modifiedLowSeats = Math.min.apply(
     Math,
     props.data.map(a =>
-      a.unixDate > 1718668800 && a.unixDate < 1721347200
+      a.unixDate > 1718668800000 && a.unixDate < 1721347200000
         ? 150
         : Math.floor(a['seats1-5'][0])
     )
@@ -553,7 +553,7 @@ const Seats = props => {
   const modifiedHighSeats = Math.max.apply(
     Math,
     props.data.map(a =>
-      a.unixDate > 1718668800 && a.unixDate < 1721347200
+      a.unixDate > 1718668800000 && a.unixDate < 1721347200000
         ? 0
         : Math.floor(a['seats95-99'][1]) + 1
     )
