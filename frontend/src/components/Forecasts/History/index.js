@@ -368,7 +368,7 @@ const Tpp = props => {
         : Math.floor(a['tpp1-5'][0])
     )
   );
-  let lowTpp = Math.min.apply(Math, modifiedLowTpp);
+  let lowTpp = modifiedLowTpp;
   while (lowTpp % 2 >= 1) --lowTpp;
   lowTpp = Math.min(48, lowTpp);
   const modifiedHighTpp = Math.max.apply(
@@ -379,7 +379,7 @@ const Tpp = props => {
         : Math.floor(a['tpp95-99'][1]) + 1
     )
   );
-  let highTpp = Math.max.apply(Math, modifiedHighTpp);
+  let highTpp = modifiedHighTpp;
   while ((highTpp - lowTpp) % 2 >= 1) ++highTpp;
   highTpp = Math.max(52, highTpp);
   const numTicks = (highTpp - lowTpp) / 2 + 1;
@@ -459,7 +459,7 @@ const Fp = props => {
         : Math.floor(a['fp1-5'][0])
     )
   );
-  let lowFp = Math.min.apply(Math, modifiedLowFp);
+  let lowFp = modifiedLowFp;
   while (lowFp % 4 >= 1) --lowFp;
   const modifiedHighFp = Math.max.apply(
     Math,
@@ -469,7 +469,7 @@ const Fp = props => {
         : Math.floor(a['fp95-99'][1]) + 1
     )
   );
-  let highFp = Math.max.apply(Math, modifiedHighFp);
+  let highFp = modifiedHighFp;
   while ((highFp - lowFp) % 4 >= 1) ++highFp;
   const numTicks = (highFp - lowFp) / 4 + 1;
 
@@ -548,7 +548,7 @@ const Seats = props => {
         : Math.floor(a['seats1-5'][0])
     )
   );
-  let lowSeats = Math.min.apply(Math, modifiedLowSeats);
+  let lowSeats = modifiedLowSeats;
   while (lowSeats % 10 >= 1) --lowSeats;
   const modifiedHighSeats = Math.max.apply(
     Math,
@@ -558,7 +558,7 @@ const Seats = props => {
         : Math.floor(a['seats95-99'][1]) + 1
     )
   );
-  let highSeats = Math.max.apply(Math, modifiedHighSeats);
+  let highSeats = modifiedHighSeats;
   while ((highSeats - lowSeats) % 10 >= 1) ++highSeats;
   let numTicks = (highSeats - lowSeats) / 10 + 1;
   if (numTicks < 5) numTicks = (highSeats - lowSeats) / 5 + 1;
