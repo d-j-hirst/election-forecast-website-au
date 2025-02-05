@@ -359,17 +359,28 @@ RangeTooltip.propTypes = {
 };
 
 const Tpp = props => {
-  let lowTpp = Math.min.apply(
+  // Remove certain outliers so that the chart is more readable
+  const modifiedLowTpp = Math.min.apply(
     Math,
-    props.data.map(a => Math.floor(a['tpp1-5'][0]))
+    props.data.map(a =>
+      a.unixDate > 1718668800 && a.unixDate < 1721347200
+        ? 100
+        : Math.floor(a['tpp1-5'][0])
+    )
   );
-  if (lowTpp % 2 !== 0) --lowTpp;
+  let lowTpp = Math.min.apply(Math, modifiedLowTpp);
+  while (lowTpp % 2 >= 1) --lowTpp;
   lowTpp = Math.min(48, lowTpp);
-  let highTpp = Math.max.apply(
+  const modifiedHighTpp = Math.max.apply(
     Math,
-    props.data.map(a => Math.floor(a['tpp95-99'][1]) + 1)
+    props.data.map(a =>
+      a.unixDate > 1718668800 && a.unixDate < 1721347200
+        ? 0
+        : Math.floor(a['tpp95-99'][1]) + 1
+    )
   );
-  if ((highTpp - lowTpp) % 2 !== 0) ++highTpp;
+  let highTpp = Math.max.apply(Math, modifiedHighTpp);
+  while ((highTpp - lowTpp) % 2 >= 1) ++highTpp;
   highTpp = Math.max(52, highTpp);
   const numTicks = (highTpp - lowTpp) / 2 + 1;
 
@@ -381,8 +392,6 @@ const Tpp = props => {
     Math,
     props.data.map(a => a.unixDate)
   );
-
-  const customTicks = createTicks(lowDate, highDate);
 
   return (
     <ResponsiveContainer width="100%" height={400}>
@@ -441,16 +450,27 @@ Tpp.propTypes = {
 };
 
 const Fp = props => {
-  let lowFp = Math.min.apply(
+  // Remove certain outliers so that the chart is more readable
+  const modifiedLowFp = Math.min.apply(
     Math,
-    props.data.map(a => Math.floor(a['fp1-5'][0]))
+    props.data.map(a =>
+      a.unixDate > 1718668800 && a.unixDate < 1721347200
+        ? 100
+        : Math.floor(a['fp1-5'][0])
+    )
   );
-  while (lowFp % 4 !== 0) --lowFp;
-  let highFp = Math.max.apply(
+  let lowFp = Math.min.apply(Math, modifiedLowFp);
+  while (lowFp % 4 >= 1) --lowFp;
+  const modifiedHighFp = Math.max.apply(
     Math,
-    props.data.map(a => Math.floor(a['fp95-99'][1]) + 1)
+    props.data.map(a =>
+      a.unixDate > 1718668800 && a.unixDate < 1721347200
+        ? 0
+        : Math.floor(a['fp95-99'][1]) + 1
+    )
   );
-  while ((highFp - lowFp) % 4 !== 0) ++highFp;
+  let highFp = Math.max.apply(Math, modifiedHighFp);
+  while ((highFp - lowFp) % 4 >= 1) ++highFp;
   const numTicks = (highFp - lowFp) / 4 + 1;
 
   const lowDate = Math.min.apply(
@@ -461,8 +481,6 @@ const Fp = props => {
     Math,
     props.data.map(a => a.unixDate)
   );
-
-  const customTicks = createTicks(lowDate, highDate);
 
   return (
     <ResponsiveContainer width="100%" height={400}>
@@ -521,16 +539,27 @@ Fp.propTypes = {
 };
 
 const Seats = props => {
-  let lowSeats = Math.min.apply(
+  // Remove certain outliers so that the chart is more readable
+  const modifiedLowSeats = Math.min.apply(
     Math,
-    props.data.map(a => Math.floor(a['seats1-5'][0]))
+    props.data.map(a =>
+      a.unixDate > 1718668800 && a.unixDate < 1721347200
+        ? 150
+        : Math.floor(a['seats1-5'][0])
+    )
   );
-  while (lowSeats % 10 !== 0) --lowSeats;
-  let highSeats = Math.max.apply(
+  let lowSeats = Math.min.apply(Math, modifiedLowSeats);
+  while (lowSeats % 10 >= 1) --lowSeats;
+  const modifiedHighSeats = Math.max.apply(
     Math,
-    props.data.map(a => Math.floor(a['seats95-99'][1]) + 1)
+    props.data.map(a =>
+      a.unixDate > 1718668800 && a.unixDate < 1721347200
+        ? 0
+        : Math.floor(a['seats95-99'][1]) + 1
+    )
   );
-  while ((highSeats - lowSeats) % 10 !== 0) ++highSeats;
+  let highSeats = Math.max.apply(Math, modifiedHighSeats);
+  while ((highSeats - lowSeats) % 10 >= 1) ++highSeats;
   let numTicks = (highSeats - lowSeats) / 10 + 1;
   if (numTicks < 5) numTicks = (highSeats - lowSeats) / 5 + 1;
   if (numTicks < 4) numTicks = (highSeats - lowSeats) / 2 + 1;
