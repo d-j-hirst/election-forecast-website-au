@@ -408,6 +408,7 @@ const Tpp = props => {
       >
         {genericXAxis(lowDate, highDate, props.mode)}
         <YAxis
+          allowDataOverflow={true}
           allowDecimals={false}
           domain={[lowTpp, highTpp]}
           interval="preserveStartEnd"
@@ -498,6 +499,7 @@ const Fp = props => {
       >
         {genericXAxis(lowDate, highDate, props.mode)}
         <YAxis
+          allowDataOverflow={true}
           allowDecimals={false}
           domain={[lowFp, highFp]}
           interval="preserveStartEnd"
@@ -603,6 +605,7 @@ const Seats = props => {
       >
         {genericXAxis(lowDate, highDate, props.mode)}
         <YAxis
+          allowDataOverflow={true}
           allowDecimals={false}
           domain={[lowSeats, highSeats]}
           interval="preserveStartEnd"
