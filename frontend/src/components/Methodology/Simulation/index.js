@@ -7,27 +7,28 @@ const MethodologyPollTrend = props => {
     <>
       <h4 id="simulation">Simulation of full election results</h4>
       <p>
-        To generate forecasts, the model simulates the election a large number
-        of times (typically 100,000) to evaluate how projected vote totals
-        translate into actual seat outcomes in Parliament. This process
+        To produce forecasts, the model simulates the election a large number of
+        times (typically at least 100,000) to determine how the projected vote
+        shares translate into actual seat outcomes in Parliament. This process
         involves:
       </p>
       <ul>
         <li>
-          Generating election samples, using projected vote shares from the poll
-          trends and fundamentals as described in the previous sections.
+          <strong>Generating election samples:</strong> Using the projected vote
+          shares derived from the poll trends and fundamentals.
         </li>
         <li>
-          Simulating seat-by-seat results, incorporating historical seat-level
-          voting patterns.
+          <strong>Simulating seat-by-seat results:</strong> Incorporating
+          historical seat-level voting patterns.
         </li>
         <li>
-          Adjusting results to ensure the overall totals match the projected
-          election sample as closely as possible.
+          <strong>Adjusting totals:</strong> Tweaking the results so that the
+          overall simulated totals closely match the original election sample.
         </li>
         <li>
-          Collating results across all simulations to produce probability
-          distributions for various election outcomes.
+          <strong>Collating outcomes:</strong> Aggregating the results from all
+          simulations to form probability distributions for various election
+          scenarios.
         </li>
       </ul>
       <h5 id="tpp-region">
@@ -35,28 +36,23 @@ const MethodologyPollTrend = props => {
       </h5>
       <p>
         Elections rarely exhibit uniform swings across all regions. For example,
-        in the 2019 Federal Election, the ALP gained ground in Victoria but lost
-        support in Queensland.
+        in the 2019 federal election the ALP gained ground in Victoria while
+        losing support in Queensland.
       </p>
       <p>
-        In federal elections, polling often includes regional breakdowns by
-        state. In state elections, some polls occasionally provide regional
-        breakdowns within the state. For the purpose of this section, &quot;
-        region&quot; refers to either:
-      </p>
-      <ul>
-        <li>A state/territory (in a federal election), or</li>
-        <li>A geographic region (within a state election).</li>
-      </ul>
-      <p>
-        This model considers regional variations in two-party-preferred (2PP)
-        vote swings, but not first-preference variations across regions.
+        In federal elections, polling typically includes regional breakdowns by
+        state. In state elections, some polls provide regional breakdowns within
+        the state. For the purpose of this analysis, a &quot;region&quot; refers
+        either to a state or territory (in federal elections) or to a geographic
+        region within a state (in state elections). The model accounts for
+        regional variations in 2PP swings, though it does not consider regional
+        differences in first-preference votes.
       </p>
       <h6>Estimating Regional Swings from Polls</h6>
       <p>
         When a poll provides regional breakdowns, the model calculates swing
         deviations—the difference between a region&apos;s swing and the overall
-        national/statewide swing in the same poll.
+        national or statewide swing in the same poll.
       </p>
       <p>Example Calculation of Swing Deviation:</p>
       <p>A poll reports a +4% swing to the ALP nationally.</p>
@@ -66,69 +62,57 @@ const MethodologyPollTrend = props => {
         swing).
       </p>
       <p>
-        Each poll&apos;s regional swing deviations are aggregated using a
-        Bayesian analysis, similar to the method used for national poll trends.
+        These regional deviations are aggregated using a Bayesian approach
+        similar to that applied to national poll trends. This method accounts
+        for polling uncertainty while ensuring that the weighted sum of all
+        regional swing deviations is zero, so that total seat swings remain
+        consistent with the overall election-wide trend. When pollsters divide
+        regions differently, the aggregation process resolves overlaps to
+        produce a final set of non-overlapping regions.
       </p>
-      <ul>
-        <li>
-          This ensures that swing deviations are estimated as accurately as
-          possible, while accounting for polling uncertainty.
-        </li>
-        <li>
-          A key constraint is that the weighted sum of all regional swing
-          deviations must be zero, ensuring that total seat swings still match
-          the overall election-wide trend.
-        </li>
-        <li>
-          If pollsters divide regions differently, the aggregation process
-          resolves overlaps by producing a final set of non-overlapping regions.
-        </li>
-      </ul>
       <h6>Assessing the Reliability of Regional Polling</h6>
       <p>
-        To ensure regional polling is used realistically, the model evaluates
-        historical polling performance by measuring:
+        To ensure that regional polling is used realistically, the model
+        evaluates historical polling performance by measuring:
       </p>
       <ul>
         <li>
-          <i>Bias</i> – Do polled regional swing deviations systematically
-          overestimate support for one party?
+          <i>Bias</i>: Whether polled regional swing deviations systematically
+          overestimate support for one party.
         </li>
         <li>
-          <i>Sensitivity</i> – How well do polled deviations correlate with
-          actual election swings? Generally, polls tend to exaggerate regional
-          swing deviations, but some regions are more predictable than others.
+          <i>Sensitivity</i>: How well the polled deviations correlate with
+          actual election swings. Although polls tend to exaggerate regional
+          differences, some regions prove more predictable than others.
         </li>
         <li>
-          <i>Spread of Errors</i> – After accounting for bias and sensitivity,
-          how large are the remaining discrepancies between polled and actual
-          swing deviations?
+          <i>Spread of Errors</i>: After accounting for bias and sensitivity,
+          the magnitude of the remaining discrepancies between polled and actual
+          swing deviations.
         </li>
       </ul>
       <h6>Estimating Regional Swings Without Polling</h6>
       <p>
-        Not all regions have regular polling data—for example, in federal
-        elections, Tasmania, ACT, and NT often lack regional polling.
-      </p>
-      <p>
-        For these regions, the model instead uses historical patterns, analyzing
-        how their past swings tended to differ from national swings:
+        Not all regions have regular polling data—for instance, Tasmania, the
+        ACT, and the NT often lack regional polls in federal elections. In such
+        cases, the model uses historical patterns to estimate regional swings by
+        analysing how a region&apos;s past swings have differed from the
+        national average. Here:
       </p>
       <ul>
         <li>
-          Bias now reflects long-term trends in how the region typically swings
-          relative to the national average.
+          Bias reflects long-term trends in a region&apos;s typical deviation
+          from the national swing.
         </li>
         <li>
-          Sensitivity measures whether the region tends to swing more or less
-          than the national average in any given election.
+          Sensitivity measures whether a region tends to swing more or less than
+          the national average in any given election.
         </li>
         <li>
-          In regions with limited polling, the final regional swing estimate is
-          a mix of poll-based deviations (when available), historically inferred
-          deviations (when polling is unavailable or unreliable). If regional
-          polling exists but is outdated, its weight is gradually reduced over
-          time.
+          For regions with limited polling, the final regional swing estimate is
+          a mix of available poll-based deviations and historically inferred
+          deviations. If regional polling exists but is outdated, its weight is
+          gradually reduced over time.
         </li>
       </ul>
       <h6>Applying Regional Swing Deviations in Simulations</h6>
@@ -155,15 +139,16 @@ const MethodologyPollTrend = props => {
       <h5 id="tpp-seat">Two-party-preferred (2PP) seat vote share</h5>
       <p>
         Once regional 2PP swings have been determined, the next step is to
-        simulate the two-party-preferred (2PP) result for each seat. This is
-        done for all seats, even those where the final two-candidate-preferred
-        (2CP) result was not between the two major parties.
+        simulate the 2PP result for each seat. This simulation is applied to
+        every seat—even in contests where the final two-candidate-preferred
+        outcome did not involve the two major parties.
       </p>
       <h6>Applying Regional Swings to Individual Seats</h6>
-      <p>Each seat&apos;s projected 2PP swing is determined by:</p>
+      <p>For each seat, the projected 2PP swing is determined by:</p>
       <ul>
         <li>
-          Applying the regional swing to the existing seat margin, adjusted for
+          <strong>Applying Regional Swings:</strong> The regional swing is
+          applied to the existing seat margin, which is adjusted for
           redistributions using{' '}
           <ExtLink href="https://antonygreen.com.au/category/redistribution/">
             Antony Green&apos;s estimates
@@ -171,48 +156,36 @@ const MethodologyPollTrend = props => {
           (including draft redistributions where applicable).
         </li>
         <li>
-          Adjusting for seat elasticity, which accounts for whether the seat
-          typically swings more or less than the regional average. If a seat has
-          changed names or borders, historical data from similar past seats is
-          incorporated. If a seat is completely new, data from comparable seats
-          is used instead. Validating seat elasticity estimates using a
-          cross-one-out analysis to measure their predictive accuracy and adjust
-          their influence accordingly.
+          <strong>Adjusting for Seat Elasticity:</strong> Seats often swing by
+          more or less than the regional average. To account for this,
+          adjustments are made based on historical data from similar seats. For
+          seats with altered names or boundaries, comparable past seats are
+          used, and entirely new seats are matched with data from comparable
+          areas. These elasticity estimates are validated through a
+          cross-one-out analysis to measure predictive accuracy and fine-tune
+          their influence.
         </li>
       </ul>
-      <h6>Adjustments for Candidate-Specific Factors</h6>
+      <h6>Incorporating Candidate-Specific Factors</h6>
       <p>
-        Certain candidate-related effects are incorporated into the seat&apos;s
-        2PP adjustment, including:
+        Several candidate-related effects are factored into the 2PP adjustment:
       </p>
       <ul>
         <li>
-          Retirements – The loss of an incumbent advantage when a sitting MP
-          does not recontest.
+          <strong>Retirements:</strong> A loss of incumbent advantage occurs
+          when a sitting MP does not recontest.
         </li>
         <li>
-          Sophomore Surge – Newly elected MPs (and new parties in a seat) tend
-          to outperform the regional average in their second election.
-          <ul>
-            <li>
-              This effect is analysed separately for individual candidates and
-              political parties, and both factors are combined when a candidate
-              wins a seat from an opposing party.
-            </li>
-            <li>
-              The impact is also assessed separately for urban and regional
-              seats to capture geographic differences.
-            </li>
-          </ul>
+          <strong>Sophomore Surge:</strong> Newly elected MPs (or new parties in
+          a seat) tend to outperform the regional average in their second
+          election. This effect is analysed separately for individual candidates
+          and parties, and the combined influence is applied when a candidate
+          wins a seat from an opposing party
         </li>
         <li>
-          Disendorsement effects – Adjustments for:
-          <ul>
-            <li>A vote loss when a candidate is disendorsed.</li>
-            <li>
-              A vote recovery in the next election after such a disendorsement.
-            </li>
-          </ul>
+          <strong>Disendorsement Effects:</strong> Adjustments account for a
+          vote loss when a candidate is disendorsed and a subsequent recovery in
+          the following election.
         </li>
       </ul>
       <h6>State Elections: Correlation with Federal Swings</h6>
@@ -255,7 +228,8 @@ const MethodologyPollTrend = props => {
       <ul>
         <li>
           Some seats are naturally more volatile than others, even after
-          considering the above factors.
+          considering the above factors, and this is reflected in the magnitude
+          of the random variation.
         </li>
         <li>
           However, a minimum level of variability is imposed, as small sample
@@ -288,10 +262,10 @@ const MethodologyPollTrend = props => {
       <h5 id="fp-seat">First-preference (FP) seat vote share</h5>
       <p>
         Although the 2PP vote is simulated first due to its greater reliability,
-        the FP vote is also modelled, as some contests do not result in a
-        two-party-preferred final count. This process is complex, involving
-        numerous variables and judgment calls, particularly in cases with third
-        parties and independents where historical data is limited.
+        the FP vote is also modelled, since some contests do not result in a
+        two-candidate-preferred count. This process is complex, involving
+        numerous variables and judgment calls—especially where historical data
+        for third parties and independents is limited.
       </p>
       <h6>Simulating Minor Party and Independent FP Votes</h6>
       <p>
@@ -305,13 +279,13 @@ const MethodologyPollTrend = props => {
           (see &quot;Fundamentals&quot; above).
         </li>
         <li>
-          Applying historical trends to previous election vote shares, adjusting
+          Applying historical trends to previous election vote shares, adjusted
           for incumbency effects, previous vote share, and natural vote
           volatility.
         </li>
       </ul>
       <h6>Independents</h6>
-      <p>For independent candidates, additional considerations are made:</p>
+      <p>For independent candidates, additional considerations are applied:</p>
       <p>Recontesting probabilities:</p>
       <ul>
         <li>
@@ -319,8 +293,7 @@ const MethodologyPollTrend = props => {
           historical patterns are used to estimate these probabilities.
         </li>
         <li>
-          If a candidate announces retirement, they are removed from
-          simulations.
+          Candidates who announce retirement are removed from simulations.
         </li>
         <li>
           If a candidate declares intent to run, their recontesting probability
@@ -357,13 +330,13 @@ const MethodologyPollTrend = props => {
         </li>
         <li>
           This also applies to quasi-independent candidates, who technically
-          stand for a party but run primarily on personal appeal.
+          stand for a party but rely primarily on personal appeal.
         </li>
       </ul>
       <p>Correlated performance of independents:</p>
       <ul>
         <li>
-          The performance of independents is not treated as fully independent
+          Independents&apos; performance is not treated as fully independent
           across seats.
         </li>
         <li>
@@ -392,17 +365,13 @@ const MethodologyPollTrend = props => {
       </p>
       <h6>&quot;Populist&quot; parties and ideology</h6>
       <p>
-        Parties in the &quot;populist&quot; category (e.g., One Nation, UAP,
-        Australian Democrats) do not necessarily contest every seat.
-      </p>
-      <p>
-        In each simulation, they are assigned a random number of contested
-        seats, based on historical patterns but with substantial variation,
-        preferentially contest seats where they historically performed well.
-      </p>
-      <p>
-        FP votes for these parties are calibrated by ideology, based on how
-        similar parties have performed in comparable seats.
+        Parties in the &quot;populist&quot; category (e.g. One Nation, UAP,
+        Australian Democrats) do not necessarily contest every seat. In each
+        simulation, they are assigned a random number of contested seats based
+        on historical patterns, with substantial variation, and are
+        preferentially placed in seats where they have historically performed
+        well. Their FP votes are calibrated by ideology, drawing on how similar
+        parties have performed in comparable seats.
       </p>
       <p>
         Unidentified emerging parties are randomly assigned an ideological
@@ -412,11 +381,10 @@ const MethodologyPollTrend = props => {
       </p>
       <h6>Incorporation of betting odds</h6>
       <p>
-        As of September 2022, seat betting odds are used to adjust vote shares
-        for minor party and independent candidates. This is achieved by running
-        preliminary simulations to determine the FP vote share required for a
-        certain probability of winning a seat. The model then nudges the
-        simulated FP vote toward the vote share implied by the betting odds.
+        Seat betting odds are also used to adjust vote shares for minor party
+        and independent candidates. Preliminary simulations determine the FP
+        vote share required for a specific probability of winning a seat, and
+        the simulated FP vote is nudged toward the betting odds.
       </p>
       <h6 id="fp-seat-">Simulating Major Party FP Votes</h6>
       <p>
@@ -425,26 +393,25 @@ const MethodologyPollTrend = props => {
       </p>
       <ul>
         <li>
-          Calculating preference flows for each party, based on previous
+          Calculating preference flows for each party based on previous
           elections.
         </li>
         <li>
-          Adjusting preference flows using the baseline from the election
-          sample, the seat-level deviation from the previous election, and
-          randomvariability to account for uncertainty.
+          Adjusting these flows using the baseline from the election sample, the
+          seat-level deviation from the previous election, and random
+          variability to capture uncertainty.
         </li>
         <li>
-          Deriving the major party FP vote shares, ensuring they align with the
-          simulated 2PP result for each seat.
+          Deriving major party FP vote shares that align with the simulated 2PP
+          result for each seat.
         </li>
       </ul>
       <h6 id="fp-seat-">
         Reconciling Seat-Level FP Votes with the Election Sample
       </h6>
       <p>
-        After seat-level FP votes are generated, their totals may no longer
-        align with the FP vote distribution in the original election sample. To
-        correct this:
+        After generating seat-level FP votes, the totals may not align with the
+        FP vote distribution in the original election sample. To correct this:
       </p>
       <ul>
         <li>
@@ -462,20 +429,17 @@ const MethodologyPollTrend = props => {
       </ul>
       <p>
         In seats where a specific independent significantly outperforms their
-        party&apos;s general FP vote share, adjustments are modified to minimise
-        reductions to their vote. This ensures that independent candidates with
-        strong personal support are not unfairly penalised due to overall minor
-        party vote fluctuations.
+        party&apos;s general FP vote share, adjustments are tailored to minimise
+        reductions to that candidate&apos;s vote, ensuring strong personal
+        support is not unfairly penalised by overall minor party vote
+        fluctuations.
       </p>
       <h5 id="simulation-aggregation">Aggregation of simulation results</h5>
       <p>
-        Once each election simulation is completed, the results for all seats—
-        including first-preference votes, two-candidate-preferred (TCP)
-        outcomes, total seats won, and overall vote shares—are recorded.
-      </p>
-      <p>
-        After all simulations have run, the results are aggregated into
-        statistical summaries, including:
+        Once every election simulation is complete, the results for all seats—
+        including FP votes, two-candidate-preferred (TCP) outcomes, total seats
+        won, and overall vote shares—are recorded. These outcomes are then
+        aggregated into statistical summaries, which include:
       </p>
       <ul>
         <li>Averages and percentiles for key outcomes.</li>
