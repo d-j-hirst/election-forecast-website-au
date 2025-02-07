@@ -256,11 +256,6 @@ const MethodologyPollTrend = props => {
         election—within a week or less—the projection is neither markedly better
         nor worse than the raw poll trend.
       </p>
-      <p>
-        The other exception is that for estimates <i>very close</i> to the
-        election—within a week or less—the projection becomes neither
-        particularly better nor worse than the raw poll trend.
-      </p>
       <h5 id="mixing">Sampling elections from the projection</h5>
       <p>
         Up to this point, the fundamentals, poll trend, and projection have been

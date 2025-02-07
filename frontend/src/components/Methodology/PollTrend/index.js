@@ -17,7 +17,7 @@ const MethodologyPollTrend = props => {
       </p>
       <h5 id="poll-data-used">Poll data used</h5>
       <p>
-        <GlossaryLink word="Poll" /> are collected mainly from public sources –
+        <GlossaryLink word="Polls" /> are collected mainly from public sources –
         directly from pollsters, through news media, or from the{' '}
         <ExtLink href="https://www.pollbludger.net/">Poll Bludger</ExtLink>{' '}
         archives, with additional historical data from{' '}
@@ -108,7 +108,7 @@ const MethodologyPollTrend = props => {
         of{' '}
         <ExtLink href="https://marktheballot.blogspot.com/">
           Mark the Ballot
-        </ExtLink>
+        </ExtLink>{' '}
         and first applied in the 2004 federal election{' '}
         <ExtLink href="http://dx.doi.org/10.1080/10361140500302472">
           (Jackman, 2005)
@@ -139,7 +139,7 @@ const MethodologyPollTrend = props => {
           systemic bias due to methodological limitations.
         </li>
         <li>
-          <strong>Pollster Reliability:</strong> Each pollster&apos; historical
+          <strong>Pollster Reliability:</strong> Each pollster&apos;s historical
           volatility—the extent to which their results fluctuate relative to the
           overall trend—is assessed. Pollsters with higher volatility are deemed
           less reliable in tracking shifts in voting intention, so their results
@@ -278,7 +278,7 @@ const MethodologyPollTrend = props => {
           corresponding times are then averaged. This average is weighted by
           proximity to other polls (for example, polls conducted on the same day
           as two others receive full weighting, while those with no other polls
-          polls within two months receive almost zero weighting).
+          within two months receive almost zero weighting).
         </li>
       </ul>
       <p>
