@@ -7,14 +7,13 @@ const MethodologyPollTrend = props => {
     <>
       <h4 id="projection">Projecting election vote shares</h4>
       <p>
-        The poll trends can be considered the model&apos;s best guess at where
-        the poll averages would be if very many polls were done. Historically,
-        the polling average immediately before the election has been quite
-        accurate in most cases. However, as seen in some previous elections,
-        such as the 2019 federal election and the 2018 Victorian state election,
-        the poll average can sometimes differ significantly from the actual
-        results. Additionally, any time difference between the now and the
-        election further diminishes the predictiveness of the poll trend.
+        The poll trends represent the model&apos;s best estimate of where
+        polling averages would land if a large number of polls were conducted.
+        While pre-election polling has historically been fairly accurate,
+        exceptions exist—such as the 2019 federal election and the 2018
+        Victorian state election, where polling significantly misestimated the
+        actual results. Furthermore, the predictive accuracy of poll trends
+        decreases the further out they are from the election.
       </p>
       <p>
         Therefore, the next step after identifying the poll trend is to project
@@ -26,12 +25,17 @@ const MethodologyPollTrend = props => {
       </p>
       <h5 id="fundamentals">Fundamentals</h5>
       <p>
-        The first step of this projection procedure is to establish a baseline
-        value for the result that would be expected if there were <i>no</i>{' '}
-        polls. This is called a <i>fundamentals</i> projection. Fundamentals are
-        analysed for a number of different categories of parties and votes
-        (known as party categories). The party categories are chosen according
-        to similar electoral behaviour, and some do overlap. The categories are:
+        The first step in projecting election outcomes is establishing a
+        baseline estimate—known as the fundamentals projection. This serves as a
+        starting point for the model, representing the expected result in the
+        absence of polling data. Later, this will be combined with real-time
+        polling trends to refine the final projection.
+      </p>
+      <p>
+        Fundamentals are analysed for a number of different categories of
+        parties and votes (known as party categories). The party categories are
+        chosen according to similar electoral behaviour, and some do overlap.
+        The categories are:
       </p>
       <ul>
         <li>Two-party-preferred vote</li>
@@ -48,14 +52,14 @@ const MethodologyPollTrend = props => {
           e.g. One Nation, Australian Democrates, UAP/PUP
         </li>
         <li>
-          &quot;Others&quot; - Sum of <i>all</i> parties (including any
-          mentioned above) <i>except</i> the major parties, Greens, and WA
-          Nationals
+          &quot;Others&quot; - Sum of <i>all</i> parties and independents\
+          (including any mentioned above) <i>except</i> the major parties,
+          Greens, and WA Nationals
         </li>
         <li>
           &quot;Unnamed others&quot; - Sum of all parties not considered
-          significant (either not polled, or only polling very low numbers)
-          along with independents
+          significant for analysis (either not polled, or only polling very low
+          numbers) along with independents
         </li>
       </ul>
       <p>
@@ -111,14 +115,14 @@ const MethodologyPollTrend = props => {
         procedure repeatedly with a data point left out and determining how
         accurately the procedure predicts that data point, which measures the
         ability to predict out-of-sample data. Fitted models such as these are
-        often less accurate when working on new&quot;out-of-sample&quot; data
+        often less accurate when working on new &quot;out-of-sample&quot; data
         than the data that the model is trained on, and this validation checks
         that the method still has predictive value.
       </p>
       <p>
         The predictive accuracy of the fundamentals regression was compared to
         some simple baselines: using the previous election result, averages of
-        previous election results, and for 2PP a simple 50-50 result. The{' '}
+        previous election results, and for 2PP, a simple 50-50 result. The{' '}
         <ExtLink href="https://en.wikipedia.org/wiki/Root-mean-square_deviation">
           RMSD
         </ExtLink>
@@ -146,16 +150,16 @@ const MethodologyPollTrend = props => {
       </p>
       <h5 id="mixing">Calculating the projection parameters</h5>
       <p>
-        The aim here is combine the fundamentals estimate with the poll trend,
-        using a weighted average to produce the most accurate estimate possible.
-        The parameters for this process depend on the vote type (the party and
-        whether it is 2PP or FP) and the time remaining until the election. This
-        process uses all elections with recorded polling data to determine the
-        optimal parameters. Separate estimates of the parameters are made at
-        various time points, ranging from immediately before the election to
-        about 3 years prior (before that point there are too few elections with
-        any polling to obtain a useful sample size). The following steps are
-        conducted separately for each combination of vote type and time point.
+        To refine the projection, the model blends the fundamentals estimate
+        with the poll trend using a weighted average. The weighting depends on
+        (1) the party and vote type (2PP vs. FP) and (2) the time remaining
+        until the election. These parameters are optimized using past elections
+        where polling data was available. Separate estimates of the parameters
+        are made at various lengths of time prior to elections, ranging from
+        immediately before the election to about 3 years prior (before that
+        point there are too few elections with any polling to obtain a useful
+        sample size). The following steps are conducted separately for each
+        combination of vote type and time point.
       </p>
       <p>
         First, the <i>biases</i> of both the poll trend and the fundamentals
@@ -164,9 +168,8 @@ const MethodologyPollTrend = props => {
         observed that both &quot;Others&quot; and &quot;Populist Minors&quot;
         tend to poll significantly higher than their election result around 1-2
         years from the election. (Biases for fundamentals are usually quite
-        small). the election. (Biases for fundamentals are usually quite small).
-        These biases are then subtracted from the poll trend and fundamentals
-        before the next steps.
+        small). These biases are then subtracted from the poll trend and
+        fundamentals before the next steps.
       </p>
       <p>
         The next step is to determine the optimal amount of mixing between the
@@ -196,12 +199,12 @@ const MethodologyPollTrend = props => {
       </p>
       <p>
         As mentioned earlier, the above process is repeated separately using
-        different time points for the polling trend, each with its own set of
-        parameters for the models (biases, mix factor, and measures of spread).
-        Due to fluctuations in historical polling and the relatively small
-        sample size, the parameters obtained also tend to fluctuate, as measured
-        against the time remaining before the election. Since such fluctuations
-        are very unlikely to have predictive value (being the result of polling
+        lengths of time before the election, each with its own set of parameters
+        for the models (biases, mix factor, and measures of spread). Due to
+        fluctuations in historical polling and the relatively small sample size,
+        the parameters obtained also tend to fluctuate, as measured against the
+        time remaining before the election. Since such fluctuations are very
+        unlikely to have predictive value (being the result of polling
         volatility across a small sample of elections), and indeed are likely to
         mislead if they were actually used for modelling, the obtained
         parameters are each individually smoothed heavily over time into trends
@@ -289,53 +292,44 @@ const MethodologyPollTrend = props => {
         variation.
       </p>
       <p>
-        The most straightforward part of this step involves the minor parties
-        (including the Greens), which receive a first preference vote share
-        randomly selected from the probability distribution in their FP
-        projection, as determined earlier.
+        Minor parties (including the Greens) receive a randomly drawn
+        first-preference vote share from their probability distribution.
       </p>
       <p>
-        In addition to the significant minor parties, some samples are also
-        assigned to include an &quot;emerging party&quot;, representing the
-        possibility of a new party emerging and getting a sizeable percentage of
-        the vote (as One Nation did significantly in the 1998 Queensland
-        election, and to a lesser extent, the Palmer United Party in the 2013
-        federal election). The probability of emergence and the size of the
-        emerging party&apos;s vote are loosely extrapolated from the few such
-        events that have occurred in the past; both decrease over time as the
-        election approaches. The rate of this reduction over time is based on
-        subjective judgment, as, while it is oevident that the chances of a new
-        party emerging should decrease as the election approaches, there is
-        insufficient data to even roughly estimate the rate of decrease.
+        Some simulations include an &quot;emerging party&quot; to account for
+        the possibility of a new political force gaining traction (e.g., One
+        Nation in 1998 or the Palmer United Party in 2013). The probability of
+        an emerging party and its vote share are modeled based on historical
+        cases but decline as the election nears.
       </p>
       <p>
-        For the major parties, it is necessary to coordinate their FPs with the
-        2PP so that the 2PP can result from a plausible preference flow. Two
-        approaches are used to achieve this: either by using the FPs and
-        ignoring the 2PP projection (<i>FP-first</i> approach) or by using the
-        2PP projection and ignoring the FPs (<i>2PP-first</i> approach). Both
-        methods have advantages and disadvantages, so for each sample, one or
-        the other is picked at random.
+        Coordinating Major Party Vote Shares with 2PP: Because first-preference
+        (FP) votes and two-party-preferred (2PP) results must align, the model
+        uses two different approaches:
       </p>
       <ul>
         <li>
-          FP-first: Both the Labor and Coalition/Liberal FP vote shares are
-          projected. The FP of all parties are then adjusted proportionally so
-          that the total is equal to 100%. Each minor party is assigned a
-          preference flow based on its preference flow at the previous election
-          (or, if unavailable, the most comparable election available), with
-          random variance according to the historical variability in that
-          preference flow. From this a 2PP is calculated and used in the vote
-          share sample.
+          FP-first: Assigns first-preference shares first, then derives 2PP from
+          historical preference flows.
         </li>
         <li>
-          2PP-first: The 2PP value is projected. Preference flows for the minor
-          parties are calculated as for the FP-first approach, including
-          historical variance. Then the preferences are added together, and
-          major parties are assigned FP vote shares such that, after accounting
-          for the preferences, they match the 2PP.
+          2PP-First: Assigns 2PP first, then back-calculates FP shares based on
+          expected preference flows.
         </li>
       </ul>
+      <p>
+        Because preference flows from minor parties to the major parties are not
+        static, the model introduces random variance based on historical
+        fluctuations. In both approaches, the preference flow percentages for
+        each minor party are drawn from a probability distribution reflecting
+        past elections&apos; variation. This ensures that the simulated 2PP
+        results realistically capture the uncertainty and potential shifts in
+        voter behavior.
+      </p>
+      <p>
+        Each method has strengths and weaknesses, so the model randomly selects
+        one per simulation to reflect possible real-world variance.
+      </p>
       <p>
         Once the major party and 2PP vote shares have been determined, a
         coherent vote share sample is established, which can be used as a basis

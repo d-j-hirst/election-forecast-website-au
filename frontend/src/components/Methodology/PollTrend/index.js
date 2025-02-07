@@ -18,35 +18,35 @@ const MethodologyPollTrend = props => {
       <h5 id="poll-data-used">Poll data used</h5>
       <p>
         <GlossaryLink word="Poll" /> results have been collected primarily from
-        public sources, either directly from news media or from the{' '}
-        <ExtLink href="https://www.pollbludger.net/">Poll Bludger</ExtLink>{' '}
-        archives, with some additional historical data from{' '}
+        public sources, either directly from the pollster, news media or from
+        the <ExtLink href="https://www.pollbludger.net/">Poll Bludger</ExtLink>{' '}
+        archives, with additional historical data from{' '}
         <ExtLink href="https://www.wikipedia.org/">Wikipedia</ExtLink>. Where
-        possible, the figures have been verified in original sources, often via
-        the <ExtLink href="https://archive.org/web/">Wayback Machine</ExtLink>.{' '}
-        Many older results prior to 2007 have been kindly provided by{' '}
+        possible, the figures are verified in original sources, often via the{' '}
+        <ExtLink href="https://archive.org/web/">Wayback Machine</ExtLink>. Many
+        older results (pre-2007) have been kindly provided by{' '}
         <ExtLink href="https://kevinbonham.blogspot.com/">Kevin Bonham</ExtLink>
-        . Polls that require a paywall are not included unless a method for
-        accessing the results without a paywall is available. Additionally, to
-        be included in the analysis, polls must:
+        .
+      </p>
+      <p>
+        Polls that require payment to view are not included unless a method for
+        accessing the results without a paywall is available. To be included in
+        the analysis, polls must:
       </p>
       <ul>
         <li>
-          cover the entire region for the election they are being run for (for
-          example, a poll for a federal election that only covers one state is
-          not included)
+          Cover the entire voting region for the election in question (e.g., a
+          federal election poll covering only one state is excluded).
         </li>
+        <li>Meet minimum standards for plausible sampling methodology</li>
         <li>
-          meet minimum standards for having a plausible sampling methodology
-        </li>
-        <li>
-          report <GlossaryLink word="first preference (FP)" /> votes for at
+          Report <GlossaryLink word="first preference (FP)" /> votes for at
           least the two <GlossaryLink word="major parties" /> and the Greens
-          (the Greens are not required for historical polls before 2010)
+          (except for historical polls before 2010)
         </li>
         <li>
-          report or imply whether undecided voters are in the sample and, if so,
-          what proportion they represent
+          Indicate whether undecided voters are included in the sample and, if
+          so, what proportion they represent.
         </li>
       </ul>
       <p>
@@ -54,47 +54,51 @@ const MethodologyPollTrend = props => {
         <ExtLink href="https://github.com/d-j-hirst/aus-polling-analyser/tree/master/analysis/Data">
           here
         </ExtLink>{' '}
-        under the poll-data-xxx.csv files. Feel free to inform the site&apos;s
-        author (email link above) of any polls not yet included, noting that
-        they can only be included if the results are available to be released
-        publicly. The following data from the poll are used:
+        under the poll-data-xxx.csv files. If you notice any missing polls, feel
+        free to inform the site&apos;s author (email link above), noting that
+        only publicly available poll results can be included.
       </p>
+      <p>The following data is recorded for each poll:</p>
       <ul>
         <li>
-          The date of the poll, or the average of fieldwork dates. If such dates
-          are not known precisely, they is either estimated from the known
-          fieldwork dates of previous polls by the polling house or assumed to
-          be a few days before the release of its results.
+          <strong>Date:</strong> The fieldwork date or an average of the
+          fieldwork dates. If these are unknown, an estimate is made based on
+          previous polling timelines or assumed to be a few days before the
+          release.
         </li>
         <li>
-          The brand name of the pollster that conducted the poll. Pollsters that
-          use substantially different methodologies under the same brand name
-          are classed separately (for example, there are different entries for
-          Roy Morgan face-to-face, phone, SMS and multi-mode polls.)
+          <strong>Pollster:</strong> The brand name of the polling firm. If a
+          pollster uses different methodologies under the same name, they are
+          classed separately (e.g., Roy Morgan face-to-face, phone, SMS, and
+          multi-mode polls).
         </li>
         <li>
-          First preference votes for all significant parties (some polled
-          parties may be judged sufficiently unlikely to ever challenge for a
-          lower house seat). The Liberal and National parties are recorded
-          separately for polls in Western Australia, but only the sum of their
-          vote shares is recorded in other states and federally. The publicised{' '}
+          <strong>First preference votes:</strong> Votes for all significant
+          parties. The Liberal and National parties are recorded separately in
+          Western Australia but combined elsewhere. The publicised{' '}
           <GlossaryLink word="two-party-preferred vote" /> (if present) is
-          recorded for display purposes but not used in the forecast
-          calculations. If the poll report leaves undecided voters in the
-          sample, they are removed, and the vote shares are rescaled so that the
-          total adds to 100%. If a poll does not give a specific value for
-          &quot;Others&quot;, it is assumed to be the number required to make
-          the first preferences add up to 100.
+          recorded for display purposes but is not used in forecast
+          calculations.
+        </li>
+        <li>
+          <strong>Undecided Votes:</strong> If a poll includes undecided voters
+          in its sample, they are removed, and the remaining vote shares are
+          rescaled to total 100%.
+        </li>
+        <li>
+          <strong>&quot;Others&quot; Vote Share:</strong> If a poll does not
+          specify a value for &quot;Others,&quot; it is inferred to ensure first
+          preferences sum to 100%.
         </li>
       </ul>
       <h5 id="poll-data-used">Generating the poll trend</h5>
       <p>
-        From this data, the actual poll trend is generated using{' '}
+        Using this data, the poll trend is generated using{' '}
         <ExtLink href="https://en.wikipedia.org/wiki/Bayesian_hierarchical_modeling">
           Bayesian hierarchical modelling
         </ExtLink>{' '}
-        through the <ExtLink href="https://www.python.org/">Python</ExtLink>{' '}
-        module,{' '}
+        using the <ExtLink href="https://www.python.org/">Python</ExtLink>{' '}
+        module{' '}
         <ExtLink href="https://pystan.readthedocs.io/en/latest/">
           PyStan
         </ExtLink>
@@ -102,78 +106,62 @@ const MethodologyPollTrend = props => {
         <ExtLink href="https://marktheballot.blogspot.com/p/the.html">
           work
         </ExtLink>{' '}
-        of blogger{' '}
+        of{' '}
         <ExtLink href="https://marktheballot.blogspot.com/">
           Mark the Ballot
         </ExtLink>
-        , whose posts introduced the author to the technique. To my knowledge,
-        it was first used, in Australian politics for the analysis of the 2004
-        federal election in{' '}
+        and was first used in Australian politics to analyse the 2004 federal
+        election{' '}
         <ExtLink href="http://dx.doi.org/10.1080/10361140500302472">
-          Jackman (2005)
+          (Jackman, 2005)
         </ExtLink>
         .
       </p>
       <p>
-        A detailed explanation of this method is quite technical and beyond the
-        scope of this page. In brief, the method aims to find the probability
-        distribution of a hidden variable (in this case, the actual voting
-        intention of the population over time) using imperfect information and
-        assumptions. This results in a trend over time with probability bands,
-        similar to the one shown under &quot;Vote Totals&quot; on the forecast
-        page. (Important note: the poll trend is <i>not</i> the same data as
-        this published vote trend; it just has a similar form. Further
-        adjustments are made as described later.)
+        A detailed explanation of this technique is beyond the scope of this
+        page. In summary, the method estimates the probability distribution of a
+        hidden variable—in this case, actual voting intention over time—based on
+        imperfect polling data and statistical assumptions. This produces a
+        trend with probability bands, similar to the one shown under Vote Totals
+        on the forecast page. (
+        <i>
+          Note: the poll trend itself is not the same as the published vote
+          trend; further adjustments are made later.
+        </i>
+        )
       </p>
-      <p>The following assumptions are used to formulate the model:</p>
+      <p>The model incorporates the following assumptions:</p>
       <ul>
         <li>
-          The real voting intention for the entire election cycle is assumed to
-          change over time, approximately following a{' '}
+          Voting intention changes over time in a manner approximating a{' '}
           <ExtLink href="https://en.wikipedia.org/wiki/Random_walk#Gaussian_random_walk">
             Gaussian random walk
           </ExtLink>
-          . Changes in voting intention are assumed to be mostly small most of
-          the time but increase during the election campaign, especially in the
-          final two weeks.
+          . These changes are generally small but tend to increase during the
+          election campaign, especially in the final two weeks.
         </li>
         <li>
-          Polls are assumed to be imperfect and biased estimates of actual
-          voting intention. This is expected to manifest as a mix of independent
-          errors in individual polls and longer-term systemic bias. Random
-          errors are expected as a result of sampling variability but may
-          potentially also be due to changes in timing of the poll (if not
-          consistent) and external events that affect response rates separately
-          from actual changes in voting intention. On the other hand, systemic
-          bias is expected as a result of the inability of methods to perfectly
-          represent the full population in their sampling, leaving some parts of
-          the population underrepresented in each poll.
+          Polls are imperfect estimations of actual voting intention, influenced
+          by both random errors (sampling variation, timing inconsistencies,
+          response biases) and systemic bias (methodological limitations in
+          representing the full population).
         </li>
         <li>
-          The random component of the error is assumed to vary depending on the
-          pollster and method. For each pollster, a measure of how closely their
-          polls follow the trend of other pollsters is taken (see &quot;More on
-          pollster calibration&quot; below, especially the sections relating to
-          &quot;indication of trend&quot;). This indicates the volatility of the
-          pollster&apos;s results; pollsters with higher volatility are
-          considered to be less reliable indicators of the voting intention
-          trend, and the method is therefore designed so that they do not
-          influence the calculated poll trend as much.
+          Pollster reliability varies. Each pollster’s historical volatility—the
+          extent to which its results fluctuate relative to the overall trend—is
+          assessed. Pollsters with higher volatility are considered less
+          reliable in tracking shifts in voting intention, so their results
+          influence short-term movements in the trend line less.
         </li>
         <li>
-          Pollsters are also assumed to have a{' '}
-          <GlossaryLink word="house effect" />, giving lower or higher results
-          than the trend on average over time. The model accounts for this by
-          summing a weighted average of all pollsters&apos; house effects and
-          constraining them to be equal to the expected overall bias. The
-          weighting is based on how consistent the bias of the pollster was in
-          previous elections (see &quot;More on pollster calibration&quot;
-          below, especially the subsection &quot;Calculating the typical bias
-          and its variability&quot;); pollsters who have a consistent bias over
-          time are weighted more than those whose bias has large changes between
-          elections. The sum of the house effects is equal to the average bias
-          of the pollsters involved when compared to actual election results;
-          the same weightings as before are used in calculating this average.
+          Pollsters have <GlossaryLink word="house effects" />. Each pollster
+          tends to overestimate or underestimate certain parties over time due
+          to methodological differences. The model accounts for this by
+          calculating systematic bias for each pollster based on past election
+          performance. Pollsters with more consistent biases are weighted more
+          heavily when determining the overall level of support for each party,
+          ensuring that fluctuating biases do not disproportionately affect the
+          trend line&apos;s position.
         </li>
         <li>
           A pollster&apos;s house effect is not assumed to be entirely constant
@@ -186,49 +174,49 @@ const MethodologyPollTrend = props => {
         </li>
         <li>
           In the absence of polling data, as a weak prior, voting intention is
-          loosely assumed to be the same as at the previous election, but with
-          considerable uncertainty.
+          loosely assumed to match the previous election, but with considerable
+          uncertainty.
         </li>
       </ul>
       <p>
-        The model is run using the available polling data, generating trends for
-        vote shares across the whole election from the earliest poll in the
-        current election cycle until the most recent poll. Separate estimates
-        are made for first preferences for all major and minor parties deemed
-        &quot;significant&quot; (generally, polling more than 3% or getting more
-        than 5% in some previous general election), as well as a generic
-        &quot;others&quot; category for all minor parties except the Greens. A
-        trend is generated for this entire time period, even for minor parties
-        that don&apos;t have any polling data for a long part of this period.
+        The model is run using the available polling data, generating vote share
+        trends for the entire election period from the earliest poll in the
+        cycle to the most recent. Separate estimates are made for:
+      </p>
+      <ul>
+        <li>
+          First preferences for all major and significant minor parties
+          (generally, those polling &gt;3% or exceeding 5% in past elections).
+        </li>
+        <li>
+          a generic &quot;others&quot; category for all minor parties except the
+          Greens.
+        </li>
+        <li>
+          Two-party-preferred (2PP) vote shares, calculated from first
+          preferences using past preference flows (adjusted if significant
+          shifts in flow patterns are observed).
+        </li>
+      </ul>
+      <p>
+        If a poll lacks first-preference data for a minor party included in the
+        trend, an estimated value from the trend is used, with the corresponding
+        amount subtracted from the &quot;Others&quot; total.
       </p>
       <p>
-        A polling trend is also calculated for the two-party-preferred (2PP)
-        vote. This does <i>not</i> use published 2PP values but instead
-        calculates them according to the first preferences using preference
-        flows from the previous election. Adjustments may be made to this
-        estimation in cases where notable shifts in preference flows are
-        observed in other elections. If a poll does not report first preferences
-        for some minor parties for which first-preference trends are being
-        generated, then the first-preference poll trend of that minor party at
-        the date of the poll is used for the 2PP calculation, and the
-        corresponding amount is subtracted from the &quot;Others&quot; value
-        reported in the poll.
+        These poll trends form the basis for the next step: projecting the poll
+        trend to actual election vote shares.
       </p>
+      <h5 id="pollster-calibration">Further details on pollster calibration</h5>
       <p>
-        These polling trends are then used for the next step of the process:
-        projecting the poll trend to actual election vote shares.
-      </p>
-      <h5 id="pollster-calibration">More on pollster calibration</h5>
-      <p>
-        To effectively use polling information, it is important for the model to
-        assess the value of each pollster&apos;s results in estimating true
-        voting intention. The most straightforward method is to compare
-        pollsters&apos; results to actual election outcomes. Unfortunately, most
-        Australian pollsters have been tested in very few elections; with such a
-        low sample size, the results of such a comparison lack significance.
-        Therefore, assessing pollsters needs to be done in a somewhat more
-        indirect manner, by measuring pollsters and polls{' '}
-        <i>against each other</i>.
+        To effectively utilise polling data, the model must assess each
+        pollster&apos;s reliability in estimating true voting intention. The
+        most straightforward method is to compare pollsters&apos; results to
+        actual election outcomes. Most Australian pollsters have only been
+        tested in a few elections, making direct comparisons statistically
+        unreliable. Therefore, assessing pollsters needs to be done in a
+        somewhat more indirect manner, by evaluating pollsters{' '}
+        <i>relative to each other</i>.
       </p>
       <p>
         A brief outline of this process is described first, with more detail
@@ -255,34 +243,33 @@ const MethodologyPollTrend = props => {
       </p>
       <ul>
         <li>
-          How effective the pollster is as an <i>indicator of trend</i>? That
-          is, after accounting for a constant house effect, does it closely
-          follow other polls, or does it produce noisy results or trends not
-          shown by other pollsters?
+          <i>How well does the pollster track the general trend?</i> That is,
+          after accounting for a constant house effect, does it closely follow
+          other polls, or does it produce noisy results or trends not shown by
+          other pollsters?
         </li>
         <li>
-          What is the{' '}
           <i>
-            typical <GlossaryLink word="bias" />
-          </i>{' '}
-          of the pollster? Does it tend to overestimate or underestimate certain
-          parties?
+            What is the pollster&apos;s typical <GlossaryLink word="bias" />?
+          </i>
+          Does it systematically overestimate or underestimate certain parties?
         </li>
         <li>
-          What is the <i>consistency of its bias</i>? When calibrating the
-          overall bias of the poll trend, it is preferable to use pollsters with
-          a consistent bias, even if it is quite large, rather than those that
-          vary significantly from one election to the next.
+          <i>How consistent is its bias across elections?</i> When calibrating
+          the overall bias of the poll trend, it is preferable to use pollsters
+          with a consistent bias, even if it is quite large, rather than those
+          that vary significantly from one election to the next.
         </li>
       </ul>
       <h6 id="pollster-calibration">Setting up the comparison poll trends</h6>
       <p>
-        To measure these, a simplified <i>comparison poll trend</i> is generated
-        for each pollster in each election. This pollster will henceforth be
-        referred to as the <i>pollster in focus</i>—i.e. the one whose behaviour
-        is being measured. This is done to compare that pollster to the trend
-        from the <i>other</i> pollsters. This follows a similar approach to the
-        final poll trend described above, with the following changes:
+        To assess these factors, a simplified <i>comparison poll trend</i> is
+        generated for each pollster in every election. This pollster will
+        henceforth be referred to as the <i>pollster in focus</i>—i.e. the one
+        whose behaviour is being measured. This is done to compare that pollster
+        to the trend from the <i>other</i> pollsters. This follows a similar
+        approach to the final poll trend described above, with the following
+        changes:
       </p>
       <ul>
         <li>
@@ -300,8 +287,8 @@ const MethodologyPollTrend = props => {
         the polls of the pollster in focus to determine its effectiveness as an{' '}
         <i>indicator of trend</i>. First, the house effect of the pollster in
         focus relative to the comparison poll trend is calculated and then
-        subtracted from each of their polls (for this step, it is the movement
-        of the polls, not the absolute position, that matters).
+        subtracted from each of their polls (for this step, only the movement of
+        the polls, not their absolute values, is considered.).
       </p>
       <p>
         Next, the remaining differences between each of those polls and the
@@ -316,12 +303,12 @@ const MethodologyPollTrend = props => {
         polls within two months gives a near-zero weighting.
       </p>
       <p>
-        It should be noted that this measure does not depend on any election
-        result actually being recorded—thus it can be (and is) calculated for
-        the election being forecast. Also, since the value is a measure of the
-        deviation of the pollster&apos;s polls from the trend, a lower number
-        indicates the poll is more accurate <i>as an indicator of the trend</i>{' '}
-        (but not necessarily a better indicator of the &quot;true&quot; voting
+        This measure is independent of actual election results, meaning it can
+        be calculated even for an election whose results are not yet known.
+        Also, since the value is a measure of the deviation of the
+        pollster&apos;s polls from the trend, a lower number indicates the poll
+        is more accurate <i>as an indicator of the trend</i> (but not
+        necessarily a better indicator of the &quot;true&quot; voting
         intention). It&apos;s important to be cautious in the interpretation of
         this variable—a low value may be as a result of the pollster herding, or
         even outright fabricating results, while a high value might be the
@@ -336,7 +323,7 @@ const MethodologyPollTrend = props => {
         are determined by both the number of polls for the pollster in focus,
         and also the number of polls in total (in both cases, a high number of
         polls gives a higher weighting). In addition to the actual results, this
-        weighted average includes an &quot;initial&quot;election (not a real
+        weighted average includes an &quot;initial&quot; election (not a real
         result) that is functionally similar to (but mathematically different
         to) a Bayesian prior or regularization parameter—it allows for a default
         expectation of poll behaviour when there is little or no empirical data
@@ -360,17 +347,17 @@ const MethodologyPollTrend = props => {
         meaningful signal in those results.
       </p>
       <p>
-        As a more robust alternative, the model uses the entire set of polls for
-        each election to minimise this randomness. This is achieved by taking
-        the estimated house effect for that pollster, relative to the comparison
-        poll trend, and adding it to the final median value of the comparison
-        poll trend. This creates a <i>final result estimate</i> for that
-        pollster with significantly reduced random noise, as for any well-polled
-        election, both values in this calculation are drawn from a sample of
-        multiple results. (In the case of the house effect, all of the
-        pollster&apos;s polls in the term prior to the election are included,
-        and in the case of the final poll value, all the polls from any pollster
-        close to the election are included.)
+        To reduce random fluctuations, the model evaluates an entire election
+        cycle&apos;s polling data rather than just final pre-election polls.
+        This is achieved by taking the estimated house effect for that pollster,
+        relative to the comparison poll trend, and adding it to the final median
+        value of the comparison poll trend. This creates a{' '}
+        <i>final result estimate</i> for that pollster. This method produces a
+        refined estimate of the pollster&apos;s final result, reducing random
+        noise by incorporating multiple poll samples. (In the case of the house
+        effect, all of the pollster&apos;s polls in the term prior to the
+        election are included, and in the case of the final poll value, all the
+        polls from any pollster close to the election are included.)
       </p>
       <p>
         For example, suppose an election has a final result where the
@@ -392,15 +379,18 @@ const MethodologyPollTrend = props => {
         same data with the same weightings.
       </p>
       <p>
-        As with the indication-of-trend measures, an initial estimate is
-        included in the calculations, consisting of two elections with a fairly
-        large biases (of the same size and opposite signs) but small weightings.
-        Without additional election data, this results in a value of zero for
-        typical bias but high bias variability. This ensures that pollsters with
-        little or no data from previous elections have a minimal effect on the
-        expected bias of the election until there is enough data to confidently
-        assess the characteristics of their biases, at which point the effect of
-        this initial estimate becomes insignificant.
+        As with the indication-of-trend measures, the model includes an initial
+        estimate to handle cases where a pollster has little or no historical
+        election data. This estimate consists of two hypothetical elections with
+        equal but opposite biases and low weightings.
+      </p>
+      <p>
+        In practice, this means that for new or untested pollsters, the model
+        assumes a neutral bias (zero) but assigns high uncertainty to that
+        assumption. This prevents such pollsters from unduly influencing the
+        expected election bias until sufficient data is available to calibrate
+        their performance. As the pollster contributes more real-world data, the
+        influence of this initial estimate gradually diminishes.
       </p>
     </>
   );

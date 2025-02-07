@@ -8,233 +8,376 @@ const MethodologyPollTrend = props => {
       <h4 id="simulation">Simulation of full election results</h4>
       <p>
         To generate forecasts, the model simulates the election a large number
-        of times (typically 100,000) to evaluate how the projected vote totals
-        correspond to actual seats in Parliament. This process involves taking
-        election samples, simulating the results in each seat based on both the
-        overall vote shares and athe history of each individual seat, adjusting
-        those results so that the overall totals match the projected election
-        sample as closely as possible, and then collating the results across all
-        the simulations into statistics for display on the site.
+        of times (typically 100,000) to evaluate how projected vote totals
+        translate into actual seat outcomes in Parliament. This process
+        involves:
       </p>
+      <ul>
+        <li>
+          Generating election samples, using projected vote shares from the poll
+          trends and fundamentals as described in the previous sections.
+        </li>
+        <li>
+          Simulating seat-by-seat results, incorporating historical seat-level
+          voting patterns.
+        </li>
+        <li>
+          Adjusting results to ensure the overall totals match the projected
+          election sample as closely as possible.
+        </li>
+        <li>
+          Collating results across all simulations to produce probability
+          distributions for various election outcomes.
+        </li>
+      </ul>
       <h5 id="tpp-region">
         Regional analysis of two-party-preferred (2PP) vote share
       </h5>
       <p>
-        Many elections experience different swings in different areas. For
-        example, the 2019 Federal Election had a swing to the ALP in Victoria
-        but to the LNP in Queensland. In federal elections, there are often
-        polls that break down the results by state; for state elections there
-        are occasionally polls that break down their results by region as well.
-        For the rest of this section, the word &quot;region&quot; refers to
-        either states in a federal election or, regions within a state election.
-        In this model, only 2PP differences between regions are considered.
+        Elections rarely exhibit uniform swings across all regions. For example,
+        in the 2019 Federal Election, the ALP gained ground in Victoria but lost
+        support in Queensland.
       </p>
       <p>
-        For each poll that breaks down results by region, the{' '}
-        <i>swing deviation</i> is calculated for each region by subtracting the
-        region&apos; swing recorded in the poll from the overall swing recorded
-        in the same poll. For example, if a poll says the overall swing is 4% to
-        the ALP but the swing in a particular region is only 2%, that is a swing
-        deviation of -2%.
+        In federal elections, polling often includes regional breakdowns by
+        state. In state elections, some polls occasionally provide regional
+        breakdowns within the state. For the purpose of this section, &quot;
+        region&quot; refers to either:
+      </p>
+      <ul>
+        <li>A state/territory (in a federal election), or</li>
+        <li>A geographic region (within a state election).</li>
+      </ul>
+      <p>
+        This model considers regional variations in two-party-preferred (2PP)
+        vote swings, but not first-preference variations across regions.
+      </p>
+      <h6>Estimating Regional Swings from Polls</h6>
+      <p>
+        When a poll provides regional breakdowns, the model calculates swing
+        deviations—the difference between a region&apos;s swing and the overall
+        national/statewide swing in the same poll.
+      </p>
+      <p>Example Calculation of Swing Deviation:</p>
+      <p>A poll reports a +4% swing to the ALP nationally.</p>
+      <p>It reports a +2% swing in a specific region.</p>
+      <p>
+        The regional swing deviation is -2% (i.e., 2% less than the national
+        swing).
       </p>
       <p>
-        The swing deviations of recent polls are then analysed by a Bayesian
-        aggregation to create regional trends similar to the way the overall
-        trends are created. This is done in a single pass with the constraint
-        that the sum of all the swing deviations, weighted by expected turnout,
-        is equal to zero. If different pollsters have different ways to divide
-        into regions, this can result in differences in the definition of the
-        regions between inputs and outputs, with some regions in the inputs
-        overlapping. The aggregation is designed to handle these differences,
-        and outputs a set of mutually exclusive regions that cover the entire
-        electorate.
-      </p>
-      <p>
-        To ensure that the use of these swing deviations reflects their historic
-        performance, the predictiveness of polled swing deviations from previous
-        elections is analysed. Regional polling breakdowns are analysed for:
+        Each poll&apos;s regional swing deviations are aggregated using a
+        Bayesian analysis, similar to the method used for national poll trends.
       </p>
       <ul>
         <li>
-          <i>bias</i>—do swing deviations overestimate one party or the other on
-          average?
+          This ensures that swing deviations are estimated as accurately as
+          possible, while accounting for polling uncertainty.
         </li>
         <li>
-          <i>sensitivity</i>—how do the sizes of swing deviations in polls
-          correlate to those in an actual election? (Generally, the swing
-          deviations seen in polls overestimate those seen in the actual result,
-          but more so in some regions than others.)
+          A key constraint is that the weighted sum of all regional swing
+          deviations must be zero, ensuring that total seat swings still match
+          the overall election-wide trend.
         </li>
         <li>
-          <i>spread in the error</i>—after taking those two factors into
-          account, how far are the swing deviations from the actual results?
+          If pollsters divide regions differently, the aggregation process
+          resolves overlaps by producing a final set of non-overlapping regions.
+        </li>
+      </ul>
+      <h6>Assessing the Reliability of Regional Polling</h6>
+      <p>
+        To ensure regional polling is used realistically, the model evaluates
+        historical polling performance by measuring:
+      </p>
+      <ul>
+        <li>
+          <i>Bias</i> – Do polled regional swing deviations systematically
+          overestimate support for one party?
+        </li>
+        <li>
+          <i>Sensitivity</i> – How well do polled deviations correlate with
+          actual election swings? Generally, polls tend to exaggerate regional
+          swing deviations, but some regions are more predictable than others.
+        </li>
+        <li>
+          <i>Spread of Errors</i> – After accounting for bias and sensitivity,
+          how large are the remaining discrepancies between polled and actual
+          swing deviations?
+        </li>
+      </ul>
+      <h6>Estimating Regional Swings Without Polling</h6>
+      <p>
+        Not all regions have regular polling data—for example, in federal
+        elections, Tasmania, ACT, and NT often lack regional polling.
+      </p>
+      <p>
+        For these regions, the model instead uses historical patterns, analyzing
+        how their past swings tended to differ from national swings:
+      </p>
+      <ul>
+        <li>
+          Bias now reflects long-term trends in how the region typically swings
+          relative to the national average.
+        </li>
+        <li>
+          Sensitivity measures whether the region tends to swing more or less
+          than the national average in any given election.
+        </li>
+        <li>
+          In regions with limited polling, the final regional swing estimate is
+          a mix of poll-based deviations (when available), historically inferred
+          deviations (when polling is unavailable or unreliable). If regional
+          polling exists but is outdated, its weight is gradually reduced over
+          time.
+        </li>
+      </ul>
+      <h6>Applying Regional Swing Deviations in Simulations</h6>
+      <p>
+        Each simulated election assigns randomized regional swing deviations
+        based on the estimated regional patterns.
+      </p>
+      <ul>
+        <li>
+          A swing deviation is randomly generated for each region based on
+          polling trends and/or historical patterns.
+        </li>
+        <li>
+          Total swing deviations are adjusted so that the population-weighted
+          sum remains zero (ensuring that the overall national swing is
+          preserved).
+        </li>
+        <li>
+          Each region&apos;s final swing deviation is applied to the national
+          swing from the election sample, producing a realistic set of regional
+          swings for that simulation.
+        </li>
+      </ul>
+      <h5 id="tpp-seat">Two-party-preferred (2PP) seat vote share</h5>
+      <p>
+        Once regional 2PP swings have been determined, the next step is to
+        simulate the two-party-preferred (2PP) result for each seat. This is
+        done for all seats, even those where the final two-candidate-preferred
+        (2CP) result was not between the two major parties.
+      </p>
+      <h6>Applying Regional Swings to Individual Seats</h6>
+      <p>Each seat&apos;s projected 2PP swing is determined by:</p>
+      <ul>
+        <li>
+          Applying the regional swing to the existing seat margin, adjusted for
+          redistributions using{' '}
+          <ExtLink href="https://antonygreen.com.au/category/redistribution/">
+            Antony Green&apos;s estimates
+          </ExtLink>{' '}
+          (including draft redistributions where applicable).
+        </li>
+        <li>
+          Adjusting for seat elasticity, which accounts for whether the seat
+          typically swings more or less than the regional average. If a seat has
+          changed names or borders, historical data from similar past seats is
+          incorporated. If a seat is completely new, data from comparable seats
+          is used instead. Validating seat elasticity estimates using a
+          cross-one-out analysis to measure their predictive accuracy and adjust
+          their influence accordingly.
+        </li>
+      </ul>
+      <h6>Adjustments for Candidate-Specific Factors</h6>
+      <p>
+        Certain candidate-related effects are incorporated into the seat&apos;s
+        2PP adjustment, including:
+      </p>
+      <ul>
+        <li>
+          Retirements – The loss of an incumbent advantage when a sitting MP
+          does not recontest.
+        </li>
+        <li>
+          Sophomore Surge – Newly elected MPs (and new parties in a seat) tend
+          to outperform the regional average in their second election.
+          <ul>
+            <li>
+              This effect is analysed separately for individual candidates and
+              political parties, and both factors are combined when a candidate
+              wins a seat from an opposing party.
+            </li>
+            <li>
+              The impact is also assessed separately for urban and regional
+              seats to capture geographic differences.
+            </li>
+          </ul>
+        </li>
+        <li>
+          Disendorsement effects – Adjustments for:
+          <ul>
+            <li>A vote loss when a candidate is disendorsed.</li>
+            <li>
+              A vote recovery in the next election after such a disendorsement.
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <h6>State Elections: Correlation with Federal Swings</h6>
+      <p>
+        In state elections, an additional adjustment accounts for the tendency
+        of state-level swings to correlate with federal swings in the same
+        areas.
+      </p>
+      <p>
+        An analysis of the 2022 South Australian, 2019 New South Wales, and 2018
+        Victorian elections found a statistically significant correlation
+        between state and federal swings at the seat level, after accounting for
+        candidate effects. This was confirmed by results from the 2022 Victorian
+        and 2023 New South Wales elections.
+      </p>
+      <p>The size of this effect follows a decay curve:</p>
+      <ul>
+        <li>
+          If a state election is held concurrently with a federal election, ~55%
+          of the federal swing is reflected in the state result.
+        </li>
+        <li>
+          If the state election occurs ~6 months before/after the federal
+          election, the effect decreases to ~33%.
         </li>
       </ul>
       <p>
-        Separately, a similar process is used run without taking into account
-        polls at all - instead, it examines how the <i>overall swing</i>{' '}
-        predicts state swings. In this case, the &quot;bias&quot; represents
-        trends over time for a state compared to the national average, and the
-        &quot;sensitivity&quot; represents whether the state swings more or less
-        than the national average. These results are used for regions which
-        don&apos;t have polling (for federal elections, usually Tasmania, ACT
-        and NT) and they are mixed with the poll-based deviations for polling
-        when that polling is some time out from the election.
+        Due to the small sample size of available elections and potential
+        variability, the actual effect size in each simulation is randomized
+        using a gamma distribution, calibrated so that the median effect matches
+        the estimates above. This approach allows for simulated scenarios where
+        the state election effect is minimal or, alternatively, where federal
+        swings are amplified at the state level.
+      </p>
+      <h6>Incorporating Random Variability</h6>
+      <p>
+        Random variation is introduced into each seat&apos;s 2PP vote share,
+        accounting for historical volatility at the seat level:
+      </p>
+      <ul>
+        <li>
+          Some seats are naturally more volatile than others, even after
+          considering the above factors.
+        </li>
+        <li>
+          However, a minimum level of variability is imposed, as small sample
+          sizes might otherwise underestimate the true volatility of certain
+          seats.
+        </li>
+      </ul>
+      <h6>Ensuring Seat 2PP Totals Align with the Election-Wide 2PP</h6>
+      <p>
+        These seat-level adjustments mean that the population-weighted average
+        of seat 2PPs may no longer match the regional 2PP calculated earlier.
       </p>
       <p>
-        In any given election simulation, each region has its own swing
-        deviation calculated from the patterns observed in the polled swing
-        deviation and/or the base deviation, with different random variation for
-        each simulation. The deviations are then adjusted so that the total of
-        all swing deviations, weighted by population, is equal to zero, as it is
-        desired that the resulting swings match the national 2PP swing from the
-        election sample. Finally, the swing deviations are each combined with
-        the election sample&apos;s national swing to give the regional swing for
-        the simulation.
+        To maintain consistency, a final linear adjustment is applied so that:
       </p>
-      <h5 id="tpp-seat">Two-party-preferred (2PP) seat vote share</h5>
+      <ul>
+        <li>
+          Each region&apos;s average seat 2PP aligns with its previously
+          calculated regional 2PP.
+        </li>
+        <li>
+          The regions&apos; 2PP still sums up to the election-wide projected
+          2PP.
+        </li>
+      </ul>
       <p>
-        Following the generation of each region&apos;s 2PP swings, the next step
-        in the seat simulation is to produce a two-party-preferred result for
-        each seat. This is done even for seats where the the final 2CP was not
-        between the major parties. The regional two-party swing is applied to
-        the existing margin in the seat, accounting for the redistributed margin
-        according to{' '}
-        <ExtLink href="https://antonygreen.com.au/category/redistribution/">
-          Antony Green&apos;s estimates
-        </ExtLink>
-        , including draft redistributions. This margin is then adjusted to
-        reflect the <i>elasticity</i> of the seat—whether it tends to swing more
-        or less than the regional average. The analysis includes previous seats
-        covering a similar area with a different name, and if the seat is new,
-        statistics from other seats are used. As mentioned in earlier sections,
-        a cross-one-out analysis is employed to estimate the predictiveness of
-        the elasticity analysis and adjust its impact on the simulated result.
-      </p>
-      <p>
-        The 2PP for each seat is also adjusted for candidate factors, such as
-        retirements and the &quot;sophomore surge&quot;, where newly elected
-        candidates and parties perform better than the regional average in their
-        second election. Sophomore effects for new candidates and parties are
-        treated as separate, with both added together when a candidate takes a
-        seat from the opposing party. These effects are also analysed separately
-        for urban and regional seats. Additionally, an adjustment is also made
-        for both the loss of vote following candidate disendorsements, and the
-        gain of vote in the election following such a disendorsement.
-      </p>
-      <p>
-        For state elections, a further adjustment to the simulated 2PP for each
-        seat is made to account for the tendency of state election swings tend
-        to correlate with federal election swings in the same areas. Analysis of
-        the 2022 South Australia, 2019 New South Wales and 2018 Victorian
-        elections found a statistically significant correlation between the
-        swing in that seat and the estimated federal swing within the boundaries
-        of the state seat, after accounting for the candidate effects noted
-        earlier. The size of this effect fit a decaying curve where
-        approximately 55% of the federal swing is reflected in a state Election
-        held concurrently, decreasing to 33% for a state election six months on
-        either side of the federal election (such as the 2022 Victorian
-        election). Given the small number of elections used to form this
-        conclusion and the potential for significant variability between
-        elections, the actual effect size in each simulation is generated by a
-        gamma distribution calibrated so that the median effect size matches the
-        estimates above. This approach allows the effect size in any individual
-        simulation to range from almost zero to scenarios where the state
-        election amplifies the federal swings.
-      </p>
-      <p>
-        Finally, random variability is added to each seat. The standard
-        deviation of this variability is assessed on a seat-by-seat basis, as
-        some seats tend to be more volatile than others even after accounting
-        for the above factors. However, a minimum level of variability is
-        imposed because, due to the relatively small sample sizes involved, it
-        is quite likely that the variability of some seats is underestimated.
-      </p>
-      <p>
-        These adjustments mean that the population-weighted average of seat 2PPs
-        usually no longer matches the regional 2PP calculated before. To
-        maintain consistency across the simulation, the 2PPs are adjusted
-        linearly so that the seat average 2PP for each region aligns with the
-        overall 2PP. Keep in mind that the regional 2PPs have already been
-        adjusted to match the election 2PP, so this final adjustment also
-        ensures that the seat 2PPs are in line with the election 2PP.
+        This ensures the seat-level projections remain in line with the overall
+        election sample.
       </p>
       <h5 id="fp-seat">First-preference (FP) seat vote share</h5>
       <p>
-        The model simulates 2PP votes first before FP, as the former are much
-        easier to work with and more reliable to simulate. However, because this
-        is a comprehensive model and because some contests may not result in a
-        2PP contest, FP votes are also simulated. This process is quite involved
-        due to the numerous variables to consider and the many corner cases to
-        cover, so this page will only give an outline. Additionally, there are
-        more judgment calls in this section than others, as there is relatively
-        little historical data on the performance of third parties and
-        independents in some unusual situations.
+        Although the 2PP vote is simulated first due to its greater reliability,
+        the FP vote is also modelled, as some contests do not result in a
+        two-party-preferred final count. This process is complex, involving
+        numerous variables and judgment calls, particularly in cases with third
+        parties and independents where historical data is limited.
       </p>
+      <h6>Simulating Minor Party and Independent FP Votes</h6>
       <p>
-        FP votes for non-major parties, including independents and a generic
-        &quot;others&quot; category, are simulated first. The behaviour of FP
-        votes in historical elections is analysed separately for each party
-        category (see &quot;Fundamentals&quot; above) and then the results are
-        applied to the vote for those parties in the previous election. This
-        includes, where appropriate, changes from the previous election&apos;
-        vote share based on incumbency, previous vote share, and the level of
-        variability in the vote (for random variation).
+        The simulation begins by modelling FP votes for non-major parties,
+        including independents and a generic &quot;others&quot; category. This
+        is done by:
       </p>
-      <h6 id="fp-seat-">Independents</h6>
-      <p>
-        For independent candidates who are either incumbents or secured a
-        substantial vote share in the previous election, the possibility that
-        they may not recontest is also considered. The likelihood of
-        recontesting is based on historical analysis and estimates of how this
-        probability might change as the election approaches, since reliable
-        historical data is hard to obtain. Candidates who announce their
-        retirement or that they will not recontest are removed from
-        consideration, while those who declare their intention to run again have
-        their chances of recontesting significantly increased (though not to
-        100%).
-      </p>
-      <p>
-        The potential for yet-to-be-recognised independents to emerge and secure
-        a significant vote share is also taken into account. Previous elections
-        have been analysed to determine the typical vote shares independent
-        candidates achieve at various levels, and how this varies by seat type
-        (inner or outer urban, provincial, or rural), the prior performance of
-        non-major parties in each seat, and whether the election is a federal or
-        state one.
-      </p>
-      <p>
-        Prominent independent candidates who are not incumbents are handled in a
-        similar manner. Determining whether a candidate is considered prominent
-        involves some judgement, typically based on whether they receive
-        substantial media coverage and have a significant campaign team. Seat
-        betting odds and seat polls are used to inform the likely performance of
-        these prominent independent candidates. Due to the low accuracy of
-        Australian seat polling (as demonstrated in Kevin Bonham&apos;s{' '}
-        <ExtLink href="https://kevinbonham.blogspot.com/2018/06/is-seat-polling-utterly-useless.html">
-          analysis
-        </ExtLink>
-        ), a considerable margin of error is applied to polls. This approach
-        also applies to certain quasi-independent candidates who technically
-        stand for a party but primarily run on their personal appeal.
-      </p>
-      <p>
-        The performance of independents is not assumed to be statistically
-        independent. Instead, correlations relative to expectations in
-        independents&apos; performance are anticipated, which can sometimes be
-        quite strong. In other words, independents may collectively overperform
-        expectations in some elections and underperform in others. For each
-        simulation, parameters are randomly selected from a beta distribution to
-        intentionally bias the variable component of the independents&apos; FP
-        vote share. The distribution of these parameters is chosen so that the
-        distribution of an individual independent&apos;s FP share remains very
-        close to what it would be without any correlation. Consequently, the
-        overall simulated performance of each independent is minimally affected
-        by this step, while the distribution of total independent seats across
-        many simulations exhibits a much wider range of outcomes than if each
-        independent were treated independently.
-      </p>
-      <h6 id="fp-seat-">Greens</h6>
+      <ul>
+        <li>
+          Analysing historical FP vote behaviour for different party categories
+          (see &quot;Fundamentals&quot; above).
+        </li>
+        <li>
+          Applying historical trends to previous election vote shares, adjusting
+          for incumbency effects, previous vote share, and natural vote
+          volatility.
+        </li>
+      </ul>
+      <h6>Independents</h6>
+      <p>For independent candidates, additional considerations are made:</p>
+      <p>Recontesting probabilities:</p>
+      <ul>
+        <li>
+          Incumbents or strong previous candidates may choose not to recontest;
+          historical patterns are used to estimate these probabilities.
+        </li>
+        <li>
+          If a candidate announces retirement, they are removed from
+          simulations.
+        </li>
+        <li>
+          If a candidate declares intent to run, their recontesting probability
+          is significantly increased (though not necessarily to 100%).
+        </li>
+      </ul>
+      <p>New independent candidates:</p>
+      <ul>
+        <li>
+          Simulations consider the likelihood of a new independent emerging with
+          a strong FP vote.
+        </li>
+        <li>
+          Historical elections are analysed to determine typical independent
+          vote shares, adjusted for factors such as seat type (urban,
+          provincial, rural) and whether the election is state or federal.
+        </li>
+      </ul>
+      <p>Prominent non-incumbent independents:</p>
+      <ul>
+        <li>
+          A candidate is considered &quot;prominent&quot; if they receive
+          significant media coverage and have a strong campaign team.
+        </li>
+        <li>
+          Seat betting odds and seat polling inform the likely performance of
+          these candidates, but a substantial margin of error is applied due to
+          the low accuracy of Australian seat polling (as noted in Kevin
+          Bonham&apos;s{' '}
+          <ExtLink href="https://kevinbonham.blogspot.com/2018/06/is-seat-polling-utterly-useless.html">
+            analysis
+          </ExtLink>
+          ).
+        </li>
+        <li>
+          This also applies to quasi-independent candidates, who technically
+          stand for a party but run primarily on personal appeal.
+        </li>
+      </ul>
+      <p>Correlated performance of independents:</p>
+      <ul>
+        <li>
+          The performance of independents is not treated as fully independent
+          across seats.
+        </li>
+        <li>
+          Some elections see independents collectively overperform or
+          underperform expectations.
+        </li>
+        <li>
+          To reflect this, a beta distribution is used to introduce a small bias
+          across independents in each simulation, ensuring a wider range of
+          total independent seat outcomes without significantly altering
+          individual seat projections.
+        </li>
+      </ul>
+      <h6>Greens</h6>
       <p>
         As of September 2022, seat betting is also used to adjust Greens FP vote
         shares. This is done by running a number of preliminary simulations to
@@ -247,73 +390,101 @@ const MethodologyPollTrend = props => {
         </i>
         )
       </p>
-      <h6 id="fp-seat-">&quot;Populist&quot; parties and ideology</h6>
+      <h6>&quot;Populist&quot; parties and ideology</h6>
       <p>
-        Parties in the &quot;populist&quot; category, which includes emerging
-        parties, are considered not to run in every seat. Instead, in each
-        simulation they are assigned a random number of seats based on the
-        number of seats they have contested historically (with substatial random
-        variation), and only run in seats in a randomised fashion that heavily
-        favours seats where they are likely to obtain higher vote shares.
-        Additionally, the votes of such parties are calibrated on a seat-by-seat
-        basis according to how parties of similar ideology have performed in
-        that or similar seats historically—such as One Nation in the case of
-        right-wing parties and the Australian Democrats for centrist parties.
-        Unidentified emerging parties are randomly assigned as centrist,
-        right-wing, or somewhere in between for the purposes of determining
-        where they might be most popular. (Some might wonder why there is no
-        left-wing &quot;populist&quot; party—basically, there has never really
-        been one, so there&apos;s no way to assess where they might be most
-        popular.)
+        Parties in the &quot;populist&quot; category (e.g., One Nation, UAP,
+        Australian Democrats) do not necessarily contest every seat.
       </p>
-      <h6 id="fp-seat-">Major party FP votes</h6>
       <p>
-        After simulating a set of minor party FP results for the seat and a 2PP
-        result, the model now calculates the major party FP votes implied from
-        those results. This requires calculating preference flows for each
-        party. Since preference flows typically vary from seat to seat and from
-        election to election, they must also be simulated. The preference flow
-        from the election sample serves as a baseline, which is then adjusted
-        based on how the preference flow in the seat compared to the overall
-        average in the previous election. Additional random variability is
-        subsequently applied. Using this newly calculated preference flow, the
-        total preferences for each party are determined, and the major parties
-        are assigned FP vote shares necessary to match the 2PP result.
+        In each simulation, they are assigned a random number of contested
+        seats, based on historical patterns but with substantial variation,
+        preferentially contest seats where they historically performed well.
       </p>
+      <p>
+        FP votes for these parties are calibrated by ideology, based on how
+        similar parties have performed in comparable seats.
+      </p>
+      <p>
+        Unidentified emerging parties are randomly assigned an ideological
+        alignment (right-wing, centrist, or in-between) to determine their
+        potential support base. (No left-wing populist category exists in the
+        model, as no such party has significantly emerged in Australia.)
+      </p>
+      <h6>Incorporation of betting odds</h6>
+      <p>
+        As of September 2022, seat betting odds are used to adjust vote shares
+        for minor party and independent candidates. This is achieved by running
+        preliminary simulations to determine the FP vote share required for a
+        certain probability of winning a seat. The model then nudges the
+        simulated FP vote toward the vote share implied by the betting odds.
+      </p>
+      <h6 id="fp-seat-">Simulating Major Party FP Votes</h6>
+      <p>
+        Once minor party FP votes and the seat-level 2PP result have been
+        established, major party FP votes are determined by:
+      </p>
+      <ul>
+        <li>
+          Calculating preference flows for each party, based on previous
+          elections.
+        </li>
+        <li>
+          Adjusting preference flows using the baseline from the election
+          sample, the seat-level deviation from the previous election, and
+          randomvariability to account for uncertainty.
+        </li>
+        <li>
+          Deriving the major party FP vote shares, ensuring they align with the
+          simulated 2PP result for each seat.
+        </li>
+      </ul>
       <h6 id="fp-seat-">
-        Reconciling the simulated results with the election sample
+        Reconciling Seat-Level FP Votes with the Election Sample
       </h6>
       <p>
-        Once all the FP votes have been simulated, their totals across the
-        entire election usually no longer align with those in the election
-        sample. To ensure the simulation accurately reflects the election
-        sampling, the seat FPs need to be adjusted to match the original sample.
-        Although the actual process is quite involved, it primarily involves
-        proportionally adjusting minor party votes up or down across all seats
-        and then recalculating the major party 2PPs for each seat. This process
-        is repeated five times, after which the difference between the FP votes
-        in the election sample and the simulation is typically below 0.1% on
-        average. However, in rare cases where a minor party receives a
-        significantly higher share of the FP vote, the discrepancy may exceed
-        this threshold.
+        After seat-level FP votes are generated, their totals may no longer
+        align with the FP vote distribution in the original election sample. To
+        correct this:
       </p>
+      <ul>
+        <li>
+          Minor party votes are proportionally adjusted up or down across all
+          seats.
+        </li>
+        <li>
+          Major party 2PPs are recalculated for each seat based on the adjusted
+          minor party votes.
+        </li>
+        <li>
+          This process is repeated five times, bringing the average difference
+          between the sample and the simulation below 0.1%.
+        </li>
+      </ul>
       <p>
-        One important detail is that in seats where a candidate&apos;s vote is
-        significantly higher that the overall vote for their party, the
-        adjustment is modified so that it impacts the seat significantly less.
-        This particularly affects independents, whose vote projections should
-        not be heavily reduced simply because the generic Others vote happened
-        to be too high.
+        In seats where a specific independent significantly outperforms their
+        party&apos;s general FP vote share, adjustments are modified to minimise
+        reductions to their vote. This ensures that independent candidates with
+        strong personal support are not unfairly penalised due to overall minor
+        party vote fluctuations.
       </p>
       <h5 id="simulation-aggregation">Aggregation of simulation results</h5>
       <p>
-        There&apos;s not too much to say about this. For each simulation, the
-        results of each seat (primaries, TCP results) are recorded, along with
-        various aggregate results such as total seats won, total vote share, and
-        so on. Once all simulations are complete, percentiles, averages and
-        additional statistics are compiled. These are then stored and uploaded
-        to the server, where they can be viewed on the website in either the
-        latest report or the archives.
+        Once each election simulation is completed, the results for all seats—
+        including first-preference votes, two-candidate-preferred (TCP)
+        outcomes, total seats won, and overall vote shares—are recorded.
+      </p>
+      <p>
+        After all simulations have run, the results are aggregated into
+        statistical summaries, including:
+      </p>
+      <ul>
+        <li>Averages and percentiles for key outcomes.</li>
+        <li>Probability distributions for different election scenarios.</li>
+      </ul>
+      <p>
+        These processed results are then stored and uploaded to the server,
+        where they can be viewed on the website in either the latest report or
+        the archives.
       </p>
     </>
   );

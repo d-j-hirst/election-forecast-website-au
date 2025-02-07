@@ -7,17 +7,16 @@ const GuideNowcast = props => {
     <>
       <h4 id="outline">Outline</h4>
       <p>
-        The overall approach involves analysing data relating to a future
-        election—primarily public opinion polling and recent election results—
-        and comparing it to historical data to simulate possible future election
-        outcomes. This is achieved through the following process:
+        The approach involves analyzing data related to an upcoming election—
+        primarily public opinion polling and recent election results—and
+        comparing it with historical data to simulate possible outcomes.
       </p>
       <ul>
         <li>
-          Identify the best fitting trend in{' '}
+          Determine the best-fitting trend in{' '}
           <GlossaryLink word="voting intention" /> polling for the current
-          election cycle using publicly available opinion{' '}
-          <GlossaryLink word="polls" />. This results in{' '}
+          election cycle using publicly available <GlossaryLink word="polls" />.
+          This results in{' '}
           <i>
             <GlossaryLink word="poll trends" />
           </i>{' '}
@@ -29,21 +28,20 @@ const GuideNowcast = props => {
           <GlossaryLink word="pollsters" />.
         </li>
         <li>
-          After creating poll trends for previous elections, examine how these
-          trends correlated with actual election results. Then, use these
-          correlations to project the current poll trends into probability
-          distributions of vote shares for a future election.
+          Using poll trends from previous elections, analyze how these trends
+          correlated with actual election results. Use these correlations to
+          transform current poll trends into probability distributions of vote
+          shares for the upcoming election.
         </li>
         <li>
-          Randomly sample vote shares from these distributions to simulate
-          various hypothetical election results, taking into account historical
-          factors and current region- and seat-specific information.
+          Generate hypothetical election results by randomly sampling vote
+          shares from these distributions, factoring in past election data and
+          current region- and seat-specific information.
         </li>
         <li>
-          Aggregate these simulations into probabilities and/or probability
-          distributions for different outcomes, including whole parliament
-          results, overall vote shares, <GlossaryLink word="seat" /> totals, and
-          individual seat results.
+          Aggregate these simulations into probability distributions for various
+          outcomes, including overall parliament composition, vote shares,
+          <GlossaryLink word="seat" /> totals, and individual seat results.
         </li>
       </ul>
     </>
