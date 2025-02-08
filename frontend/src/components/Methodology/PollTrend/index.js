@@ -17,7 +17,7 @@ const MethodologyPollTrend = props => {
       </p>
       <h5 id="poll-data-used">Poll data used</h5>
       <p>
-        <GlossaryLink word="Polls" /> are collected mainly from public sources –
+        <GlossaryLink word="Polls" /> are collected mainly from public sources:
         directly from pollsters, through news media, or from the{' '}
         <ExtLink href="https://www.pollbludger.net/">Poll Bludger</ExtLink>{' '}
         archives, with additional historical data from{' '}
@@ -92,7 +92,7 @@ const MethodologyPollTrend = props => {
       </ul>
       <h5 id="poll-data-used">Generating the poll trend</h5>
       <p>
-        Using the collected poll data, the poll trend is generated via{' '}
+        The poll trend is generated via{' '}
         <ExtLink href="https://en.wikipedia.org/wiki/Bayesian_hierarchical_modeling">
           Bayesian hierarchical modelling
         </ExtLink>{' '}
@@ -101,7 +101,7 @@ const MethodologyPollTrend = props => {
         <ExtLink href="https://pystan.readthedocs.io/en/latest/">
           PyStan
         </ExtLink>
-        . Inspired by the{' '}
+        . This method—inspired by the{' '}
         <ExtLink href="https://marktheballot.blogspot.com/p/the.html">
           work
         </ExtLink>{' '}
@@ -113,13 +113,12 @@ const MethodologyPollTrend = props => {
         <ExtLink href="http://dx.doi.org/10.1080/10361140500302472">
           (Jackman, 2005)
         </ExtLink>
-        , this method estimates the probability distribution of a hidden
-        variable—in this case, actual voting intention over time—based on
-        imperfect polling data and a set of statistical assumptions. The result
-        is a trend with probability bands, similar to the display under Vote
-        Totals on the forecast page. (Note: the poll trend itself is not the
-        same as the published vote trend; further adjustments are applied
-        later.)
+        —estimates the probability distribution of a hidden variable (in this
+        case, actual voting intention over time) using imperfect polling data
+        and statistical assumptions. The result is a trend with probability
+        bands, similar to the display under Vote Totals on the forecast page.
+        (Note: the poll trend itself is not the same as the published vote
+        trend; further adjustments are applied later.)
       </p>
       <p>The model incorporates the following assumptions:</p>
       <ul>
@@ -136,14 +135,15 @@ const MethodologyPollTrend = props => {
           <strong>Poll imperfections:</strong> Polls are imperfect estimates of
           true voting intention, influenced by random errors (such as sampling
           variation, timing inconsistencies, and response biases) as well as
-          systemic bias due to methodological limitations.
+          systematic bias due to methodological limitations.
         </li>
         <li>
-          <strong>Pollster Reliability:</strong> Each pollster&apos;s historical
-          volatility—the extent to which their results fluctuate relative to the
-          overall trend—is assessed. Pollsters with higher volatility are deemed
-          less reliable in tracking shifts in voting intention, so their results
-          are given less weight for short-term movements in the trend.
+          <strong>Pollster Reliability:</strong> The historical volatility of
+          each pollster&apos;s results—measuring the degree to which results
+          deviate from the overall trend—is evaluated to determine reliability.
+          Pollsters with higher volatility are deemed less reliable in tracking
+          shifts in voting intention, so their results are given less weight for
+          short-term movements in the trend.
         </li>
         <li>
           <strong>House Effects:</strong> Pollsters often overestimate or

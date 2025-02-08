@@ -232,9 +232,10 @@ const MethodologyPollTrend = props => {
           of the random variation.
         </li>
         <li>
-          However, a minimum level of variability is imposed, as small sample
-          sizes might otherwise underestimate the true volatility of certain
-          seats.
+          However, a minimum level of variability of about half the average
+          amount is imposed, as small sample sizes might otherwise underestimate
+          the true volatility of certain seats, as well as changes in the
+          electoral environment that may change the level of variability.
         </li>
       </ul>
       <h6>Ensuring Seat 2PP Totals Align with the Election-Wide 2PP</h6>
@@ -436,15 +437,14 @@ const MethodologyPollTrend = props => {
       </p>
       <h5 id="simulation-aggregation">Aggregation of simulation results</h5>
       <p>
-        Once every election simulation is complete, the results for all seats—
-        including FP votes, two-candidate-preferred (TCP) outcomes, total seats
-        won, and overall vote shares—are recorded. These outcomes are then
-        aggregated into statistical summaries, which include:
+        After each individual simulation – representing a single iteration of a
+        simulated election – the resulting statistics (including FP votes, TCP
+        outcomes, overall vote shares, and other key outputs) are added to
+        running totals and averages. Once all individual simulations have been
+        performed, additional calculations are carried out to finalise the
+        overall forecast, incorporating the construction of probability
+        distributions for each seat and other aggregate statistics.
       </p>
-      <ul>
-        <li>Averages and percentiles for key outcomes.</li>
-        <li>Probability distributions for different election scenarios.</li>
-      </ul>
       <p>
         These processed results are then stored and uploaded to the server,
         where they can be viewed on the website in either the latest report or

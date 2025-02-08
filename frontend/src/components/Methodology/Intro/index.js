@@ -11,7 +11,7 @@ const MethodologyIntro = props => {
         provided rather than a detailed account of every formula or step. For
         those seeking complete details, the source code is available{' '}
         <a href="https://github.com/d-j-hirst/aus-polling-analyser">
-          on Github
+          on GitHub
         </a>
         . For specific questions, please contact the site&apos;s author by{' '}
         <Email>email</Email>.

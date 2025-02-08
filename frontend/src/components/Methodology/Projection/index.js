@@ -159,15 +159,14 @@ const MethodologyPollTrend = props => {
           before proceeding.
         </li>
         <li>
-          <strong>Mix Factor Determination:</strong> The next step is to
-          identify the optimal mix factor, which determines the proportion of
-          the final projection derived from the poll trend versus the
-          fundamentals. For instance, if (after bias correction) the
-          fundamentals projection estimates the ALP&apos;s 2PP vote share at 54%
-          while the poll trend indicates 48%, then the final projection could
-          range from 54% (100% fundamentals) to 48% (100% poll trend), or lie
-          somewhere in between. The optimal mix factor is chosen by minimising
-          the error across all elections.
+          Determine the optimal mix factor that specifies the proportion of the
+          final projection derived from the poll trend versus the fundamentals.
+          For example, if the fundamentals estimate the ALP&apos;s 2PP vote
+          share at 54% while the poll trend indicates 48%, the mix factor is
+          applied to produce a final projection that lies between these two
+          values. The optimal mix factor is chosen by minimising the error
+          between the final projection and the actual election result across all
+          past elections.
         </li>
         <li>
           <strong>Final Bias Correction:</strong> Once the mixed estimate is
@@ -241,8 +240,9 @@ const MethodologyPollTrend = props => {
         points, the projection method produces a significant reduction in error
         compared to these simpler estimates. For example, exactly one year prior
         to an election, the average absolute error from the projection is 2.87
-        percentage points, compared to 3.68 for the fundamentals alone, 3.77 for
-        the poll trend alone, and 4.29 for the baseline estimate.
+        percentage points, compared to 3.68 percentage points for the
+        fundamentals alone, 3.77 percentage points for the poll trend alone, and
+        4.29 percentage points for the baseline estimate.
       </p>
       <p>
         There are two main exceptions. First, for federal elections more than a
@@ -286,12 +286,16 @@ const MethodologyPollTrend = props => {
       </p>
       <ul>
         <li>
-          <strong>FP-first:</strong> Assign first-preference shares initially,
-          then derive the 2PP using historical preference flows.
+          <strong>FP-first:</strong> After drawing a random first-preference
+          vote share from the relevant probability distribution, the values are
+          normalised so that the total across all parties sums to 100%. Then,
+          the 2PP is derived using historical preference flows.
         </li>
         <li>
-          <strong>2PP-First:</strong> Assign the 2PP first, then back-calculate
-          FP shares based on expected preference flows.
+          <strong>2PP-First:</strong> Assign the 2PP first by drawing a random
+          value from the relevant probability distribution, assign FP values for
+          each non-major party, then back-calculate the major party FP values
+          based on expected preference flows.
         </li>
       </ul>
       <p>
