@@ -387,7 +387,7 @@ const MethodologyPollTrend = props => {
         vote share required for a specific probability of winning a seat, and
         the simulated FP vote is nudged toward the betting odds.
       </p>
-      <h6 id="fp-seat-">Simulating Major Party FP Votes</h6>
+      <h6>Simulating Major Party FP Votes</h6>
       <p>
         Once minor party FP votes and the seat-level 2PP result have been
         established, major party FP votes are determined by:
@@ -407,9 +407,33 @@ const MethodologyPollTrend = props => {
           result for each seat.
         </li>
       </ul>
-      <h6 id="fp-seat-">
-        Reconciling Seat-Level FP Votes with the Election Sample
-      </h6>
+      <h6>Nationals </h6>
+      <p>
+        <i>
+          Note: Prior to February 2025, the Nationals were treated as identical
+          to the Liberal Party.
+        </i>
+      </p>
+      <p>
+        When both the Nationals and the Liberal Party field candidates in a
+        seat, the proportion of votes allocated to the Nationals is modelled as
+        a random variable, with its distribution derived from historical
+        patterns.
+      </p>
+      <p>
+        A linear regression on historical results, using the Nationals&apos;
+        share in each of the previous two elections, provides the best estimate
+        of the Nationals&apos; share, while the standard deviation of the
+        regression residuals quantifies the associated uncertainty in the
+        Nationals&apos; share for each seat.
+      </p>
+      <p>
+        In addition, the overall Nationals&apos; vote share across all seats is
+        adjusted on a per-election basis using a probability distribution
+        calibrated to historical results, with its standard deviation and
+        kurtosis reflecting observed variability.
+      </p>
+      <h6>Reconciling Seat-Level FP Votes with the Election Sample</h6>
       <p>
         After generating seat-level FP votes, the totals may not align with the
         FP vote distribution in the original election sample. To correct this:
