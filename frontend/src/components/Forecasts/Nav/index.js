@@ -96,16 +96,16 @@ const ForecastsNav = props => {
               id="basic-navbar-nav"
               className="justify-content-end"
             >
-              {/* <ElectionNav
+              <ElectionNav
                 text="Western Australia"
                 election="2025wa"
-                mode={'nowcast'}
+                mode={effectiveMode}
                 activeElection={props.election}
-              /> */}
+              />
               <ElectionNav
                 text="Federal"
                 election="2025fed"
-                mode={'nowcast'}
+                mode={effectiveMode}
                 activeElection={props.election}
               />
               <NavDropdown title="Past Elections">
@@ -158,14 +158,12 @@ const ForecastsNav = props => {
               id="basic-navbar-nav"
               className="justify-content-end"
             >
-              {props.election !== '2025fed' && (
-                <ModeNav
-                  text="Regular Forecast"
-                  election={props.election}
-                  mode="regular"
-                  activeMode={props.mode}
-                />
-              )}
+              <ModeNav
+                text="Regular Forecast"
+                election={props.election}
+                mode="regular"
+                activeMode={props.mode}
+              />
               <ModeNav
                 text="Nowcast"
                 election={props.election}
