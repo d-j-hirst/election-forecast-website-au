@@ -429,9 +429,9 @@ const MethodologyPollTrend = props => {
       </p>
       <p>
         In addition, the overall Nationals&apos; vote share across all seats is
-        adjusted on a per-election basis using a probability distribution
-        calibrated to historical results, with its standard deviation and
-        kurtosis reflecting observed variability.
+        adjusted per simulation using a probability distribution calibrated to
+        historical results, with its standard deviation and kurtosis reflecting
+        observed variability.
       </p>
       <h6>Reconciling Seat-Level FP Votes with the Election Sample</h6>
       <p>

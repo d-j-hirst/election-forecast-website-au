@@ -29,6 +29,10 @@ const SeatVoteRow = props => {
     [10, 12, 5],
     [12, 14, 6],
   ];
+
+  let candidateName = props.candidateName;
+  if (candidateName === 'Renee McLennan') candidateName = 'Renée McLennan';
+
   return (
     <ListGroup.Item className={styles.seatsSubitem}>
       <div className={styles.rowLeftSection}>
