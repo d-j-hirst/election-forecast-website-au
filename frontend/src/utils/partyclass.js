@@ -19,6 +19,17 @@ const isKnownParty = party => {
   ].some(el => el === party.toLowerCase());
 };
 
+export const partyCategory = party => {
+  const sp = standardiseParty(party).toLowerCase();
+  if (sp === 'grn') return -2;
+  if (sp === 'alp') return -1;
+  if (sp === 'kap') return 1;
+  if (sp === 'lnp') return 2;
+  if (sp === 'lib') return 2;
+  if (sp === 'nat') return 2;
+  return 0;
+};
+
 export const standardiseParty = (party, forecast) => {
   if (typeof party !== 'string') party = jsonMap(forecast.partyAbbr, party);
   if (!isKnownParty(party)) party = 'oth';

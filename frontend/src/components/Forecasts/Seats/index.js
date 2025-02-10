@@ -22,23 +22,12 @@ import TooltipWrapper from '../../General/TooltipWrapper';
 import {coalitionAbbreviation} from '../../../utils/coalition.js';
 import {deepCopy} from '../../../utils/deepcopy.js';
 import {jsonMap, jsonMapReverse} from '../../../utils/jsonmap.js';
-import {standardiseParty} from '../../../utils/partyclass.js';
+import {partyCategory} from '../../../utils/partyclass.js';
 import {getSeatUrl} from '../../../utils/seaturls.js';
 import {seatInRegion} from '../../../utils/seatregion.js';
 import {useWarning} from '../../../utils/seatwarnings.js';
 
 import styles from './Seats.module.css';
-
-const partyCategory = (party, forecast) => {
-  const sp = standardiseParty(party).toLowerCase();
-  if (sp === 'grn') return -2;
-  if (sp === 'alp') return -1;
-  if (sp === 'kap') return 1;
-  if (sp === 'lnp') return 2;
-  if (sp === 'on') return 3;
-  if (sp === 'uap') return 3;
-  return 0;
-};
 
 const seatAsterisks = {
   '2023nsw;Bega':

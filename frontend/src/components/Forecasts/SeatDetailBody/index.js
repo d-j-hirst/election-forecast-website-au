@@ -22,18 +22,7 @@ import {deepCopy} from '../../../utils/deepcopy.js';
 import {useWarning} from '../../../utils/seatwarnings.js';
 
 import styles from '../Seats/Seats.module.css';
-import {standardiseParty} from 'utils/partyclass';
-
-const partyCategory = (party, forecast) => {
-  const sp = standardiseParty(party).toLowerCase();
-  if (sp === 'grn') return -2;
-  if (sp === 'alp') return -1;
-  if (sp === 'kap') return 1;
-  if (sp === 'lnp') return 2;
-  if (sp === 'on') return 3;
-  if (sp === 'uap') return 3;
-  return 0;
-};
+import {partyCategory} from 'utils/partyclass';
 
 const ReturnToMain = props => {
   const linkUrl =
