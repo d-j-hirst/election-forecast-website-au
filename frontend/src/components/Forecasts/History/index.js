@@ -939,7 +939,13 @@ const History = props => {
 
   const title = (() => {
     let title = 'Display: ';
-    const partyAbbr = jsonMap(props.forecast.partyAbbr, graphParty);
+    let partyAbbr = jsonMap(props.forecast.partyAbbr, graphParty);
+    if (
+      Object.hasOwn(lastHistoryItem, 'coalitionFpFrequencies') &&
+      graphParty === 1
+    ) {
+      partyAbbr = 'LIB';
+    }
     if (graphType === GraphTypeEnum.governmentFormation) {
       title += 'Formation of Government';
     } else if (graphType === GraphTypeEnum.tpp) {
