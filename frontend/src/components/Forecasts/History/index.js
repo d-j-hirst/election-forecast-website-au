@@ -937,15 +937,20 @@ const History = props => {
     fetchElectionSummary();
   }, [props.election, props.mode]);
 
+  const lastHistoryItem = history.length > 0 ? history.slice(-1)[0] : null;
+  const coalitionFpAvailable =
+    lastHistoryItem &&
+    Object.hasOwn(lastHistoryItem, 'coalitionFpFrequencies') &&
+    lastHistoryItem.coalitionFpFrequencies.length > 0;
+  const coalitionSeatsAvailable =
+    lastHistoryItem &&
+    Object.hasOwn(lastHistoryItem, 'coalitionSeatCountFrequencies') &&
+    lastHistoryItem.coalitionSeatCountFrequencies.length > 0;
+
   const title = (() => {
     let title = 'Display: ';
     let partyAbbr = jsonMap(props.forecast.partyAbbr, graphParty);
-    if (
-      Object.hasOwn(lastHistoryItem, 'coalitionFpFrequencies') &&
-      graphParty === 1
-    ) {
-      partyAbbr = 'LIB';
-    }
+    if (coalitionFpAvailable && graphParty === 1) partyAbbr = 'LIB';
     if (graphType === GraphTypeEnum.governmentFormation) {
       title += 'Formation of Government';
     } else if (graphType === GraphTypeEnum.tpp) {
@@ -972,16 +977,6 @@ const History = props => {
     else title += 'Include late counting';
     return title;
   })();
-
-  const lastHistoryItem = history.length > 0 ? history.slice(-1)[0] : null;
-  const coalitionFpAvailable =
-    lastHistoryItem &&
-    Object.hasOwn(lastHistoryItem, 'coalitionFpFrequencies') &&
-    lastHistoryItem.coalitionFpFrequencies.length > 0;
-  const coalitionSeatsAvailable =
-    lastHistoryItem &&
-    Object.hasOwn(lastHistoryItem, 'coalitionSeatCountFrequencies') &&
-    lastHistoryItem.coalitionSeatCountFrequencies.length > 0;
 
   let lnpIndex = jsonMapReverse(props.forecast.partyAbbr, 'LNP');
   // Some reports have LNP = -4 because of the current treatment of coalition partners, but
