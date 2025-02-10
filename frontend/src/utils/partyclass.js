@@ -27,6 +27,8 @@ export const partyCategory = party => {
   if (sp === 'lnp') return 2;
   if (sp === 'lib') return 2;
   if (sp === 'nat') return 2;
+  if (sp === 'on') return 3;
+  if (sp === 'uap') return 3;
   return 0;
 };
 
