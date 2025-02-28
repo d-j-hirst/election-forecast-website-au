@@ -191,7 +191,9 @@ const VoteTrendChart = props => {
       if (!trendData[trendIndex].hasOwnProperty('pollDesc'))
         trendData[trendIndex]['pollDesc'] = '';
       else trendData[trendIndex]['pollDesc'] += ';';
-      const pollster = poll.pollster.replace('Newspoll2', 'Newspoll');
+      const pollster = poll.pollster
+        .replace('Newspoll2', 'Newspoll')
+        .replace('YouGov2', 'YouGov');
       trendData[trendIndex]['pollDesc'] += `${pollster}, ${round1(pollVal)}`;
     }
 
