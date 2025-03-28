@@ -161,14 +161,14 @@ const FpRowSet = props => {
     props.results === null
       ? null
       : freqs.map(freq => {
-          const partyAbbr = jsonMap(props.forecast.partyAbbr, freq[0]);
+          const thisPartyAbbr = jsonMap(props.forecast.partyAbbr, freq[0]);
           if (
-            partyAbbr === 'ON' &&
+            thisPartyAbbr === 'ON' &&
             props.results.overall.fp['ONP'] !== undefined
           ) {
             return props.results.overall.fp['ONP'];
           }
-          return props.results.overall.fp[partyAbbr];
+          return props.results.overall.fp[thisPartyAbbr];
         });
   const maxVoteTotal = Math.max(...freqs.map(el => Math.max(...el[1])));
   return (
