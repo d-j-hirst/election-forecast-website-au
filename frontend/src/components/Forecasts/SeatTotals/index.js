@@ -16,18 +16,11 @@ import {jsonMap} from '../../../utils/jsonmap.js';
 
 import styles from './SeatTotals.module.css';
 
-const partyMap = (map, val) => {
-  if (val === 'ON' && jsonMap(map, 'ON') === undefined) {
-    return jsonMap(map, 'ONP');
-  }
-  return jsonMap(map, val);
-};
-
 const SeatsRow = props => {
   let partyAbbr =
     props.freqSet[0] === null
       ? 'LNP'
-      : partyMap(props.forecast.partyAbbr, props.freqSet[0]);
+      : jsonMap(props.forecast.partyAbbr, props.freqSet[0]);
   const canShowCoalition =
     Object.hasOwn(props.forecast, 'coalitionSeatCountFrequencies') &&
     props.forecast.coalitionSeatCountFrequencies.length > 0;
@@ -35,7 +28,7 @@ const SeatsRow = props => {
     partyAbbr = 'LIB';
   }
 
-  const partyName = partyMap(props.forecast.partyName, props.freqSet[0]);
+  const partyName = jsonMap(props.forecast.partyName, props.freqSet[0]);
   let result = props.result;
   if (partyName === 'Emerging Ind') partyAbbr = 'IndX';
   if (partyName === 'Emerging Party') partyAbbr = 'EOth';
@@ -110,7 +103,7 @@ const SeatsRowSet = props => {
   if (props.showCoalition === true && canShowCoalition) {
     //
     freqs = freqs.filter(el => {
-      const partyAbbr = partyMap(props.forecast.partyAbbr, el[0]);
+      const partyAbbr = jsonMap(props.forecast.partyAbbr, el[0]);
       return partyAbbr !== 'LIB' && partyAbbr !== 'NAT' && partyAbbr !== 'LNP';
     });
     freqs.push([null, props.forecast.coalitionSeatCountFrequencies]);
@@ -122,12 +115,16 @@ const SeatsRowSet = props => {
   const results =
     props.results === null
       ? null
-      : freqs.map(
-          freq =>
-            props.results.overall.seats[
-              partyMap(props.forecast.partyAbbr, freq[0])
-            ]
-        );
+      : freqs.map(freq => {
+          const partyAbbr = jsonMap(props.forecast.partyAbbr, freq[0]);
+          if (
+            partyAbbr === 'ON' &&
+            props.results.overall.seats['ONP'] !== undefined
+          ) {
+            return props.results.overall.seats['ONP'];
+          }
+          return props.results.overall.seats[partyAbbr];
+        });
   const maxVoteTotal = Math.max(...freqs.map(el => Math.max(...el[1])));
   return (
     <>

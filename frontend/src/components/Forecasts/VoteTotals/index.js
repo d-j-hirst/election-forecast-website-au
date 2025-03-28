@@ -18,18 +18,11 @@ import {jsonMap} from '../../../utils/jsonmap.js';
 
 import styles from './VoteTotals.module.css';
 
-const partyMap = (map, val) => {
-  if (val === 'ON' && jsonMap(map, 'ON') === undefined) {
-    return jsonMap(map, 'ONP');
-  }
-  return jsonMap(map, val);
-};
-
 const VoteShareRow = props => {
   let partyAbbr =
     props.freqSet[0] === null
       ? 'LNP'
-      : partyMap(props.forecast.partyAbbr, props.freqSet[0]);
+      : jsonMap(props.forecast.partyAbbr, props.freqSet[0]);
   const canShowCoalition =
     Object.hasOwn(props.forecast, 'coalitionFpFrequencies') &&
     props.forecast.coalitionFpFrequencies.length > 0;
@@ -155,7 +148,7 @@ const FpRowSet = props => {
   });
   if (showCoalition) {
     freqs = freqs.filter(el => {
-      const partyAbbr = partyMap(props.forecast.partyAbbr, el[0]);
+      const partyAbbr = jsonMap(props.forecast.partyAbbr, el[0]);
       return partyAbbr !== 'LIB' && partyAbbr !== 'NAT' && partyAbbr !== 'LNP';
     });
     freqs.push([null, props.forecast.coalitionFpFrequencies]);
@@ -167,12 +160,16 @@ const FpRowSet = props => {
   const results =
     props.results === null
       ? null
-      : freqs.map(
-          freq =>
-            props.results.overall.fp[
-              partyMap(props.forecast.partyAbbr, freq[0])
-            ]
-        );
+      : freqs.map(freq => {
+          const partyAbbr = jsonMap(props.forecast.partyAbbr, freq[0]);
+          if (
+            partyAbbr === 'ON' &&
+            props.results.overall.fp['ONP'] !== undefined
+          ) {
+            return props.results.overall.fp['ONP'];
+          }
+          return props.results.overall.fp[partyAbbr];
+        });
   const maxVoteTotal = Math.max(...freqs.map(el => Math.max(...el[1])));
   return (
     <>
