@@ -264,25 +264,26 @@ const MethodologyPollTrend = props => {
       <p>
         Although the 2PP vote is simulated first due to its greater reliability,
         the FP vote is also modelled, since some contests do not result in a
-        two-candidate-preferred count. This process is complex, involving
-        numerous variables and judgment calls—especially where historical data
-        for third parties and independents is limited.
+        two-party-preferred count. This process is complex, involving numerous
+        variables and judgment calls—especially where historical data for third
+        parties and independents is limited.
       </p>
       <h6>Simulating Minor Party and Independent FP Votes</h6>
       <p>
-        The simulation begins by modelling FP votes for non-major parties,
-        including independents and a generic &quot;others&quot; category. This
-        is done by:
+        This simulation begins for each seat by modelling FP votes for non-major
+        parties, including independents and a generic &quot;others&quot;
+        category. This is done by:
       </p>
       <ul>
         <li>
           Analysing historical FP vote behaviour for different party categories
-          (see &quot;Fundamentals&quot; above).
+          (the same categories as used in &quot;Fundamentals&quot; above).
+          Incumbency effects, previous vote share, and volatility between
+          elections are measured.
         </li>
         <li>
-          Applying historical trends to previous election vote shares, adjusted
-          for incumbency effects, previous vote share, and natural vote
-          volatility.
+          Applying this historical data to estimate the first preference votes
+          for each party based on previous election vote shares.
         </li>
       </ul>
       <h6>Independents</h6>
