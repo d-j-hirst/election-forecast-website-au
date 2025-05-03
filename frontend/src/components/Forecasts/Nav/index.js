@@ -65,6 +65,7 @@ ModeNav.propTypes = {
 };
 
 const live_elections = [
+  '2025fed',
   '2024qld',
   '2023nsw',
   '2022vic',
