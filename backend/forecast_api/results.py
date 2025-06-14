@@ -238,13 +238,21 @@ def fetch_seat_results(election: Election, urls):
 
     all_seat_results = {}
     for url, r in responses.items():
-        soup = BeautifulSoup(r.content, 'html.parser')
-        try:
-            tables = (soup.find(class_='mw-parser-output')
-                      .find_all(class_='wikitable'))
-        except:
-            print(soup.prettify())
-            raise
+        success = False
+        attempts = 0
+        while not success and attempts < 10:
+            soup = BeautifulSoup(r.content, 'html.parser')
+            try:
+                tables = (soup.find(class_='mw-parser-output')
+                        .find_all(class_='wikitable'))
+                success = True
+            except AttributeError as e:
+                print(f'Error loading {url} on attempt {attempts}')
+                print(soup.prettify())
+                print(e)
+                if attempts == 9:
+                    raise
+            attempts += 1
         for table in tables:
             caption = table.find('caption')
             if caption is None: continue
