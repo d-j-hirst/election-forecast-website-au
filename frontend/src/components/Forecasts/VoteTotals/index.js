@@ -172,6 +172,7 @@ const FpRowSet = props => {
         });
   const maxVoteTotal = Math.max(...freqs.map(el => Math.max(...el[1])));
   const combinedCoalition =
+    props.results !== null &&
     props.results.overall.fp['LIB'] !== undefined &&
     props.results.overall.fp['NAT'] !== undefined
       ? props.results.overall.fp['LIB'] + props.results.overall.fp['NAT']
