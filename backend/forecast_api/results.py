@@ -61,10 +61,18 @@ party_convert = {
         'Independents': 'IND',
         'Independent': 'IND',
     },
+    '2025wa': {
+        'Labor': 'ALP',
+        'Liberal': 'LNP',
+        'National': 'NAT',
+        'Greens': 'GRN',
+        'Independents': 'IND',
+        'Independent': 'IND',
+    },
     '2025fed': {
         'Labor': 'ALP',
         'Liberal': 'LNP',
-        'National': 'LNP',
+        'National': 'NAT',
         'Liberal National (Qld)': 'LNP',
         'Liberal National': 'LNP',
         'Coalition': 'LNP',
@@ -97,6 +105,7 @@ def fetch_overall_results(election: Election):
         '2022vic': {'IND'},
         '2023nsw': {'IND'},
         '2024qld': {'KAP', 'IND'},
+        '2025wa': {'IND'},
         '2025fed': {'CA', 'KAP', 'IND'}
     }
     overall_results = {'fp': {}, 'seats': {}, 'tpp': 0}
