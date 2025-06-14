@@ -139,7 +139,7 @@ def fetch_overall_results(election: Election):
         if name not in party_convert[election.code]: continue
         if name == 'National' and region == 'sa': continue
         code = party_convert[election.code][name]
-        if name == 'National' and region == 'wa': code = 'NP'
+        if name == 'National' and region == 'wa': code = 'NAT'
         vote_share = float(cols[3].text.replace('%', ''))
         if doing_tpp and code == 'ALP':
             overall_results['tpp'] = vote_share
@@ -158,6 +158,9 @@ def fetch_overall_results(election: Election):
             continue
         total_fp += vote_share
     overall_results['fp']['OTH'] = 100 - total_fp
+    if election.code == '2025wa':
+        overall_results['tpp'] = 57.1  # Doesn't appear on this page, but it's known
+    print(overall_results)
     return overall_results
 
 
@@ -249,9 +252,6 @@ def fetch_seat_results(election: Election, urls):
             print(f'Repeatedly running the script may resolve this')
             print(soup.prettify())
             print(e)
-            if attempts == 9:
-                raise
-        attempts += 1
         for table in tables:
             caption = table.find('caption')
             if caption is None: continue
