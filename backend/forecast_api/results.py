@@ -239,8 +239,12 @@ def fetch_seat_results(election: Election, urls):
     all_seat_results = {}
     for url, r in responses.items():
         soup = BeautifulSoup(r.content, 'html.parser')
-        tables = (soup.find(class_='mw-parser-output')
+        try:
+            tables = (soup.find(class_='mw-parser-output')
                       .find_all(class_='wikitable'))
+        except:
+            print(soup.prettify())
+            raise
         for table in tables:
             caption = table.find('caption')
             if caption is None: continue
