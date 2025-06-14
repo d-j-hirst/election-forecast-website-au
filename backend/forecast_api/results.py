@@ -63,7 +63,7 @@ party_convert = {
     },
     '2025wa': {
         'Labor': 'ALP',
-        'Liberal': 'LNP',
+        'Liberal': 'LIB',
         'National': 'NAT',
         'Greens': 'GRN',
         'Independents': 'IND',
@@ -238,21 +238,20 @@ def fetch_seat_results(election: Election, urls):
 
     all_seat_results = {}
     for url, r in responses.items():
-        success = False
-        attempts = 0
-        while not success and attempts < 10:
-            soup = BeautifulSoup(r.content, 'html.parser')
-            try:
-                tables = (soup.find(class_='mw-parser-output')
-                        .find_all(class_='wikitable'))
-                success = True
-            except AttributeError as e:
-                print(f'Error loading {url} on attempt {attempts}')
-                print(soup.prettify())
-                print(e)
-                if attempts == 9:
-                    raise
-            attempts += 1
+        soup = BeautifulSoup(r.content, 'html.parser')
+        try:
+            tables = (soup.find(class_='mw-parser-output')
+                    .find_all(class_='wikitable'))
+            success = True
+        except AttributeError as e:
+            print(f'Error loading {url} on attempt {attempts}')
+            print(f'This can occur due to issues with the remote servers')
+            print(f'Repeatedly running the script may resolve this')
+            print(soup.prettify())
+            print(e)
+            if attempts == 9:
+                raise
+        attempts += 1
         for table in tables:
             caption = table.find('caption')
             if caption is None: continue
