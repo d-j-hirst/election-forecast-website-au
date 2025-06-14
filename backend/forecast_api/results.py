@@ -293,7 +293,7 @@ def fetch_seat_results(election: Election, urls):
                         code = 'IND*'
                     else:
                         code = 'OTH'
-                if name == 'National' and region == 'wa': code = 'NP'
+                if name == 'National' and region == 'wa': code = 'NAT'
                 vote_share = float(cols[4].text)
                 if doing_tcp == 1:
                     seat_results['tcp'][code] = vote_share
