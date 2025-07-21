@@ -171,12 +171,22 @@ const FpRowSet = props => {
           return props.results.overall.fp[thisPartyAbbr];
         });
   const maxVoteTotal = Math.max(...freqs.map(el => Math.max(...el[1])));
-  const combinedCoalition =
+  let combinedCoalition = 0.0;
+  if (
     props.results !== null &&
     props.results.overall.fp['LIB'] !== undefined &&
     props.results.overall.fp['NAT'] !== undefined
-      ? props.results.overall.fp['LIB'] + props.results.overall.fp['NAT']
-      : 0.0;
+  ) {
+    combinedCoalition =
+      props.results.overall.fp['LIB'] + props.results.overall.fp['NAT'];
+  } else if (
+    props.results !== null &&
+    props.results.overall.fp['LNP'] !== undefined &&
+    props.results.overall.fp['NAT'] !== undefined
+  ) {
+    combinedCoalition =
+      props.results.overall.fp['LNP'] + props.results.overall.fp['NAT'];
+  }
   return (
     <>
       <ListGroup.Item className={styles.voteTotalsSubHeading}>
