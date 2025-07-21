@@ -71,13 +71,14 @@ party_convert = {
     },
     '2025fed': {
         'Labor': 'ALP',
-        'Liberal': 'LNP',
+        'Liberal': 'LIB',
         'National': 'NAT',
-        'Liberal National (Qld)': 'LNP',
-        'Liberal National': 'LNP',
-        'Coalition': 'LNP',
-        'Country Liberal (NT)': 'LNP',
-        'Country Liberal': 'LNP',
+        'Nationals': 'NAT',
+        'Liberal National (Qld)': 'LIB',
+        'Liberal National': 'LIB',
+        'Coalition': 'LIB',
+        'Country Liberal (NT)': 'LIB',
+        'Country Liberal': 'LIB',
         'Greens': 'GRN',
         'One Nation': 'ON',
         'United Australia Party': 'UAP',
@@ -192,8 +193,8 @@ def collect_seat_names(election: Election):
         first_heading = rows[0].find('th')
         if first_heading is None: continue
         if first_heading.text.strip() != 'Electorate': continue
-        for row in rows:
-            first_cell = row.find('td')
+        for row in rows[1:]:
+            first_cell = row.find('th' if election.code == '2025fed' else 'td')
             if first_cell is None: continue
             if '(' in first_cell.text: continue
             link = first_cell.find('a')
