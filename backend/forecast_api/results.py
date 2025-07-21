@@ -1,4 +1,5 @@
 from forecast_api.models import Election
+import json
 import requests
 import threading
 from bs4 import BeautifulSoup
@@ -228,19 +229,17 @@ def fetch_seat_results(election: Election, urls):
 
     # Concurrently fetch results while maintaining order
     responses = {url: None for url in urls}
-    # threads = []
-    # some_lock = threading.Lock()
+    threads = []
+    some_lock = threading.Lock()
     def get_response(url):
         r = requests.get(url)
-        # with some_lock:
-        responses[url]= r
+        with some_lock:
+            responses[url]= r
     for url in urls:
-        get_response(url)
-        print(f'Collected results from {url}')
-        # threads.append(threading.Thread(target=get_response, args=(url,)))
-        # threads[-1].start()
-    # for thread in threads:
-        # thread.join()
+        threads.append(threading.Thread(target=get_response, args=(url,)))
+        threads[-1].start()
+    for thread in threads:
+        thread.join()
 
     all_seat_results = {}
     for url, r in responses.items():
@@ -250,7 +249,7 @@ def fetch_seat_results(election: Election, urls):
                     .find_all(class_='wikitable'))
             success = True
         except AttributeError as e:
-            print(f'Error loading {url} on attempt {attempts}')
+            print(f'Error loading {url}')
             print(f'This can occur due to issues with the remote servers')
             print(f'Repeatedly running the script may resolve this')
             print(soup.prettify())
@@ -392,18 +391,25 @@ def fetch_seat_results(election: Election, urls):
     return all_seat_results
 
 
-def update_results(election: Election):
-    overall_results = fetch_overall_results(election)
-    urls = collect_seat_names(election)
-    seat_results = fetch_seat_results(election, urls)
-    # for code, vote_share in list(overall_results['fp'].items()):
-    #     print(f'Overall {code} FP: {vote_share:.2f}%')
-    # for code, seats in list(overall_results['seats'].items()):
-    #     print(f'Overall {code} seats: {seats}')
-    # print(f'Overall ALP 2PP: {overall_results["tpp"]:.2f}%')
-    full_results = {'code': election.code,
-                    'overall': overall_results,
-                    'seats': seat_results}
+def update_results(election: Election, pre_fill):
+    if pre_fill is None:
+        overall_results = fetch_overall_results(election)
+        urls = collect_seat_names(election)
+        seat_results = fetch_seat_results(election, urls)
+        # for code, vote_share in list(overall_results['fp'].items()):
+        #     print(f'Overall {code} FP: {vote_share:.2f}%')
+        # for code, seats in list(overall_results['seats'].items()):
+        #     print(f'Overall {code} seats: {seats}')
+        # print(f'Overall ALP 2PP: {overall_results["tpp"]:.2f}%')
+        full_results = {'code': election.code,
+                        'overall': overall_results,
+                        'seats': seat_results}
+    else:
+        full_results = pre_fill
     election.results = full_results
+    if not pre_fill:
+        print(election.results)
+        with open('prefill_results.json', 'w') as f:
+            json.dump(election.results, f)
     election.results_version += 1
     election.save()

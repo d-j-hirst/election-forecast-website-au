@@ -35,3 +35,4 @@ backend/static/
 frontend/build/
 .vscode/
 frontend/commentary_test.txt
+backend/prefill_results.json

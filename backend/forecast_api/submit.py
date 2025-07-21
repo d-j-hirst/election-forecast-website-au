@@ -129,8 +129,9 @@ def submit_results_update(request: HttpRequest):
     data_json = request.body.decode()
     data = json.loads(data_json)
     code = data['termCode']
+    pre_fill = data['preFill'] if 'preFill' in data else None
     election = get_object_or_404(Election, code=code)
-    update_results(election)
+    update_results(election, pre_fill)
     clear_results_cache(code)
     return Response("Election results successfully updated.")
 
