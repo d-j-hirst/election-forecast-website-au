@@ -228,17 +228,19 @@ def fetch_seat_results(election: Election, urls):
 
     # Concurrently fetch results while maintaining order
     responses = {url: None for url in urls}
-    threads = []
-    some_lock = threading.Lock()
+    # threads = []
+    # some_lock = threading.Lock()
     def get_response(url):
         r = requests.get(url)
-        with some_lock:
-            responses[url]= r
+        # with some_lock:
+        responses[url]= r
     for url in urls:
-        threads.append(threading.Thread(target=get_response, args=(url,)))
-        threads[-1].start()
-    for thread in threads:
-        thread.join()
+        get_response(url)
+        print(f'Collected results from {url}')
+        # threads.append(threading.Thread(target=get_response, args=(url,)))
+        # threads[-1].start()
+    # for thread in threads:
+        # thread.join()
 
     all_seat_results = {}
     for url, r in responses.items():
