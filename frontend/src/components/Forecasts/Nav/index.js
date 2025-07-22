@@ -165,12 +165,14 @@ const ForecastsNav = props => {
               id="basic-navbar-nav"
               className="justify-content-end"
             >
-              <ModeNav
-                text="Regular Forecast"
-                election={props.election}
-                mode="regular"
-                activeMode={props.mode}
-              />
+              {props.election !== '2028fed' && (
+                <ModeNav
+                  text="Regular Forecast"
+                  election={props.election}
+                  mode="regular"
+                  activeMode={props.mode}
+                />
+              )}
               <ModeNav
                 text="Nowcast"
                 election={props.election}
