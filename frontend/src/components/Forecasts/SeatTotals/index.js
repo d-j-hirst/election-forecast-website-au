@@ -235,6 +235,7 @@ const MajorityRow = props => {
     if (props.election === '2026sa') return 24;
     if (props.election === '2026vic') return 45;
     if (props.election === '2027nsw') return 47;
+    if (props.election === '2028fed') return 76;
   })();
 
   return (

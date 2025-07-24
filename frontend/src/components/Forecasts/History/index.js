@@ -588,6 +588,8 @@ const Seats = props => {
     if (props.election === '2024qld') return 46.5;
     if (props.election === '2025wa') return 29.5;
     if (props.election === '2025fed') return 75.5;
+    if (props.election === '2026sa') return 23.5;
+    if (props.election === '2028fed') return 75.5;
   })();
 
   return (
