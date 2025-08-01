@@ -104,6 +104,12 @@ const ForecastsNav = props => {
                 activeElection={props.election}
               />
               <ElectionNav
+                text="Victoria"
+                election="2026vic"
+                mode={effectiveMode}
+                activeElection={props.election}
+              />
+              <ElectionNav
                 text="Federal"
                 election="2028fed"
                 mode="nowcast"
