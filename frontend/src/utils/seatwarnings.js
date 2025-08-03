@@ -9,6 +9,7 @@ export const useWarning = (election, seatName) => {
         seatName === 'MacKillop')) ||
     (election === '2026vic' &&
       (seatName === 'Prahran' || seatName === 'Narracan')) ||
+    (election === '2027nsw' && seatName === 'Kiama') ||
     (election === '2028fed' && seatName === 'Calare')
   );
 };
