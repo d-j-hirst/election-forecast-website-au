@@ -13,6 +13,7 @@ import TooltipWrapper from '../../General/TooltipWrapper';
 
 import {coalitionName} from '../../../utils/coalition.js';
 import {jsonMap} from '../../../utils/jsonmap.js';
+import {isOutlook} from '../../../utils/outlook.js';
 
 import styles from './SeatTotals.module.css';
 
@@ -42,25 +43,31 @@ const SeatsRow = props => {
     [10, 12, 5],
     [12, 14, 6],
   ];
+  const outerStyle = isOutlook(props.forecast.termCode)
+    ? styles.rowNumberStrong
+    : styles.rowNumber;
+  const innerStyle = isOutlook(props.forecast.termCode)
+    ? styles.rowNumberDeemphasised
+    : styles.rowNumberStrong;
   return (
     <ListGroup.Item className={styles.seatTotalsItem}>
       <div className={styles.rowLeftSection}>
         <div className={styles.rowParty}>
           <SmartBadge party={partyAbbr} termCode={props.forecast.termCode} />
         </div>
-        <div className={styles.rowNumber}>
+        <div className={outerStyle}>
           <TooltipWrapper tooltipText="5th percentile">
             {props.freqSet[1][4]}
           </TooltipWrapper>
         </div>
         <div className={styles.rowDash}> - </div>
-        <div className={styles.rowNumber}>
+        <div className={innerStyle}>
           <TooltipWrapper tooltipText="Median">
-            <strong>{props.freqSet[1][7]}</strong>
+            {props.freqSet[1][7]}
           </TooltipWrapper>
         </div>
         <div className={styles.rowDash}> - </div>
-        <div className={styles.rowNumber}>
+        <div className={outerStyle}>
           <TooltipWrapper tooltipText="95th percentile">
             {props.freqSet[1][10]}
           </TooltipWrapper>

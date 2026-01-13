@@ -15,6 +15,7 @@ import InfoIcon from '../../General/InfoIcon';
 
 import {coalitionName} from '../../../utils/coalition.js';
 import {jsonMap} from '../../../utils/jsonmap.js';
+import {isOutlook} from '../../../utils/outlook.js';
 
 import styles from './VoteTotals.module.css';
 
@@ -38,13 +39,19 @@ const VoteShareRow = props => {
     [10, 12, 5],
     [12, 14, 6],
   ];
+  const innerStyle = isOutlook(props.forecast.termCode)
+    ? styles.rowPercentageDeemphasised
+    : styles.rowPercentageStrong;
+  const outerStyle = isOutlook(props.forecast.termCode)
+    ? styles.rowPercentageStrong
+    : styles.rowPercentage;
   return (
     <ListGroup.Item className={styles.voteTotalsItem}>
       <div className={styles.rowLeftSection}>
         <div className={styles.rowParty}>
           <SmartBadge party={partyAbbr} termCode={props.forecast.termCode} />
         </div>
-        <div className={styles.rowPercentage}>
+        <div className={outerStyle}>
           {' '}
           <TooltipPercentage
             value={props.freqSet[1][4]}
@@ -52,15 +59,11 @@ const VoteShareRow = props => {
           />
         </div>
         <div className={styles.rowDash}> - </div>
-        <div className={styles.rowPercentage}>
-          {
-            <strong>
-              <TooltipPercentage value={props.freqSet[1][7]} label="Median" />
-            </strong>
-          }
+        <div className={innerStyle}>
+          <TooltipPercentage value={props.freqSet[1][7]} label="Median" />
         </div>
         <div className={styles.rowDash}> - </div>
-        <div className={styles.rowPercentage}>
+        <div className={outerStyle}>
           <TooltipPercentage
             value={props.freqSet[1][10]}
             label="95th percentile"

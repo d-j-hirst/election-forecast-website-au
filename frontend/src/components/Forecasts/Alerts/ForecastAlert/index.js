@@ -65,7 +65,7 @@ const ForecastAlert = props => {
                   {isThisOutlook ? 'outlook' : 'general forecast '}
                 </strong>{' '}
                 report for the {props.forecast.electionName}. It
-                {isThisOutlook ? (!current ? 'e' : '') : ' estimate'}
+                {isThisOutlook ? (!current ? 'showe' : 'show') : ' estimate'}
                 {!current ? 'd ' : 's '}
                 {isThisOutlook ? 'a range of possibilities for ' : ''}
                 how the election might

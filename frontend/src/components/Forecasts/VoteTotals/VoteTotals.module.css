@@ -87,6 +87,23 @@
     justify-content: center;
 }
 
+.rowPercentageStrong {
+    font-weight: bold;
+    width: 46px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.rowPercentageDeemphasised {
+    color: #666666;
+    width: 46px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+
 .rowDash {
     width: 10px;
     display: flex;

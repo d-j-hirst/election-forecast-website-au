@@ -5,6 +5,7 @@ import {Helmet} from 'react-helmet-async';
 
 import {useWindowDimensions} from '../../../utils/window.js';
 import {fetchReport} from '../../../utils/report_manager.js';
+import {isOutlook} from '../../../utils/outlook.js';
 
 import {
   Footer,
@@ -91,14 +92,16 @@ const ForecastLayout = props => {
                 isArchive={props.isArchive}
                 mode={mode}
               />
-              <StandardErrorBoundary>
-                <FormationOfGovernment
-                  election={code}
-                  forecast={forecast}
-                  mode={mode}
-                  windowWidth={windowDimensions.width}
-                />
-              </StandardErrorBoundary>
+              {!isOutlook(code) && (
+                <StandardErrorBoundary>
+                  <FormationOfGovernment
+                    election={code}
+                    forecast={forecast}
+                    mode={mode}
+                    windowWidth={windowDimensions.width}
+                  />
+                </StandardErrorBoundary>
+              )}
               <StandardErrorBoundary>
                 <VoteTotals
                   election={code}
@@ -118,6 +121,17 @@ const ForecastLayout = props => {
                   windowWidth={windowDimensions.width}
                 />
               </StandardErrorBoundary>
+              {isOutlook(code) && (
+                /* move this downward to deemphasise when in outlook mode */
+                <StandardErrorBoundary>
+                  <FormationOfGovernment
+                    election={code}
+                    forecast={forecast}
+                    mode={mode}
+                    windowWidth={windowDimensions.width}
+                  />
+                </StandardErrorBoundary>
+              )}
               <StandardErrorBoundary>
                 <History
                   election={code}

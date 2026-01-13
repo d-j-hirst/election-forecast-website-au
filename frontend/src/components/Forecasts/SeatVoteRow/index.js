@@ -8,6 +8,7 @@ import ProbBarDist from '../../General/ProbBarDist';
 import {SmartBadge} from '../../General/PartyBadge';
 
 import {jsonMap} from '../../../utils/jsonmap.js';
+import {isOutlook} from '../../../utils/outlook.js';
 
 import styles from '../Seats/Seats.module.css';
 
@@ -33,6 +34,13 @@ const SeatVoteRow = props => {
   let candidateName = props.candidateName;
   if (candidateName === 'Renee McLennan') candidateName = 'Renée McLennan';
 
+  const outerStyle = isOutlook(props.forecast.termCode)
+    ? styles.rowPercentageStrong
+    : styles.rowPercentage;
+  const innerStyle = isOutlook(props.forecast.termCode)
+    ? styles.rowPercentageDeemphasised
+    : styles.rowPercentageStrong;
+
   return (
     <ListGroup.Item className={styles.seatsSubitem}>
       <div className={styles.rowLeftSection}>
@@ -42,7 +50,7 @@ const SeatVoteRow = props => {
         <div className={styles.candidateName}>
           {props.candidateName && ' (' + props.candidateName + ') '}
         </div>
-        <div className={styles.rowPercentage}>
+        <div className={outerStyle}>
           {' '}
           <TooltipPercentage
             value={props.freqSet[1][4]}
@@ -50,15 +58,11 @@ const SeatVoteRow = props => {
           />
         </div>
         <div className={styles.rowDash}> - </div>
-        <div className={styles.rowPercentage}>
-          {
-            <strong>
-              <TooltipPercentage value={props.freqSet[1][7]} label="Median" />
-            </strong>
-          }
+        <div className={innerStyle}>
+          <TooltipPercentage value={props.freqSet[1][7]} label="Median" />
         </div>
         <div className={styles.rowDash}> - </div>
-        <div className={styles.rowPercentage}>
+        <div className={outerStyle}>
           <TooltipPercentage
             value={props.freqSet[1][10]}
             label="95th percentile"
