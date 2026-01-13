@@ -59,7 +59,7 @@ const ForecastAlert = props => {
             <>
               <div>
                 This {oldElec && (isArchive ? 'is an ' : 'was the final ')}
-                {!oldElec && (isArchive ? 'is an ' : 'is a ')}
+                {!oldElec && (isArchive || isThisOutlook ? 'is an ' : 'is a ')}
                 <strong>
                   {isArchive ? 'archived ' : ''}
                   {isThisOutlook ? 'outlook' : 'general forecast '}
