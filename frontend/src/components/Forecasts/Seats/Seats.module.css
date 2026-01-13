@@ -190,7 +190,7 @@
     justify-content: center;
 }
 
-@media (max-width: 420px){
+@media (max-width: 445px){
     .altCandidateName {
         margin: 0px auto;
     }
@@ -199,7 +199,7 @@
     }
 }
 
-@media (min-width: 421px){
+@media (min-width: 446px){
     .altCandidateName {
         display: none;
     }
