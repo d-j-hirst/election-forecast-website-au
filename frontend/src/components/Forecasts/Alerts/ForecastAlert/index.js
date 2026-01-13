@@ -64,11 +64,17 @@ const ForecastAlert = props => {
                   {isArchive ? 'archived ' : ''}
                   {isThisOutlook ? 'outlook' : 'general forecast '}
                 </strong>{' '}
-                report for the {props.forecast.electionName}. It estimate
-                {!current ? 'd' : 's'} how the election might{' '}
-                {oldElec ? 'have turned' : 'turn'} out{' '}
+                report for the {props.forecast.electionName}. It
+                {isThisOutlook ? (!current ? 'e' : '') : ' estimate'}
+                {!current ? 'd ' : 's '}
+                {isThisOutlook ? 'a range of possibilities for ' : ''}
+                how the election might
+                {oldElec ? ' have played' : ' play'} out{' '}
                 <strong>when it {oldElec ? 'was' : 'is'} held</strong>
                 {oldElec ? ' based on information available at the time' : ''}.
+                {isThisOutlook
+                  ? ' As there is a long time from this outlook to the election, the display is designed to emphasise the uncertainty of the outcome and the range of possible outcomes.'
+                  : ''}
                 {current && (
                   <>
                     {' '}
