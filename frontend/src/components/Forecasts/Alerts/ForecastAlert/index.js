@@ -8,6 +8,7 @@ import Button from 'react-bootstrap/Button';
 
 import InfoIcon from '../../../General/InfoIcon';
 import {ExtLink} from '../../../../utils/extlink.js';
+import {isOutlook} from '../../../../utils/outlook.js';
 
 import quantityMarkerExample from './assets/quantity-marker-example.png';
 import categoryMarkerExample from './assets/category-marker-example.png';

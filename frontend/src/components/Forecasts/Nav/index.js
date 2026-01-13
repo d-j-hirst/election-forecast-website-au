@@ -8,6 +8,7 @@ import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import Container from 'react-bootstrap/Container';
 import styles from './ForecastsNav.module.css';
+import {isOutlook} from '../../../utils/outlook.js';
 
 const ElectionNav = props => {
   const thisClass =
@@ -184,7 +185,9 @@ const ForecastsNav = props => {
               className="justify-content-end"
             >
               <ModeNav
-                text="Regular Forecast"
+                text={
+                  isOutlook(props.election) ? 'Outlook' : 'Regular Forecast'
+                }
                 election={props.election}
                 mode="regular"
                 activeMode={props.mode}
