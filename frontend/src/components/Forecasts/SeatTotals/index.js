@@ -43,12 +43,14 @@ const SeatsRow = props => {
     [10, 12, 5],
     [12, 14, 6],
   ];
-  const outerStyle = isOutlook(props.forecast.termCode)
-    ? styles.rowNumberStrong
-    : styles.rowNumber;
-  const innerStyle = isOutlook(props.forecast.termCode)
-    ? styles.rowNumberDeemphasised
-    : styles.rowNumberStrong;
+  const outerStyle =
+    isOutlook(props.forecast.termCode) && props.forecast.reportMode !== 'RF'
+      ? styles.rowNumberStrong
+      : styles.rowNumber;
+  const innerStyle =
+    isOutlook(props.forecast.termCode) && props.forecast.reportMode !== 'RF'
+      ? styles.rowNumberDeemphasised
+      : styles.rowNumberStrong;
   return (
     <ListGroup.Item className={styles.seatTotalsItem}>
       <div className={styles.rowLeftSection}>

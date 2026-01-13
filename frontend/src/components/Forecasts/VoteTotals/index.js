@@ -39,12 +39,14 @@ const VoteShareRow = props => {
     [10, 12, 5],
     [12, 14, 6],
   ];
-  const innerStyle = isOutlook(props.forecast.termCode)
-    ? styles.rowPercentageDeemphasised
-    : styles.rowPercentageStrong;
-  const outerStyle = isOutlook(props.forecast.termCode)
-    ? styles.rowPercentageStrong
-    : styles.rowPercentage;
+  const innerStyle =
+    isOutlook(props.forecast.termCode) && props.forecast.reportMode !== 'RF'
+      ? styles.rowPercentageDeemphasised
+      : styles.rowPercentageStrong;
+  const outerStyle =
+    isOutlook(props.forecast.termCode) && props.forecast.reportMode !== 'RF'
+      ? styles.rowPercentageStrong
+      : styles.rowPercentage;
   return (
     <ListGroup.Item className={styles.voteTotalsItem}>
       <div className={styles.rowLeftSection}>

@@ -34,12 +34,14 @@ const SeatVoteRow = props => {
   let candidateName = props.candidateName;
   if (candidateName === 'Renee McLennan') candidateName = 'Renée McLennan';
 
-  const outerStyle = isOutlook(props.forecast.termCode)
-    ? styles.rowPercentageStrong
-    : styles.rowPercentage;
-  const innerStyle = isOutlook(props.forecast.termCode)
-    ? styles.rowPercentageDeemphasised
-    : styles.rowPercentageStrong;
+  const outerStyle =
+    isOutlook(props.forecast.termCode) && props.forecast.reportMode !== 'RF'
+      ? styles.rowPercentageStrong
+      : styles.rowPercentage;
+  const innerStyle =
+    isOutlook(props.forecast.termCode) && props.forecast.reportMode !== 'RF'
+      ? styles.rowPercentageDeemphasised
+      : styles.rowPercentageStrong;
 
   return (
     <ListGroup.Item className={styles.seatsSubitem}>
