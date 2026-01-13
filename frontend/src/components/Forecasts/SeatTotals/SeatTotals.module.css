@@ -71,8 +71,9 @@
 .rowParty {
     display: flex;
     flex-direction: row;
+    flex-shrink: 0;
     justify-content: center;
-    margin: 0px 8px 0px 0px;
+    width: 54px;
 }
 
 .rowNumber {

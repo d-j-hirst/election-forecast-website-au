@@ -142,30 +142,28 @@
 }
 
 .rowParty {
-    width: 53px;
     display: flex;
     flex-direction: row;
+    flex-shrink: 0;
     justify-content: center;
-    margin: 0px 8px 0px 0px;
+    width: 54px;
 }
 
 .rowPercentage {
-    width: 46px;
     display: flex;
     flex-direction: row;
     flex-shrink: 0;
     justify-content: center;
-    margin: 0px 2px;
+    width: 46px;
 }
 
 .rowPercentageStrong {
-    font-weight: bold;
-    width: 46px;
     display: flex;
     flex-direction: row;
     flex-shrink: 0;
+    font-weight: bold;
     justify-content: center;
-    margin: 0px 2px;
+    width: 46px;
 }
 
 .rowPercentageDeemphasised {
@@ -174,7 +172,6 @@
     flex-direction: row;
     flex-shrink: 0;
     justify-content: center;
-    margin: 0px 2px;
     width: 46px;
 }
 
