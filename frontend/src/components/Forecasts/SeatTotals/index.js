@@ -84,7 +84,7 @@ const SeatsRow = props => {
         result={result}
         valType="integer"
         adjust={true}
-        width={Math.min(props.windowWidth - 70, 350)}
+        width={Math.min(props.windowWidth - 100, 350)}
       />
     </ListGroup.Item>
   );

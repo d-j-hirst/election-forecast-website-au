@@ -43,7 +43,7 @@ const SeatVoteRow = props => {
 
   return (
     <ListGroup.Item className={styles.seatsSubitem}>
-      <div style={styles.rowLeftSection}>
+      <div className={styles.rowLeftSection}>
         <div className={styles.rowParty}>
           <SmartBadge party={partyAbbr} termCode={props.forecast.termCode} />
         </div>

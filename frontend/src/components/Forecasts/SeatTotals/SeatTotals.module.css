@@ -63,7 +63,7 @@
 .rowLeftSection {
     display: flex;
     flex-direction: row;
-    width: 165px;
+    width: 195px;
     justify-content: space-around;
     margin: 0px auto;
 }
