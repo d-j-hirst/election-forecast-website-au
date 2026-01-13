@@ -138,16 +138,33 @@
     flex-direction: row;
     justify-content: space-around;
     margin: 0px auto;
+    width: 100%;
 }
 
 .rowParty {
-    width: 44px;
+    width: 53px;
     display: flex;
     flex-direction: row;
     justify-content: center;
 }
 
 .rowPercentage {
+    width: 46px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.rowPercentageStrong {
+    font-weight: bold;
+    width: 46px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.rowPercentageDeemphasised {
+    color: #888888;
     width: 46px;
     display: flex;
     flex-direction: row;
