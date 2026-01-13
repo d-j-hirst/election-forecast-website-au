@@ -69,16 +69,14 @@
 .rowLeftSection {
     display: flex;
     flex-direction: row;
-    width: 250px;
-    justify-content: space-around;
+    width: 230px;
+    justify-content: center;
     margin: 0px auto;
 }
 
 .rowParty {
-    width: 56px;
     display: flex;
     flex-direction: row;
-    flex-shrink: 0;
     justify-content: center;
     margin: 0px 8px 0px 0px;
 }
@@ -86,30 +84,37 @@
 .rowPercentage {
     display: flex;
     flex-direction: row;
+    flex-shrink: 0;
     justify-content: center;
     margin: 0px 2px;
+    width: 50px;
 }
 
 .rowPercentageStrong {
-    font-weight: bold;
     display: flex;
     flex-direction: row;
+    flex-shrink: 0;
+    font-weight: bold;
     justify-content: center;
     margin: 0px 2px;
+    width: 50px;
 }
 
 .rowPercentageDeemphasised {
     color: #777777;
     display: flex;
+    flex-shrink: 0;
     flex-direction: row;
     justify-content: center;
     margin: 0px 2px;
+    width: 50px;
 }
 
 
 .rowDash {
-    width: 10px;
     display: flex;
     flex-direction: row;
+    flex-shrink: 0;
     justify-content: center;
+    width: 10px;
 }

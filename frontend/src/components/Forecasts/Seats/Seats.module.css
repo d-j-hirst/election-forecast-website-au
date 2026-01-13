@@ -153,6 +153,7 @@
     width: 46px;
     display: flex;
     flex-direction: row;
+    flex-shrink: 0;
     justify-content: center;
     margin: 0px 2px;
 }
@@ -162,23 +163,26 @@
     width: 46px;
     display: flex;
     flex-direction: row;
+    flex-shrink: 0;
     justify-content: center;
     margin: 0px 2px;
 }
 
 .rowPercentageDeemphasised {
     color: #777777;
-    width: 46px;
     display: flex;
     flex-direction: row;
+    flex-shrink: 0;
     justify-content: center;
     margin: 0px 2px;
+    width: 46px;
 }
 
 .rowDash {
-    width: 15px;
+    width: 10px;
     display: flex;
     flex-direction: row;
+    flex-shrink: 0;
     justify-content: center;
 }
 
@@ -190,17 +194,19 @@
 }
 
 @media (max-width: 420px){
+    .altCandidateName {
+        margin: 0px auto;
+    }
     .candidateName {
         display: none;
     }
 }
 
-.altCandidateName {
-    margin: 0px auto;
-}
-
 @media (min-width: 421px){
     .altCandidateName {
         display: none;
+    }
+    .candidateName {
+        margin: 0px;
     }
 }

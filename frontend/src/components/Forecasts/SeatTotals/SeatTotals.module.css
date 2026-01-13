@@ -63,13 +63,12 @@
 .rowLeftSection {
     display: flex;
     flex-direction: row;
-    width: 195px;
-    justify-content: space-around;
+    width: 185px;
+    justify-content: center;
     margin: 0px auto;
 }
 
 .rowParty {
-    width: 54px;
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -79,31 +78,36 @@
 .rowNumber {
     display: flex;
     flex-direction: row;
+    flex-shrink: 0;
     justify-content: center;
     margin: 0px 2px;
+    width: 30px;
 }
 
 .rowNumberStrong {
+    flex-direction: row;
+    flex-shrink: 0;
     font-weight: bold;
     display: flex;
-    flex-direction: row;
     justify-content: center;
     margin: 0px 2px;
+    width: 30px;
 }
 
 .rowNumberDeemphasised {
     color: #777777;
-    width: 35px;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    margin: 0px 2px;
-}
-
-.rowDash {
-    width: 10px;
     display: flex;
     flex-direction: row;
     flex-shrink: 0;
     justify-content: center;
+    margin: 0px 2px;
+    width: 30px;
+}
+
+.rowDash {
+    display: flex;
+    flex-direction: row;
+    flex-shrink: 0;
+    justify-content: center;
+    width: 10px;
 }

@@ -80,7 +80,7 @@ const VoteShareRow = props => {
         pluralNoun="vote totals"
         result={props.result}
         valType="percentage"
-        width={Math.min(props.windowWidth - 120, 400)}
+        width={Math.min(props.windowWidth - 100, 420)}
       />
     </ListGroup.Item>
   );
