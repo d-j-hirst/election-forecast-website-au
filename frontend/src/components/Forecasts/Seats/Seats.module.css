@@ -146,6 +146,7 @@
     display: flex;
     flex-direction: row;
     justify-content: center;
+    margin: 0px 8px 0px 0px;
 }
 
 .rowPercentage {
@@ -153,6 +154,7 @@
     display: flex;
     flex-direction: row;
     justify-content: center;
+    margin: 0px 2px;
 }
 
 .rowPercentageStrong {
@@ -161,6 +163,7 @@
     display: flex;
     flex-direction: row;
     justify-content: center;
+    margin: 0px 2px;
 }
 
 .rowPercentageDeemphasised {
@@ -169,6 +172,7 @@
     display: flex;
     flex-direction: row;
     justify-content: center;
+    margin: 0px 2px;
 }
 
 .rowDash {

@@ -73,21 +73,22 @@
     display: flex;
     flex-direction: row;
     justify-content: center;
+    margin: 0px 8px 0px 0px;
 }
 
 .rowNumber {
-    width: 35px;
     display: flex;
     flex-direction: row;
     justify-content: center;
+    margin: 0px 2px;
 }
 
 .rowNumberStrong {
     font-weight: bold;
-    width: 35px;
     display: flex;
     flex-direction: row;
     justify-content: center;
+    margin: 0px 2px;
 }
 
 .rowNumberDeemphasised {
@@ -96,11 +97,13 @@
     display: flex;
     flex-direction: row;
     justify-content: center;
+    margin: 0px 2px;
 }
 
 .rowDash {
     width: 10px;
     display: flex;
     flex-direction: row;
+    flex-shrink: 0;
     justify-content: center;
 }
