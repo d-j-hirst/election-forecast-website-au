@@ -35,11 +35,11 @@ const SeatVoteRow = props => {
   if (candidateName === 'Renee McLennan') candidateName = 'Renée McLennan';
 
   const outerStyle =
-    isOutlook(props.forecast.termCode) && props.forecast.reportMode !== 'RF'
+    isOutlook(props.forecast.termCode) && props.forecast.reportMode === 'RF'
       ? styles.rowPercentageStrong
       : styles.rowPercentage;
   const innerStyle =
-    isOutlook(props.forecast.termCode) && props.forecast.reportMode !== 'RF'
+    isOutlook(props.forecast.termCode) && props.forecast.reportMode === 'RF'
       ? styles.rowPercentageDeemphasised
       : styles.rowPercentageStrong;
 

@@ -44,11 +44,11 @@ const SeatsRow = props => {
     [12, 14, 6],
   ];
   const outerStyle =
-    isOutlook(props.forecast.termCode) && props.forecast.reportMode !== 'RF'
+    isOutlook(props.forecast.termCode) && props.forecast.reportMode === 'RF'
       ? styles.rowNumberStrong
       : styles.rowNumber;
   const innerStyle =
-    isOutlook(props.forecast.termCode) && props.forecast.reportMode !== 'RF'
+    isOutlook(props.forecast.termCode) && props.forecast.reportMode === 'RF'
       ? styles.rowNumberDeemphasised
       : styles.rowNumberStrong;
   return (

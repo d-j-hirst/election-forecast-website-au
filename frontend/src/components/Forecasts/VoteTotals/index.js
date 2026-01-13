@@ -40,11 +40,11 @@ const VoteShareRow = props => {
     [12, 14, 6],
   ];
   const innerStyle =
-    isOutlook(props.forecast.termCode) && props.forecast.reportMode !== 'RF'
+    isOutlook(props.forecast.termCode) && props.forecast.reportMode === 'RF'
       ? styles.rowPercentageDeemphasised
       : styles.rowPercentageStrong;
   const outerStyle =
-    isOutlook(props.forecast.termCode) && props.forecast.reportMode !== 'RF'
+    isOutlook(props.forecast.termCode) && props.forecast.reportMode === 'RF'
       ? styles.rowPercentageStrong
       : styles.rowPercentage;
   return (
