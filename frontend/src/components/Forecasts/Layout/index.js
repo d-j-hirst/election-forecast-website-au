@@ -57,7 +57,7 @@ const ForecastLayout = props => {
       {props.isArchive && (
         <Helmet>
           {/* Archived forecasts shouldn't be indexed by search engines etc.,
-            they're for people specifically looking at the history performance
+            they're for people specifically looking at the historical performance
             of the AEF forecast and not for more general searches */}
           <meta name="robots" content="noindex" />
         </Helmet>

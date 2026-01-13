@@ -39,6 +39,7 @@ const ForecastAlert = props => {
   const isLive = props.mode === 'live';
   const isRegular = props.mode === 'regular';
   const isArchive = props.isArchive === true;
+  const isOutlook = isOutlook(props.code);
   const oldElec = oldElections.includes(props.code);
   const current = !(oldElec || isArchive);
   const isWarning = isNowcast || isLive || props.isArchive;
@@ -59,7 +60,8 @@ const ForecastAlert = props => {
                 This {oldElec && (isArchive ? 'is an ' : 'was the final ')}
                 {!oldElec && (isArchive ? 'is an ' : 'is a ')}
                 <strong>
-                  {isArchive ? 'archived ' : ''}general forecast
+                  {isArchive ? 'archived ' : ''}
+                  {isOutlook ? 'outlook' : 'general forecast '}
                 </strong>{' '}
                 report for the {props.forecast.electionName}. It estimate
                 {!current ? 'd' : 's'} how the election might{' '}
