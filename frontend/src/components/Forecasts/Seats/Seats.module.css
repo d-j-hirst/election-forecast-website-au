@@ -136,7 +136,7 @@
 .rowLeftSection {
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
+    justify-content: center;
     margin: 0px auto;
     width: 100%;
 }
