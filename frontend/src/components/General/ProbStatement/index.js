@@ -1,15 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import {SmartBadge} from '../PartyBadge';
 import TooltipPercentage from '../TooltipPercentage';
 import TooltipWrapper from '../TooltipWrapper';
+
+import {standardiseParty} from '../../../utils/partyclass.js';
 import {
   getIsPhrase,
   getWillPhrase,
   getProbPhrase,
 } from '../../../utils/phrases.js';
-import {SmartBadge} from '../PartyBadge';
-import {standardiseParty} from '../../../utils/partyclass.js';
+import {seatInRegion} from '../../../utils/seatregion.js';
 
 const interpretOth = (code, text) =>
   code === undefined ||
