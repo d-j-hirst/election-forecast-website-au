@@ -12,8 +12,9 @@ import {SmartBadge} from '../../General/PartyBadge';
 import InfoIcon from '../../General/InfoIcon';
 import TooltipWrapper from '../../General/TooltipWrapper';
 
-import {jsonMap} from '../../../utils/jsonmap.js';
 import {deepCopy} from '../../../utils/deepcopy.js';
+import {jsonMap} from '../../../utils/jsonmap.js';
+import {seatInRegion} from '../../../utils/seatregion.js';
 
 import styles from '../Seats/Seats.module.css';
 
@@ -105,6 +106,9 @@ const SeatTcpRowPair = props => {
     ) {
       if (partyAbbr0 === 'LNP') partyAbbr0 = 'LIB';
       if (partyAbbr1 === 'LNP') partyAbbr1 = 'LIB';
+    } else {
+      if (partyAbbr0 === 'LNP') partyAbbr0 = 'LNPx';
+      if (partyAbbr1 === 'LNP') partyAbbr1 = 'LNPx';
     }
   }
 

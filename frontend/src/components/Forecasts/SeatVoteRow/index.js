@@ -25,7 +25,7 @@ const SeatVoteRow = props => {
       props.forecast.termCode.slice(4) === 'fed' &&
       seatInRegion(props.seatName, 'qld')
     ) {
-      partyAbbr = 'LNP';
+      partyAbbr = 'LNPx';
     } else {
       partyAbbr = 'LIB';
     }

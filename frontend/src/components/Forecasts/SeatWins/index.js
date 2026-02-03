@@ -6,8 +6,10 @@ import ListGroup from 'react-bootstrap/ListGroup';
 
 import ProbStatement from '../../General/ProbStatement';
 
-import {jsonMap} from '../../../utils/jsonmap.js';
 import {deepCopy} from '../../../utils/deepcopy.js';
+import {jsonMap} from '../../../utils/jsonmap.js';
+import {seatInRegion} from '../../../utils/seatregion.js';
+
 import InfoIcon from '../../General/InfoIcon';
 
 import styles from '../Seats/Seats.module.css';

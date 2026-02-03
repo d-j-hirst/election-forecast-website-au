@@ -75,6 +75,15 @@ LnpBadge.propTypes = {
   termCode: PropTypes.string,
 };
 
+export const LnpxBadge = props => {
+  const classes = `${styles['party-badge']} ${styles['lnp-badge']}`;
+  return (
+    <TooltipWrapper tooltipText={'Liberal National Party'}>
+      <span className={classes}>LNP</span>
+    </TooltipWrapper>
+  );
+};
+
 export const LibBadge = props => {
   const classes = `${styles['party-badge']} ${styles['lib-badge']}`;
   return (
@@ -183,6 +192,7 @@ export const SmartBadge = props => {
   if (partyName === 'ca') return <CaBadge />;
   if (partyName === 'sab') return <SabBadge />;
   if (partyName === 'lnp') return <LnpBadge termCode={props.termCode} />;
+  if (partyName === 'lnpx') return <LnpxBadge />;
   if (partyName === 'lib') return <LibBadge />;
   if (partyName === 'nat') return <NatBadge />;
   if (partyName === 'on') return <OnBadge />;

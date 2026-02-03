@@ -6,6 +6,7 @@ const isKnownParty = party => {
     'grn',
     'kap',
     'lnp',
+    'lnpx',
     'nat',
     'lib',
     'on',
@@ -25,6 +26,7 @@ export const partyCategory = party => {
   if (sp === 'alp') return -1;
   if (sp === 'kap') return 1;
   if (sp === 'lnp') return 2;
+  if (sp === 'lnpx') return 2;
   if (sp === 'lib') return 2;
   if (sp === 'nat') return 2;
   if (sp === 'on') return 3;
