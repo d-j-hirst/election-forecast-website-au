@@ -33,13 +33,17 @@ const ProbStatement = props => {
     if (
       props.useLiberals &&
       props.forecast.coalitionSeatCountFrequencies &&
-      partyAbbr === 'lnp' &&
-      !(
+      partyAbbr === 'lnp'
+    ) {
+      if (
         props.forecast.termCode.slice(4) === 'fed' &&
         seatInRegion(props.seatName, 'qld')
-      )
-    )
-      partyAbbr = 'lib';
+      ) {
+        partyAbbr = 'lnpx';
+      } else {
+        partyAbbr = 'lib';
+      }
+    }
     if (props.party === -2) partyAbbr = 'indx';
     if (props.party === -3) partyAbbr = 'eoth';
     text = interpretOth(props.text, 'An emerging party');
