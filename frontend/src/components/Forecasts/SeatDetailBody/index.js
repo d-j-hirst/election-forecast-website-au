@@ -49,7 +49,14 @@ ReturnToMain.propTypes = {
 
 const SeatSummary = props => {
   const incumbentIndex = props.forecast.seatIncumbents[props.index];
-  const incumbentAbbr = jsonMap(props.forecast.partyAbbr, incumbentIndex);
+  const tempAbbr = jsonMap(props.forecast.partyAbbr, incumbentIndex);
+  const incumbentAbbr =
+    props.forecast.coalitionSeatCountFrequencies && tempAbbr === 'LNP'
+      ? props.forecast.termCode.slice(4) === 'fed' &&
+        seatInRegion(seatName, 'qld')
+        ? 'LNPx'
+        : 'LIB'
+      : tempAbbr;
   const margin = props.forecast.seatMargins[props.index];
 
   const freqs = deepCopy(props.forecast.seatPartyWinFrequencies[props.index]);
@@ -84,6 +91,7 @@ SeatSummary.propTypes = {
   forecast: PropTypes.object.isRequired,
   result: PropTypes.object,
   index: PropTypes.number.isRequired,
+  seatName: PropTypes.string.isRequired,
   windowWidth: PropTypes.number.isRequired,
 };
 
@@ -150,11 +158,12 @@ const SeatDetailBody = props => {
           </StandardErrorBoundary>
           <StandardErrorBoundary>
             <SeatSummary
-              forecast={props.forecast}
               election={props.election}
+              forecast={props.forecast}
+              index={props.index}
               mode={props.mode}
               result={result}
-              index={props.index}
+              seatName={seatName}
               windowWidth={props.windowWidth}
             />
           </StandardErrorBoundary>

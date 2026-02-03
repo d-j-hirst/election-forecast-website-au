@@ -88,7 +88,7 @@ const SeatRow = props => {
     props.forecast.coalitionSeatCountFrequencies && tempAbbr === 'LNP'
       ? props.forecast.termCode.slice(4) === 'fed' &&
         seatInRegion(seatName, 'qld')
-        ? 'LNP'
+        ? 'LNPx'
         : 'LIB'
       : tempAbbr;
   const margin = props.forecast.seatMargins[props.index];
