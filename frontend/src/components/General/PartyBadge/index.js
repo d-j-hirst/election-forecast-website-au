@@ -3,7 +3,10 @@ import PropTypes from 'prop-types';
 
 import TooltipWrapper from '../TooltipWrapper';
 
-import {coalitionAbbreviation} from '../../../utils/coalition.js';
+import {
+  coalitionAbbreviation,
+  coalitionName,
+} from '../../../utils/coalition.js';
 
 import styles from './PartyBadge.module.css';
 
