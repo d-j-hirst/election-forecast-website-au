@@ -456,7 +456,13 @@ const Seats = props => {
     let indexedChances = [];
     indexedChances = props.forecast.seatPartyWinFrequencies.map((a, index) => [
       index,
-      jsonMap(a, libIndex, 0) + jsonMap(a, natIndex, 0),
+      () => {
+        let val = 0;
+        if (natIndex) val += jsonMap(a, natIndex, 0);
+        if (libIndex) val += jsonMap(a, libIndex, 0);
+        if (!natIndex && !libIndex && lnpIndex) val = jsonMap(a, lnpIndex, 0);
+        return val;
+      },
     ]);
     indexedChances.sort((a, b) => (a[1] > b[1] ? -1 : 1));
     sortedIndices = indexedChances.map((a, b) => a[0]);
@@ -471,6 +477,8 @@ const Seats = props => {
     const partyAbbr = (() => {
       if (sortParty === -2) return 'Emerging IND ';
       if (sortParty === -3) return 'Emerging party ';
+      if (sortParty === libIndex) return 'LIB ';
+      if (sortParty === natIndex) return 'NAT ';
       return jsonMap(props.forecast.partyAbbr, sortParty);
     })();
     if (sortType === SortTypeEnum.competitiveness) title += 'Competitiveness';
@@ -479,9 +487,10 @@ const Seats = props => {
     else if (sortType === SortTypeEnum.alpTppMargin) title += 'ALP 2PP margin';
     else if (sortType === SortTypeEnum.lnpTppMargin)
       title += `${coalitionAbbreviation(props.election)} 2PP margin`;
-    else if (sortType === SortTypeEnum.winChance) {
+    else if (sortType === SortTypeEnum.winChance)
       title += `${partyAbbr} win chance`;
-    }
+    else if (sortType === SortTypeEnum.lnpWinChance)
+      title += `${coalitionAbbreviation(props.election)} win chance`;
     return title;
   })();
 
