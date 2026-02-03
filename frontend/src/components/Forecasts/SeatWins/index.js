@@ -54,7 +54,11 @@ const SeatWinsSection = props => {
           let partyAbbr = jsonMap(props.forecast.partyAbbr, a[0]);
           if (
             props.forecast.coalitionSeatCountFrequencies &&
-            partyAbbr === 'LNP'
+            partyAbbr === 'LNP' &&
+            !(
+              props.forecast.termCode.slice(4) === 'fed' &&
+              seatInRegion(seatName, 'qld')
+            )
           )
             partyAbbr = 'LIB';
           let text = 'Independent';
