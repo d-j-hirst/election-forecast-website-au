@@ -28,9 +28,9 @@ const OnPrefsAlert = props => {
           <InfoIcon size="large" inactive={true} warning={false} />
           <div>
             As of 6 January 2025, the estimated preference flow from One Nation
-            to the Coalition has been adjusted to be stronger, based on changes
-            observed in the 2024 Queensland state election and Fadden
-            by-election.
+            to the Liberal and National Parties has been adjusted to be
+            stronger, based on changesobserved in the 2024 Queensland state
+            election and Fadden by-election.
           </div>
         </div>
       </Alert>

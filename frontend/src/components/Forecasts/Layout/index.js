@@ -87,11 +87,6 @@ const ForecastLayout = props => {
                 mode={mode}
                 results={effectiveResults}
               />
-              <OnPrefsAlert
-                code={code}
-                isArchive={props.isArchive}
-                mode={mode}
-              />
               {!isOutlook(code) && (
                 <StandardErrorBoundary>
                   <FormationOfGovernment

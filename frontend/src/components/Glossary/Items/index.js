@@ -90,11 +90,10 @@ const GlossaryItems = props => {
           particular party that is higher than other pollsters refer to; this
           pollster would then be considered to have a house effect toward this
           party. (Depending on the party, this might be known as a pro-Labor,
-          pro-Coalition, pro-Green house effect, and so on.) It must be
-          emphasised that a house effect is not the same as{' '}
-          <Link to="#bias">bias</Link>: a poll showing a house effect may in
-          fact turn out to be accurate, in which case the other polls would have
-          a bias.
+          pro-L/NP, pro-Green house effect, and so on.) It must be emphasised
+          that a house effect is not the same as <Link to="#bias">bias</Link>: a
+          poll showing a house effect may in fact turn out to be accurate, in
+          which case the other polls would have a bias.
         </p>
         <p>
           House effects are typically a result of methodological differences
@@ -152,9 +151,8 @@ const GlossaryItems = props => {
           The term &quot;major party&quot; is most often used to refer to those
           parties with a significant chance of forming government in the short
           to medium term. At present this refers to either Labor (ALP) or the
-          Coalition and its members (Liberals, Nationals, the Liberal National
-          party and the Country Liberal party). This as as opposed to other
-          parties known as <Link to="#minor-party">minor parties</Link>.
+          Liberal/National Parties. This as as opposed to other parties known as{' '}
+          <Link to="#minor-party">minor parties</Link>.
         </p>
         <p>
           In this site&apos;s analysis these parties are treated separately from
@@ -471,23 +469,23 @@ const GlossaryItems = props => {
         <p>
           The most common example is when a prominent independent is running in
           a <Link to="#seat">seat</Link>. In particular, independents running
-          against Coalition incumbents is a common theme of the 2022 federal
+          against Liberal incumbents is a common theme of the 2022 federal
           election and other recent elections, so that will be used here as an
           example. Consider a seat where, after all other candidates are
           excluded, the vote shares would be as follows:
         </p>
         <ul>
-          <li>Coalition: 40%</li>
+          <li>Liberal: 40%</li>
           <li>Labor: 35%</li>
           <li>Independent: 25%</li>
         </ul>
         <p>
           Suppose that of the voters for the independent, 60% preference the
-          Coalition and 40% preference Labor. As things stand, the independent
+          Liberal and 40% preference Labor. As things stand, the independent
           will be eliminated and their votes will be reassigned to the{' '}
           <Link to="#major-party">major party</Link> candidates accordingly: 15%
-          of total vote to the Coalition and the other 10% to Labor. This
-          results in the Coalition winning 55-45% over Labor in the{' '}
+          of total vote to the Liberal and the other 10% to Labor. This results
+          in the Liberal winning 55-45% over Labor in the{' '}
           <Link to="#two-candidate-preferred-vote">
             two-candidate-preferred
           </Link>{' '}
@@ -499,7 +497,7 @@ const GlossaryItems = props => {
           independent looks like this:
         </p>
         <ul>
-          <li>Coalition: 40%</li>
+          <li>Liberal: 40%</li>
           <li>Labor: 25%</li>
           <li>Independent: 35%</li>
         </ul>
@@ -507,9 +505,9 @@ const GlossaryItems = props => {
           Now suppose a much higher preference flow from the remaining Labor
           voters: 80% of them preference the Independent and 20% preference
           Liberal. Then Labor is eliminated and 5% of the total vote is
-          reassigned to the Coalition while the other 20% is reassigned to the
+          reassigned to the Liberal while the other 20% is reassigned to the
           Independent. This results in the Independent winning 55-45% over the
-          Coalition in the two-candidate-preferred vote.
+          Liberal in the two-candidate-preferred vote.
         </p>
         <p>
           In this case, Labor supporters instead voting for the independent

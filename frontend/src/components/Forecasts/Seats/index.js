@@ -120,7 +120,7 @@ const SeatRow = props => {
   let marginTooltip = '';
   if (incumbentIndex === 0) {
     marginTooltip =
-      'The two-party-preferred (2PP) margin against the Liberal/National Coalition, after adjustment for redistributions.';
+      'The two-party-preferred (2PP) margin against the Liberal and National Parties, after adjustment for redistributions.';
   } else if (incumbentIndex === 1) {
     marginTooltip =
       'The two-party-preferred (2PP) margin against Labor, after adjustment for redistributions.';

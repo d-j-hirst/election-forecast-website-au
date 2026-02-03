@@ -62,7 +62,7 @@ const MinorityWinGovernmentRow = props => {
       'are expected to support the Liberal Party.',
     lnp:
       "In these scenarios, One Nation, United Australia Party and Katter's Australian Party " +
-      'are expected to support the Coalition.',
+      'are expected to support the Liberal and National Parties.',
   }[partyAbbr];
   return (
     <ListGroup.Item className={bgClasses}>
@@ -173,8 +173,8 @@ const MajorPartyExplainer = props => {
       {props.partyIndex === 1 && (
         <p>
           This site considers One Nation, the United Australia Party and
-          Katter&apos;s Australian Party as assumed to support the
-          Liberal/National Coalition.
+          Katter&apos;s Australian Party as assumed to support the Liberal and
+          National Parties.
         </p>
       )}
     </Alert>
@@ -527,7 +527,7 @@ const MainExplainer = props => {
       <ul>
         <li>
           one for <i>each major party</i> (Labor/ALP and the Liberal/National
-          Coalition) being in a position to form government
+          Parties) being in a position to form government
         </li>
         <li>
           one for <i>some other party</i> being in a position to form government

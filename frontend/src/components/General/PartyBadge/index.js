@@ -63,7 +63,7 @@ export const KapBadge = props => {
 export const LnpBadge = props => {
   const classes = `${styles['party-badge']} ${styles['lnp-badge']}`;
   return (
-    <TooltipWrapper tooltipText="Liberal/National Coalition">
+    <TooltipWrapper tooltipText={coalitionName(props.termCode)}>
       <span className={classes}>{coalitionAbbreviation(props.termCode)}</span>
     </TooltipWrapper>
   );
