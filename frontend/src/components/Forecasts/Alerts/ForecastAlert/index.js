@@ -43,7 +43,7 @@ const ForecastAlert = props => {
   const isThisOutlook = isOutlook(props.code);
   const oldElec = oldElections.includes(props.code);
   const current = !(oldElec || isArchive);
-  const isWarning = isNowcast || isLive || props.isArchive;
+  const isWarning = isNowcast || isLive || isThisOutlook || props.isArchive;
   const alertVariant = isWarning ? 'warning' : 'info';
   if (show) {
     return (
