@@ -71,7 +71,7 @@ const MinorityWinGovernmentRow = props => {
         forecast={props.forecast}
         party={party}
         prob={prob}
-        outcome={'have a clear path to minority government'}
+        outcome={'only have a clear path to minority government'}
         tooltipText={minorityTooltipText}
       />
     </ListGroup.Item>
