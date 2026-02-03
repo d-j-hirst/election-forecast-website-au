@@ -54,7 +54,7 @@ const SeatSummary = props => {
   const incumbentAbbr =
     props.forecast.coalitionSeatCountFrequencies && tempAbbr === 'LNP'
       ? props.forecast.termCode.slice(4) === 'fed' &&
-        seatInRegion(seatName, 'qld')
+        seatInRegion(props.seatName, 'qld')
         ? 'LNPx'
         : 'LIB'
       : tempAbbr;
