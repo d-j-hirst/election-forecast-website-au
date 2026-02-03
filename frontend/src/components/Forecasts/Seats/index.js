@@ -398,7 +398,7 @@ const Seats = props => {
     }
     indexedChances.sort((a, b) => (a[1] > b[1] ? -1 : 1));
     sortedIndices = indexedChances.map((a, b) => a[0]);
-  } else if (sortType === SortTypeEnum.lnpChance) {
+  } else if (sortType === SortTypeEnum.lnpWinChance) {
     let indexedChances = [];
     indexedChances = props.forecast.seatPartyWinFrequencies.map((a, index) => [
       index,
@@ -474,8 +474,10 @@ const Seats = props => {
     jsonMap(props.forecast.seatCountFrequencies, natIndex)[14] === 0
   ) {
     natIndex = null;
-    libIndex = null; // If NAT is null, we don't need to show LIB either
+    libIndex = null; // If NAT is null because results are too low, don't need to show LIB either
   }
+  // Also don't show LIB if NAT is simply absent
+  if (!natIndex && lnpIndex) libIndex = null;
   let onIndex = jsonMapReverse(props.forecast.partyAbbr, 'ON');
   if (
     onIndex &&
