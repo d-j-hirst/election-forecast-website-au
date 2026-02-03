@@ -53,16 +53,6 @@ const SeatWinsSection = props => {
       {showExplainer && <WinsExplainer seatName={seatName} />}
       <ListGroup.Item className={styles.seatsMore}>
         {sortedFreqs.map((a, index) => {
-          let partyAbbr = jsonMap(props.forecast.partyAbbr, a[0]);
-          if (
-            props.forecast.coalitionSeatCountFrequencies &&
-            partyAbbr === 'LNP' &&
-            !(
-              props.forecast.termCode.slice(4) === 'fed' &&
-              seatInRegion(seatName, 'qld')
-            )
-          )
-            partyAbbr = 'LIB';
           let text = 'Independent';
           const party = a[0];
           if (party === -3) text = 'An emerging party';
@@ -89,6 +79,7 @@ const SeatWinsSection = props => {
                   outcome={'win ' + seatName}
                   party={a[0]}
                   prob={a[1]}
+                  seatName={seatName}
                   text={text}
                   useLiberals={true}
                 />
@@ -100,10 +91,11 @@ const SeatWinsSection = props => {
           <div className={styles.seatsWinStatement}>
             <ProbStatement
               forecast={props.forecast}
+              outcome={'win ' + seatName}
               party={'oth'}
               prob={anyOtherWinPc}
+              seatName={seatName}
               text={'Any other candidate'}
-              outcome={'win ' + seatName}
             />
           </div>
         )}

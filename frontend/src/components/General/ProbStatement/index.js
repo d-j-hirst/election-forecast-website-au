@@ -31,7 +31,11 @@ const ProbStatement = props => {
     if (
       props.useLiberals &&
       props.forecast.coalitionSeatCountFrequencies &&
-      partyAbbr === 'lnp'
+      partyAbbr === 'lnp' &&
+      !(
+        props.forecast.termCode.slice(4) === 'fed' &&
+        seatInRegion(props.seatName, 'qld')
+      )
     )
       partyAbbr = 'lib';
     if (props.party === -2) partyAbbr = 'indx';
@@ -79,6 +83,7 @@ ProbStatement.propTypes = {
   outcome: PropTypes.string,
   party: PropTypes.any,
   prob: PropTypes.number.isRequired,
+  seatName: PropTypes.string,
   text: PropTypes.string,
   tooltipText: PropTypes.string,
   useLiberals: PropTypes.bool,

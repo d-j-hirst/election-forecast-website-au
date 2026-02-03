@@ -42,6 +42,7 @@ export const standardiseParty = (party, forecast) => {
 
 export const partyColorClass = (party, forecast) => {
   let sParty = standardiseParty(party);
+  if (sParty === 'lnpx') sParty = 'lnp';
   if (sParty === 'ca') sParty = 'on';
   if (sParty === 'sab') sParty = 'on';
   if (sParty === 'sff') sParty = 'kap';
