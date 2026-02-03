@@ -39,6 +39,10 @@ const WinnerBarDist = props => {
         ? namedIndependentExists
           ? 'Any other independent'
           : 'Any independent'
+        : freq[0] === 1 &&
+          props.forecast.termCode.slice(4) === 'fed' &&
+          seatInRegion(props.forecast.seatNames[props.index], 'qld')
+        ? 'Liberal National Party'
         : jsonMap(props.forecast.partyName, freq[0]);
     return {
       candidateName: candidateNames[index],

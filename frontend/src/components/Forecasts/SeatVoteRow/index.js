@@ -9,6 +9,7 @@ import {SmartBadge} from '../../General/PartyBadge';
 
 import {jsonMap} from '../../../utils/jsonmap.js';
 import {isOutlook} from '../../../utils/outlook.js';
+import {seatInRegion} from '../../../utils/seatregion.js';
 
 import styles from '../Seats/Seats.module.css';
 
@@ -16,8 +17,16 @@ const SeatVoteRow = props => {
   let partyAbbr = jsonMap(props.forecast.partyAbbr, props.freqSet[0]);
   if (props.freqSet[0] === -2) partyAbbr = 'IndX';
   if (props.freqSet[0] === -3) partyAbbr = 'EOth';
-  if (props.forecast.coalitionSeatCountFrequencies && partyAbbr === 'LNP')
-    partyAbbr = 'LIB';
+  if (props.forecast.coalitionSeatCountFrequencies && partyAbbr === 'LNP') {
+    if (
+      props.forecast.termCode.slice(4) === 'fed' &&
+      seatInRegion(props.seatName, 'qld')
+    ) {
+      partyAbbr = 'LNP';
+    } else {
+      partyAbbr = 'LIB';
+    }
+  }
   const result =
     props.freqSet[0] >= -1 || props.forceXInd ? props.result : null;
 
@@ -97,6 +106,7 @@ SeatVoteRow.propTypes = {
   candidateName: PropTypes.string,
   minVoteTotal: PropTypes.number.isRequired,
   maxVoteTotal: PropTypes.number.isRequired,
+  seatName: PropTypes.string,
   windowWidth: PropTypes.number.isRequired,
 };
 

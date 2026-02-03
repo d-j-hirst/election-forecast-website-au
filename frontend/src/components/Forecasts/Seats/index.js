@@ -76,6 +76,7 @@ const SeatRow = props => {
   if (displayName.length > 14) {
     displayName = displayName.replace('North', 'N').replace('South', 'S');
     displayName = displayName.replace('East', 'E').replace('West', 'W');
+    displayName = displayName.replace('Mount', 'Mt').replace('Saint', 'St');
   }
   const asteriskCode = props.election + ';' + seatName;
   const asterisk = seatAsterisks.hasOwnProperty(asteriskCode)
@@ -85,7 +86,10 @@ const SeatRow = props => {
   const tempAbbr = jsonMap(props.forecast.partyAbbr, incumbentIndex);
   const incumbentAbbr =
     props.forecast.coalitionSeatCountFrequencies && tempAbbr === 'LNP'
-      ? 'LIB'
+      ? props.forecast.termCode.slice(4) === 'fed' &&
+        seatInRegion(seatName, 'qld')
+        ? 'LNP'
+        : 'LIB'
       : tempAbbr;
   const margin = props.forecast.seatMargins[props.index];
 
@@ -323,6 +327,7 @@ const Seats = props => {
     alpTppMargin: 3,
     lnpTppMargin: 4,
     winChance: 5,
+    lnpWinChance: 6,
   });
 
   const [showExplainer, setShowExplainer] = useState(false);
@@ -393,6 +398,14 @@ const Seats = props => {
     }
     indexedChances.sort((a, b) => (a[1] > b[1] ? -1 : 1));
     sortedIndices = indexedChances.map((a, b) => a[0]);
+  } else if (sortType === SortTypeEnum.lnpChance) {
+    let indexedChances = [];
+    indexedChances = props.forecast.seatPartyWinFrequencies.map((a, index) => [
+      index,
+      jsonMap(a, libIndex, 0) + jsonMap(a, natIndex, 0),
+    ]);
+    indexedChances.sort((a, b) => (a[1] > b[1] ? -1 : 1));
+    sortedIndices = indexedChances.map((a, b) => a[0]);
   }
 
   sortedIndices = sortedIndices.filter(val =>
@@ -412,8 +425,9 @@ const Seats = props => {
     else if (sortType === SortTypeEnum.alpTppMargin) title += 'ALP 2PP margin';
     else if (sortType === SortTypeEnum.lnpTppMargin)
       title += `${coalitionAbbreviation(props.election)} 2PP margin`;
-    else if (sortType === SortTypeEnum.winChance)
+    else if (sortType === SortTypeEnum.winChance) {
       title += `${partyAbbr} win chance`;
+    }
     return title;
   })();
 
@@ -443,8 +457,12 @@ const Seats = props => {
   )
     libIndex = null;
   let lnpIndex = jsonMapReverse(props.forecast.partyAbbr, 'LNP');
-  if (lnpIndex < 0)
+  if (lnpIndex < 0) {
     lnpIndex = jsonMapReverse(props.forecast.partyAbbr.slice(1), 'LNP');
+    // by default libIndex should be the same as lnpIndex if it exists
+    // if there are no Nats it will be removed later
+    libIndex = lnpIndex;
+  }
   if (
     lnpIndex &&
     jsonMap(props.forecast.seatCountFrequencies, lnpIndex)[14] === 0
@@ -454,8 +472,10 @@ const Seats = props => {
   if (
     natIndex &&
     jsonMap(props.forecast.seatCountFrequencies, natIndex)[14] === 0
-  )
+  ) {
     natIndex = null;
+    libIndex = null; // If NAT is null, we don't need to show LIB either
+  }
   let onIndex = jsonMapReverse(props.forecast.partyAbbr, 'ON');
   if (
     onIndex &&
@@ -492,7 +512,7 @@ const Seats = props => {
     setSortParty(0);
   };
   const setSortLnpWinChance = () => {
-    setSortType(SortTypeEnum.winChance);
+    setSortType(SortTypeEnum.lnpWinChance);
     setSortParty(1);
   };
   const setSortLibWinChance = () => {

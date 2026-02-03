@@ -8,6 +8,8 @@ export const coalitionName = termCode => {
     return 'Liberal and National Parties';
   } else if (state === 'qld' && year >= 2008) {
     return 'Liberal National Party';
+  } else if (state === 'fed' && year >= 2028) {
+    return 'Liberal and National Parties';
   }
   return 'Liberal–National Coalition';
 };
@@ -22,6 +24,8 @@ export const coalitionAbbreviation = termCode => {
     return 'L/NP';
   } else if (state === 'qld' && year >= 2008) {
     return 'LNP';
+  } else if (state === 'fed' && year >= 2028) {
+    return 'L/NP';
   }
   return 'L–NC';
 };

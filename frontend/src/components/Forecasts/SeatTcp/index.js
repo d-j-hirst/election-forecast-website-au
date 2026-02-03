@@ -144,6 +144,7 @@ const SeatTcpRowPair = props => {
         result={props.result}
         minVoteTotal={minVoteTotal}
         maxVoteTotal={maxVoteTotal}
+        seatName={props.seatName}
         windowWidth={props.windowWidth}
       />
       <SeatVoteRow
@@ -154,18 +155,20 @@ const SeatTcpRowPair = props => {
         result={props.result !== null ? 100 - props.result : null}
         minVoteTotal={minVoteTotal}
         maxVoteTotal={maxVoteTotal}
+        seatName={props.seatName}
         windowWidth={props.windowWidth}
       />
     </>
   );
 };
 SeatTcpRowPair.propTypes = {
-  forecast: PropTypes.object.isRequired,
-  result: PropTypes.number,
   forceXInd: PropTypes.bool.isRequired,
-  windowWidth: PropTypes.number.isRequired,
-  index: PropTypes.number.isRequired,
+  forecast: PropTypes.object.isRequired,
   freqSet: PropTypes.array.isRequired,
+  index: PropTypes.number.isRequired,
+  result: PropTypes.number,
+  seatName: PropTypes.string,
+  windowWidth: PropTypes.number.isRequired,
 };
 
 const SeatTcpSection = props => {
@@ -229,8 +232,9 @@ const SeatTcpSection = props => {
               forecast={props.forecast}
               freqSet={freqSet}
               index={props.index}
-              result={results !== null ? results[index] : null}
               key={`tcp${seatName}a${index}`}
+              seatName={seatName}
+              result={results !== null ? results[index] : null}
               windowWidth={props.windowWidth}
             />
           ))}

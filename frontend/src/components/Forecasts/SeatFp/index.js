@@ -121,6 +121,7 @@ const SeatFpSection = props => {
           minVoteTotal={0}
           key={`fp${seatName}a${index}`}
           index={`fp${seatName}a${index}`}
+          seatName={seatName}
           result={results === null ? null : results[index]}
           windowWidth={props.windowWidth}
         />
