@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import WinnerBar from '../WinnerBar';
 
 import {jsonMap} from '../../../utils/jsonmap.js';
+import {seatInRegion} from '../../../utils/seatregion.js';
 
 const WinnerBarDist = props => {
   const chartWidth = props.width !== undefined ? props.width : 300;
