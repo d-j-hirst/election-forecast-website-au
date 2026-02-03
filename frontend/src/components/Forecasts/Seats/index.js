@@ -348,6 +348,60 @@ const Seats = props => {
     ]);
   };
 
+  const grnIndex = jsonMapReverse(props.forecast.partyAbbr, 'GRN');
+  const indIndex = jsonMapReverse(
+    props.forecast.partyAbbr,
+    'IND',
+    null,
+    a => a >= 0
+  );
+  let libIndex = jsonMapReverse(props.forecast.partyAbbr, 'LIB');
+  if (
+    libIndex &&
+    jsonMap(props.forecast.seatCountFrequencies, libIndex)[14] === 0
+  )
+    libIndex = null;
+  let lnpIndex = jsonMapReverse(props.forecast.partyAbbr, 'LNP');
+  if (lnpIndex < 0) {
+    lnpIndex = jsonMapReverse(props.forecast.partyAbbr.slice(1), 'LNP');
+    // by default libIndex should be the same as lnpIndex if it exists
+    // if there are no Nats it will be removed later
+    libIndex = lnpIndex;
+  }
+  if (
+    lnpIndex &&
+    jsonMap(props.forecast.seatCountFrequencies, lnpIndex)[14] === 0
+  )
+    libIndex = null;
+  let natIndex = jsonMapReverse(props.forecast.partyAbbr, 'NAT');
+  if (
+    natIndex &&
+    jsonMap(props.forecast.seatCountFrequencies, natIndex)[14] === 0
+  ) {
+    natIndex = null;
+    libIndex = null; // If NAT is null because results are too low, don't need to show LIB either
+  }
+  // Also don't show LIB if NAT is simply absent
+  if (!natIndex && lnpIndex) libIndex = null;
+  let onIndex = jsonMapReverse(props.forecast.partyAbbr, 'ON');
+  if (
+    onIndex &&
+    jsonMap(props.forecast.seatCountFrequencies, onIndex)[14] === 0
+  )
+    onIndex = null;
+  let uapIndex = jsonMapReverse(props.forecast.partyAbbr, 'UAP');
+  if (
+    uapIndex &&
+    jsonMap(props.forecast.seatCountFrequencies, uapIndex)[14] === 0
+  )
+    uapIndex = null;
+  let kapIndex = jsonMapReverse(props.forecast.partyAbbr, 'KAP');
+  if (
+    kapIndex &&
+    jsonMap(props.forecast.seatCountFrequencies, kapIndex)[14] === 0
+  )
+    kapIndex = null;
+
   let sortedIndices = [];
   if (sortType === SortTypeEnum.competitiveness) {
     const indexedSeats = props.forecast.seatPartyWinFrequencies.map(
@@ -442,60 +496,6 @@ const Seats = props => {
     }
     return title;
   })();
-
-  const grnIndex = jsonMapReverse(props.forecast.partyAbbr, 'GRN');
-  const indIndex = jsonMapReverse(
-    props.forecast.partyAbbr,
-    'IND',
-    null,
-    a => a >= 0
-  );
-  let libIndex = jsonMapReverse(props.forecast.partyAbbr, 'LIB');
-  if (
-    libIndex &&
-    jsonMap(props.forecast.seatCountFrequencies, libIndex)[14] === 0
-  )
-    libIndex = null;
-  let lnpIndex = jsonMapReverse(props.forecast.partyAbbr, 'LNP');
-  if (lnpIndex < 0) {
-    lnpIndex = jsonMapReverse(props.forecast.partyAbbr.slice(1), 'LNP');
-    // by default libIndex should be the same as lnpIndex if it exists
-    // if there are no Nats it will be removed later
-    libIndex = lnpIndex;
-  }
-  if (
-    lnpIndex &&
-    jsonMap(props.forecast.seatCountFrequencies, lnpIndex)[14] === 0
-  )
-    libIndex = null;
-  let natIndex = jsonMapReverse(props.forecast.partyAbbr, 'NAT');
-  if (
-    natIndex &&
-    jsonMap(props.forecast.seatCountFrequencies, natIndex)[14] === 0
-  ) {
-    natIndex = null;
-    libIndex = null; // If NAT is null because results are too low, don't need to show LIB either
-  }
-  // Also don't show LIB if NAT is simply absent
-  if (!natIndex && lnpIndex) libIndex = null;
-  let onIndex = jsonMapReverse(props.forecast.partyAbbr, 'ON');
-  if (
-    onIndex &&
-    jsonMap(props.forecast.seatCountFrequencies, onIndex)[14] === 0
-  )
-    onIndex = null;
-  let uapIndex = jsonMapReverse(props.forecast.partyAbbr, 'UAP');
-  if (
-    uapIndex &&
-    jsonMap(props.forecast.seatCountFrequencies, uapIndex)[14] === 0
-  )
-    uapIndex = null;
-  let kapIndex = jsonMapReverse(props.forecast.partyAbbr, 'KAP');
-  if (
-    kapIndex &&
-    jsonMap(props.forecast.seatCountFrequencies, kapIndex)[14] === 0
-  )
-    kapIndex = null;
 
   const setSortCompetitiveness = () => {
     setSortType(SortTypeEnum.competitiveness);
