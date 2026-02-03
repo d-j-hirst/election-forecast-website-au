@@ -76,11 +76,7 @@ const Header = props => (
                 page="glossary"
                 activePage={props.page}
               />
-              <PageNav
-                text="Methods"
-                page="methods"
-                activePage={props.page}
-              />
+              <PageNav text="Methods" page="methods" activePage={props.page} />
               <PageNav
                 text="Commentary"
                 page="commentary"
