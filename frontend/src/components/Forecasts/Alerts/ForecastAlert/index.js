@@ -185,7 +185,7 @@ const ForecastAlert = props => {
           probability of eventual election results based on this information.
           For more information on how these forecasts are constructed, check the{' '}
           <Link to={'/guide'}>forecast guide</Link>, the{' '}
-          <Link to={'/methodology'}>methodology&nbsp;page</Link> or the{' '}
+          <Link to={'/methods'}>methods&nbsp;page</Link> or the{' '}
           <ExtLink href="https://github.com/d-j-hirst/aus-polling-analyser">
             source code on Github
           </ExtLink>

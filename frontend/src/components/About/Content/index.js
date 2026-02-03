@@ -49,11 +49,11 @@ const AboutContent = () => {
           <InfoIcon inactive={true} warning={true} /> buttons reveal brief
           inline explanations for parts of the forecasts, with the latter
           drawing attention to parts that are easy to misinterpret. A
-          step-by-step description of the methodology for producing a forecast
-          is given on the <a href="/methodology">methodology page</a>. As this
-          is quite complex, the methodology page does not describe every detail
-          of the technical implementation, so those wanting to know the full
-          details can check the source code and data for the{' '}
+          step-by-step description of the methods for producing a forecast is
+          given on the <a href="/methods">methods page</a>. As this is quite
+          complex, the methods page does not describe every detail of the
+          technical implementation, so those wanting to know the full details
+          can check the source code and data for the{' '}
           <ExtLink href="https://github.com/d-j-hirst/aus-polling-analyser">
             forecast generation
           </ExtLink>{' '}
@@ -67,7 +67,7 @@ const AboutContent = () => {
       </ul>
       <p>
         Follow on{' '}
-        <ExtLink href="https://twitter.com/aeforecasts">Twitter</ExtLink> for
+        <ExtLink href="https://twitter.com/aeforecasts">Twitter/X</ExtLink> for
         notifications when new forecasts are released.
       </p>
       <h4 id="introduction">About the Author</h4>

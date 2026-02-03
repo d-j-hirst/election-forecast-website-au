@@ -4,7 +4,7 @@ import GlossaryLink from '../GlossaryLink';
 
 import {ExtLink} from '../../../utils/extlink.js';
 
-const MethodologyPollTrend = props => {
+const MethodsPollTrend = props => {
   return (
     <>
       <h4 id="poll-trend">Poll Trend</h4>
@@ -37,7 +37,7 @@ const MethodologyPollTrend = props => {
           Cover the entire voting region for the relevant election (for example,
           a federal election poll covering only one state is excluded);
         </li>
-        <li>Meet minimum standards for plausible sampling methodology;</li>
+        <li>Meet minimum standards for plausible sampling methods;</li>
         <li>
           Report <GlossaryLink word="first preference (FP)" /> votes for at
           least the two <GlossaryLink word="major parties" /> and the Greens
@@ -358,4 +358,4 @@ const MethodologyPollTrend = props => {
   );
 };
 
-export default MethodologyPollTrend;
+export default MethodsPollTrend;

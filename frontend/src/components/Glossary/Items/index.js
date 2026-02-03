@@ -33,9 +33,9 @@ const GlossaryItems = props => {
           systemic bias across multiple elections. As a result, in each election
           certain pollsters are assignedto be <i>anchoring pollsters</i> based
           on their confidence rating (more details on the{' '}
-          <Link to="/methodology#poll-data-used">methodology page</Link>). The
-          forecast calibrates the calculation of the poll trend such that the
-          anchoring pollsters&apos; house effects sum to zero, effectively{' '}
+          <Link to="/methods#poll-data-used">methods page</Link>). The forecast
+          calibrates the calculation of the poll trend such that the anchoring
+          pollsters&apos; house effects sum to zero, effectively{' '}
           <i>anchoring</i> the trend to the average of these pollsters over
           time. Other pollsters are still used as they may be useful indicators
           of trend changes, but also not so reliable for the absolute level of{' '}
@@ -242,12 +242,12 @@ const GlossaryItems = props => {
           A poll can be used to refer to any survey of public opinion, but for
           the purposes of this site it mainly refers to surveys that attempt to
           measure <Link to="#voting-intention">voting intention</Link>. For a
-          poll to be usable in forecasting it needs to have a good methodology
-          in regard to sampling of the population, as even fairly small errors
-          can have a major effect on the assessed outcome of an election. This
-          can be achieved by random sampling of respondents (to avoid
-          self-selection bias) and weighting by demographic groups to account
-          for differing response rates among them.
+          poll to be usable in forecasting it needs to have a good method for
+          sampling of the population, as even fairly small errors can have a
+          major effect on the assessed outcome of an election. This can be
+          achieved by random sampling of respondents (to avoid self-selection
+          bias) and weighting by demographic groups to account for differing
+          response rates among them.
         </p>
       </GlossaryItem>
       <GlossaryItem type="general" title="Pollster">
@@ -267,7 +267,7 @@ const GlossaryItems = props => {
           choose only to publish favourable polls, result in survivorship bias.
         </p>
         <p>
-          The moodelling on this site assesses pollsters both on the lean of
+          The modelling on this site assesses pollsters both on the lean of
           their results relative to the average (&quot;
           <Link to="#house-effect">house effects</Link>&quot;) and the level of
           confidence that can be held in their polling (&quot;poll confidence
@@ -287,10 +287,10 @@ const GlossaryItems = props => {
           <Link to="#bias">bias</Link> of the{' '}
           <Link to="#anchoring-pollster">anchoring pollsters</Link> sum to zero.
           (For more detail see{' '}
-          <Link to="/methodology/#poll-trend">this section</Link> of the
-          methodology page.) The latest point on the poll trend is then used as
-          a basis for election simulations after further adjustments for
-          historical bias and uncertainty.
+          <Link to="/methods/#poll-trend">this section</Link> of the methods
+          page.) The latest point on the poll trend is then used as a basis for
+          election simulations after further adjustments for historical bias and
+          uncertainty.
         </p>
       </GlossaryItem>
       <GlossaryItem type="general" title="Preferential voting">

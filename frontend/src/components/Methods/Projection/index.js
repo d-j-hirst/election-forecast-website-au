@@ -2,7 +2,7 @@ import React from 'react';
 
 import {ExtLink} from '../../../utils/extlink.js';
 
-const MethodologyPollTrend = props => {
+const MethodsPollTrend = props => {
   return (
     <>
       <h4 id="projection">Projecting election vote shares</h4>
@@ -317,4 +317,4 @@ const MethodologyPollTrend = props => {
   );
 };
 
-export default MethodologyPollTrend;
+export default MethodsPollTrend;
