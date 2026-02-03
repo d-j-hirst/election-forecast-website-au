@@ -456,13 +456,13 @@ const Seats = props => {
     let indexedChances = [];
     indexedChances = props.forecast.seatPartyWinFrequencies.map((a, index) => [
       index,
-      () => {
+      (() => {
         let val = 0;
         if (natIndex) val += jsonMap(a, natIndex, 0);
         if (libIndex) val += jsonMap(a, libIndex, 0);
         if (!natIndex && !libIndex && lnpIndex) val = jsonMap(a, lnpIndex, 0);
         return val;
-      },
+      })(),
     ]);
     indexedChances.sort((a, b) => (a[1] > b[1] ? -1 : 1));
     sortedIndices = indexedChances.map((a, b) => a[0]);
