@@ -19,7 +19,7 @@ const OnAbsentAlert = props => {
   if (show) {
     return (
       <Alert
-        variant="info"
+        variant="warning"
         className={styles.onAbsentAlert}
         dismissible={true}
         onClose={() => setShow(false)}

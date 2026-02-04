@@ -19,7 +19,7 @@ const OnUnderestimateAlert = props => {
   if (show) {
     return (
       <Alert
-        variant="info"
+        variant="warning"
         className={styles.onUnderestimateAlert}
         dismissible={true}
         onClose={() => setShow(false)}
