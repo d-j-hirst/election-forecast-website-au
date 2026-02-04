@@ -1,0 +1,28 @@
+.onUnderestimateAlert {
+  text-align: center;
+  max-width: 650px;
+  /*width: 710px !important;*/
+  margin: auto;
+  border-color: #CCCCCC;
+  border-radius: 20px 20px 2px 2px !important;
+}
+
+.onUnderestimateAlert p {
+  margin: 0px;
+}
+
+.firstPara {
+  display: flex;
+  flex: row;
+  gap: 15px;
+}
+
+.largeInfo {
+  width: 36px;
+  height: 36px;
+  margin: 1px;
+}
+
+.infoIcon {
+  width: 22px;
+}
