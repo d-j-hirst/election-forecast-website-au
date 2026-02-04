@@ -13,7 +13,7 @@ const OnAbsentAlert = props => {
     props.showInitially === undefined || props.showInitially
   );
   const isLive = props.mode === 'live';
-  if (props.isArchive === true || isLive || props.code !== '2025fed') {
+  if (props.isArchive === true || isLive) {
     return null;
   }
   if (show) {
