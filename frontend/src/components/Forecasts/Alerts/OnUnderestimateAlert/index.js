@@ -28,8 +28,8 @@ const OnUnderestimateAlert = props => {
           <InfoIcon size="large" inactive={true} warning={true} />
           <div>
             There have been very few polls measuring the level of One Nation
-            support in this state. The current forecast is likely to
-            underestimate One Nation support until more polls are available.
+            support in this state. The current forecast may underestimate One
+            Nation support until more polls are available.
           </div>
         </div>
       </Alert>

@@ -90,16 +90,8 @@ const ForecastLayout = props => {
                 mode={mode}
                 results={effectiveResults}
               />
-              {(code == '2026sa' || code == '2027nsw') && (
+              {(code == '2026sa' || code == '2027nsw' || code == '2026vic') && (
                 <OnUnderestimateAlert
-                  code={code}
-                  isArchive={props.isArchive}
-                  mode={mode}
-                  showInitially={true}
-                />
-              )}
-              {code == '2026vic' && (
-                <OnAbsentAlert
                   code={code}
                   isArchive={props.isArchive}
                   mode={mode}
