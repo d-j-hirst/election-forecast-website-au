@@ -25,7 +25,7 @@ import {jsonMap, jsonMapReverse} from '../../../utils/jsonmap.js';
 import {partyCategory} from '../../../utils/partyclass.js';
 import {getSeatUrl} from '../../../utils/seaturls.js';
 import {seatInRegion} from '../../../utils/seatregion.js';
-import {useWarning} from '../../../utils/seatwarnings.js';
+import {useByElectionWarning, useWarning} from '../../../utils/seatwarnings.js';
 
 import styles from './Seats.module.css';
 
@@ -160,6 +160,16 @@ const SeatRow = props => {
                 warning={true}
                 noToggle={true}
                 tooltipText="This seat has unusual circumstances which make it particularly difficult to model. Treat with caution."
+              />
+            </>
+          )}
+          {useByElectionWarning(props.election, seatName) && (
+            <>
+              {' '}
+              <InfoIcon
+                warning={true}
+                noToggle={true}
+                tooltipText="This projection is for a general election only and should NOT be used to make any predictions about the upcoming by-election."
               />
             </>
           )}

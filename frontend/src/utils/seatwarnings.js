@@ -11,3 +11,7 @@ export const useWarning = (election, seatName) => {
     (election === '2027nsw' && seatName === 'Kiama')
   );
 };
+
+export const useByElectionWarning = (election, seatName) => {
+  return election === '2028fed' && seatName === 'Farrer';
+};
