@@ -67,9 +67,9 @@ const MethodsPollTrend = props => {
         </li>
         <li>
           <strong>Pollster:</strong> The brand name of the polling firm. If a
-          pollster uses different methodologies under the same name, they are
-          classed separately (e.g., Roy Morgan face-to-face, phone, SMS, and
-          multi-mode polls).
+          pollster uses different methods under the same name, they are classed
+          separately (e.g., Roy Morgan face-to-face, phone, SMS, and multi-mode
+          polls).
         </li>
         <li>
           <strong>First preference votes:</strong> Votes for all significant
@@ -135,7 +135,7 @@ const MethodsPollTrend = props => {
           <strong>Poll imperfections:</strong> Polls are imperfect estimates of
           true voting intention, influenced by random errors (such as sampling
           variation, timing inconsistencies, and response biases) as well as
-          systematic bias due to methodological limitations.
+          systematic bias due to limitations in methods.
         </li>
         <li>
           <strong>Pollster Reliability:</strong> The historical volatility of
@@ -147,8 +147,8 @@ const MethodsPollTrend = props => {
         </li>
         <li>
           <strong>House Effects:</strong> Pollsters often overestimate or
-          underestimate certain parties because of methodological differences.
-          The model calculates a systematic bias, or{' '}
+          underestimate certain parties because of difference in methods. The
+          model calculates a systematic bias, or{' '}
           <GlossaryLink word="house effects" />, for each pollster based on past
           election performance. Those with consistent biases are weighted more
           heavily when determining overall support levels, ensuring that

@@ -96,12 +96,12 @@ const GlossaryItems = props => {
           which case the other polls would have a bias.
         </p>
         <p>
-          House effects are typically a result of methodological differences
-          between pollsters: sampling and weighting techniques as well as
-          wordings of questions asked. Accurate election analysis will take into
-          account house effects to avoid assessments of voting intention being
-          unduly influenced by the release schedules of pollsters. For example,
-          if there are two pollsters releasing polls every two weeks in an
+          House effects are typically a result of difference in methods between
+          pollsters: sampling and weighting techniques as well as wordings of
+          questions asked. Accurate election analysis will take into account
+          house effects to avoid assessments of voting intention being unduly
+          influenced by the release schedules of pollsters. For example, if
+          there are two pollsters releasing polls every two weeks in an
           alternating fashion, and these two pollsters have very different house
           effects, then a naive analysis wouldresult in a volatile, fluctuating
           vote estimate even if there is no actual underlying change in voting
