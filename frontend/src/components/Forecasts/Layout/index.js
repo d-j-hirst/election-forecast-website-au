@@ -3,9 +3,6 @@ import PropTypes from 'prop-types';
 
 import {Helmet} from 'react-helmet-async';
 
-import OnAbsentAlert from '../Alerts/OnAbsentAlert';
-import OnUnderestimateAlert from '../Alerts/OnUnderestimateAlert';
-
 import {useWindowDimensions} from '../../../utils/window.js';
 import {fetchReport} from '../../../utils/report_manager.js';
 import {isOutlook} from '../../../utils/outlook.js';
@@ -90,14 +87,6 @@ const ForecastLayout = props => {
                 mode={mode}
                 results={effectiveResults}
               />
-              {(code == '2026sa' || code == '2027nsw' || code == '2026vic') && (
-                <OnUnderestimateAlert
-                  code={code}
-                  isArchive={props.isArchive}
-                  mode={mode}
-                  showInitially={true}
-                />
-              )}
               {!isOutlook(code) && (
                 <StandardErrorBoundary>
                   <FormationOfGovernment
