@@ -6,9 +6,9 @@ import Button from 'react-bootstrap/Button';
 
 import InfoIcon from '../../../General/InfoIcon';
 
-import styles from './OnPrefsAlert.module.css';
+import styles from './LiveForecastInfo.module.css';
 
-const OnPrefsAlert = props => {
+const LiveForecastInfo = props => {
   const [show, setShow] = useState(
     props.showInitially === undefined || props.showInitially
   );
@@ -45,11 +45,11 @@ const OnPrefsAlert = props => {
     );
   }
 };
-OnPrefsAlert.propTypes = {
+LiveForecastInfo.propTypes = {
   code: PropTypes.string.isRequired,
   isArchive: PropTypes.bool,
   mode: PropTypes.string.isRequired,
   showInitially: PropTypes.bool,
 };
 
-export default OnPrefsAlert;
+export default LiveForecastInfo;
