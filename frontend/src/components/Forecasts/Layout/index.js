@@ -88,7 +88,7 @@ const ForecastLayout = props => {
                 mode={mode}
                 results={effectiveResults}
               />
-              {code == '2026sa' && (
+              {code === '2026sa' && (
                 <LiveForecastInfo
                   code={code}
                   isArchive={props.isArchive}
