@@ -198,6 +198,14 @@ const ForecastAlert = props => {
                         incorrect.
                       </li>
                       <li>
+                        The model does not know which polling places within a
+                        seat are stronger for One Nation unless the party ran
+                        there in the previous election. This may cause a
+                        temporary overestimation of One Nation support in some
+                        seats if their stronger rural polling places report
+                        results first.
+                      </li>
+                      <li>
                         There is a very large increase in early voting compared
                         to the previous election due to changes in rules and
                         availability. While the forecast is in theory set up to
