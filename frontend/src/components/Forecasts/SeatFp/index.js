@@ -67,7 +67,9 @@ const SeatFpSection = props => {
   const someExcluded = sortedFreqs.length < fpFreqs.length;
 
   const hideMajorParties =
-    props.mode === 'live' && props.election !== '2019nsw';
+    props.mode === 'live' &&
+    props.election !== '2019nsw' &&
+    props.election !== '2026sa';
 
   sortedFreqs = sortedFreqs.filter(
     e => !hideMajorParties || e[0] < 0 || e[0] > 1
