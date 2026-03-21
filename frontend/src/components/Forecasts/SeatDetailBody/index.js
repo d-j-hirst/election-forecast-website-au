@@ -176,7 +176,7 @@ const SeatDetailBody = props => {
               index={props.index}
             />
           </StandardErrorBoundary>
-          {(props.mode !== 'live' || props.election !== '2022sa"') && (
+          {(props.mode !== 'live' || props.election !== '2022sa') && (
             <StandardErrorBoundary>
               <SeatFpSection
                 forecast={props.forecast}

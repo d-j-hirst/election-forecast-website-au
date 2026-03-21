@@ -27,12 +27,11 @@ const LiveForecastInfo = props => {
         <div className={styles.firstPara}>
           <InfoIcon size="large" inactive={true} warning={false} />
           <div>
-            On election night, a <strong>live forecast</strong> will be run,
-            updated using the latest official election results as they come in.
-            On election night, choose &quot;Live Forecast&quot; from the
-            &quot;Modes&quot; menu to view the live forecast. It will continue
-            to be updated throughout the night and most likely during further
-            counting in the following days.
+            A <strong>live forecast</strong> is being run, which is updated
+            using the latest official election results as they come in. Choose
+            &quot;Live&quot; from the &quot;Modes&quot; menu to view the live
+            forecast. It will continue to be updated throughout the night and
+            most likely during further counting in the following days.
           </div>
         </div>
       </Alert>
@@ -40,7 +39,7 @@ const LiveForecastInfo = props => {
   } else {
     return (
       <Button onClick={() => setShow(true)} variant="info">
-        Show ON preferences notice ▼
+        Show live forecast notice ▼
       </Button>
     );
   }

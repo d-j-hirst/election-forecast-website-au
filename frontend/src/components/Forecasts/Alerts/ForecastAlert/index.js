@@ -14,7 +14,15 @@ import quantityMarkerExample from './assets/quantity-marker-example.png';
 import categoryMarkerExample from './assets/category-marker-example.png';
 import styles from './ForecastAlert.module.css';
 
-const oldElections = ['2022sa', '2022fed', '2022vic', '2023nsw', '2024qld'];
+const oldElections = [
+  '2022sa',
+  '2022fed',
+  '2022vic',
+  '2023nsw',
+  '2024qld',
+  '2025wa',
+  '2025fed',
+];
 const oldElectionsLinks = {
   '2022sa': 'https://www.ecsa.sa.gov.au/elections/2022-state-election/results',
   '2022fed': 'https://results.aec.gov.au/27966/Website/HouseDefault-27966.htm',
@@ -22,6 +30,8 @@ const oldElectionsLinks = {
     'https://www.vec.vic.gov.au/results/state-election-results/2022-state-election-results',
   '2023nsw': 'https://vtr.elections.nsw.gov.au/SG2301',
   '2024qld': 'https://results.elections.qld.gov.au/SGE2024',
+  '2025fed': 'https://results.aec.gov.au/31496/Website/HouseDefault-31496.htm',
+  '2026sa': 'https://result.ecsa.sa.gov.au/',
 };
 const oldLiveText = {
   '2022sa': 'at the end of election night',
@@ -141,12 +151,57 @@ const ForecastAlert = props => {
                 {props.forecast.electionName}, incorporating official election
                 results as they {oldElec ? 'were' : 'are'} reported. Please be
                 aware that the development of this live forecasting process is
-                incomplete, and as a result it may contain significant
-                inaccuracies.
+                ongoing and may contain inaccuracies.
+                {props.code === '2026sa' && (
+                  <>
+                    <hr />
+                    <p>
+                      This live forecast extrapolates the differences between
+                      known results and the prior expected results to estimate
+                      the likely outcome of the election. For example, if
+                      polling places in some seats are reporting results, those
+                      will be used to update the forecast for other seats.
+                    </p>
+                    <p>
+                      The forecast is aware of the different categories of
+                      polling places, such as early voting centres and postal
+                      votes. It takes into account that each category may have
+                      correlated differences in voting behaviour when running
+                      the simulations. If the forecast sees that a particular
+                      category is reporting significantly different results to
+                      the expected results, it will use that information to
+                      update the forecast for polling places in that category.
+                    </p>
+                    <p>Known potential issues:</p>
+                    <ul>
+                      <li>
+                        There is little historical partial-count data from
+                        previous elections for seats where One Nation performs
+                        very strongly, so it is hard to calibrate how the model
+                        uses that data. The model&apos;s assumptions may be
+                        incorrect.
+                      </li>
+                      <li>
+                        There is a very large increase in early voting compared
+                        to the previous election due to changes in rules and
+                        availability. While the forecast is in theory set up to
+                        handle this, the scale of change is unprecedented and
+                        may lead to unforeseen issues.
+                      </li>
+                      <li>
+                        The forecast may struggle with seats where there are two
+                        separate competitive independents. It will convert the
+                        second independent into &quot;Others&quot; for the
+                        purpose of distributing preferences, which may not be
+                        accurate.
+                      </li>
+                    </ul>
+                  </>
+                )}
                 {oldElec && !isArchive && (
                   <>
                     <hr />
-                    This was the the final such forecast made{' '}
+                    This was the final such forecast made{' '}
                     {oldLiveText[props.code]}, visible for historical purposes
                     only. It represents the apparent state of play at that time,
                     and has not and will not be updated further from there.
