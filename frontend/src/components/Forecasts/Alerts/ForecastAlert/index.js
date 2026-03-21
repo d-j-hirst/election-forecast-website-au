@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 
 import {Link} from 'react-router-dom';
@@ -41,11 +41,9 @@ const oldLiveText = {
   '2024qld':
     'at about 10:20 p.m. on election night (ended early due to issues with comparing prepoll and postal votes)',
 };
+const liveAlertStorageKey = 'liveForecastAlertClosed';
 
 const ForecastAlert = props => {
-  const [show, setShow] = useState(
-    props.showInitially === undefined || props.showInitially
-  );
   const isNowcast = props.mode === 'nowcast';
   const isLive = props.mode === 'live';
   const isRegular = props.mode === 'regular';
@@ -55,13 +53,29 @@ const ForecastAlert = props => {
   const current = !(oldElec || isArchive);
   const isWarning = isNowcast || isLive || isThisOutlook || props.isArchive;
   const alertVariant = isWarning ? 'warning' : 'info';
+  const defaultShow = props.showInitially === undefined || props.showInitially;
+  const getShowState = () =>
+    isLive
+      ? defaultShow && localStorage.getItem(liveAlertStorageKey) !== 'true'
+      : defaultShow;
+  const [show, setShow] = useState(getShowState);
+
+  useEffect(() => {
+    setShow(getShowState());
+  }, [defaultShow, isLive]);
+
+  const closeAlert = () => {
+    if (isLive) localStorage.setItem(liveAlertStorageKey, 'true');
+    setShow(false);
+  };
+
   if (show) {
     return (
       <Alert
         variant={alertVariant}
         className={isWarning ? styles.nowcastAlert : styles.forecastAlert}
         dismissible={true}
-        onClose={() => setShow(false)}
+        onClose={closeAlert}
       >
         <div className={styles.firstPara}>
           <InfoIcon size="large" inactive={true} warning={isWarning} />
@@ -162,6 +176,7 @@ const ForecastAlert = props => {
                       polling places in some seats are reporting results, those
                       will be used to update the forecast for other seats.
                     </p>
+                    <br />
                     <p>
                       The forecast is aware of the different categories of
                       polling places, such as early voting centres and postal
@@ -172,6 +187,7 @@ const ForecastAlert = props => {
                       the expected results, it will use that information to
                       update the forecast for polling places in that category.
                     </p>
+                    <br />
                     <p>Known potential issues:</p>
                     <ul>
                       <li>
