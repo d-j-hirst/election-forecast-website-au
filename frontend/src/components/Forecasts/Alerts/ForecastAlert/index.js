@@ -219,6 +219,14 @@ const ForecastAlert = props => {
                         purpose of distributing preferences, which may not be
                         accurate.
                       </li>
+                      <li>
+                        A bug was fixed at around midday on 23 March 2026 that
+                        caused the forecast not to include Family First first
+                        preference votes among &quot;Others&quot;. This mostly
+                        affected first preference projections but the fix did
+                        somewhat increase One Nation&apos;s win chance in the
+                        seat of Light, along with other slight changes.
+                      </li>
                     </ul>
                   </>
                 )}
