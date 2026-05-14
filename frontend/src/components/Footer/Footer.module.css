@@ -1,5 +1,6 @@
-footer {
+.footer {
   width: 100%;
-  background-color: #DDDDDD;
+  background-color: #dddddd;
   text-align: center;
+  padding: 4px 8px;
 }

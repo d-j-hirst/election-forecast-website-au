@@ -1,12 +1,17 @@
 import React from 'react';
 
-import './Footer.module.css';
+import {Link} from 'react-router-dom';
 
-const Footer = props => (
+import {SUPPORT_URL} from 'config/urls';
+
+import styles from './Footer.module.css';
+
+const Footer = () => (
   <>
-    <footer>
+    <footer className={styles.footer}>
       Copyright ©2025 Australian Election Forecasts. Give attribution for ideas
-      from the site. Not financial advice.
+      from the site. Not financial advice.{' '}
+      <Link to={SUPPORT_URL}>Support the site</Link>.
     </footer>
   </>
 );

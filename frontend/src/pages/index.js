@@ -11,3 +11,4 @@ export {default as Methods} from './Methods';
 export {default as Commentary} from './Commentary';
 export {default as CommentarySingle} from './CommentarySingle';
 export {default as About} from './About';
+export {default as Support} from './Support';

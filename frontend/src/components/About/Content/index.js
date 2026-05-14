@@ -3,6 +3,7 @@ import React from 'react';
 import InfoIcon from '../../General/InfoIcon';
 import {ExtLink} from '../../../utils/extlink';
 import Email from '../../General/Email';
+import {SUPPORT_URL} from 'config/urls';
 
 const AboutContent = () => {
   return (
@@ -69,6 +70,11 @@ const AboutContent = () => {
         Follow on{' '}
         <ExtLink href="https://twitter.com/aeforecasts">Twitter/X</ExtLink> for
         notifications when new forecasts are released.
+      </p>
+      <h4 id="supporting-the-site">Supporting the Site</h4>
+      <p>
+        If you find the site useful and want to show appreciation for the work
+        behind it, there is an optional <a href={SUPPORT_URL}>support page</a>.
       </p>
       <h4 id="introduction">About the Author</h4>
       <p>

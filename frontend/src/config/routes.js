@@ -17,6 +17,7 @@ import {
   SEAT_DETAILS_URL,
   METHODOLOGY_URL,
   METHODS_URL,
+  SUPPORT_URL,
 } from 'config/urls';
 
 import {
@@ -31,6 +32,7 @@ import {
   Guide,
   Methods,
   SeatDetails,
+  Support,
 } from 'pages';
 
 const AllRoutes = () => {
@@ -54,6 +56,7 @@ const AllRoutes = () => {
         <Route path={COMMENTARY_SINGLE_URL} element={<CommentarySingle />} />
         <Route path={COMMENTARY_URL} element={<Commentary />} />
         <Route path={ABOUT_URL} element={<About />} />
+        <Route path={SUPPORT_URL} element={<Support />} />
         <Route
           path={BASIC_FORECAST_URL}
           element={<Navigate replace to={DEFAULT_FORECAST_URL} />}
