@@ -8,10 +8,12 @@ export const useWarning = (election, seatName) => {
       (seatName === 'Narungga' || seatName === 'MacKillop')) ||
     (election === '2026vic' &&
       (seatName === 'Prahran' || seatName === 'Narracan')) ||
-    (election === '2027nsw' && seatName === 'Kiama')
+    (election === '2027nsw' && seatName === 'Kiama') ||
+    (election === '2028fed' && seatName === 'Farrer')
   );
 };
 
 export const useByElectionWarning = (election, seatName) => {
-  return election === '2028fed' && seatName === 'Farrer';
+  //return election === '2028fed' && seatName === 'Farrer';
+  return false;
 };
