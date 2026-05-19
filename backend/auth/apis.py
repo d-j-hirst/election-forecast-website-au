@@ -3,10 +3,10 @@ from urllib.parse import urlencode
 from rest_framework import status, serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework_jwt.views import ObtainJSONWebTokenView
 
 from django.urls import reverse
 from django.conf import settings
+from django.contrib.auth import authenticate
 from django.shortcuts import redirect
 
 from auth_api.mixins import ApiErrorsMixin, PublicApiMixin, ApiAuthMixin
@@ -14,21 +14,34 @@ from auth_api.mixins import ApiErrorsMixin, PublicApiMixin, ApiAuthMixin
 from users.services import user_record_login, user_change_secret_key, user_get_or_create
 
 from auth.services import jwt_login, google_get_access_token, google_get_user_info
+from users.selectors import user_get_me
 
 from typing import Any
 
 
-class LoginApi(ApiErrorsMixin, ObtainJSONWebTokenView):
+class LoginApi(PublicApiMixin, ApiErrorsMixin, APIView):
+    class InputSerializer(serializers.Serializer):
+        email = serializers.EmailField(required=False)
+        username = serializers.EmailField(required=False)
+        password = serializers.CharField(write_only=True)
+
     def post(self, request: Any, *args: Any, **kwargs: Any):
-        # Reference: https://github.com/Styria-Digital/django-rest-framework-jwt/blob/master/src/rest_framework_jwt/views.py#L44
-        serializer: Any = self.get_serializer(data=request.data)
+        serializer = self.InputSerializer(data=request.data)
 
         serializer.is_valid(raise_exception=True)
 
-        user = serializer.validated_data.get('user') or request.user
-        user_record_login(user=user)
+        email = serializer.validated_data.get('email') or serializer.validated_data.get('username')
 
-        return super().post(request, *args, **kwargs)
+        if not email:
+            raise serializers.ValidationError({'email': 'This field is required.'})
+
+        user = authenticate(request, username=email, password=serializer.validated_data['password'])
+
+        if user is None:
+            raise serializers.ValidationError('Unable to log in with provided credentials.')
+
+        response = Response(data={'me': user_get_me(user=user)})
+        return jwt_login(response=response, user=user)
 
 
 class GoogleLoginApi(PublicApiMixin, ApiErrorsMixin, APIView):

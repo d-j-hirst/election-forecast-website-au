@@ -1,9 +1,9 @@
-from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import exceptions as rest_exceptions
 
 from django.core.exceptions import ValidationError
 
+from auth.jwt import JSONWebTokenAuthentication
 from utils import get_error_message
 from users.models import User
 

@@ -71,8 +71,6 @@ INSTALLED_APPS = [
     'django_extensions',
     'rest_framework',
     'rest_framework.authtoken',
-    'rest_framework_jwt',
-    'rest_framework_jwt.blacklist',
     'users'
 ]
 
@@ -113,7 +111,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        'auth.jwt.JSONWebTokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
     ),
@@ -169,8 +167,6 @@ TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
-USE_L10N = True
-
 USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
@@ -180,8 +176,14 @@ STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [FRONTEND_DIR / 'build' / 'static']
 
-STATICFILES_STORAGE = (
-    'whitenoise.storage.CompressedManifestStaticFilesStorage')
+STORAGES = {
+    'default': {
+        'BACKEND': 'django.core.files.storage.FileSystemStorage',
+    },
+    'staticfiles': {
+        'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
+    },
+}
 
 STATIC_ROOT = BACKEND_DIR / 'static'
 
@@ -220,7 +222,7 @@ JWT_AUTH = {
 }
 
 CORS_ALLOW_CREDENTIALS = True
-CORS_ORIGIN_WHITELIST: List[str] = env.list(  # type: ignore
+CORS_ALLOWED_ORIGINS: List[str] = env.list(  # type: ignore
     'DJANGO_CORS_ORIGIN_WHITELIST',
     default=[BASE_FRONTEND_URL]
 )

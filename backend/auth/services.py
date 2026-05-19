@@ -5,9 +5,7 @@ from django.conf import settings
 from django.http import HttpResponse
 from django.core.exceptions import ValidationError
 
-from rest_framework_jwt.settings import api_settings
-from rest_framework_jwt.compat import set_cookie_with_token
-
+from auth.jwt import generate_jwt_token
 from users.models import User
 from users.services import user_record_login
 
@@ -18,15 +16,20 @@ GOOGLE_USER_INFO_URL = 'https://www.googleapis.com/oauth2/v3/userinfo'
 
 
 def jwt_login(*, response: HttpResponse, user: User) -> HttpResponse:
-    jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
-    jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
+    token = generate_jwt_token(user)
 
-    payload = jwt_payload_handler(user)
-    token = jwt_encode_handler(payload)
+    if settings.JWT_AUTH['JWT_AUTH_COOKIE']:
+        response.set_cookie(
+            settings.JWT_AUTH['JWT_AUTH_COOKIE'],
+            token,
+            max_age=int(settings.JWT_AUTH['JWT_EXPIRATION_DELTA'].total_seconds()),
+            secure=settings.SESSION_COOKIE_SECURE,
+            httponly=True,
+            samesite=settings.JWT_AUTH.get('JWT_AUTH_COOKIE_SAMESITE', 'Lax'),
+        )
 
-    if api_settings.JWT_AUTH_COOKIE:
-        # Reference: https://github.com/Styria-Digital/django-rest-framework-jwt/blob/master/src/rest_framework_jwt/compat.py#L43
-        set_cookie_with_token(response, api_settings.JWT_AUTH_COOKIE, token)
+    if hasattr(response, 'data') and isinstance(response.data, dict):
+        response.data['token'] = token
 
     user_record_login(user=user)
 
