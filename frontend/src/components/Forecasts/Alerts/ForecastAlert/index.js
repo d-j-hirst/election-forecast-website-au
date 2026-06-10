@@ -22,6 +22,7 @@ const oldElections = [
   '2024qld',
   '2025wa',
   '2025fed',
+  '2026sa',
 ];
 const oldElectionsLinks = {
   '2022sa': 'https://www.ecsa.sa.gov.au/elections/2022-state-election/results',
@@ -40,6 +41,7 @@ const oldLiveText = {
   '2023nsw': 'at the end of election night',
   '2024qld':
     'at about 10:20 p.m. on election night (ended early due to issues with comparing prepoll and postal votes)',
+  '2026sa': 'after final results were available',
 };
 const liveAlertStorageKey = 'liveForecastAlertClosed';
 

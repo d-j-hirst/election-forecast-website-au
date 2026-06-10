@@ -22,8 +22,6 @@ import {
   VoteTotals,
 } from 'components';
 
-import LiveForecastInfo from '../../../components/Forecasts/Alerts/LiveForecastInfo';
-
 import styles from './Layout.module.css';
 
 const ForecastLayout = props => {
@@ -88,14 +86,6 @@ const ForecastLayout = props => {
                 mode={mode}
                 results={effectiveResults}
               />
-              {code === '2026sa' && (
-                <LiveForecastInfo
-                  code={code}
-                  isArchive={props.isArchive}
-                  mode={mode}
-                  showInitially={true}
-                />
-              )}
               {!isOutlook(code) && (
                 <StandardErrorBoundary>
                   <FormationOfGovernment
