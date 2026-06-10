@@ -338,12 +338,17 @@ const Seats = props => {
     lnpTppMargin: 4,
     winChance: 5,
     lnpWinChance: 6,
+    mostUnexpected: 7,
   });
 
   const [showExplainer, setShowExplainer] = useState(false);
   const [sortType, setSortType] = useState(SortTypeEnum.competitiveness);
   const [sortParty, setSortParty] = useState(0);
   const [filter, setFilter] = useState('all');
+  const resultsAvailable =
+    props.results !== null &&
+    props.results.seats !== undefined &&
+    Object.keys(props.results.seats).length > 0;
 
   const getIndexedMargins = () => {
     return props.forecast.seatMargins.map((a, index) => [
@@ -413,7 +418,33 @@ const Seats = props => {
     kapIndex = null;
 
   let sortedIndices = [];
-  if (sortType === SortTypeEnum.competitiveness) {
+  const getWinnerChance = (seatName, index) => {
+    const result = props.results.seats[seatName];
+    const winner =
+      result !== undefined && result.tcp !== undefined
+        ? Object.entries(result.tcp).sort((a, b) => b[1] - a[1])[0][0]
+        : null;
+
+    if (winner === null) return 101;
+
+    const seatWinFrequencies = props.forecast.seatPartyWinFrequencies[index];
+    const matchingWinner = seatWinFrequencies.find(freq => {
+      const partyAbbr =
+        freq[0] === -2
+          ? 'IND*'
+          : freq[0] === -3
+          ? 'OTH'
+          : jsonMap(props.forecast.partyAbbr, freq[0]);
+      return partyAbbr === winner;
+    });
+
+    return matchingWinner === undefined ? 101 : matchingWinner[1];
+  };
+
+  if (
+    sortType === SortTypeEnum.competitiveness ||
+    (sortType === SortTypeEnum.mostUnexpected && !resultsAvailable)
+  ) {
     const indexedSeats = props.forecast.seatPartyWinFrequencies.map(
       (a, index) => [index, a]
     );
@@ -476,6 +507,17 @@ const Seats = props => {
     ]);
     indexedChances.sort((a, b) => (a[1] > b[1] ? -1 : 1));
     sortedIndices = indexedChances.map((a, b) => a[0]);
+  } else if (sortType === SortTypeEnum.mostUnexpected) {
+    const indexedWinnerChances = props.forecast.seatNames.map(
+      (seatName, index) => [index, getWinnerChance(seatName, index)]
+    );
+    indexedWinnerChances.sort((a, b) => {
+      if (a[1] !== b[1]) return a[1] - b[1];
+      return props.forecast.seatNames[a[0]] < props.forecast.seatNames[b[0]]
+        ? -1
+        : 1;
+    });
+    sortedIndices = indexedWinnerChances.map(a => a[0]);
   }
 
   sortedIndices = sortedIndices.filter(val =>
@@ -501,6 +543,8 @@ const Seats = props => {
       title += `${partyAbbr} win chance`;
     else if (sortType === SortTypeEnum.lnpWinChance)
       title += `${coalitionAbbreviation(props.election)} win chance`;
+    else if (sortType === SortTypeEnum.mostUnexpected)
+      title += 'Most unexpected';
     return title;
   })();
 
@@ -564,6 +608,9 @@ const Seats = props => {
     setSortType(SortTypeEnum.winChance);
     setSortParty(kapIndex);
   };
+  const setSortMostUnexpected = () => {
+    setSortType(SortTypeEnum.mostUnexpected);
+  };
   const setSortEmergingPartyWinChance = () => {
     setSortType(SortTypeEnum.winChance);
     setSortParty(-3);
@@ -619,6 +666,11 @@ const Seats = props => {
                 <Dropdown.Item as="button" onClick={setSortAlphabetical}>
                   Alphabetical order
                 </Dropdown.Item>
+                {resultsAvailable && (
+                  <Dropdown.Item as="button" onClick={setSortMostUnexpected}>
+                    Most unexpected
+                  </Dropdown.Item>
+                )}
                 <Dropdown.Item as="button" onClick={setSortAlpTppMargin}>
                   ALP 2PP margin
                 </Dropdown.Item>

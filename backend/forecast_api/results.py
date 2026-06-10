@@ -5,6 +5,24 @@ import threading
 from bs4 import BeautifulSoup
 
 
+WIKIPEDIA_REQUEST_HEADERS = {
+    'User-Agent': (
+        'AEForecasts results updater '
+        '(https://www.aeforecasts.com; contact via site maintainer)'
+    )
+}
+
+
+def fetch_wikipedia_page(url):
+    response = requests.get(url, headers=WIKIPEDIA_REQUEST_HEADERS, timeout=30)
+    response.raise_for_status()
+    soup = BeautifulSoup(response.content, 'html.parser')
+    content = soup.find(class_='mw-parser-output')
+    if content is None:
+        raise ValueError(f'Could not find Wikipedia article content at {url}')
+    return content
+
+
 party_convert = {
     '2022fed': {
         'Labor': 'ALP',
@@ -31,6 +49,14 @@ party_convert = {
         'Independents': 'IND',
         'Independent': 'IND',
         'SA-Best' : 'SAB'
+    },
+    '2026sa': {
+        'Labor': 'ALP',
+        'Liberal': 'LNP',
+        'One Nation': 'ON',
+        'Greens': 'GRN',
+        'Independents': 'IND',
+        'Independent': 'IND',
     },
     '2022vic': {
         'Labor': 'ALP',
@@ -104,6 +130,7 @@ def fetch_overall_results(election: Election):
     remove_from_overall_fp = {
         '2022fed': {'CA', 'KAP', 'IND'},
         '2022sa': {'IND'},
+        '2026sa': {'IND'},
         '2022vic': {'IND'},
         '2023nsw': {'IND'},
         '2024qld': {'KAP', 'IND'},
@@ -113,13 +140,15 @@ def fetch_overall_results(election: Election):
     overall_results = {'fp': {}, 'seats': {}, 'tpp': 0}
     year = election.code[:4]
     region = election.code[4:]
-    url = ('https://en.wikipedia.org/wiki/Results_of_the_' +
-        f'{year}{election_wiki_desc_dict[region]}')
-    r = requests.get(url)
-    soup = BeautifulSoup(r.content, 'html.parser')
+    if election.code == '2026sa':
+        url = 'https://en.wikipedia.org/wiki/2026_South_Australian_House_of_Assembly_election'
+    else:
+        url = ('https://en.wikipedia.org/wiki/Results_of_the_' +
+            f'{year}{election_wiki_desc_dict[region]}')
+    content = fetch_wikipedia_page(url)
     print(election_wiki_desc_dict[region])
     print(url)
-    table = soup.find(class_='mw-parser-output').find_all(
+    table = content.find_all(
         lambda tag: 
             (
                 tag.has_attr('class')
@@ -159,9 +188,13 @@ def fetch_overall_results(election: Election):
             del overall_results['fp'][code]
             continue
         total_fp += vote_share
-    overall_results['fp']['OTH'] = 100 - total_fp
+    overall_results['fp']['OTH'] = round(100 - total_fp, 2)
     if election.code == '2025wa':
         overall_results['tpp'] = 57.1  # Doesn't appear on this page, but it's known
+    if election.code == '2026sa':
+        # Wikipedia does not currently publish a comparable statewide ALP-vs-LNP
+        # 2PP for this election; use Kevin Bonham's estimate for now.
+        overall_results['tpp'] = 57.89
     print(overall_results)
     return overall_results
 
@@ -181,9 +214,8 @@ def collect_seat_names(election: Election):
     region = election.code[4:]
     url = ('https://en.wikipedia.org/wiki/Candidates_of_the_' +
         f'{year}{election_wiki_desc_dict[region]}')
-    r = requests.get(url)
-    soup = BeautifulSoup(r.content, 'html.parser')
-    tables = soup.find(class_='mw-parser-output').find_all(class_='wikitable')
+    content = fetch_wikipedia_page(url)
+    tables = content.find_all(class_='wikitable')
     urls = []
     # Special case for Narracan supplementary election which is not included
     # in Wikipedia's standard table format. But also need to include a check
@@ -232,7 +264,7 @@ def fetch_seat_results(election: Election, urls):
     threads = []
     some_lock = threading.Lock()
     def get_response(url):
-        r = requests.get(url)
+        r = requests.get(url, headers=WIKIPEDIA_REQUEST_HEADERS, timeout=30)
         with some_lock:
             responses[url]= r
     for url in urls:
@@ -243,6 +275,7 @@ def fetch_seat_results(election: Election, urls):
 
     all_seat_results = {}
     for url, r in responses.items():
+        r.raise_for_status()
         soup = BeautifulSoup(r.content, 'html.parser')
         try:
             tables = (soup.find(class_='mw-parser-output')
@@ -270,14 +303,31 @@ def fetch_seat_results(election: Election, urls):
 
             seat_results = {'fp': {}, 'tcp': {}}
             doing_tcp = 0
+            preferred_results = []
+            current_preferred_label = None
+            current_preferred_results = {}
             rows = table.find_all('tr')
             found_ind = 0
             for row in rows:
                 if 'preferred' in row.text and 'Notional' not in row.text:
+                    if current_preferred_label is not None:
+                        preferred_results.append((
+                            current_preferred_label,
+                            current_preferred_results
+                        ))
                     doing_tcp = 1
+                    current_preferred_label = row.text.strip()
+                    current_preferred_results = {}
                     found_ind = 0
                     continue
                 elif 'preferred' in row.text:
+                    if current_preferred_label is not None:
+                        preferred_results.append((
+                            current_preferred_label,
+                            current_preferred_results
+                        ))
+                        current_preferred_label = None
+                        current_preferred_results = {}
                     doing_tcp = 2  # Notional count, don't record this
                     continue
                 cols = row.find_all('td')
@@ -298,12 +348,27 @@ def fetch_seat_results(election: Election, urls):
                 if name == 'National' and region == 'wa': code = 'NAT'
                 vote_share = float(cols[4].text)
                 if doing_tcp == 1:
-                    seat_results['tcp'][code] = vote_share
+                    current_preferred_results[code] = vote_share
                 elif doing_tcp == 0:
                     if code not in seat_results['fp']:
                         seat_results['fp'][code] = vote_share
                     else:
                         seat_results['fp'][code] += vote_share
+
+            if current_preferred_label is not None:
+                preferred_results.append((
+                    current_preferred_label,
+                    current_preferred_results
+                ))
+
+            two_candidate_results = [
+                results for label, results in preferred_results
+                if 'two-candidate-preferred' in label.lower()
+            ]
+            if two_candidate_results:
+                seat_results['tcp'] = two_candidate_results[-1]
+            elif preferred_results:
+                seat_results['tcp'] = preferred_results[0][1]
 
             if (int(year) == 2022 and (region == 'fed' or region == 'sa')):
                 # For now, remove smaller emerging-inds
