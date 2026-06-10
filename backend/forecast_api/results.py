@@ -457,7 +457,15 @@ def fetch_seat_results(election: Election, urls):
 
 
 def update_results(election: Election, pre_fill):
-    if pre_fill is None:
+    pre_fill_matches_election = (
+        isinstance(pre_fill, dict) and pre_fill.get('code') == election.code
+    )
+    if pre_fill is not None and not pre_fill_matches_election:
+        print(
+            f'Ignoring prefilled results for {pre_fill.get("code", "unknown")} '
+            f'while updating {election.code}'
+        )
+    if not pre_fill_matches_election:
         overall_results = fetch_overall_results(election)
         urls = collect_seat_names(election)
         seat_results = fetch_seat_results(election, urls)
@@ -472,7 +480,7 @@ def update_results(election: Election, pre_fill):
     else:
         full_results = pre_fill
     election.results = full_results
-    if not pre_fill:
+    if not pre_fill_matches_election:
         print(election.results)
         with open('prefill_results.json', 'w') as f:
             json.dump(election.results, f)
