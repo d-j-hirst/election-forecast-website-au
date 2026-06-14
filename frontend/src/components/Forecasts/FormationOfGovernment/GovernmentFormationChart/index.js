@@ -11,7 +11,7 @@ import {
 } from 'recharts';
 
 import {brightness} from '../../../../utils/brightness.js';
-import {jsonMap} from '../../../../utils/jsonmap.js';
+import {jsonMap, jsonMapReverse} from '../../../../utils/jsonmap.js';
 
 import styles from './GovernmentFormationChart.module.css';
 import {coalitionAbbreviation} from 'utils/coalition.js';
@@ -23,12 +23,27 @@ const RADIAN = Math.PI / 180;
 
 const GovernmentFormationChart = props => {
   const lowerLegendRequired = props.windowWidth < 550;
+  const electionYear = parseInt(props.forecast.termCode.slice(0, 4));
+  const onPartyIndex =
+    electionYear >= 2026
+      ? jsonMapReverse(props.forecast.partyAbbr, 'ON', null)
+      : null;
+  const showOneNation = onPartyIndex !== null;
 
   const partyOneName = jsonMap(props.forecast.partyAbbr, 0);
-  const otherWins =
+  let otherWins =
     100 -
     jsonMap(props.forecast.overallWinPc, 0) -
     jsonMap(props.forecast.overallWinPc, 1);
+  const onMajority = showOneNation
+    ? jsonMap(props.forecast.majorityWinPc, onPartyIndex, 0)
+    : 0;
+  const onMostSeats = showOneNation
+    ? jsonMap(props.forecast.mostSeatsWinPc, onPartyIndex, 0)
+    : 0;
+  if (showOneNation) {
+    otherWins = Math.max(0, otherWins - onMajority - onMostSeats);
+  }
   let partyOneVals = [
     jsonMap(props.forecast.overallWinPc, 0),
     jsonMap(props.forecast.majorityWinPc, 0),
@@ -77,6 +92,16 @@ const GovernmentFormationChart = props => {
     '#5792da',
     '#1467cc',
   ];
+
+  if (showOneNation) {
+    data.splice(
+      5,
+      0,
+      {name: 'ON most seats', value: round1(onMostSeats)},
+      {name: 'ON majority', value: round1(onMajority)}
+    );
+    colors.splice(5, 0, '#ffc388', '#ff7f00');
+  }
 
   const chartHeight = lowerLegendRequired
     ? props.windowWidth < 360

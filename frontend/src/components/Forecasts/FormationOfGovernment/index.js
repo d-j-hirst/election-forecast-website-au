@@ -13,7 +13,7 @@ import {
   xxxLightBgClass,
   standardiseParty,
 } from '../../../utils/partyclass.js';
-import {jsonMap} from '../../../utils/jsonmap.js';
+import {jsonMap, jsonMapReverse} from '../../../utils/jsonmap.js';
 
 import StandardErrorBoundary from '../../General/StandardErrorBoundary';
 import ProbStatement from '../../General/ProbStatement';
@@ -189,7 +189,7 @@ const OthersExplainer = props => {
     <Alert variant="warning" className={styles.alert}>
       <p>
         This row shows the share of model simulations in which some party other
-        than the two traditional majors gains a majority. Note that:
+        than those listed separately above gains a majority. Note that:
       </p>
       <ul>
         <li>
@@ -236,7 +236,8 @@ const OverallWinGovernmentRow = props => {
   if (party === -1) {
     prob = 0;
     for (const el of props.forecast.majorityWinPc) {
-      if (el[0] === 0 || el[0] === 1) continue;
+      if (el[0] === 0 || el[0] === 1 || el[0] === props.excludedPartyIndex)
+        continue;
       prob += el[1];
     }
   }
@@ -281,6 +282,7 @@ const OverallWinGovernmentRow = props => {
   );
 };
 OverallWinGovernmentRow.propTypes = {
+  excludedPartyIndex: PropTypes.number,
   forecast: PropTypes.object.isRequired,
   partyIndex: PropTypes.string.isRequired,
   text: PropTypes.string,
@@ -319,6 +321,31 @@ const MajorPartyCollapsibleRows = props => {
 MajorPartyCollapsibleRows.propTypes = {
   forecast: PropTypes.object.isRequired,
   partyIndex: PropTypes.string.isRequired,
+};
+
+const OneNationGovernmentRow = props => {
+  let prob = jsonMap(props.forecast.majorityWinPc, props.partyIndex);
+  if (prob === undefined) prob = 0;
+  const bgClasses = `${styles.formationOfGovernmentTopItem} ${lightBgClass(
+    'ON'
+  )}`;
+
+  return (
+    <ListGroup.Item className={bgClasses}>
+      <div className={styles.formationOfGovernmentDescription}>
+        <ProbStatement
+          forecast={props.forecast}
+          party={props.partyIndex}
+          prob={prob}
+          outcome={'have a majority'}
+        />
+      </div>
+    </ListGroup.Item>
+  );
+};
+OneNationGovernmentRow.propTypes = {
+  forecast: PropTypes.object.isRequired,
+  partyIndex: PropTypes.number.isRequired,
 };
 
 const HungExplainer = props => {
@@ -456,7 +483,8 @@ const OthersCollapsibleRows = props => {
 
   const minorParties = [];
   for (const el of props.forecast.majorityWinPc) {
-    if (el[0] === 0 || el[0] === 1) continue;
+    if (el[0] === 0 || el[0] === 1 || el[0] === props.excludedPartyIndex)
+      continue;
     minorParties.push(el[0]);
   }
 
@@ -476,6 +504,7 @@ const OthersCollapsibleRows = props => {
       <OverallWinGovernmentRow
         partyIndex="-1"
         forecast={props.forecast}
+        excludedPartyIndex={props.excludedPartyIndex}
         detailHandler={detailHandler}
         expanded={showDetail}
         text="Any other party"
@@ -500,6 +529,7 @@ const OthersCollapsibleRows = props => {
   );
 };
 OthersCollapsibleRows.propTypes = {
+  excludedPartyIndex: PropTypes.number,
   forecast: PropTypes.object.isRequired,
 };
 
@@ -521,14 +551,21 @@ const MainExplainer = props => {
       </p>
       <hr />
       <p>
-        Simulated results are grouped here into four categories, with the chance
-        of each shown as a percentage:
+        Simulated results are grouped here into
+        {props.showOneNation ? ' five' : ' four'} categories, with the chance of
+        each shown as a percentage:
       </p>
       <ul>
         <li>
           one for <i>each major party</i> (Labor/ALP and the Liberal/National
           Parties) being in a position to form government
         </li>
+        {props.showOneNation && (
+          <li>
+            one for <i>One Nation</i> gaining a majority (no clear path to
+            minority government is modelled for One Nation)
+          </li>
+        )}
         <li>
           one for <i>some other party</i> being in a position to form government
           (this is usually highly unlikely)
@@ -544,6 +581,9 @@ const MainExplainer = props => {
     </Alert>
   );
 };
+MainExplainer.propTypes = {
+  showOneNation: PropTypes.bool.isRequired,
+};
 
 const FormationOfGovernment = props => {
   const [showExplainer, setShowExplainer] = useState(false);
@@ -558,6 +598,12 @@ const FormationOfGovernment = props => {
 
   const higherProbParty = partyProb(0) > partyProb(1) ? '0' : '1';
   const lowerProbParty = higherProbParty === '0' ? '1' : '0';
+  const electionYear = parseInt(props.forecast.termCode.slice(0, 4));
+  const onPartyIndex =
+    electionYear >= 2026
+      ? jsonMapReverse(props.forecast.partyAbbr, 'ON', null)
+      : null;
+  const showOneNation = onPartyIndex !== null;
 
   return (
     <Card className={styles.summary}>
@@ -570,7 +616,7 @@ const FormationOfGovernment = props => {
       <Card.Body className={styles.formationOfGovernmentBody}>
         <StandardErrorBoundary>
           <ListGroup className={styles.formationOfGovernmentTopList}>
-            {showExplainer && <MainExplainer />}
+            {showExplainer && <MainExplainer showOneNation={showOneNation} />}
             <MajorPartyCollapsibleRows
               partyIndex={higherProbParty}
               forecast={props.forecast}
@@ -579,7 +625,16 @@ const FormationOfGovernment = props => {
               partyIndex={lowerProbParty}
               forecast={props.forecast}
             />
-            <OthersCollapsibleRows forecast={props.forecast} />
+            {showOneNation && (
+              <OneNationGovernmentRow
+                partyIndex={onPartyIndex}
+                forecast={props.forecast}
+              />
+            )}
+            <OthersCollapsibleRows
+              excludedPartyIndex={showOneNation ? onPartyIndex : undefined}
+              forecast={props.forecast}
+            />
             <HungParliamentCollapsibleRows forecast={props.forecast} />
           </ListGroup>
         </StandardErrorBoundary>
