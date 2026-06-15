@@ -36,6 +36,9 @@ const round2 = num => Math.round(num * 100) / 100;
 
 const integerPercent = a => String(Math.round(a)) + '%';
 
+const historyPointDisplayDate = point =>
+  point.displayUnixDate === undefined ? point.unixDate : point.displayUnixDate;
+
 const GraphTypeEnum = Object.freeze({
   governmentFormation: 1,
   tpp: 2,
@@ -183,7 +186,7 @@ const GovernmentFormationTooltip = ({
   showOneNation,
 }) => {
   if (active && payload && payload.length) {
-    const date = payload[0].payload.unixDate;
+    const date = historyPointDisplayDate(payload[0].payload);
     const thisDate =
       mode === 'live' ? unixTimeToStr(date) : unixDateToStr(date);
     const p = payload[0].payload;
@@ -330,7 +333,7 @@ GovernmentFormation.propTypes = {
 
 const RangeTooltip = ({active, payload, label, mode, obsLabel, dataKey}) => {
   if (active && payload && payload.length) {
-    const date = payload[0].payload.unixDate;
+    const date = historyPointDisplayDate(payload[0].payload);
     const thisDate =
       mode === 'live' ? unixTimeToStr(date) : unixDateToStr(date);
     return (
@@ -384,7 +387,8 @@ const Tpp = props => {
   const modifiedLowTpp = Math.min.apply(
     Math,
     props.data.map(a =>
-      a.unixDate > 1718668800000 && a.unixDate < 1721347200000
+      historyPointDisplayDate(a) > 1718668800000 &&
+      historyPointDisplayDate(a) < 1721347200000
         ? 100
         : Math.floor(a['tpp1-5'][0])
     )
@@ -395,7 +399,8 @@ const Tpp = props => {
   const modifiedHighTpp = Math.max.apply(
     Math,
     props.data.map(a =>
-      a.unixDate > 1718668800000 && a.unixDate < 1721347200000
+      historyPointDisplayDate(a) > 1718668800000 &&
+      historyPointDisplayDate(a) < 1721347200000
         ? 0
         : Math.floor(a['tpp95-99'][1]) + 1
     )
@@ -477,7 +482,8 @@ const Fp = props => {
   const modifiedLowFp = Math.min.apply(
     Math,
     props.data.map(a =>
-      a.unixDate > 1718668800000 && a.unixDate < 1721347200000
+      historyPointDisplayDate(a) > 1718668800000 &&
+      historyPointDisplayDate(a) < 1721347200000
         ? 100
         : Math.floor(a['fp1-5'][0])
     )
@@ -487,7 +493,8 @@ const Fp = props => {
   const modifiedHighFp = Math.max.apply(
     Math,
     props.data.map(a =>
-      a.unixDate > 1718668800000 && a.unixDate < 1721347200000
+      historyPointDisplayDate(a) > 1718668800000 &&
+      historyPointDisplayDate(a) < 1721347200000
         ? 0
         : Math.floor(a['fp95-99'][1]) + 1
     )
@@ -568,7 +575,8 @@ const Seats = props => {
   const modifiedLowSeats = Math.min.apply(
     Math,
     props.data.map(a =>
-      a.unixDate > 1718668800000 && a.unixDate < 1721347200000
+      historyPointDisplayDate(a) > 1718668800000 &&
+      historyPointDisplayDate(a) < 1721347200000
         ? 150
         : Math.floor(a['seats1-5'][0])
     )
@@ -578,7 +586,8 @@ const Seats = props => {
   const modifiedHighSeats = Math.max.apply(
     Math,
     props.data.map(a =>
-      a.unixDate > 1718668800000 && a.unixDate < 1721347200000
+      historyPointDisplayDate(a) > 1718668800000 &&
+      historyPointDisplayDate(a) < 1721347200000
         ? 0
         : Math.floor(a['seats95-99'][1]) + 1
     )
@@ -818,6 +827,26 @@ const Chart = props => {
       chartData.map(a => a.unixDate)
     );
     chartData = chartData.filter(a => a.unixDate < lowDate + 43200000); // 12-hour period after first result
+  }
+  if (chartData.length > 0) {
+    const lowDate = Math.min.apply(
+      Math,
+      chartData.map(a => a.unixDate)
+    );
+    const highDate = Math.max.apply(
+      Math,
+      chartData.map(a => a.unixDate)
+    );
+    const finalPoint = chartData[chartData.length - 1];
+    const extension = Math.max((highDate - lowDate) * 0.006, 1);
+    chartData = [
+      ...chartData,
+      {
+        ...finalPoint,
+        unixDate: finalPoint.unixDate + extension,
+        displayUnixDate: finalPoint.unixDate,
+      },
+    ];
   }
   const effectiveMode =
     props.mode === 'live' && !props.eveningOnly ? 'liveEx' : props.mode;
