@@ -175,7 +175,13 @@ const genericChartArea = (dataKey, colourKey, num, stroke) => {
   );
 };
 
-const GovernmentFormationTooltip = ({active, payload, mode, termCode}) => {
+const GovernmentFormationTooltip = ({
+  active,
+  payload,
+  mode,
+  termCode,
+  showOneNation,
+}) => {
   if (active && payload && payload.length) {
     const date = payload[0].payload.unixDate;
     const thisDate =
@@ -210,10 +216,20 @@ const GovernmentFormationTooltip = ({active, payload, mode, termCode}) => {
           <Val text="ALP most seats" high={p.alpMost[1]} low={p.alpMin[1]} />
           <Val text="Exact Ties" high={p.ties[1]} low={p.alpMost[1]} />
           <Val text="Other party leads" high={p.othLeads[1]} low={p.ties[1]} />
+          {showOneNation && (
+            <>
+              <Val
+                text="ON most seats"
+                high={p.onMost[1]}
+                low={p.othLeads[1]}
+              />
+              <Val text="ON majority" high={p.onMaj[1]} low={p.onMost[1]} />
+            </>
+          )}
           <Val
             text={`${coalitionAbbreviation(termCode)} most seats`}
             high={p.lnpMost[1]}
-            low={p.othLeads[1]}
+            low={showOneNation ? p.onMaj[1] : p.othLeads[1]}
           />
           <Val
             text={`${coalitionAbbreviation(termCode)} minority`}
@@ -237,6 +253,7 @@ GovernmentFormationTooltip.propTypes = {
   active: PropTypes.bool,
   mode: PropTypes.string.isRequired,
   termCode: PropTypes.string,
+  showOneNation: PropTypes.bool.isRequired,
 };
 
 const GovernmentFormation = props => {
@@ -285,6 +302,8 @@ const GovernmentFormation = props => {
         {genericChartArea('alpMost', 'ALP', 2)}
         {genericChartArea('ties', 'tie', 0)}
         {genericChartArea('othLeads', 'OTH', 1)}
+        {props.showOneNation && genericChartArea('onMost', 'ON', 3)}
+        {props.showOneNation && genericChartArea('onMaj', 'ON', 1)}
         {genericChartArea('lnpMost', 'LNP', 2)}
         {genericChartArea('lnpMin', 'LNP', 1)}
         {genericChartArea('lnpMaj', 'LNP', 0)}
@@ -293,6 +312,7 @@ const GovernmentFormation = props => {
             <GovernmentFormationTooltip
               mode={props.mode}
               termCode={props.termCode}
+              showOneNation={props.showOneNation}
             />
           }
           isAnimationActive={false}
@@ -305,6 +325,7 @@ GovernmentFormation.propTypes = {
   data: PropTypes.array.isRequired,
   mode: PropTypes.string.isRequired,
   termCode: PropTypes.string,
+  showOneNation: PropTypes.bool.isRequired,
 };
 
 const RangeTooltip = ({active, payload, label, mode, obsLabel, dataKey}) => {
@@ -670,6 +691,16 @@ const Chart = props => {
   const alpMaj = props.data.map(a => jsonMap(a.majorityWinPc, 0));
   const alpMin = props.data.map((a, index) => jsonMap(a.minorityWinPc, 0));
   const alpMost = props.data.map((a, index) => jsonMap(a.mostSeatsWinPc, 0));
+  const electionYear = parseInt(props.election.slice(0, 4));
+  const onPartyIndex =
+    electionYear >= 2026 ? jsonMapReverse(props.partyAbbr, 'ON', null) : null;
+  const showOneNation = onPartyIndex !== null;
+  const onMaj = props.data.map(a =>
+    showOneNation ? jsonMap(a.majorityWinPc, onPartyIndex, 0) : 0
+  );
+  const onMost = props.data.map(a =>
+    showOneNation ? jsonMap(a.mostSeatsWinPc, onPartyIndex, 0) : 0
+  );
   const ties = props.data.map(
     (a, index) =>
       100 -
@@ -677,20 +708,24 @@ const Chart = props => {
       a.minorityWinPc.reduce((a, b) => a + b[1], 0) -
       a.mostSeatsWinPc.reduce((a, b) => a + b[1], 0)
   );
-  const othLeads = props.data.map(
-    (a, index) =>
+  const othLeads = props.data.map((a, index) =>
+    Math.max(
+      0,
       a.majorityWinPc.reduce(
         (a, b) => a + (b[0] > 1 || b[0] < 0 ? b[1] : 0),
         0
       ) +
-      a.minorityWinPc.reduce(
-        (a, b) => a + (b[0] > 1 || b[0] < 0 ? b[1] : 0),
-        0
-      ) +
-      a.mostSeatsWinPc.reduce(
-        (a, b) => a + (b[0] > 1 || b[0] < 0 ? b[1] : 0),
-        0
-      )
+        a.minorityWinPc.reduce(
+          (a, b) => a + (b[0] > 1 || b[0] < 0 ? b[1] : 0),
+          0
+        ) +
+        a.mostSeatsWinPc.reduce(
+          (a, b) => a + (b[0] > 1 || b[0] < 0 ? b[1] : 0),
+          0
+        ) -
+        onMaj[index] -
+        onMost[index]
+    )
   );
   const lnpMost = props.data.map((a, index) => jsonMap(a.mostSeatsWinPc, 1));
   const lnpMin = props.data.map((a, index) => jsonMap(a.minorityWinPc, 1, 0));
@@ -700,7 +735,9 @@ const Chart = props => {
   const alpMostStacked = alpMost.map((a, index) => a + alpMinStacked[index]);
   const tiesStacked = ties.map((a, index) => a + alpMostStacked[index]);
   const othLeadsStacked = othLeads.map((a, index) => a + tiesStacked[index]);
-  const lnpMostStacked = lnpMost.map((a, index) => a + othLeadsStacked[index]);
+  const onMostStacked = onMost.map((a, index) => a + othLeadsStacked[index]);
+  const onMajStacked = onMaj.map((a, index) => a + onMostStacked[index]);
+  const lnpMostStacked = lnpMost.map((a, index) => a + onMajStacked[index]);
   const lnpMinStacked = lnpMin.map((a, index) => a + lnpMostStacked[index]);
   const lnpMajStacked = lnpMaj.map((a, index) => a + lnpMinStacked[index]);
 
@@ -750,7 +787,9 @@ const Chart = props => {
     alpMost: [alpMinStacked[index], alpMostStacked[index]],
     ties: [alpMostStacked[index], tiesStacked[index]],
     othLeads: [tiesStacked[index], othLeadsStacked[index]],
-    lnpMost: [othLeadsStacked[index], lnpMostStacked[index]],
+    onMost: [othLeadsStacked[index], onMostStacked[index]],
+    onMaj: [onMostStacked[index], onMajStacked[index]],
+    lnpMost: [onMajStacked[index], lnpMostStacked[index]],
     lnpMin: [lnpMostStacked[index], lnpMinStacked[index]],
     lnpMaj: [lnpMinStacked[index], lnpMajStacked[index]],
     'tpp1-5': tpp ? [tpp[index][0], tpp[index][1]] : null,
@@ -794,6 +833,7 @@ const Chart = props => {
               data={chartData}
               mode={effectiveMode}
               termCode={props.election}
+              showOneNation={showOneNation}
             />
           )}
           {props.type === GraphTypeEnum.tpp && (
