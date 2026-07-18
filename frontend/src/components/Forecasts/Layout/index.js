@@ -16,6 +16,7 @@ import {
   Header,
   History,
   LoadingMarker,
+  MethodsChangesAlert,
   Seats,
   SeatTotals,
   StandardErrorBoundary,
@@ -85,6 +86,11 @@ const ForecastLayout = props => {
                 isArchive={props.isArchive}
                 mode={mode}
                 results={effectiveResults}
+              />
+              <MethodsChangesAlert
+                isArchive={props.isArchive}
+                mode={mode}
+                reportDate={forecast.reportDate}
               />
               {!isOutlook(code) && (
                 <StandardErrorBoundary>

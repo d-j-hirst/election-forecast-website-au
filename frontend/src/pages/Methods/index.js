@@ -9,6 +9,7 @@ import {
   MethodsPollTrend,
   MethodsProjection,
   MethodsSimulation,
+  RecentMethodsChanges,
   StandardErrorBoundary,
 } from 'components';
 import {useWindowDimensions} from '../../utils/window.js';
@@ -27,6 +28,7 @@ const Methods = () => {
         <MethodsHeader />
         <StandardErrorBoundary>
           <div className={styles.mainText}>
+            <RecentMethodsChanges />
             <MethodsIntro />
             <MethodsOutline />
             <MethodsPollTrend />

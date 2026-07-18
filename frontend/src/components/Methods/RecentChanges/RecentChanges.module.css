@@ -1,0 +1,19 @@
+.heading {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.toggle {
+  padding: 0 4px;
+  vertical-align: baseline;
+}
+
+.change {
+  margin-bottom: 20px;
+}
+
+.changeTitle {
+  margin-bottom: 6px;
+}

@@ -1,0 +1,30 @@
+.methodsChangesAlert {
+  text-align: left;
+  max-width: 710px;
+  margin: auto;
+  border-color: #cccccc;
+  border-radius: 20px 20px 2px 2px !important;
+}
+
+.methodsChangesAlert p {
+  margin-bottom: 8px;
+}
+
+.methodsChangesAlert p:last-child {
+  margin-bottom: 0;
+}
+
+.centeredText {
+  text-align: center;
+}
+
+.detailsLine {
+  margin-top: 16px;
+  text-align: center;
+}
+
+.firstPara {
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+}
