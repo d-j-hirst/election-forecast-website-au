@@ -11,11 +11,12 @@ aim to optimise for many concurrent report submitters or arbitrary third-party
 administration patterns.
 
 ## Setting up the backend server
-* This project is designed for the latest Python version (3.9 as of writing). Earlier versions might work but don't count on it.
+* This project currently runs on Python 3.13. Earlier versions might work but are not part of the tested deployment setup.
 * Set up a virtual environment in the parent folder using (under Linux/WSL2, consult Python docs for other OSs):
-  - python3 venv -m env
-  - source env/bin/activate
+  - python3.13 -m venv env313
+  - source env313/bin/activate
   - pip install -r requirements.txt
+* `backend_environment.txt` records which virtual environment local launcher scripts should activate. Update it when replacing the environment for a future Python upgrade.
 * Go into the /backend folder. Copy the .env.example file to a new file called .env and fill out the fields according to your local setup.
   - DJANGO_SECRET_KEY - a secret key for the Django server. Can be generated from django.core.management.utils.get_random_secret_key(). Keep this secret!
   - GOOGLE_OAUTH_ID - the complete Google client id for your application registered in the Google Cloud Platform. (Find it under top left menu -> APIs and Services -> Credentials -> Create Credentials (if not already done for the frontend) / OAuth 2.0 Client IDs, and select your web client)

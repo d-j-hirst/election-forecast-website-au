@@ -12,6 +12,9 @@ def ensure_unique_timepoints(apps, schema_editor):
         .values('election_id', 'mode', 'date')
         .annotate(total=Count('id'))
         .filter(total__gt=1)
+        # Django 5 rejects first() on an unordered aggregate queryset rather
+        # than implicitly ordering by a primary key which is not grouped here.
+        .order_by('election_id', 'mode', 'date')
         .first()
     )
     if duplicate is not None:
