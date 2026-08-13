@@ -58,7 +58,18 @@ class Forecast(models.Model):
         blank=True
     )
 
+    # Election history is derived from this report by submit_report, forecast
+    # deletion signals, and the explicit reconstruction endpoint. Direct ORM or
+    # admin edits must be followed by reconstruction to restore consistency.
     report = models.JSONField(default=str)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['election', 'mode', 'date'],
+                name='forecast_unique_election_mode_date',
+            ),
+        ]
 
     def get_mode(self) -> Mode:
         return Forecast.Mode[self.mode]

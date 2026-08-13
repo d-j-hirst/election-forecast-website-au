@@ -1,3 +1,15 @@
+## Project scope
+
+This repository is published for transparency about the election forecasts, rather
+than as a reusable website framework. It is maintained for the project's own
+deployment and workflow; people who choose to adapt or deploy it elsewhere do so
+at their own risk.
+
+Forecast reports are submitted one at a time in normal operation. The backend
+therefore protects the data integrity needed by that workflow, but it does not
+aim to optimise for many concurrent report submitters or arbitrary third-party
+administration patterns.
+
 ## Setting up the backend server
 * This project is designed for the latest Python version (3.9 as of writing). Earlier versions might work but don't count on it.
 * Set up a virtual environment in the parent folder using (under Linux/WSL2, consult Python docs for other OSs):

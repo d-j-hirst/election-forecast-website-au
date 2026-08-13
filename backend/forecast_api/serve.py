@@ -86,19 +86,15 @@ def serve_forecast_archive_list(code):
         return Response(cached_response)
 
     try:
-        election = Election.objects.get(code=code)
+        election = Election.objects.only('id', 'name').get(code=code)
     except Election.DoesNotExist:
         raise Http404('Election does not exist')
-    forecasts = election.forecast_set.order_by('-date')
-    if forecasts is None:
-        raise Http404('No forecasts for this election!')
-    responses = [{"id": forecast.id, 
-                  "mode": forecast.mode,
-                  "date": forecast.date, 
-                  "label": forecast.label,
-                  "flags": forecast.flags
-                 } for forecast in forecasts]
-    full_response = [election.name, responses]
+    forecasts = list(
+        election.forecast_set
+        .order_by('-date')
+        .values('id', 'mode', 'date', 'label', 'flags')
+    )
+    full_response = [election.name, forecasts]
 
     # Set cache so that we can use it subsequently
     cache.set(cache_response_key, full_response)
