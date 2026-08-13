@@ -21,7 +21,7 @@ const RecentMethodsChanges = props => {
   return (
     <section>
       <h4 id="recent-methods-changes" className={styles.heading}>
-        Recent methods changes
+        Recent major methods changes
         <Button
           variant="link"
           className={styles.toggle}

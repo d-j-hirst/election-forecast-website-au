@@ -49,23 +49,23 @@ describe('MethodsChangesAlert', () => {
 
     fireEvent.click(screen.getByLabelText('Close alert'));
     expect(
-      screen.queryByText(/following recent methods changes/i)
+      screen.queryByText(/following recent major methods changes/i)
     ).not.toBeInTheDocument();
     expect(
-      screen.getByRole('button', {name: /show recent methods changes/i})
+      screen.getByRole('button', {name: /show recent major methods changes/i})
     ).toBeInTheDocument();
 
     fireEvent.click(
-      screen.getByRole('button', {name: /show recent methods changes/i})
+      screen.getByRole('button', {name: /show recent major methods changes/i})
     );
     expect(
-      screen.getByText(/following recent methods changes/i)
+      screen.getByText(/following recent major methods changes/i)
     ).toBeInTheDocument();
     unmount();
 
     const sameChanges = renderAlert({changes: [firstChange]});
     expect(
-      screen.queryByText(/following recent methods changes/i)
+      screen.queryByText(/following recent major methods changes/i)
     ).not.toBeInTheDocument();
     sameChanges.unmount();
 

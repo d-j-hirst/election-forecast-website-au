@@ -36,7 +36,7 @@ describe('RecentMethodsChanges', () => {
     render(<RecentMethodsChanges changes={changes} />);
 
     fireEvent.click(screen.getByRole('button', {name: 'hide'}));
-    expect(screen.getByText('Recent methods changes')).toBeInTheDocument();
+    expect(screen.getByText('Recent major methods changes')).toBeInTheDocument();
     expect(screen.queryByText('Newer paragraph.')).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', {name: 'show'}));

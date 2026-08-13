@@ -6,8 +6,10 @@ export const MethodChangeForecastType = Object.freeze({
 
 export const DISMISSED_METHOD_CHANGES_KEY = 'dismissedMethodsChanges';
 
-// Keep entries in chronological order. Omit forecastType for general/nowcast.
-// longDescription is an array containing one string per paragraph.
+// Keep entries in chronological order. Publish only major changes which merit
+// a forecast-page notice; routine fixes and implementation hardening do not.
+// Omit forecastType for general/nowcast. longDescription is one string per
+// paragraph.
 export const methodsChanges = [
   {
     date: '2026-07-18',

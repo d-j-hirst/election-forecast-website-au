@@ -62,7 +62,7 @@ const MethodsChangesAlert = props => {
   if (!hasUnseenChange && !showDismissedAlert) {
     return (
       <Button onClick={() => setShowDismissedAlert(true)} variant="info">
-        Show recent methods changes ▼
+        Show recent major methods changes ▼
       </Button>
     );
   }
@@ -78,7 +78,8 @@ const MethodsChangesAlert = props => {
         <InfoIcon size="large" inactive={true} warning={false} />
         <div>
           <p className={styles.centeredText}>
-            The following recent methods changes have affected this report:
+            The following recent major methods changes have affected this
+            report:
           </p>
           <div>
             {applicableChanges.map(change => (
