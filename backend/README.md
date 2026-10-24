@@ -46,6 +46,44 @@ credentials or using the normal database/cache, from `backend/`:
 python3 manage.py test accounts forecast_api --settings=core.test_settings
 ```
 
+## Forecast publication and response caching
+
+Public summary, archive-list, history and results requests first read the
+election's current revision from the database. Response bodies are cached under
+keys containing the election identity, response scope and that revision, with a
+one-hour lifetime. Expiry controls retention; the database revision determines
+which body can be served. Cache failures fall back to database reads. Requests
+whose data changes repeatedly during loading return HTTP 503 with `Retry-After: 1`.
+
+Report submission, reconstruction and forecast deletion advance
+`Election.report_revision` in the same transaction as their source changes.
+History retains its per-mode versions; results publication updates only its body
+and version in one database statement. Publication does not depend on cache
+deletion. Reads inside a database transaction bypass the shared response cache
+so uncommitted data cannot be reused after a rollback.
+
+Use the submission endpoints for normal publication. After direct report or
+election-name edits, run the existing history reconstruction endpoint for the
+affected mode(s) to publish the corresponding history and report revision. A
+cache reset alone does not complete that workflow. Publish results through the
+results update endpoint, and regenerate history through reconstruction instead
+of editing the history JSON/version fields directly.
+
+When upgrading to migration `0017_election_report_revision`, take the normal
+database backup and pause publishing, reconstruction and admin edits. Apply
+`python3 manage.py migrate`, then replace/drain all application workers before
+resuming writes. SQLite rebuilds the Election table for this migration; allow
+space and time for copying its history/results blobs. Forecast rows and public
+IDs are preserved. Old workers do not maintain the new report revision and must
+not remain active writers alongside the new code.
+
+After replacing the workers, clear the server cache through the existing
+authenticated reset operation to reclaim obsolete entries. New readers ignore
+the old keys, but those entries had no expiry. Also clear cached responses when
+restoring an older database backup. Browser routes, response shapes and client
+ID/version conventions do not change with this server-cache upgrade. Verify the
+upgrade on the test application before public deployment.
+
 ### For development:
 
 * Load the backend using `python3 manage.py runserver` which will open a backend server on port 8000 by default.

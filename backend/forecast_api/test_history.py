@@ -3,12 +3,17 @@ from datetime import datetime, timezone
 
 from django.core.cache import cache
 from django.db import IntegrityError
+from django.http import Http404
 from django.test import RequestFactory, TransactionTestCase, override_settings
 from rest_framework.test import APIRequestFactory, force_authenticate
 
 from forecast_api.models import Election, Forecast
 from forecast_api.history import HistoryCorruptionError
-from forecast_api.serve import serve_forecast_archive_list
+from forecast_api.serve import (
+    serve_forecast_archive_list, serve_forecast,
+    serve_election_timeseries, serve_election_results,
+)
+from forecast_api.cache_utils import response_cache_key
 from forecast_api.submit import submit_report
 from forecast_api.views import SubmitReportResponse, SubmitTimeseriesUpdateResponse
 from users.models import User
@@ -187,39 +192,37 @@ class ForecastHistoryTests(TransactionTestCase):
     def test_history_version_does_not_change_when_summary_is_identical(self):
         payload = report_payload('2026-08-13T12:00:00')
         self.submit(payload)
+        old_history = serve_election_timeseries('testfed', 'regular', -1).data
+        serve_forecast('testfed', 'regular', -1)
         payload['flags'] = 'updated-non-history-field'
-        cache.set('forecast_recent_resp_FC_testfed', 'stale')
-        cache.set('timeseries_recent_resp_FC_testfed', 'preserve')
 
         self.submit(payload)
 
         election = Election.objects.get(code='testfed')
+        self.assertEqual(election.report_revision, 2)
         self.assertEqual(election.timeseries_fc_version, 1)
-        self.assertEqual(Forecast.objects.get().flags, 'updated-non-history-field')
-        self.assertIsNone(cache.get('forecast_recent_resp_FC_testfed'))
         self.assertEqual(
-            cache.get('timeseries_recent_resp_FC_testfed'),
-            'preserve',
+            serve_forecast('testfed', 'regular', -1).data['flags'],
+            'updated-non-history-field',
         )
+        self.assertEqual(serve_election_timeseries('testfed', 'regular', -1).data, old_history)
 
-    def test_submission_clears_only_affected_mode_caches(self):
-        cache.set('forecast_recent_resp_FC_testfed', 'stale')
-        cache.set('timeseries_recent_resp_FC_testfed', 'stale')
-        cache.set('forecast_recent_resp_NC_testfed', 'preserve')
-        cache.set('timeseries_recent_resp_NC_testfed', 'preserve')
+    def test_submission_preserves_unaffected_mode_history(self):
+        self.submit(report_payload('2026-08-13T11:00:00', mode='NC'))
+        old_history = serve_election_timeseries('testfed', 'nowcast', -1).data
+        old_forecast = serve_forecast('testfed', 'nowcast', -1).data
+        election = Election.objects.get(code='testfed')
+        history_key = response_cache_key('testfed', election.pk, 'timeseries_nc', 1)
 
         self.submit(report_payload('2026-08-13T12:00:00'))
 
-        self.assertIsNone(cache.get('forecast_recent_resp_FC_testfed'))
-        self.assertIsNone(cache.get('timeseries_recent_resp_FC_testfed'))
-        self.assertEqual(
-            cache.get('forecast_recent_resp_NC_testfed'),
-            'preserve',
-        )
-        self.assertEqual(
-            cache.get('timeseries_recent_resp_NC_testfed'),
-            'preserve',
-        )
+        election.refresh_from_db()
+        self.assertEqual(election.report_revision, 2)
+        self.assertEqual(election.timeseries_nc_version, 1)
+        self.assertEqual(election.timeseries_fc_version, 1)
+        self.assertEqual(cache.get(history_key), old_history)
+        self.assertEqual(serve_election_timeseries('testfed', 'nowcast', -1).data, old_history)
+        self.assertEqual(serve_forecast('testfed', 'nowcast', -1).data, old_forecast)
 
     def test_optional_history_fields_default_to_empty_lists(self):
         self.submit(report_payload('2026-08-13T12:00:00'))
@@ -238,9 +241,9 @@ class ForecastHistoryTests(TransactionTestCase):
         election.save(update_fields=['timeseries_fc', 'timeseries_nc'])
         old_fc_version = election.timeseries_fc_version
         old_nc_version = election.timeseries_nc_version
-        cache.set('forecast_recent_resp_NC_testfed', 'stale')
-        cache.set('timeseries_recent_resp_NC_testfed', 'stale')
-        cache.set('forecast_archives_resp_testfed', 'stale')
+        serve_forecast('testfed', 'nowcast', -1)
+        serve_election_timeseries('testfed', 'nowcast', -1)
+        serve_forecast_archive_list('testfed')
 
         response = self.rebuild({'termCode': 'testfed', 'mode': 'NC'})
 
@@ -252,9 +255,11 @@ class ForecastHistoryTests(TransactionTestCase):
         self.assertEqual(len(election.timeseries_nc), 1)
         self.assertEqual(election.timeseries_nc[0]['label'], 'Test report')
         self.assertEqual(election.timeseries_nc_version, old_nc_version + 1)
-        self.assertIsNone(cache.get('forecast_recent_resp_NC_testfed'))
-        self.assertIsNone(cache.get('timeseries_recent_resp_NC_testfed'))
-        self.assertIsNone(cache.get('forecast_archives_resp_testfed'))
+        self.assertEqual(election.report_revision, 3)
+        self.assertEqual(
+            serve_election_timeseries('testfed', 'nowcast', -1).data['timeseries'],
+            election.timeseries_nc,
+        )
 
     def test_rebuild_without_mode_rebuilds_all_modes(self):
         self.submit(report_payload('2026-08-13T10:00:00', mode='RF'))
@@ -286,8 +291,8 @@ class ForecastHistoryTests(TransactionTestCase):
         forecast = Forecast.objects.order_by('date').first()
         election = Election.objects.get(code='testfed')
         old_version = election.timeseries_fc_version
-        cache.set('forecast_recent_resp_FC_testfed', 'stale')
-        cache.set('timeseries_recent_resp_FC_testfed', 'stale')
+        serve_forecast('testfed', 'regular', -1)
+        serve_election_timeseries('testfed', 'regular', -1)
 
         forecast.delete()
 
@@ -295,8 +300,11 @@ class ForecastHistoryTests(TransactionTestCase):
         self.assertEqual(len(election.timeseries_fc), 1)
         self.assertIn('11:00:00', election.timeseries_fc[0]['date'])
         self.assertEqual(election.timeseries_fc_version, old_version + 1)
-        self.assertIsNone(cache.get('forecast_recent_resp_FC_testfed'))
-        self.assertIsNone(cache.get('timeseries_recent_resp_FC_testfed'))
+        self.assertEqual(election.report_revision, 3)
+        self.assertEqual(
+            serve_election_timeseries('testfed', 'regular', -1).data['timeseries'],
+            election.timeseries_fc,
+        )
 
     def test_queryset_deletion_removes_each_history_point(self):
         self.submit(report_payload('2026-08-13T10:00:00'))
@@ -310,25 +318,23 @@ class ForecastHistoryTests(TransactionTestCase):
     def test_election_cascade_deletion_succeeds(self):
         self.submit(report_payload('2026-08-13T10:00:00'))
         election = Election.objects.get(code='testfed')
-        cache_keys = [
-            'forecast_archives_resp_testfed',
-            'results_recent_id_testfed',
-            'results_recent_resp_testfed',
+        reads = [
+            lambda: serve_forecast_archive_list('testfed'),
+            lambda: serve_forecast('testfed', 'regular', -1),
+            lambda: serve_election_results('testfed', -1),
+            *[lambda mode=mode: serve_election_timeseries('testfed', mode, -1)
+              for mode in ('regular', 'nowcast', 'live')],
         ]
-        for mode in ('FC', 'NC', 'LF'):
-            cache_keys.extend([
-                f'forecast_recent_id_{mode}_testfed',
-                f'forecast_recent_resp_{mode}_testfed',
-                f'timeseries_recent_id_{mode}_testfed',
-                f'timeseries_recent_resp_{mode}_testfed',
-            ])
-        cache.set_many({key: 'stale' for key in cache_keys})
+        for read in reads:
+            read()
 
         election.delete()
 
         self.assertEqual(Election.objects.count(), 0)
         self.assertEqual(Forecast.objects.count(), 0)
-        self.assertEqual(cache.get_many(cache_keys), {})
+        for read in reads:
+            with self.assertRaises(Http404):
+                read()
 
     def test_corrupt_existing_date_fails_loudly_and_rolls_back(self):
         Election.objects.create(
@@ -345,21 +351,23 @@ class ForecastHistoryTests(TransactionTestCase):
 
         self.assertEqual(Forecast.objects.count(), 0)
 
-    def test_rebuild_repairs_out_of_band_delete_and_clears_caches(self):
+    def test_rebuild_publishes_repaired_out_of_band_delete(self):
         self.submit(report_payload('2026-08-13T12:00:00'))
+        serve_forecast('testfed', 'regular', -1)
+        serve_election_timeseries('testfed', 'regular', -1)
+        serve_forecast_archive_list('testfed')
         Forecast.objects.all()._raw_delete(using='default')
-        cache.set('forecast_recent_resp_FC_testfed', 'stale')
-        cache.set('timeseries_recent_resp_FC_testfed', 'stale')
-        cache.set('forecast_archives_resp_testfed', 'stale')
 
         response = self.rebuild({'termCode': 'testfed', 'mode': 'FC'})
 
         election = Election.objects.get(code='testfed')
         self.assertEqual(response.data['rebuilt'], {'FC': 0})
         self.assertEqual(election.timeseries_fc, [])
-        self.assertIsNone(cache.get('forecast_recent_resp_FC_testfed'))
-        self.assertIsNone(cache.get('timeseries_recent_resp_FC_testfed'))
-        self.assertIsNone(cache.get('forecast_archives_resp_testfed'))
+        self.assertEqual(election.report_revision, 2)
+        self.assertEqual(serve_election_timeseries('testfed', 'regular', -1).data['timeseries'], [])
+        self.assertEqual(serve_forecast_archive_list('testfed').data[1], [])
+        with self.assertRaises(Http404):
+            serve_forecast('testfed', 'regular', -1)
 
     def test_unique_constraint_rejects_duplicate_exact_timepoint(self):
         election = Election.objects.create(code='testfed', name='Test')
@@ -384,7 +392,7 @@ class ForecastHistoryTests(TransactionTestCase):
         self.submit(report_payload('2026-08-13T12:00:00'))
         cache.clear()
 
-        with self.assertNumQueries(2) as context:
+        with self.assertNumQueries(3) as context:
             response = serve_forecast_archive_list('testfed')
 
         forecast_query = context.captured_queries[1]['sql']

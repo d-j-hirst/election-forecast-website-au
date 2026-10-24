@@ -10,6 +10,10 @@ class Election(models.Model):
     # Descriptive name of the election
     name = models.CharField(max_length=100)
 
+    # Publication of any report or archive metadata advances this in the same
+    # transaction. Public readers use it to select immutable cached bodies.
+    report_revision = models.PositiveBigIntegerField(default=0, editable=False)
+
     timeseries_fc = models.JSONField(default=str)
 
     timeseries_fc_version = models.IntegerField(default=0)
@@ -25,6 +29,13 @@ class Election(models.Model):
     results = models.JSONField(default=str)
 
     results_version = models.IntegerField(default=0)
+
+    def advance_report_revision(self):
+        # Call inside the source write's transaction, including reconstruction
+        # after manual report/name edits. Never save an old in-memory counter.
+        Election.objects.using(self._state.db).filter(pk=self.pk).update(
+            report_revision=models.F('report_revision') + 1,
+        )
     
     def __str__(self):
         return self.code + " - " + self.name
@@ -60,7 +71,8 @@ class Forecast(models.Model):
 
     # Election history is derived from this report by submit_report, forecast
     # deletion signals, and the explicit reconstruction endpoint. Direct ORM or
-    # admin edits must be followed by reconstruction to restore consistency.
+    # admin edits must be followed by reconstruction to publish consistent
+    # history and a new report revision. Clearing the cache alone is insufficient.
     report = models.JSONField(default=str)
 
     class Meta:

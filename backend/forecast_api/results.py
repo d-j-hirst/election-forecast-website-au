@@ -1,4 +1,6 @@
 from forecast_api.models import Election
+from django.db.models import F
+from django.http import Http404
 import json
 import requests
 import threading
@@ -479,10 +481,17 @@ def update_results(election: Election, pre_fill):
                         'seats': seat_results}
     else:
         full_results = pre_fill
-    election.results = full_results
     if not pre_fill_matches_election:
-        print(election.results)
+        print(full_results)
         with open('prefill_results.json', 'w') as f:
-            json.dump(election.results, f)
-    election.results_version += 1
-    election.save()
+            json.dump(full_results, f)
+    # Fetching/parsing may take time. Publish only the completed results and
+    # their current database version in one statement, preserving any reports
+    # or histories published since this importer loaded its Election object.
+    updated = Election.objects.filter(pk=election.pk, code=election.code).update(
+        results=full_results,
+        results_version=F('results_version') + 1,
+    )
+    if not updated:
+        # Do not recreate an election removed while external data was fetched.
+        raise Http404('Election does not exist')

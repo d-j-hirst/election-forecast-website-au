@@ -41,3 +41,4 @@ backend/prefill_results.json
 # Internal work, review plans and findings
 /docs/internal/
 /docs/code-reviews/
+backend/db - Copy.sqlite3

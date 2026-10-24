@@ -68,7 +68,7 @@ class ForecastServingTests(TestCase):
             ('regular', 'FC'), ('nowcast', 'NC'), ('live', 'LF'),
         ):
             with self.subTest(mode=route_mode):
-                with self.assertNumQueries(2) as queries:
+                with self.assertNumQueries(3) as queries:
                     response = serve_forecast('testfed', route_mode, -1)
                 self.assert_no_unrelated_election_blobs(queries.captured_queries)
                 forecast = self.forecasts[stored_mode]
@@ -103,7 +103,7 @@ class ForecastServingTests(TestCase):
             ('live', 'timeseries_lf', 4),
         ):
             with self.subTest(mode=route_mode):
-                with self.assertNumQueries(1) as queries:
+                with self.assertNumQueries(2) as queries:
                     response = serve_election_timeseries('testfed', route_mode, -1)
                 self.assert_no_unrelated_election_blobs(queries.captured_queries, (field,))
                 self.assertEqual(response.data, {
@@ -112,7 +112,7 @@ class ForecastServingTests(TestCase):
                 })
 
     def test_results_excludes_histories_and_preserves_response(self):
-        with self.assertNumQueries(1) as queries:
+        with self.assertNumQueries(2) as queries:
             response = serve_election_results('testfed', -1)
         self.assert_no_unrelated_election_blobs(queries.captured_queries, ('results',))
         self.assertEqual(response.data, {
@@ -125,11 +125,11 @@ class ForecastServingTests(TestCase):
         # existing public version protocol as part of the query projection fix.
         with self.assertNumQueries(1) as queries:
             response = serve_election_timeseries('testfed', 'nowcast', 3)
-        self.assert_no_unrelated_election_blobs(queries.captured_queries, ('timeseries_nc',))
+        self.assert_no_unrelated_election_blobs(queries.captured_queries)
         self.assertEqual(response.data, {'new': False})
         with self.assertNumQueries(1) as queries:
             response = serve_election_results('testfed', 5)
-        self.assert_no_unrelated_election_blobs(queries.captured_queries, ('results',))
+        self.assert_no_unrelated_election_blobs(queries.captured_queries)
         self.assertEqual(response.data, {'new': False})
 
     def test_unknown_election_returns_json_404_with_or_without_cached_id(self):
@@ -141,13 +141,12 @@ class ForecastServingTests(TestCase):
                 self.assertEqual(response.status_code, 404)
                 self.assertEqual(response.json(), {'detail': 'Election does not exist'})
 
-    def test_deleted_election_returns_json_404_after_normal_invalidation(self):
-        # Deletion invalidates populated caches only after commit. Execute the
-        # callback inside this test transaction before exercising the real view.
+    def test_deleted_election_returns_json_404(self):
+        # Exercise the real view after removing the election; it must check
+        # existence before considering a saved browser ID.
         forecast_id = self.forecasts['FC'].id
         serve_forecast('testfed', 'regular', -1)
-        with self.captureOnCommitCallbacks(execute=True):
-            self.election.delete()
+        self.election.delete()
         for suffix in ('', f'/{forecast_id}'):
             with self.subTest(suffix=suffix):
                 response = self.client.get(

@@ -9,11 +9,6 @@ from django.utils.timezone import is_naive, make_aware
 from rest_framework.permissions import BasePermission
 from rest_framework.response import Response
 
-from forecast_api.cache_utils import (
-    clear_forecast_cache,
-    clear_results_cache,
-    clear_timeseries_cache,
-)
 from forecast_api.history import (
     MODE_FIELDS,
     history_model_fields,
@@ -54,12 +49,6 @@ def _forecast_mode(report_mode: str) -> str:
         raise ValueError('reportMode must be RF, NC, or LF.') from None
 
 
-def _clear_report_caches(code: str, mode: str, history_changed: bool):
-    clear_forecast_cache(code, mode)
-    if history_changed:
-        clear_timeseries_cache(code, mode)
-
-
 def _parse_report_date(value: str):
     # Python 3.8's fromisoformat does not accept the otherwise-standard Z form.
     normalized = value[:-1] + '+00:00' if value.endswith('Z') else value
@@ -67,14 +56,6 @@ def _parse_report_date(value: str):
     if is_naive(report_date):
         report_date = make_aware(report_date)
     return report_date.astimezone(timezone.utc)
-
-
-def _clear_rebuilt_caches(code: str, modes):
-    for mode in modes:
-        clear_timeseries_cache(code, mode)
-        # Rebuild is the repair path after out-of-band edits/deletes, so its
-        # scope includes latest-report and archive-list caches as well.
-        clear_forecast_cache(code, mode)
 
 
 def submit_report(request: HttpRequest):
@@ -131,16 +112,17 @@ def submit_report(request: HttpRequest):
                 report=data,
                 flags=flags,
             )
-        history_changed = upsert_history_point(
+        upsert_history_point(
             election,
             mode,
             date,
             label,
             data,
         )
-        transaction.on_commit(
-            lambda: _clear_report_caches(code, mode, history_changed)
-        )
+        # Publish reports/metadata even when a flags-only or identical upload
+        # leaves the derived history unchanged. No post-commit cache work is
+        # needed for readers to discover the newly committed body.
+        election.advance_report_revision()
 
     return Response('Forecast report successfully submitted.')
 
@@ -165,9 +147,9 @@ def submit_timeseries_update(request: HttpRequest):
             code=code,
         )
         rebuilt = rebuild_history(election, modes)
-        transaction.on_commit(
-            lambda: _clear_rebuilt_caches(code, modes)
-        )
+        # Reconstruction also publishes manual report/name edits. Advance even
+        # when the derived point values happen to match the previous series.
+        election.advance_report_revision()
 
     return Response({'code': code, 'rebuilt': rebuilt})
 
@@ -176,9 +158,8 @@ def submit_results_update(request: HttpRequest):
     data = json.loads(request.body.decode())
     code = data['termCode']
     pre_fill = data['preFill'] if 'preFill' in data else None
-    election = get_object_or_404(Election, code=code)
+    election = get_object_or_404(Election.objects.only('id', 'code'), code=code)
     update_results(election, pre_fill)
-    clear_results_cache(code)
     return Response('Election results successfully updated.')
 
 

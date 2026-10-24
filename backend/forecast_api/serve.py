@@ -1,14 +1,15 @@
 from forecast_api.models import Election, Forecast
 from forecast_api.history import MODE_FIELDS
 
-from django.shortcuts import get_list_or_404
 from django.http import Http404
 from rest_framework.response import Response
 from rest_framework.permissions import BasePermission
 
-from django.core.cache import cache
-
-from typing import Any
+from forecast_api.cache_utils import (
+    get_cached_response,
+    response_cache_key,
+    set_cached_response,
+)
 
 modes = {
     'regular': Forecast.Mode.REGULAR_FORECAST,
@@ -20,10 +21,10 @@ class ViewForecastPermission(BasePermission):
     def has_permission(self, request, view):
         if request.user.is_superuser:
             return True
-        
+
         if request.user.has_perm('users.view_forecasts'):
             return True
-        
+
         return False
 
 
@@ -37,73 +38,92 @@ def find_mapped(mapped_list, val):
     return first(mapped_list, lambda x: x[0] == val)[1]
 
 
+# Public reads may overlap a publication, but must never cache a body under a
+# revision observed from another snapshot. Retry a bounded number of times.
+MAX_PUBLICATION_READ_ATTEMPTS = 3
+
+
+def _election_head(code, *fields):
+    try:
+        return Election.objects.values('id', *fields).get(code=code)
+    except Election.DoesNotExist:
+        raise Http404('Election does not exist') from None
+
+
+def _report_revision_matches(code, head):
+    return Election.objects.filter(
+        pk=head['id'], code=code, report_revision=head['report_revision'],
+    ).exists()
+
+
+def _publication_busy():
+    # Sustained publication must not create an unbounded loop or cache a mixed
+    # snapshot. The caller can retry this transient response later.
+    return Response(
+        {'detail': 'Election data changed while being read. Please retry.'},
+        status=503, headers={'Retry-After': '1'},
+    )
+
+
+def _forecast_response(body, cached_id):
+    # Retain the existing public ID-based conditional protocol. The database
+    # revision validates this server body, not the content of a browser's copy.
+    if body['id'] == cached_id:
+        return Response({'new': False})
+    return Response(body)
+
+
 def serve_forecast(code, mode, cached_id):
     if mode not in modes:
         raise Http404('Invalid mode')
-
-    # Handle possible cached responses
-    cache_int_id_key = f'forecast_recent_id_{modes[mode]}_{code}'
-    cached_int_id = cache.get(cache_int_id_key)
-    if cached_int_id == cached_id:
-        return Response({"new": False})
-    cache_response_key = f'forecast_recent_resp_{modes[mode]}_{code}'
-    cached_response = cache.get(cache_response_key)
-    if cached_response is not None:
-        print('returning cached response (forecast)')
-        return Response(cached_response)
-    
-    # This lookup only scopes the report; election history/results can be large
-    # and are not part of a latest-forecast response.
     mode_val = modes[mode]
-    try:
-        election = Election.objects.only('id').get(code=code)
-    except Election.DoesNotExist:
-        raise Http404('Election does not exist')
-    forecast = (election
-                .forecast_set
-                .filter(mode=mode_val)
-                .order_by('-date')
-                .first())
-    if forecast is None:
-        raise Http404("Election does not have a forecast for this mode.")
-    if forecast.id == cached_id:
-        return Response({"new": False})
-    response = {"report": forecast.report,
-                "label": forecast.label,
-                "mode": forecast.mode,
-                "date": forecast.date,
-                "flags": forecast.flags,
-                "id": forecast.id,
-                "new": True}
 
-    # Set cache so that we can use it subsequently
-    cache.set(cache_int_id_key, forecast.id)
-    cache.set(cache_response_key, response)
+    for _ in range(MAX_PUBLICATION_READ_ATTEMPTS):
+        # Check database authority even on warm reads; no election JSON is
+        # needed to scope the report or identify its published cache entry.
+        head = _election_head(code, 'report_revision')
+        key = response_cache_key(code, head['id'], f'summary:{mode_val}', head['report_revision'])
+        body = get_cached_response(key)
+        if body is not None:
+            return _forecast_response(body, cached_id)
 
-    return Response(response)
+        body = (
+            Forecast.objects.filter(election_id=head['id'], mode=mode_val)
+            .order_by('-date')
+            .values('report', 'label', 'mode', 'date', 'flags', 'id')
+            .first()
+        )
+        # The report and Election revision came from separate queries. Check
+        # after materialization, including an absent report, before caching it.
+        if not _report_revision_matches(code, head):
+            continue
+        if body is None:
+            raise Http404('Election does not have a forecast for this mode.')
+        body['new'] = True
+        set_cached_response(key, body)
+        return _forecast_response(body, cached_id)
+    return _publication_busy()
 
 
 def serve_forecast_archive_list(code):
-    # Handle possible cached responses
-    cache_response_key = f'forecast_archives_resp_{code}'
-    cached_response = cache.get(cache_response_key)
-    if cached_response is not None:
-        return Response(cached_response)
+    for _ in range(MAX_PUBLICATION_READ_ATTEMPTS):
+        # The name and archive metadata share the report publication revision.
+        head = _election_head(code, 'name', 'report_revision')
+        key = response_cache_key(code, head['id'], 'archives', head['report_revision'])
+        body = get_cached_response(key)
+        if body is not None:
+            return Response(body)
 
-    try:
-        election = Election.objects.only('id', 'name').get(code=code)
-    except Election.DoesNotExist:
-        raise Http404('Election does not exist')
-    forecasts = list(
-        election.forecast_set
-        .order_by('-date')
-        .values('id', 'mode', 'date', 'label', 'flags')
-    )
-    full_response = [election.name, forecasts]
-
-    # Set cache so that we can use it subsequently
-    cache.set(cache_response_key, full_response)
-    return Response(full_response)
+        forecasts = list(
+            Forecast.objects.filter(election_id=head['id']).order_by('-date')
+            .values('id', 'mode', 'date', 'label', 'flags')
+        )
+        if not _report_revision_matches(code, head):
+            continue
+        body = [head['name'], forecasts]
+        set_cached_response(key, body)
+        return Response(body)
+    return _publication_busy()
 
 
 def serve_forecast_archive(code, id):
@@ -113,85 +133,57 @@ def serve_forecast_archive(code, id):
     except Election.DoesNotExist:
         raise Http404('Election does not exist')
     try:
-        forecast = (election
-                    .forecast_set
-                    .get(id=id))
+        forecast = election.forecast_set.get(id=id)
     except Forecast.DoesNotExist:
         raise Http404('Forecast does not exist')
-    response = {"report": forecast.report,
-                "mode": forecast.mode,
-                "label": forecast.label,
-                "date": forecast.date,
-                "flags": forecast.flags,
-                "id": forecast.id}
+    response = {'report': forecast.report,
+                'mode': forecast.mode,
+                'label': forecast.label,
+                'date': forecast.date,
+                'flags': forecast.flags,
+                'id': forecast.id}
     return Response(response)
+
+
+def _serve_election_data(code, data_field, version_field, cached_version, mode=None):
+    # History and results store each body beside its version. Their shared read
+    # protocol avoids decoding any blob on warm or unchanged-version requests.
+    response_field = 'timeseries' if mode is not None else 'results'
+    for _ in range(MAX_PUBLICATION_READ_ATTEMPTS):
+        head = _election_head(code, version_field)
+        version = head[version_field]
+        if version == cached_version:
+            return Response({'new': False})
+        key = response_cache_key(code, head['id'], data_field, version)
+        body = get_cached_response(key)
+        if body is not None:
+            return Response(body)
+
+        # Constrain the payload query to the captured identity AND version. A
+        # changed/deleted election restarts the head lookup instead of attaching
+        # an older version to newer JSON (or vice versa).
+        row = Election.objects.filter(
+            pk=head['id'], code=code, **{version_field: version},
+        ).values(data_field, version_field).first()
+        if row is None:
+            continue
+        body = {
+            response_field: row[data_field],
+            'code': code, 'version': version, 'new': True,
+        }
+        if mode is not None:
+            body['mode'] = mode
+        set_cached_response(key, body)
+        return Response(body)
+    return _publication_busy()
 
 
 def serve_election_timeseries(code, mode, cached_version):
     if mode not in modes:
         raise Http404('Invalid mode')
-
-    # Handle possible cached responses
-    cache_int_id_key = f'timeseries_recent_id_{modes[mode]}_{code}'
-    cached_int_id = cache.get(cache_int_id_key)
-    if cached_int_id == cached_version:
-        return Response({"new": False})
-    cache_response_key = f'timeseries_recent_resp_{modes[mode]}_{code}'
-    cached_response = cache.get(cache_response_key)
-    if cached_response is not None:
-        return Response(cached_response)
-    
-    # Read the requested series and its version together. Other modes and
-    # results are unrelated to this response and must not be decoded here.
     series_field, version_field = MODE_FIELDS[modes[mode]]
-    try:
-        election = Election.objects.only(series_field, version_field).get(code=code)
-    except Election.DoesNotExist:
-        raise Http404('Election does not exist')
-    version = getattr(election, version_field)
-    if version == cached_version:
-        return Response({"new": False})
-    series = getattr(election, series_field)
-    response = {"timeseries": series,
-                "code": code,
-                "mode": mode,
-                "version": version,
-                "new": True}
-
-    # Set cache so that we can use it subsequently
-    cache.set(cache_int_id_key, version)
-    cache.set(cache_response_key, response)
-    return Response(response)
+    return _serve_election_data(code, series_field, version_field, cached_version, mode)
 
 
 def serve_election_results(code, cached_version):
-
-    # Handle possible cached responses
-    cache_int_id_key = f'results_recent_id_{code}'
-    cached_int_id = cache.get(cache_int_id_key)
-    if cached_int_id == cached_version:
-        return Response({"new": False})
-    cache_response_key = f'results_recent_resp_{code}'
-    cached_response = cache.get(cache_response_key)
-    if cached_response is not None:
-        return Response(cached_response)
-
-    # Keep results and their version from one row read, without loading any
-    # forecast histories on a results cache miss.
-    try:
-        election = Election.objects.only('results', 'results_version').get(code=code)
-    except Election.DoesNotExist:
-        raise Http404('Election does not exist')
-    results = election.results
-    version = election.results_version
-    if version == cached_version:
-        return Response({"new": False})
-    response = {"results": results,
-                "code": code,
-                "version": version,
-                "new": True}
-
-    # Set cache so that we can use it subsequently
-    cache.set(cache_int_id_key, version)
-    cache.set(cache_response_key, response)
-    return Response(response)
+    return _serve_election_data(code, 'results', 'results_version', cached_version)
