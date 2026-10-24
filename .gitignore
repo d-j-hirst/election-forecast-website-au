@@ -37,3 +37,7 @@ frontend/build/
 frontend/commentary_test.txt
 backend/prefill_results.json
 .codex
+
+# Internal work, review plans and findings
+/docs/internal/
+/docs/code-reviews/

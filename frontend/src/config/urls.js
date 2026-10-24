@@ -1,5 +1,4 @@
 export const HOME_URL = '/';
-export const LOGIN_URL = '/login';
 export const BASIC_FORECAST_URL = '/forecast';
 export const FORECAST_URL = '/forecast/:code/:mode';
 export const DEFAULT_FORECAST_URL = '/forecast/2026vic/regular';

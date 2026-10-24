@@ -1,4 +1,5 @@
 from forecast_api.models import Election, Forecast
+from forecast_api.history import MODE_FIELDS
 
 from django.shortcuts import get_list_or_404
 from django.http import Http404
@@ -51,9 +52,13 @@ def serve_forecast(code, mode, cached_id):
         print('returning cached response (forecast)')
         return Response(cached_response)
     
-    # Cache not present, retrieve from database
+    # This lookup only scopes the report; election history/results can be large
+    # and are not part of a latest-forecast response.
     mode_val = modes[mode]
-    election = Election.objects.get(code=code)
+    try:
+        election = Election.objects.only('id').get(code=code)
+    except Election.DoesNotExist:
+        raise Http404('Election does not exist')
     forecast = (election
                 .forecast_set
                 .filter(mode=mode_val)
@@ -102,8 +107,9 @@ def serve_forecast_archive_list(code):
 
 
 def serve_forecast_archive(code, id):
+    # Archive ownership needs the election identity, not its history/results.
     try:
-        election = Election.objects.get(code=code)
+        election = Election.objects.only('id').get(code=code)
     except Election.DoesNotExist:
         raise Http404('Election does not exist')
     try:
@@ -135,27 +141,17 @@ def serve_election_timeseries(code, mode, cached_version):
     if cached_response is not None:
         return Response(cached_response)
     
-    # Cache not present, retrieve from database
+    # Read the requested series and its version together. Other modes and
+    # results are unrelated to this response and must not be decoded here.
+    series_field, version_field = MODE_FIELDS[modes[mode]]
     try:
-        election = Election.objects.get(code=code)
+        election = Election.objects.only(series_field, version_field).get(code=code)
     except Election.DoesNotExist:
         raise Http404('Election does not exist')
-    if mode == 'regular':
-        version = election.timeseries_fc_version
-    elif mode == 'nowcast':
-        version = election.timeseries_nc_version
-    elif mode == 'live':
-        version = election.timeseries_lf_version
-    else:
-        raise Http404('Invalid mode')
+    version = getattr(election, version_field)
     if version == cached_version:
         return Response({"new": False})
-    if mode == 'regular':
-        series = election.timeseries_fc
-    elif mode == 'nowcast':
-        series = election.timeseries_nc
-    elif mode == 'live':
-        series = election.timeseries_lf
+    series = getattr(election, series_field)
     response = {"timeseries": series,
                 "code": code,
                 "mode": mode,
@@ -180,8 +176,10 @@ def serve_election_results(code, cached_version):
     if cached_response is not None:
         return Response(cached_response)
 
+    # Keep results and their version from one row read, without loading any
+    # forecast histories on a results cache miss.
     try:
-        election = Election.objects.get(code=code)
+        election = Election.objects.only('results', 'results_version').get(code=code)
     except Election.DoesNotExist:
         raise Http404('Election does not exist')
     results = election.results

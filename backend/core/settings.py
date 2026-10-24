@@ -217,6 +217,8 @@ JWT_AUTH = {
     'JWT_AUTH_HEADER_PREFIX': 'JWT',
     'JWT_GET_USER_SECRET_KEY': lambda user: user.secret_key,
     'JWT_RESPONSE_PAYLOAD_HANDLER': 'users.selectors.jwt_response_payload_handler',
+    # Response-cookie compatibility for the uploader; never an API credential on
+    # incoming requests. API authentication requires a JWT/Bearer header.
     'JWT_AUTH_COOKIE': 'jwt_token',
     'JWT_AUTH_COOKIE_SAMESITE': 'None'
 }
@@ -226,7 +228,3 @@ CORS_ALLOWED_ORIGINS: List[str] = env.list(  # type: ignore
     'DJANGO_CORS_ORIGIN_WHITELIST',
     default=[BASE_FRONTEND_URL]
 )
-
-# Google OAuth2 settings
-GOOGLE_OAUTH2_CLIENT_ID: str = str(env.str('GOOGLE_OAUTH_ID'))
-GOOGLE_OAUTH2_CLIENT_SECRET: str = str(env.str('GOOGLE_OAUTH_SECRET'))

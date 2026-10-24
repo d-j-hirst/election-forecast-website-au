@@ -9,6 +9,8 @@ from users.models import User
 
 
 class ApiAuthMixin:
+    # API clients supply JWT/Bearer headers. Django admin's cookie-based sessions
+    # and CSRF protection remain independent of this authentication policy.
     authentication_classes = (JSONWebTokenAuthentication, )
     permission_classes = (IsAuthenticated, )
 

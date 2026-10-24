@@ -32,6 +32,8 @@ def generate_jwt_token(user: Any) -> str:
 
 
 def get_token_from_request(request: Any) -> Optional[str]:
+    # Privileged API calls require an explicit credential. Accepting an ambient
+    # browser cookie here would bypass CSRF checks in these JWT-only DRF views.
     auth_header = authentication.get_authorization_header(request).decode('utf-8')
 
     if auth_header:
@@ -41,11 +43,6 @@ def get_token_from_request(request: Any) -> Optional[str]:
             return parts[1]
 
         raise exceptions.AuthenticationFailed('Invalid authorization header.')
-
-    cookie_name = settings.JWT_AUTH.get('JWT_AUTH_COOKIE')
-
-    if cookie_name:
-        return request.COOKIES.get(cookie_name)
 
     return None
 

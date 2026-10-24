@@ -1,16 +1,11 @@
-from django.urls import path, include
+from django.urls import path
 
-from auth.apis import LoginApi, GoogleLoginApi, LogoutApi
+from auth.apis import LoginApi, LogoutApi
 
-# Note: type checking ignored here because these are
-# dependent on drf-jwt which doesn't have available typing information
 
-login_patterns = [
-    path('', LoginApi.as_view(), name='login'),  # type: ignore
-    path('google/', GoogleLoginApi.as_view(), name='login-with-google'),  # type: ignore
-]
-
+# Password login is retained for the uploader. Retired Google authentication has
+# no route or configuration switch; browser administration uses Django's admin.
 urlpatterns = [
-    path('login/', include(login_patterns)),
+    path('login/', LoginApi.as_view(), name='login'),  # type: ignore
     path('logout/', LogoutApi.as_view(), name='logout'),  # type: ignore
 ]
