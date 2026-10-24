@@ -91,3 +91,27 @@ upgrade on the test application before public deployment.
 ### For production:
 
 * The exact procedure for initiating the server will depend on the hosting platform, but in all cases we'll need to collect static files. Make sure to do this after the frontend server has been built and its files sorted using `prepare_files.sh` (see the frontend readme). To collect the static files just run `python3 manage.py collectstatic` and type `yes` when prompted.
+
+For a routine PythonAnywhere update, activate the same virtual environment as
+the one configured for the web application, then run `. routine_update.sh`
+from the repository root. Sourcing runs the update in a child Bash shell so a
+failure preserves the interactive console's directory and shell options.
+`bash routine_update.sh` also works, including with the script's full path from
+another directory.
+The script uses the selected `python` for both dependency installation and Django
+commands. The local `backend_environment.txt` launcher preference does not change
+the hosting console's environment.
+
+The script requires a fast-forward Git update and stops on the first failed
+installation, build, file-preparation or management command, returning a nonzero
+exit status. It prints a success message only after static collection finishes.
+If it stops, resolve the reported failure before reloading; completed steps are
+not rolled back. Schema changes still require their documented backup and
+publication-pause procedure above.
+
+After a successful update, use **Reload** for the intended application on
+PythonAnywhere's Web tab, then check its public pages and administration. The
+script leaves this activation step to the operator.
+
+The release-script checks run without installing dependencies or touching a
+working database: `bash tests/test_routine_update.sh` from the repository root.
