@@ -11,6 +11,7 @@ import TooltipWrapper from '../../General/TooltipWrapper';
 
 import {jsonMap} from '../../../utils/jsonmap.js';
 import {deepCopy} from '../../../utils/deepcopy.js';
+import {distributionBounds} from '../../../utils/distributionBounds';
 
 import styles from '../Seats/Seats.module.css';
 
@@ -63,7 +64,7 @@ const SeatFpSection = props => {
         e[1][7] >= 1 || e[1][10] >= 20 || e[1][12] >= 30 || !props.abbreviated
     )
     .sort((el1, el2) => el2[1][7] - el1[1][7]);
-  const maxFpTotal = Math.max(...sortedFreqs.map(el => Math.max(...el[1])));
+  const distributions = sortedFreqs.map(el => el[1]);
   const someExcluded = sortedFreqs.length < fpFreqs.length;
 
   const hideMajorParties =
@@ -99,6 +100,16 @@ const SeatFpSection = props => {
       props.election === '2022sa') ||
     (seatName == 'Narracan' && props.election == '2022vic');
 
+  // Include only result markers that SeatVoteRow can display. Keep the existing
+  // forecast range even when live mode hides the major-party rows.
+  const bounds = distributionBounds(
+    distributions,
+    sortedFreqs.map((freq, index) =>
+      results !== null && (freq[0] >= -1 || forceXInd) ? results[index] : null
+    ),
+    {includeZero: true}
+  );
+
   return (
     <>
       <ListGroup.Item className={styles.seatsSubheading}>
@@ -119,8 +130,7 @@ const SeatFpSection = props => {
           forceXInd={forceXInd}
           forecast={props.forecast}
           freqSet={freqSet}
-          maxVoteTotal={maxFpTotal}
-          minVoteTotal={0}
+          {...bounds}
           key={`fp${seatName}a${index}`}
           index={`fp${seatName}a${index}`}
           seatName={seatName}

@@ -14,6 +14,7 @@ import TooltipWrapper from '../../General/TooltipWrapper';
 import {coalitionName} from '../../../utils/coalition.js';
 import {jsonMap} from '../../../utils/jsonmap.js';
 import {isOutlook} from '../../../utils/outlook.js';
+import {distributionBounds} from '../../../utils/distributionBounds';
 
 import styles from './SeatTotals.module.css';
 
@@ -134,7 +135,6 @@ const SeatsRowSet = props => {
           }
           return props.results.overall.seats[thisPartyAbbr];
         });
-  const maxVoteTotal = Math.max(...freqs.map(el => Math.max(...el[1])));
   let combinedCoalition = 0.0;
   if (
     props.results !== null &&
@@ -151,6 +151,20 @@ const SeatsRowSet = props => {
     combinedCoalition =
       props.results.overall.seats['LNP'] + props.results.overall.seats['NAT'];
   }
+  // Match the existing row results before sizing the group, including the
+  // combined row and the special outcomes whose result markers are hidden.
+  const displayedResults = freqs.map((freq, index) =>
+    props.results === null || freq[0] < -1
+      ? null
+      : results[index] === undefined
+      ? combinedCoalition
+      : results[index]
+  );
+  const bounds = distributionBounds(
+    freqs.map(freq => freq[1]),
+    displayedResults,
+    {includeZero: true, integer: true}
+  );
   return (
     <>
       {freqs.map((freqSet, index) => (
@@ -158,15 +172,8 @@ const SeatsRowSet = props => {
           forecast={props.forecast}
           freqSet={freqSet}
           key={index}
-          maxVoteTotal={maxVoteTotal}
-          minVoteTotal={0}
-          result={
-            props.results === null
-              ? null
-              : results[index] === undefined
-              ? combinedCoalition
-              : results[index]
-          }
+          {...bounds}
+          result={displayedResults[index]}
           showCoalition={props.showCoalition}
           windowWidth={props.windowWidth}
         />

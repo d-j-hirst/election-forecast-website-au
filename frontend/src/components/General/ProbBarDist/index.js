@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 import TooltipWrapper from '../TooltipWrapper';
 import ProbBar from '../ProbBar';
+import {distributionBounds} from '../../../utils/distributionBounds';
 
 const adjustFreqs = (freqs, thresholds) => {
   const lowerObjs = [];
@@ -86,7 +87,9 @@ const adjustFreqs = (freqs, thresholds) => {
 const ProbBarResult = props => {
   const width = 2;
   const left = Math.floor(
-    (props.result - props.visualOffset) * props.scalingFactor - width / 2
+    props.pixelOffset +
+      (props.result - props.visualOffset) * props.scalingFactor -
+      width / 2
   );
   const leftVal = left.toString() + 'px';
   const widthVal = width.toString() + 'px';
@@ -100,13 +103,14 @@ const ProbBarResult = props => {
     position: 'absolute',
     backgroundColor: 'black',
     border: '1px solid black',
+    boxSizing: 'border-box',
   };
-  const topStyle = structuredClone(thisStyle);
+  const topStyle = {...thisStyle};
   topStyle.left = altLeftVal;
   topStyle.width = altWidthVal;
   topStyle.height = '6px';
   topStyle.top = '4px';
-  const bottomStyle = structuredClone(topStyle);
+  const bottomStyle = {...topStyle};
   bottomStyle.top = '20px';
   // this class and its div works around a difficulty in CSS: the tooltip is placed at the
   // closest positioned ancestor, but an absolute-position div is not considered "positioned"
@@ -142,14 +146,29 @@ ProbBarResult.propTypes = {
   result: PropTypes.number.isRequired,
   visualOffset: PropTypes.number.isRequired,
   scalingFactor: PropTypes.number.isRequired,
+  pixelOffset: PropTypes.number.isRequired,
   valType: PropTypes.string.isRequired,
 };
 
 const ProbBarDist = props => {
   const midThreshold = Math.floor(props.thresholds.length / 2);
   const chartWidth = props.width !== undefined ? props.width : 300;
-  const scalingFactor = chartWidth / (props.maxVoteTotal - props.minVoteTotal);
-  const visualOffset = props.minVoteTotal;
+  // Reserve room for the eight-pixel result caps at either endpoint. The
+  // forecast and result share this inset; results are never clamped to a bar.
+  const pixelOffset = 4;
+  const frequencies = props.freqSet[1];
+  if (
+    !Number.isFinite(chartWidth) ||
+    chartWidth <= pixelOffset * 2 ||
+    !props.thresholds.length ||
+    !props.thresholds.every(
+      ([low, high]) =>
+        Number.isFinite(frequencies?.[low]) &&
+        Number.isFinite(frequencies?.[high])
+    )
+  ) {
+    return null;
+  }
   const voteDistStyle = {
     width: chartWidth.toString() + 'px',
     position: 'relative',
@@ -175,6 +194,19 @@ const ProbBarDist = props => {
     });
   }
 
+  // Callers supply group bounds. Include this row's visual endpoints as well
+  // so a standalone bar also handles point distributions and integer padding.
+  const {minVoteTotal, maxVoteTotal} = distributionBounds(
+    [
+      [props.minVoteTotal, props.maxVoteTotal],
+      bars.flatMap(bar => [bar.vLow, bar.vHigh]),
+    ],
+    [props.result]
+  );
+  const scalingFactor =
+    (chartWidth - pixelOffset * 2) / (maxVoteTotal - minVoteTotal);
+  const visualOffset = minVoteTotal;
+
   return (
     <div style={voteDistStyle}>
       {bars.map((bar, index) => {
@@ -186,16 +218,18 @@ const ProbBarDist = props => {
             partyAbbr={props.partyAbbr}
             pluralNoun={props.pluralNoun}
             scalingFactor={scalingFactor}
+            pixelOffset={pixelOffset}
             thresholdLevels={props.thresholdLevels}
             valType={props.valType}
             visualOffset={visualOffset}
           />
         );
       })}
-      {props.result !== null && props.result !== undefined && (
+      {Number.isFinite(props.result) && (
         <ProbBarResult
           result={props.result}
           scalingFactor={scalingFactor}
+          pixelOffset={pixelOffset}
           valType={props.valType}
           visualOffset={visualOffset}
         />

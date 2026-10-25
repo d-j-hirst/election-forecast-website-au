@@ -15,6 +15,7 @@ import TooltipWrapper from '../../General/TooltipWrapper';
 import {deepCopy} from '../../../utils/deepcopy.js';
 import {jsonMap} from '../../../utils/jsonmap.js';
 import {seatInRegion} from '../../../utils/seatregion.js';
+import {distributionBounds} from '../../../utils/distributionBounds';
 
 import styles from '../Seats/Seats.module.css';
 
@@ -83,13 +84,16 @@ const SeatTcpRowPair = props => {
     props.freqSet[0][1],
     props.freqSet[1].map(a => 100 - a).reverse(),
   ];
-  const maxVoteTotal = Math.max(
-    Math.max(...freqSet0[1]),
-    Math.max(...freqSet1[1])
-  );
-  const minVoteTotal = Math.min(
-    Math.min(...freqSet0[1]),
-    Math.min(...freqSet1[1])
+  const partyResults = Number.isFinite(props.result)
+    ? [props.result, 100 - props.result]
+    : [null, null];
+  // A matched result can lie outside both forecast ranges. Size the pair
+  // together so its two complementary rows remain directly comparable.
+  const bounds = distributionBounds(
+    [freqSet0[1], freqSet1[1]],
+    partyResults.filter(
+      (value, index) => props.freqSet[0][index] >= -1 || props.forceXInd
+    )
   );
 
   let partyAbbr0 = jsonMap(props.forecast.partyAbbr, freqSet0[0]);
@@ -150,9 +154,8 @@ const SeatTcpRowPair = props => {
         forceXInd={props.forceXInd}
         forecast={props.forecast}
         freqSet={freqSet0}
-        result={props.result}
-        minVoteTotal={minVoteTotal}
-        maxVoteTotal={maxVoteTotal}
+        result={partyResults[0]}
+        {...bounds}
         seatName={props.seatName}
         windowWidth={props.windowWidth}
       />
@@ -161,9 +164,8 @@ const SeatTcpRowPair = props => {
         forceXInd={props.forceXInd}
         forecast={props.forecast}
         freqSet={freqSet1}
-        result={props.result !== null ? 100 - props.result : null}
-        minVoteTotal={minVoteTotal}
-        maxVoteTotal={maxVoteTotal}
+        result={partyResults[1]}
+        {...bounds}
         seatName={props.seatName}
         windowWidth={props.windowWidth}
       />

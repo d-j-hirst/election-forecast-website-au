@@ -36,8 +36,9 @@ const ProbBar = props => {
     [5, xxxLightBgClass(props.partyAbbr)],
   ];
   const leftVal =
-    Math.floor((lv - props.visualOffset) * props.scalingFactor).toString() +
-    'px';
+    Math.floor(
+      props.pixelOffset + (lv - props.visualOffset) * props.scalingFactor
+    ).toString() + 'px';
   const widthVal =
     Math.floor((rv - lv) * props.scalingFactor + 1).toString() + 'px';
   const thisStyle = {
@@ -125,6 +126,7 @@ ProbBar.propTypes = {
   valType: PropTypes.string,
   visualOffset: PropTypes.number.isRequired,
   scalingFactor: PropTypes.number.isRequired,
+  pixelOffset: PropTypes.number.isRequired,
   midThreshold: PropTypes.number.isRequired,
   thresholdLevels: PropTypes.array.isRequired,
 };

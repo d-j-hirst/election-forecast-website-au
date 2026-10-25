@@ -16,6 +16,7 @@ import InfoIcon from '../../General/InfoIcon';
 import {coalitionName} from '../../../utils/coalition.js';
 import {jsonMap} from '../../../utils/jsonmap.js';
 import {isOutlook} from '../../../utils/outlook.js';
+import {distributionBounds} from '../../../utils/distributionBounds';
 
 import styles from './VoteTotals.module.css';
 
@@ -175,7 +176,6 @@ const FpRowSet = props => {
           }
           return props.results.overall.fp[thisPartyAbbr];
         });
-  const maxVoteTotal = Math.max(...freqs.map(el => Math.max(...el[1])));
   let combinedCoalition = 0.0;
   if (
     props.results !== null &&
@@ -192,6 +192,20 @@ const FpRowSet = props => {
     combinedCoalition =
       props.results.overall.fp['LNP'] + props.results.overall.fp['NAT'];
   }
+  // Use the results actually passed to the rows, including the combined row,
+  // to keep every first-preference comparison on one shared scale.
+  const displayedResults = freqs.map((freq, index) =>
+    results === null
+      ? null
+      : results[index] === undefined
+      ? combinedCoalition
+      : results[index]
+  );
+  const bounds = distributionBounds(
+    freqs.map(freq => freq[1]),
+    displayedResults,
+    {includeZero: true}
+  );
   return (
     <>
       <ListGroup.Item className={styles.voteTotalsSubHeading}>
@@ -211,16 +225,9 @@ const FpRowSet = props => {
           forecast={props.forecast}
           freqSet={freqSet}
           key={index}
-          maxVoteTotal={maxVoteTotal}
-          minVoteTotal={0}
+          {...bounds}
           showCoalition={showCoalition}
-          result={
-            results === null
-              ? null
-              : results[index] === undefined
-              ? combinedCoalition
-              : results[index]
-          }
+          result={displayedResults[index]}
           windowWidth={props.windowWidth}
         />
       ))}
@@ -263,16 +270,13 @@ const TppRowSet = props => {
   const partyFreqs = [[0, props.forecast.tppFrequencies]];
   partyFreqs.push([1, partyFreqs[0][1].map(freq => 100 - freq).reverse()]);
   const partyResults =
-    props.results === null
+    props.results === null || !Number.isFinite(props.results.overall.tpp)
       ? [null, null]
       : [props.results.overall.tpp, 100 - props.results.overall.tpp];
-  const maxVoteTotal = Math.max(
-    Math.max(...partyFreqs[0][1]),
-    Math.max(...partyFreqs[1][1])
-  );
-  const minVoteTotal = Math.min(
-    Math.min(...partyFreqs[0][1]),
-    Math.min(...partyFreqs[1][1])
+  // Both sides, including their complementary results, use identical bounds.
+  const bounds = distributionBounds(
+    partyFreqs.map(freq => freq[1]),
+    partyResults
   );
   const firstHigher = partyFreqs[0][1][7] > partyFreqs[1][1][7];
   return (
@@ -285,8 +289,7 @@ const TppRowSet = props => {
       <VoteShareRow
         forecast={props.forecast}
         freqSet={partyFreqs[firstHigher ? 0 : 1]}
-        maxVoteTotal={maxVoteTotal}
-        minVoteTotal={minVoteTotal}
+        {...bounds}
         showCoalition={true} // Make it use coalition badge
         result={partyResults[firstHigher ? 0 : 1]}
         windowWidth={props.windowWidth}
@@ -294,8 +297,7 @@ const TppRowSet = props => {
       <VoteShareRow
         forecast={props.forecast}
         freqSet={partyFreqs[firstHigher ? 1 : 0]}
-        maxVoteTotal={maxVoteTotal}
-        minVoteTotal={minVoteTotal}
+        {...bounds}
         showCoalition={true} // Make it use coalition badge
         result={partyResults[firstHigher ? 1 : 0]}
         windowWidth={props.windowWidth}
