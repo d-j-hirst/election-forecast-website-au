@@ -46,7 +46,7 @@ const GlossaryLink = props => {
       link = 'voting-intention';
       break;
     case 'major parties':
-      link = 'major-parties';
+      link = 'major-party';
       break;
     case 'house effect':
     case 'house effects':

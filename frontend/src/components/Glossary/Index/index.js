@@ -26,7 +26,7 @@ GlossaryLink.propTypes = {
 const GlossaryIndex = props => {
   return (
     <>
-      <h4 id="introduction">Index</h4>
+      <h4 id="glossary-index">Index</h4>
       <div className={styles.indexGrid}>
         <GlossaryLink term="Anchoring pollster" type="site" />
         <GlossaryLink term="Bias" type="general" />
@@ -43,6 +43,7 @@ const GlossaryIndex = props => {
         <GlossaryLink term="Poll trend" type="site" />
         <GlossaryLink term="Preferential voting" type="general" />
         <GlossaryLink term="Previous election preferences" type="general" />
+        <GlossaryLink term="Redistribution" type="general" />
         <GlossaryLink term="Regular forecast" type="general" />
         <GlossaryLink term="Respondent allocated preferences" type="general" />
         <GlossaryLink term="Seat" type="general" />

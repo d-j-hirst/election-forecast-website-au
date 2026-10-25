@@ -279,16 +279,15 @@ const GlossaryItems = props => {
           The forecasts on this site are based on the calculation of a{' '}
           <Link to="#poll">poll</Link> trend that aggregates polls in order to
           discern changes in{' '}
-          <Link to="#voting-intention">voting intention</Link>. The poll trend
-          represents the calculation of the most likely voting intention
-          assuming that the <Link to="#house-effect">house effects</Link> and{' '}
-          <Link to="#bias">bias</Link> of the{' '}
-          <Link to="#anchoring-pollster">anchoring pollsters</Link> sum to zero.
-          (For more detail see{' '}
-          <Link to="/methods/#poll-trend">this section</Link> of the methods
-          page.) The latest point on the poll trend is then used as a basis for
-          election simulations after further adjustments for historical bias and
-          uncertainty.
+          <Link to="#voting-intention">voting intention</Link>. It allows for
+          differences between pollsters (
+          <Link to="#house-effect">house effects</Link>) and uncertainty in the
+          polling data. The poll trend is an intermediate input to the forecast,
+          rather than a prediction of the election result on its own. (For more
+          detail see <Link to="/methods/#poll-trend">this section</Link> of the
+          methods page.) The latest point on the poll trend is then used as a
+          basis for election simulations after further adjustments for
+          historical bias and uncertainty.
         </p>
       </GlossaryItem>
       <GlossaryItem type="general" title="Preferential voting">

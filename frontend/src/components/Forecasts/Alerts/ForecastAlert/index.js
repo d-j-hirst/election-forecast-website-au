@@ -14,36 +14,66 @@ import quantityMarkerExample from './assets/quantity-marker-example.png';
 import categoryMarkerExample from './assets/category-marker-example.png';
 import styles from './ForecastAlert.module.css';
 
-const oldElections = [
-  '2022sa',
-  '2022fed',
-  '2022vic',
-  '2023nsw',
-  '2024qld',
-  '2025wa',
-  '2025fed',
-  '2026sa',
-];
-const oldElectionsLinks = {
-  '2022sa': 'https://www.ecsa.sa.gov.au/elections/2022-state-election/results',
-  '2022fed': 'https://results.aec.gov.au/27966/Website/HouseDefault-27966.htm',
-  '2022vic':
-    'https://www.vec.vic.gov.au/results/state-election-results/2022-state-election-results',
-  '2023nsw': 'https://vtr.elections.nsw.gov.au/SG2301',
-  '2024qld': 'https://results.elections.qld.gov.au/SGE2024',
-  '2025fed': 'https://results.aec.gov.au/31496/Website/HouseDefault-31496.htm',
-  '2026sa': 'https://result.ecsa.sa.gov.au/',
-};
-const oldLiveText = {
-  '2022sa': 'at the end of election night',
-  '2022fed': 'after most (but not all) counting of votes',
-  '2022vic': 'after most (but not all) counting of votes',
-  '2023nsw': 'at the end of election night',
-  '2024qld':
-    'at about 10:20 p.m. on election night (ended early due to issues with comparing prepoll and postal votes)',
-  '2026sa': 'after final results were available',
+// Publication history is maintained per election, independently of the reader's
+// clock. Include counting context only where the final live report's stage is known.
+const pastElections = {
+  '2022sa': {
+    resultsUrl:
+      'https://www.ecsa.sa.gov.au/elections/2022-state-election/results',
+    finalLiveContext: 'at the end of election night',
+  },
+  '2022fed': {
+    resultsUrl:
+      'https://results.aec.gov.au/27966/Website/HouseDefault-27966.htm',
+    finalLiveContext: 'after most (but not all) counting of votes',
+  },
+  '2022vic': {
+    resultsUrl:
+      'https://www.vec.vic.gov.au/results/state-election-results/2022-state-election-results',
+    finalLiveContext: 'after most (but not all) counting of votes',
+  },
+  '2023nsw': {
+    resultsUrl: 'https://vtr.elections.nsw.gov.au/SG2301',
+    finalLiveContext: 'at the end of election night',
+  },
+  '2024qld': {
+    resultsUrl: 'https://results.elections.qld.gov.au/SGE2024',
+    finalLiveContext:
+      'at about 10:20 p.m. on election night (ended early due to issues with comparing prepoll and postal votes)',
+  },
+  '2025wa': {
+    resultsUrl:
+      'https://www.elections.wa.gov.au/sites/default/files/SGE2025/Reports/WAEC9467%20State%20Election%20Stats%2BResults%20Report%20WEB.pdf',
+    resultsFormat: 'PDF',
+  },
+  '2025fed': {
+    resultsUrl:
+      'https://results.aec.gov.au/31496/Website/HouseDefault-31496.htm',
+  },
+  '2026sa': {
+    resultsUrl: 'https://result.ecsa.sa.gov.au/',
+    finalLiveContext: 'after final results were available',
+  },
 };
 const liveAlertStorageKey = 'liveForecastAlertClosed';
+
+// A saved preference is optional: blocked browser storage must not prevent the
+// report from rendering. Keep the existing key and acknowledgement policy.
+const wasLiveAlertDismissed = () => {
+  try {
+    return localStorage.getItem(liveAlertStorageKey) === 'true';
+  } catch (error) {
+    return false;
+  }
+};
+
+const rememberLiveAlertDismissal = () => {
+  try {
+    localStorage.setItem(liveAlertStorageKey, 'true');
+  } catch (error) {
+    // The current page still dismisses the introduction when persistence fails.
+  }
+};
 
 const ForecastAlert = props => {
   const isNowcast = props.mode === 'nowcast';
@@ -51,24 +81,26 @@ const ForecastAlert = props => {
   const isRegular = props.mode === 'regular';
   const isArchive = props.isArchive === true;
   const isThisOutlook = isOutlook(props.code);
-  const oldElec = oldElections.includes(props.code);
+  const pastElection = Object.hasOwn(pastElections, props.code)
+    ? pastElections[props.code]
+    : undefined;
+  const oldElec = Boolean(pastElection);
+  const officialResultsUrl = pastElection?.resultsUrl;
   const current = !(oldElec || isArchive);
   const isWarning = isNowcast || isLive || isThisOutlook || props.isArchive;
   const alertVariant = isWarning ? 'warning' : 'info';
   const defaultShow = props.showInitially === undefined || props.showInitially;
-  const getShowState = () =>
-    isLive
-      ? defaultShow && localStorage.getItem(liveAlertStorageKey) !== 'true'
-      : defaultShow;
-  const [show, setShow] = useState(getShowState);
+  const [show, setShow] = useState(
+    () => defaultShow && (!isLive || !wasLiveAlertDismissed())
+  );
 
   useEffect(() => {
-    setShow(getShowState());
+    setShow(defaultShow && (!isLive || !wasLiveAlertDismissed()));
   }, [defaultShow, isLive]);
 
   const closeAlert = () => {
-    if (isLive) localStorage.setItem(liveAlertStorageKey, 'true');
     setShow(false);
+    if (isLive) rememberLiveAlertDismissal();
   };
 
   if (show) {
@@ -112,11 +144,13 @@ const ForecastAlert = props => {
                     .
                   </>
                 )}
-                {oldElec && (
+                {officialResultsUrl && (
                   <>
                     {' '}
                     View the official results{' '}
-                    <ExtLink href={oldElectionsLinks[props.code]}>here</ExtLink>
+                    <ExtLink href={officialResultsUrl}>here</ExtLink>
+                    {pastElection.resultsFormat &&
+                      ` (${pastElection.resultsFormat})`}
                     .
                   </>
                 )}
@@ -236,13 +270,22 @@ const ForecastAlert = props => {
                   <>
                     <hr />
                     This was the final such forecast made{' '}
-                    {oldLiveText[props.code]}, visible for historical purposes
-                    only. It represents the apparent state of play at that time,
-                    and has not and will not be updated further from there.
+                    {pastElection.finalLiveContext || 'for this election'},
+                    visible for historical purposes only. It represents the
+                    apparent state of play at that time, and has not and will
+                    not be updated further from there.
                   </>
-                )}{' '}
-                View the official results{' '}
-                <ExtLink href={oldElectionsLinks[props.code]}>here</ExtLink>.
+                )}
+                {officialResultsUrl && (
+                  <>
+                    {' '}
+                    View the official results{' '}
+                    <ExtLink href={officialResultsUrl}>here</ExtLink>
+                    {pastElection.resultsFormat &&
+                      ` (${pastElection.resultsFormat})`}
+                    .
+                  </>
+                )}
               </div>
             </>
           )}

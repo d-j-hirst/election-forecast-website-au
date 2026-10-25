@@ -99,6 +99,7 @@ const SeatDetails = props => {
                 forecast={forecast}
                 code={code}
                 mode={mode}
+                isArchive={props.isArchive}
                 showInitially={props.isArchive !== true}
                 results={effectiveResults}
               />

@@ -76,7 +76,7 @@ const AboutContent = () => {
         If you find the site useful and want to show appreciation for the work
         behind it, there is an optional <a href={SUPPORT_URL}>support page</a>.
       </p>
-      <h4 id="introduction">About the Author</h4>
+      <h4 id="about-the-author">About the Author</h4>
       <p>
         The author of this site is based in Melbourne, is interested in politics
         as well as forecasting in various disciplines, and has a PhD in
@@ -87,7 +87,7 @@ const AboutContent = () => {
         about the website, forecasting or the Australian political system in
         general, feel free to <Email>email</Email> him.
       </p>
-      <h4 id="introduction">Acknowledgements</h4>
+      <h4 id="acknowledgements">Acknowledgements</h4>
       <p>
         This site and its analysis procedures are constructed largely
         independently but the work of others in this field has been very helpful

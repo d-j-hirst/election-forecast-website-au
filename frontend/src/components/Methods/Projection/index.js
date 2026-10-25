@@ -200,7 +200,7 @@ const MethodsPollTrend = props => {
         The final, smoothed parameter trends are then used to produce a
         projection of the future election result from the poll trend.
       </p>
-      <h5 id="mixing">Validating the projection</h5>
+      <h5 id="validating-projection">Validating the projection</h5>
       <p>
         It is essential to verify that the projection method possesses
         predictive skill with out-of-sample data. Since new elections cannot be
@@ -256,7 +256,7 @@ const MethodsPollTrend = props => {
         election—within a week or less—the projection is neither markedly better
         nor worse than the raw poll trend.
       </p>
-      <h5 id="mixing">Sampling elections from the projection</h5>
+      <h5 id="sampling-elections">Sampling elections from the projection</h5>
       <p>
         Up to this point, the fundamentals, poll trend, and projection have been
         used to generate probability distributions for each party&apos;s

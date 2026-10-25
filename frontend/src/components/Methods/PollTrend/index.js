@@ -90,7 +90,7 @@ const MethodsPollTrend = props => {
           first preferences sum to 100%.
         </li>
       </ul>
-      <h5 id="poll-data-used">Generating the poll trend</h5>
+      <h5 id="generating-poll-trend">Generating the poll trend</h5>
       <p>
         The poll trend is generated via{' '}
         <ExtLink href="https://en.wikipedia.org/wiki/Bayesian_hierarchical_modeling">
@@ -244,7 +244,7 @@ const MethodsPollTrend = props => {
           between elections.
         </li>
       </ul>
-      <h6 id="pollster-calibration">Setting up the comparison poll trends</h6>
+      <h6 id="comparison-poll-trends">Setting up the comparison poll trends</h6>
       <p>
         To evaluate these factors, a simplified <i>comparison poll trend</i> is
         generated for each pollster in every election. In this setup, the
@@ -260,7 +260,7 @@ const MethodsPollTrend = props => {
         </li>
         <li>The sum of house effects will always equal zero.</li>
       </ul>
-      <h6 id="pollster-calibration">Calculating the indication of trend</h6>
+      <h6 id="indication-of-trend">Calculating the indication of trend</h6>
       <p>
         The next step is to determine how effectively the pollster in focus
         indicates the general trend. This is done as follows:
@@ -305,7 +305,7 @@ const MethodsPollTrend = props => {
         diminishes, until such time as the pollster has sufficient data, at
         which point the effect of this initial estimate becomes insignificant.
       </p>
-      <h6 id="pollster-calibration">
+      <h6 id="pollster-bias-variability">
         Calculating the typical bias and its variability
       </h6>
       <p>
