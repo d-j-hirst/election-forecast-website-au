@@ -5,6 +5,7 @@ import WinnerBar from '../WinnerBar';
 
 import {jsonMap} from '../../../utils/jsonmap.js';
 import {seatInRegion} from '../../../utils/seatregion.js';
+import {getSeatResultPartyCode} from '../../../utils/seatresults.js';
 
 const WinnerBarDist = props => {
   const chartWidth = props.width !== undefined ? props.width : 300;
@@ -47,7 +48,11 @@ const WinnerBarDist = props => {
         : jsonMap(props.forecast.partyName, freq[0]);
     return {
       candidateName: candidateNames[index],
-      eventualWinner: props.result !== null ? props.result === abbr : false,
+      // Compare observed identity before applying display-only party labels.
+      eventualWinner:
+        props.result != null &&
+        props.result ===
+          getSeatResultPartyCode(freq[0], props.forecast.partyAbbr),
       partyAbbr: abbr,
       partyName: name,
       winPercent: freq[1],

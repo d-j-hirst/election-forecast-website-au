@@ -20,6 +20,7 @@ import InfoIcon from '../../General/InfoIcon';
 import {deepCopy} from '../../../utils/deepcopy.js';
 import {jsonMap} from '../../../utils/jsonmap.js';
 import {seatInRegion} from '../../../utils/seatregion.js';
+import {getTcpWinner} from '../../../utils/seatresults.js';
 import {useWarning} from '../../../utils/seatwarnings.js';
 
 import styles from '../Seats/Seats.module.css';
@@ -67,8 +68,7 @@ const SeatSummary = props => {
     return partyCategory(aName) - partyCategory(bName);
   });
 
-  const winner =
-    props.result !== null ? Object.keys(props.result.tcp)[0] : null;
+  const winner = getTcpWinner(props.result?.tcp);
 
   // const thresholds = [[0,2,0],[2,4,1],[4,6,2],[6,8,3],[8,10,4],[10,12,5],[12,14,6]];
   return (

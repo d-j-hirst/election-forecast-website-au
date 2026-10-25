@@ -25,6 +25,10 @@ import {jsonMap, jsonMapReverse} from '../../../utils/jsonmap.js';
 import {partyCategory} from '../../../utils/partyclass.js';
 import {getSeatUrl} from '../../../utils/seaturls.js';
 import {seatInRegion} from '../../../utils/seatregion.js';
+import {
+  getSeatResultPartyCode,
+  getTcpWinner,
+} from '../../../utils/seatresults.js';
 import {useByElectionWarning, useWarning} from '../../../utils/seatwarnings.js';
 
 import styles from './Seats.module.css';
@@ -69,9 +73,14 @@ const seatAsterisks = {
 const SeatRow = props => {
   const [showMore, setShowMore] = useState(false);
 
-  const moreHandler = () => setShowMore(!showMore);
+  const moreHandler = () => setShowMore(expanded => !expanded);
 
   const seatName = props.forecast.seatNames[props.index];
+  // Use the report's seat index, not its sorted row position, to keep the
+  // disclosure associated with the same seat when the list is reordered.
+  const detailsId = `seat-details-${props.election}-${
+    props.archiveId ?? props.mode
+  }-${props.index}`;
   let displayName = seatName;
   if (displayName.length > 14) {
     displayName = displayName.replace('North', 'N').replace('South', 'S');
@@ -106,8 +115,7 @@ const SeatRow = props => {
         )}`
       : `/seat/${props.election}/${props.mode}/${getSeatUrl(seatName)}`;
 
-  const winner =
-    props.result !== null ? Object.keys(props.result.tcp)[0] : null;
+  const winner = getTcpWinner(props.result?.tcp);
 
   let detailsAvailable = true;
   if (
@@ -176,10 +184,19 @@ const SeatRow = props => {
           <br />
           {detailsAvailable && (
             <>
-              <span className={styles.seatsLink} onClick={moreHandler}>
+              <button
+                type="button"
+                className={styles.seatToggle}
+                onClick={moreHandler}
+                aria-label={`${
+                  showMore ? 'Less detail' : 'More details'
+                } for ${seatName}`}
+                aria-expanded={showMore}
+                aria-controls={detailsId}
+              >
                 {!showMore && <>&#9660;more</>}
                 {showMore && <>&#9650;less</>}
-              </span>
+              </button>
               {(props.mode !== 'live' || props.election !== '2022sa') && (
                 <>
                   {'  |  '}
@@ -201,16 +218,20 @@ const SeatRow = props => {
           width={Math.min(props.windowWidth - 70, 300)}
         />
       </ListGroup.Item>
-      {showMore && (
-        <SeatMore
-          index={props.index}
-          forecast={props.forecast}
-          windowWidth={props.windowWidth}
-          mode={props.mode}
-          result={props.result}
-          election={props.election}
-        />
-      )}
+      {/* Keep the disclosure target available while collapsed, but only prepare
+          the detailed forecast sections when the reader expands this seat. */}
+      <div id={detailsId} hidden={!showMore}>
+        {showMore && (
+          <SeatMore
+            index={props.index}
+            forecast={props.forecast}
+            windowWidth={props.windowWidth}
+            mode={props.mode}
+            result={props.result}
+            election={props.election}
+          />
+        )}
+      </div>
     </>
   );
 };
@@ -420,23 +441,16 @@ const Seats = props => {
   let sortedIndices = [];
   const getWinnerChance = (seatName, index) => {
     const result = props.results.seats[seatName];
-    const winner =
-      result !== undefined && result.tcp !== undefined
-        ? Object.entries(result.tcp).sort((a, b) => b[1] - a[1])[0][0]
-        : null;
+    const winner = getTcpWinner(result?.tcp);
 
+    // Unknown outcomes sort after every real win probability (0–100%).
     if (winner === null) return 101;
 
     const seatWinFrequencies = props.forecast.seatPartyWinFrequencies[index];
-    const matchingWinner = seatWinFrequencies.find(freq => {
-      const partyAbbr =
-        freq[0] === -2
-          ? 'IND*'
-          : freq[0] === -3
-          ? 'OTH'
-          : jsonMap(props.forecast.partyAbbr, freq[0]);
-      return partyAbbr === winner;
-    });
+    const matchingWinner = seatWinFrequencies.find(
+      freq =>
+        getSeatResultPartyCode(freq[0], props.forecast.partyAbbr) === winner
+    );
 
     return matchingWinner === undefined ? 101 : matchingWinner[1];
   };
