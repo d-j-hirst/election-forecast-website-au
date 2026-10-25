@@ -5,7 +5,7 @@ import styles from './AboutHeader.module.css';
 const AboutHeader = props => {
   return (
     <>
-      <div className={styles.aboutTitle}>About</div>
+      <h1 className={`${styles.aboutTitle} page-heading`}>About</h1>
     </>
   );
 };

@@ -12,3 +12,4 @@ export {default as Commentary} from './Commentary';
 export {default as CommentarySingle} from './CommentarySingle';
 export {default as About} from './About';
 export {default as Support} from './Support';
+export {default as NotFound} from './NotFound';

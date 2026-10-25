@@ -1,0 +1,11 @@
+.main:focus-visible {
+  outline: 2px solid #1467cc;
+  outline-offset: -2px;
+}
+
+/* Semantic headings keep the typography of their existing page headers. */
+:global(.page-heading) {
+  margin: 0;
+  font-weight: inherit;
+  line-height: inherit;
+}

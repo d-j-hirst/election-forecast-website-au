@@ -3,6 +3,7 @@ import React from 'react';
 import {
   Header,
   Footer,
+  MainContent,
   AboutHeader,
   AboutContent,
   StandardErrorBoundary,
@@ -18,7 +19,7 @@ const About = () => {
   return (
     <div className={styles.site}>
       <Header windowWidth={windowDimensions.width} page="about" />
-      <main className={styles.content}>
+      <MainContent className={styles.content}>
         <StandardErrorBoundary>
           <AboutHeader />
           <div className={styles.mainText}>
@@ -27,7 +28,7 @@ const About = () => {
             </StandardErrorBoundary>
           </div>
         </StandardErrorBoundary>
-      </main>
+      </MainContent>
       <Footer />
     </div>
   );

@@ -8,6 +8,7 @@ import {
   ForecastsNav,
   ForecastHeader,
   LoadingMarker,
+  MainContent,
   ForecastAlert,
   SeatDetailBody,
   StandardErrorBoundary,
@@ -72,16 +73,21 @@ const SeatDetails = props => {
           <meta name="robots" content="noindex" />
         </Helmet>
       )}
-      <Header
-        windowWidth={windowDimensions.width}
-        page={props.isArchive ? 'archive' : mode}
+      <Header windowWidth={windowDimensions.width} page="forecast" />
+      {/* Navigation follows the requested mode even while its data is loading.
+        Archived reports have no current mode selected in the summary links. */}
+      <ForecastsNav
+        election={code}
+        mode={props.isArchive ? 'other' : inputMode}
       />
-      {/* Even though the archived forecast is still in some mode,
-        it's needed to set the mode to "other" here as that will
-        keep the links clickable */}
-      <ForecastsNav election={code} mode={props.isArchive ? 'other' : mode} />
-      <StandardErrorBoundary>
-        <div className={styles.content}>
+      {/* Stable loaded-state identities also recover nested sections after a new
+        report/results delivery; route identity covers changes before it arrives. */}
+      <MainContent
+        className={styles.content}
+        title={`Seat details: ${seat} (${code})`}
+        resetKeys={[code, id, inputMode, seat, forecast, results]}
+      >
+        <StandardErrorBoundary>
           {forecastValid && seatIndex >= 0 && (
             <>
               <ForecastHeader
@@ -118,14 +124,14 @@ const SeatDetails = props => {
           )}
           {forecastValid && seatIndex === -2 && <LoadingMarker />}
           {!forecastValid && <LoadingMarker />}
-        </div>
-        <Footer />
-      </StandardErrorBoundary>
+        </StandardErrorBoundary>
+      </MainContent>
+      <Footer />
     </div>
   );
 };
 SeatDetails.propTypes = {
-  mode: PropTypes.string.isRequired,
+  mode: PropTypes.string,
   code: PropTypes.string.isRequired,
   id: PropTypes.number,
   seat: PropTypes.string.isRequired,

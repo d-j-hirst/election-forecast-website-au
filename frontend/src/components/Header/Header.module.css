@@ -56,3 +56,20 @@
 .logo {
   height: 100px;
 }
+
+/* Keep the first keyboard destination visible above every navigation panel. */
+.skipLink {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  z-index: 2000;
+  transform: translateY(-200%);
+  padding: 8px 12px;
+  background: white;
+  color: #1467cc;
+  border: 2px solid currentColor;
+}
+
+.skipLink:focus {
+  transform: translateY(0);
+}

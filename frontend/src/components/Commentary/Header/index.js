@@ -15,7 +15,7 @@ const CommentaryHeader = props => {
   if (props.returnTag) returnLink += `${symbol}tag=${props.returnTag}`;
   return (
     <>
-      <div className={styles.commentaryTitle}>Commentary</div>
+      <h1 className={`${styles.commentaryTitle} page-heading`}>Commentary</h1>
       {props.returnLink && (
         <div className={styles.commentaryReturn}>
           <Link to={returnLink}>Return to commentary list</Link>

@@ -12,6 +12,7 @@ import {
   Footer,
   ForecastsNav,
   LoadingMarker,
+  MainContent,
   StandardErrorBoundary,
 } from 'components';
 import {getDirect} from 'utils/sdk';
@@ -130,9 +131,13 @@ const ArchiveList = () => {
 
   return (
     <div className={styles.site}>
-      <Header windowWidth={windowDimensions.width} page="archive" />
+      <Header windowWidth={windowDimensions.width} page="forecast" />
       <ForecastsNav election={code} mode="archives" />
-      <div className={styles.content}>
+      <MainContent
+        className={styles.content}
+        title={`Forecast archives: ${code}`}
+        resetKeys={[code, archiveList, filter]}
+      >
         {archiveListValid && (
           <>
             {
@@ -176,7 +181,7 @@ const ArchiveList = () => {
           </>
         )}
         {!archiveListValid && <LoadingMarker text="Loading archive list" />}
-      </div>
+      </MainContent>
       <Footer />
     </div>
   );

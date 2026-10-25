@@ -3,6 +3,7 @@ import React from 'react';
 import {
   Header,
   Footer,
+  MainContent,
   GlossaryHeader,
   GlossaryIntro,
   GlossaryIndex,
@@ -20,7 +21,7 @@ const Glossary = () => {
   return (
     <div className={styles.site}>
       <Header windowWidth={windowDimensions.width} page="glossary" />
-      <div className={styles.content}>
+      <MainContent className={styles.content}>
         <GlossaryHeader />
         <StandardErrorBoundary>
           <div className={styles.mainText}>
@@ -29,7 +30,7 @@ const Glossary = () => {
             <GlossaryItems />
           </div>
         </StandardErrorBoundary>
-      </div>
+      </MainContent>
       <Footer />
     </div>
   );

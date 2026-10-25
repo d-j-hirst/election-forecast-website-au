@@ -1,7 +1,7 @@
-import React from 'react';
+import React, {useState} from 'react';
 import PropTypes from 'prop-types';
 
-import {Link} from 'react-router-dom';
+import {Link, useLocation} from 'react-router-dom';
 
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
@@ -17,7 +17,14 @@ const ElectionNav = props => {
       : styles.navitem;
   const linkUrl = '/forecast/' + props.election + '/' + props.mode;
   return (
-    <Nav.Link as={Link} to={linkUrl}>
+    <Nav.Link
+      as={Link}
+      to={linkUrl}
+      eventKey={linkUrl}
+      aria-current={
+        props.activeElection === props.election ? 'true' : undefined
+      }
+    >
       <div className={thisClass}>{props.text}</div>
     </Nav.Link>
   );
@@ -36,7 +43,14 @@ const ElectionNavDropdown = props => {
       : styles.navitem;
   const linkUrl = '/forecast/' + props.election + '/' + props.mode;
   return (
-    <NavDropdown.Item as={Link} to={linkUrl}>
+    <NavDropdown.Item
+      as={Link}
+      to={linkUrl}
+      eventKey={linkUrl}
+      aria-current={
+        props.activeElection === props.election ? 'true' : undefined
+      }
+    >
       <div className={thisClass}>{props.text}</div>
     </NavDropdown.Item>
   );
@@ -49,11 +63,23 @@ ElectionNavDropdown.propTypes = {
 };
 
 const ModeNav = props => {
+  const {pathname} = useLocation();
   const thisClass =
     props.activeMode === props.mode ? styles.navselected : styles.navitem;
   const linkUrl = '/forecast/' + props.election + '/' + props.mode;
   return (
-    <Nav.Link as={Link} to={linkUrl}>
+    <Nav.Link
+      as={Link}
+      to={linkUrl}
+      eventKey={linkUrl}
+      aria-current={
+        props.activeMode === props.mode
+          ? pathname.replace(/\/$/, '') === linkUrl
+            ? 'page'
+            : 'true'
+          : undefined
+      }
+    >
       <div className={thisClass}>{props.text}</div>
     </Nav.Link>
   );
@@ -77,26 +103,51 @@ const live_elections = [
   '2019fed',
 ];
 
+const pastElections = [
+  ['2026sa', '2026 South Australia'],
+  ['2025fed', '2025 Federal'],
+  ['2025wa', '2025 Western Australia'],
+  ['2024qld', '2024 Queensland'],
+  ['2023nsw', '2023 New South Wales'],
+  ['2022vic', '2022 Victoria'],
+  ['2022fed', '2022 Federal'],
+  ['2022sa', '2022 South Australia'],
+];
+
 const ForecastsNav = props => {
-  // This determines the type of forecast we get from switching elections
+  const [electionsExpanded, setElectionsExpanded] = useState(false);
+  const [modesExpanded, setModesExpanded] = useState(false);
+  const pastElection = pastElections.find(([code]) => code === props.election);
+  // Switching elections retains nowcast/archive-list browsing, but live and
+  // individual archived reports return to a regular summary. "other" marks an
+  // archived report: no current mode is selected, and all mode links stay usable.
   let effectiveMode = props.mode;
   if (props.mode === 'other') effectiveMode = 'regular';
   if (props.mode === 'live') effectiveMode = 'regular';
   if (props.mode === '') effectiveMode = 'regular';
   return (
     <>
-      <Navbar bg="light" expand="sm" className={styles.navbar}>
+      <Navbar
+        bg="light"
+        expand="sm"
+        className={styles.navbar}
+        aria-label="Elections"
+        expanded={electionsExpanded}
+        onToggle={setElectionsExpanded}
+        collapseOnSelect
+      >
         <Container>
-          <Nav
-            defaultActiveKey={'/forecast/' + props.election + '/' + props.mode}
-            className="m-auto"
-          >
+          <Nav className="m-auto">
             <Navbar.Text>
               <div className={styles.title}>Elections</div>
             </Navbar.Text>
-            <Navbar.Toggle aria-controls="basic-navbar-nav" />
+            <Navbar.Toggle
+              label="Toggle elections"
+              aria-controls="elections-navigation"
+              aria-expanded={electionsExpanded}
+            />
             <Navbar.Collapse
-              id="basic-navbar-nav"
+              id="elections-navigation"
               className="justify-content-end"
             >
               <ElectionNav
@@ -117,72 +168,56 @@ const ForecastsNav = props => {
                 mode={effectiveMode}
                 activeElection={props.election}
               />
-              <NavDropdown title="Past Elections">
-                <ElectionNavDropdown
-                  text="2026 South Australia"
-                  election="2026sa"
-                  mode={effectiveMode}
-                  activeElection={props.election}
-                />
-                <ElectionNavDropdown
-                  text="2025 Federal"
-                  election="2025fed"
-                  mode={effectiveMode}
-                  activeElection={props.election}
-                />
-                <ElectionNavDropdown
-                  text="2025 Western Australia"
-                  election="2025wa"
-                  mode={effectiveMode}
-                  activeElection={props.election}
-                />
-                <ElectionNavDropdown
-                  text="2024 Queensland"
-                  election="2024qld"
-                  mode={effectiveMode}
-                  activeElection={props.election}
-                />
-                <ElectionNavDropdown
-                  text="2023 New South Wales"
-                  election="2023nsw"
-                  mode={effectiveMode}
-                  activeElection={props.election}
-                />
-                <ElectionNavDropdown
-                  text="2022 Victoria"
-                  election="2022vic"
-                  mode={effectiveMode}
-                  activeElection={props.election}
-                />
-                <ElectionNavDropdown
-                  text="2022 Federal"
-                  election="2022fed"
-                  mode={effectiveMode}
-                  activeElection={props.election}
-                />
-                <ElectionNavDropdown
-                  text="2022 South Australia"
-                  election="2022sa"
-                  mode={effectiveMode}
-                  activeElection={props.election}
-                />
+              <NavDropdown
+                id="past-elections-navigation"
+                title={
+                  <span
+                    className={pastElection ? styles.navselected : undefined}
+                  >
+                    Past Elections
+                    {pastElection && (
+                      <span className="visually-hidden">
+                        : {pastElection[1]} selected
+                      </span>
+                    )}
+                  </span>
+                }
+              >
+                {pastElections.map(([code, text]) => (
+                  <ElectionNavDropdown
+                    key={code}
+                    text={text}
+                    election={code}
+                    mode={effectiveMode}
+                    activeElection={props.election}
+                  />
+                ))}
               </NavDropdown>
             </Navbar.Collapse>
           </Nav>
         </Container>
       </Navbar>
-      <Navbar bg="light" expand="sm" className={styles.navbar}>
+      <Navbar
+        bg="light"
+        expand="sm"
+        className={styles.navbar}
+        aria-label="Modes"
+        expanded={modesExpanded}
+        onToggle={setModesExpanded}
+        collapseOnSelect
+      >
         <Container>
-          <Nav
-            defaultActiveKey={'/forecast/' + props.election + '/' + props.mode}
-            className="m-auto"
-          >
+          <Nav className="m-auto">
             <Navbar.Text>
               <div className={styles.title}>Modes</div>
             </Navbar.Text>
-            <Navbar.Toggle aria-controls="basic-navbar-nav" />
+            <Navbar.Toggle
+              label="Toggle modes"
+              aria-controls="modes-navigation"
+              aria-expanded={modesExpanded}
+            />
             <Navbar.Collapse
-              id="basic-navbar-nav"
+              id="modes-navigation"
               className="justify-content-end"
             >
               <ModeNav

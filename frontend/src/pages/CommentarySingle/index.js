@@ -7,6 +7,7 @@ import {
   CommentaryHeader,
   CommentaryItem,
   LoadingMarker,
+  MainContent,
   StandardErrorBoundary,
 } from 'components';
 import {useWindowDimensions} from '../../utils/window.js';
@@ -53,7 +54,7 @@ const CommentarySingle = () => {
   return (
     <div className={styles.site}>
       <Header windowWidth={windowDimensions.width} page="commentary" />
-      <div className={styles.content}>
+      <MainContent className={styles.content} resetKeys={[id, commentary]}>
         <CommentaryHeader
           returnLink
           returnPage={returnPage}
@@ -69,7 +70,7 @@ const CommentarySingle = () => {
           )}
           {!commentaryValid && <LoadingMarker text="Loading ..." />}
         </StandardErrorBoundary>
-      </div>
+      </MainContent>
       <Footer />
     </div>
   );

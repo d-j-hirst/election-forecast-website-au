@@ -5,7 +5,7 @@ import styles from './Header.module.css';
 const GlossaryHeader = props => {
   return (
     <>
-      <div className={styles.glossaryTitle}>Glossary</div>
+      <h1 className={`${styles.glossaryTitle} page-heading`}>Glossary</h1>
     </>
   );
 };

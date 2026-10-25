@@ -3,6 +3,7 @@ import React from 'react';
 import {
   Header,
   Footer,
+  MainContent,
   GuideHeader,
   GuideIntro,
   GuidePurpose,
@@ -22,7 +23,7 @@ const Guide = () => {
   return (
     <div className={styles.site}>
       <Header windowWidth={windowDimensions.width} page="guide" />
-      <div className={styles.content}>
+      <MainContent className={styles.content}>
         <GuideHeader />
         <StandardErrorBoundary>
           <div className={styles.mainText}>
@@ -33,7 +34,7 @@ const Guide = () => {
             <GuideSwingFactors />
           </div>
         </StandardErrorBoundary>
-      </div>
+      </MainContent>
       <Footer />
     </div>
   );

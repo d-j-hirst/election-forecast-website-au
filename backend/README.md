@@ -39,12 +39,19 @@ protection. Google sign-in and account-init have been removed. No Google OAuth
 configuration is required, and old Google environment values have no effect.
 Existing user records and permissions are retained.
 
-Run the authentication and forecast regression tests without reading local
+Run the authentication, routing and forecast regression tests without reading local
 credentials or using the normal database/cache, from `backend/`:
 
 ```sh
-python3 manage.py test accounts forecast_api --settings=core.test_settings
+python3 manage.py test core accounts forecast_api --settings=core.test_settings
 ```
+
+## Public route dispatch
+
+Public page deep links load the React shell, which handles unknown page addresses.
+Unmatched paths within `auth-api`, `forecast-api` and `commentary-api` return a
+JSON 404 instead of HTML. Registered endpoint paths retain their slash conventions;
+with `APPEND_SLASH` enabled, adding a slash redirects only to a registered endpoint.
 
 ## Forecast publication and response caching
 

@@ -5,7 +5,7 @@ import styles from './MethodsHeader.module.css';
 const MethodsHeader = props => {
   return (
     <>
-      <div className={styles.methodsTitle}>Methods</div>
+      <h1 className={`${styles.methodsTitle} page-heading`}>Methods</h1>
     </>
   );
 };

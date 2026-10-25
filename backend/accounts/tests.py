@@ -78,9 +78,9 @@ class AuthenticationBoundaryTests(TestCase):
                                     path, {'code': 'legacy-code', 'email': self.publisher.email},
                                     secure=True, HTTP_AUTHORIZATION='legacy-google-token',
                                 )
-                                # Removed paths may resolve to the public SPA
-                                # catchall; its 200 GET is not a login success.
-                                self.assertIn(response.status_code, (200, 403, 404, 405))
+                                # Removed API routes remain JSON not-found
+                                # responses, independent of legacy configuration.
+                                self.assertEqual(response.status_code, 404)
                                 self.assertNotIn('jwt_token', response.cookies)
                                 self.assertNotIn('sessionid', response.cookies)
                     issue_token.assert_not_called()

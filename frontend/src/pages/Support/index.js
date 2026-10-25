@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 
-import {Header, Footer, StandardErrorBoundary} from 'components';
+import {Header, Footer, MainContent, StandardErrorBoundary} from 'components';
 import {useWindowDimensions} from '../../utils/window.js';
 import {
   DONATIONS_ENABLED,
@@ -72,10 +72,10 @@ const Support = () => {
   return (
     <div className={styles.site}>
       <Header windowWidth={windowDimensions.width} page="support" />
-      <main className={styles.content}>
+      <MainContent className={styles.content}>
         <StandardErrorBoundary>
           <div className={styles.mainText}>
-            <h4>Support Australian Election Forecasts</h4>
+            <h1 className="h4">Support Australian Election Forecasts</h1>
             <p>
               Australian Election Forecasts is free to read and use. If the site
               is useful to you, an optional contribution is a way to show
@@ -90,7 +90,7 @@ const Support = () => {
             </p>
           </div>
         </StandardErrorBoundary>
-      </main>
+      </MainContent>
       <Footer />
     </div>
   );

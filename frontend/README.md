@@ -15,6 +15,19 @@ Google client configuration is unnecessary. Administration uses the backend's
 
 Finally, for development, run `npm start` to actually run the frontend server.
 
+### Public navigation and display recovery
+
+The `/` and `/forecast` entry points open the default forecast. Unknown page paths,
+unsupported mode names and malformed archive IDs display a not-found page with
+forecast and archive links. Valid IDs that are absent remain the data loader's
+responsibility.
+
+Each public page provides a main-content landmark and keyboard skip link. Client
+page navigation focuses that landmark; hash links, browser history traversal and
+same-page filter changes keep their existing focus and scroll behavior. A failed
+display can retry rendering its current data, and page/data replacements reset
+failed sections. The retry button does not make another API request.
+
 ### For production:
 
 Create the `.env` file as outlined above, but for `REACT_APP_BASE_BACKEND_URL` give the URL of your website (including the `https://`). Also create the jsconfig.json.

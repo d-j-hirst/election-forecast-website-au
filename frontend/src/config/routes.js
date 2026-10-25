@@ -1,5 +1,6 @@
-import {React} from 'react';
+import React from 'react';
 import {BrowserRouter, Navigate, Route, Routes} from 'react-router-dom';
+import RouteFocus from '../components/MainContent/RouteFocus';
 
 import {
   ABOUT_URL,
@@ -31,6 +32,7 @@ import {
   Glossary,
   Guide,
   Methods,
+  NotFound,
   SeatDetails,
   Support,
 } from 'pages';
@@ -40,6 +42,7 @@ const AllRoutes = () => {
     // Based on the current route, use the appropriate component
     // for the page
     <BrowserRouter>
+      <RouteFocus />
       <Routes>
         <Route path={ARCHIVE_LIST_URL} element={<ArchiveList />} />
         <Route path={ARCHIVE_SEAT_URL} element={<ArchiveSeat />} />
@@ -62,13 +65,12 @@ const AllRoutes = () => {
           element={<Navigate replace to={DEFAULT_FORECAST_URL} />}
         />
         <Route path={SEAT_DETAILS_URL} element={<SeatDetails />} />
-        {/* Keep this last so that other pages don't get replaced by it */}
+        {/* Only intentional entry points choose the default forecast. */}
         <Route
           path={HOME_URL}
           element={<Navigate replace to={DEFAULT_FORECAST_URL} />}
         />
-        {/* Redirect to home page if nothing else works */}
-        <Route path="*" element={<Navigate replace to={HOME_URL} />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   );

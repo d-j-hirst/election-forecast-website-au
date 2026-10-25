@@ -16,6 +16,7 @@ import {
   Header,
   History,
   LoadingMarker,
+  MainContent,
   MethodsChangesAlert,
   Seats,
   SeatTotals,
@@ -63,15 +64,20 @@ const ForecastLayout = props => {
           <meta name="robots" content="noindex" />
         </Helmet>
       )}
-      <Header
-        windowWidth={windowDimensions.width}
-        page={props.isArchive ? 'archive' : 'forecast'}
+      <Header windowWidth={windowDimensions.width} page="forecast" />
+      {/* Navigation follows the requested mode even while its data is loading.
+        Archived reports have no current mode selected in the summary links. */}
+      <ForecastsNav
+        election={code}
+        mode={props.isArchive ? 'other' : inputMode}
       />
-      {/* Even though the archived forecast is still in some mode,
-        it's needed to set the mode to "other" here as that will
-        keep the links clickable */}
-      <ForecastsNav election={code} mode={props.isArchive ? 'other' : mode} />
-      <div className={styles.content}>
+      {/* These state objects keep their identity until a load replaces the data;
+        unlike inline render objects, they reset failed sections only on delivery. */}
+      <MainContent
+        className={styles.content}
+        title={`${props.isArchive ? 'Archived forecast' : 'Forecast'}: ${code}`}
+        resetKeys={[code, id, inputMode, forecast, results]}
+      >
         <StandardErrorBoundary>
           {forecastValid && (
             <>
@@ -154,7 +160,7 @@ const ForecastLayout = props => {
           )}
           {!forecastValid && <LoadingMarker />}
         </StandardErrorBoundary>
-      </div>
+      </MainContent>
       <Footer />
     </div>
   );

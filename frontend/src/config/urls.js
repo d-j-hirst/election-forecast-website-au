@@ -1,7 +1,8 @@
 export const HOME_URL = '/';
 export const BASIC_FORECAST_URL = '/forecast';
 export const FORECAST_URL = '/forecast/:code/:mode';
-export const DEFAULT_FORECAST_URL = '/forecast/2026vic/regular';
+export const DEFAULT_ELECTION_CODE = '2026vic';
+export const DEFAULT_FORECAST_URL = `/forecast/${DEFAULT_ELECTION_CODE}/regular`;
 export const SEAT_DETAILS_URL = '/seat/:code/:mode/:seat';
 export const ARCHIVE_LIST_URL = '/forecast/:code/archives';
 export const ARCHIVE_URL = '/archive/:code/:id';

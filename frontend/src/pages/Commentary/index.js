@@ -9,6 +9,7 @@ import {
   CommentaryPages,
   CommentaryTags,
   LoadingMarker,
+  MainContent,
   StandardErrorBoundary,
 } from 'components';
 import {useWindowDimensions} from '../../utils/window.js';
@@ -66,7 +67,12 @@ const Commentary = () => {
   return (
     <div className={styles.site}>
       <Header windowWidth={windowDimensions.width} page={'commentary'} />
-      <div className={styles.content}>
+      {/* The response array is stable between loads and resets all item fallbacks
+        when another page/filter or a replacement response owns the content. */}
+      <MainContent
+        className={styles.content}
+        resetKeys={[page, tag, commentaries]}
+      >
         <CommentaryHeader />
         <StandardErrorBoundary>
           {commentariesValid && (
@@ -101,7 +107,7 @@ const Commentary = () => {
           )}
           {!commentariesValid && <LoadingMarker text="Loading ..." />}
         </StandardErrorBoundary>
-      </div>
+      </MainContent>
       <Footer />
     </div>
   );

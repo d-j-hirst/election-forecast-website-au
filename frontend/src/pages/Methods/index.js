@@ -3,6 +3,7 @@ import React from 'react';
 import {
   Header,
   Footer,
+  MainContent,
   MethodsHeader,
   MethodsIntro,
   MethodsOutline,
@@ -24,7 +25,7 @@ const Methods = () => {
   return (
     <div className={styles.site}>
       <Header windowWidth={windowDimensions.width} page="methods" />
-      <div className={styles.content}>
+      <MainContent className={styles.content}>
         <MethodsHeader />
         <StandardErrorBoundary>
           <div className={styles.mainText}>
@@ -36,7 +37,7 @@ const Methods = () => {
             <MethodsSimulation />
           </div>
         </StandardErrorBoundary>
-      </div>
+      </MainContent>
       <Footer />
     </div>
   );
