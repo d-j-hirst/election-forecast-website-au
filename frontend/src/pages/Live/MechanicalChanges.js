@@ -3,30 +3,33 @@ import PropTypes from 'prop-types';
 import {Link} from 'react-router-dom';
 import {SmartBadge} from '../../components/General/PartyBadge';
 import governmentOutcomes from 'components/Forecasts/FormationOfGovernment/governmentOutcomes';
+import formatCountPercentage from 'utils/formatCountPercentage';
+import RecentChangesSection from './RecentChangesSection';
 import useStoredBoolean from './useStoredBoolean';
 
 const votes = new Intl.NumberFormat('en-AU', {maximumFractionDigits: 0});
 
 export function Counts({progress}) {
   const total = progress?.expected_formal_votes;
-  return [
+  const counts = [
     ['First preferences', progress?.fp_votes],
     ['Two-candidate preferred', progress?.tcp_votes],
-  ].map(
-    ([label, counted]) =>
-      Number.isFinite(counted) && (
-        <p key={label}>
-          <strong>{label}</strong> counted: {votes.format(counted)}
-          {Number.isFinite(total) &&
-            total > 0 &&
-            ` of ${votes.format(total)} expected formal votes (${(
-              (counted / total) *
-              100
-            ).toFixed(1)}%)`}
-          .
-        </p>
-      )
-  );
+  ].filter(([, counted]) => Number.isFinite(counted));
+
+  if (!counts.length)
+    return <p className="mb-0">Counting progress unavailable.</p>;
+
+  return counts.map(([label, counted]) => {
+    const percentage = formatCountPercentage(counted, total);
+    return (
+      <p key={label} className="mb-0">
+        <strong>{label}</strong> counted: {votes.format(counted)}
+        {percentage &&
+          ` of ${votes.format(total)} expected formal votes (${percentage})`}
+        .
+      </p>
+    );
+  });
 }
 
 function MovementValue({before, after, change, seatCount}) {
@@ -101,50 +104,6 @@ SavedDetails.propTypes = {
   title: PropTypes.string.isRequired,
   children: PropTypes.node.isRequired,
 };
-
-function SeatMovements({comparison, parties, code, seatLink, diagnostics}) {
-  const grouped = new Map();
-  for (const row of comparison.win_changes || []) {
-    if (!grouped.has(row.seat)) grouped.set(row.seat, []);
-    grouped.get(row.seat).push(row);
-  }
-  // The server ranks seats by the sum of all absolute movements, including
-  // parties below the display threshold. Older API responses lack that total.
-  const weight = ([seat, rows]) =>
-    comparison.win_change_totals?.[seat] ??
-    rows.reduce((total, row) => total + Math.abs(row.change_pp), 0);
-  const seats = [...grouped].sort(
-    (a, b) => weight(b) - weight(a) || a[0].localeCompare(b[0], 'en-AU')
-  );
-  const seatList = rows => (
-    <ol>
-      {rows.map(([seat, candidates]) => (
-        <li key={seat}>
-          <strong>
-            <Link to={seatLink(seat)}>{seat}</Link>
-          </strong>
-          <CandidateMovements rows={candidates} parties={parties} code={code} />
-        </li>
-      ))}
-    </ol>
-  );
-
-  return (
-    <>
-      <h3 className="h6">Seat win probability changes</h3>
-      {seats.length > 0 && seatList(seats.slice(0, 5))}
-      {seats.length === 0 && <p>No candidate’s win probability changed.</p>}
-      {diagnostics && seats.length > 5 && (
-        <SavedDetails
-          section="retained-movements"
-          title={`All retained movements (${comparison.win_changes.length})`}
-        >
-          {seatList(seats)}
-        </SavedDetails>
-      )}
-    </>
-  );
-}
 
 // An FP and a TCP return can cover the same ballots. Rank units by the
 // larger reported change, and show each count type only when its total moved.
@@ -314,7 +273,7 @@ function ElectionMovements({statewide, partyAbbr, code, diagnostics}) {
     <SavedDetails section="election-movement" title="Election-wide movement">
       {groups.map(({title, rows, seatCount}) => (
         <section key={title} className="mt-2">
-          <h3 className="h6">{title}</h3>
+          <h4 className="h6">{title}</h4>
           <ul>
             {rows.map(({id, party, label, start, end}) => (
               <li key={id}>
@@ -355,23 +314,58 @@ export default function MechanicalChanges({
   diagnostics,
 }) {
   const {booth_changes: booth, statewide} = comparison;
+  const parties = Object.fromEntries(partyAbbr);
+  const grouped = new Map();
+  for (const row of comparison.win_changes || []) {
+    if (!grouped.has(row.seat)) grouped.set(row.seat, []);
+    grouped.get(row.seat).push(row);
+  }
+  // The server ranks seats by the sum of all absolute movements, including
+  // parties below the display threshold. Older API responses lack that total.
+  const weight = ([seat, rows]) =>
+    comparison.win_change_totals?.[seat] ??
+    rows.reduce((total, row) => total + Math.abs(row.change_pp), 0);
+  const seats = [...grouped].sort(
+    (a, b) => weight(b) - weight(a) || a[0].localeCompare(b[0], 'en-AU')
+  );
+  const seatList = rows => (
+    <ol>
+      {rows.map(([seat, candidates]) => (
+        <li key={seat}>
+          <strong>
+            <Link to={seatLink(seat)}>{seat}</Link>
+          </strong>
+          <CandidateMovements rows={candidates} parties={parties} code={code} />
+        </li>
+      ))}
+    </ol>
+  );
 
   return (
     <>
-      <SeatMovements
-        comparison={comparison}
-        parties={Object.fromEntries(partyAbbr)}
-        code={code}
-        seatLink={seatLink}
-        diagnostics={diagnostics}
-      />
-      <BoothChanges booth={booth} seatLink={seatLink} />
-      <ElectionMovements
-        statewide={statewide}
-        partyAbbr={partyAbbr}
-        code={code}
-        diagnostics={diagnostics}
-      />
+      <RecentChangesSection title="Seat win chance changes">
+        {seats.length > 0 && seatList(seats.slice(0, 5))}
+        {seats.length === 0 && (
+          <p className="mb-0">No candidate’s win probability changed.</p>
+        )}
+      </RecentChangesSection>
+      <RecentChangesSection title="Other updates">
+        <ElectionMovements
+          statewide={statewide}
+          partyAbbr={partyAbbr}
+          code={code}
+          diagnostics={diagnostics}
+        />
+        <BoothChanges booth={booth} seatLink={seatLink} />
+        {diagnostics && seats.length > 5 && (
+          <SavedDetails
+            section="retained-movements"
+            title={`All retained movements (${comparison.win_changes.length})`}
+          >
+            {seatList(seats)}
+          </SavedDetails>
+        )}
+      </RecentChangesSection>
     </>
   );
 }
@@ -383,13 +377,6 @@ CandidateMovements.propTypes = {
   rows: PropTypes.array.isRequired,
   parties: PropTypes.object.isRequired,
   code: PropTypes.string.isRequired,
-};
-SeatMovements.propTypes = {
-  comparison: PropTypes.object.isRequired,
-  parties: PropTypes.object.isRequired,
-  code: PropTypes.string.isRequired,
-  seatLink: PropTypes.func.isRequired,
-  diagnostics: PropTypes.bool,
 };
 MechanicalChanges.propTypes = {
   comparison: PropTypes.object.isRequired,

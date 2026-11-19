@@ -66,6 +66,7 @@ test('Numbers is the default and Text preserves the selected period and labels g
     run: {election: '2026sa', timezone: 'Australia/Adelaide'},
     report: {},
     schedule: {},
+    source_time: '2026-03-21T09:03:00Z',
     yesterday: {pending: true},
     windows: {
       previous: {comparison, commentary: previous},
@@ -88,13 +89,30 @@ test('Numbers is the default and Text preserves the selected period and labels g
   expect(
     screen.getByRole('button', {name: 'Display: Numbers'})
   ).toBeInTheDocument();
-  expect(screen.getByText('Seat win probability changes')).toBeInTheDocument();
+  const headings = () =>
+    screen
+      .getAllByRole('heading', {level: 3})
+      .map(heading => heading.textContent);
+  const expectTimestampFirst = () => {
+    const timing = screen.getByText(/Pre-count reference to/).parentElement;
+    expect(timing).toHaveClass('text-center');
+    expect(timing.nextElementSibling).toBe(
+      screen.getByRole('heading', {name: 'Counting Progress'})
+    );
+  };
+  expect(headings()).toEqual([
+    'Counting Progress',
+    'Seat win chance changes',
+    'Other updates',
+  ]);
+  expectTimestampFirst();
   expect(screen.queryByText('54%')).toBeNull();
   expect(screen.queryByText(/large language model/)).toBeNull();
 
   choose('Display: Numbers', 'Text');
   expect(screen.getByText(/large language model/)).toBeInTheDocument();
-  expect(screen.queryByText('Seat win probability changes')).toBeNull();
+  expect(headings()).toEqual(['Counting Progress', 'Commentary']);
+  expectTimestampFirst();
   expect(screen.getByText('54%').tagName).toBe('STRONG');
   const seat = screen.getByRole('link', {name: 'Alpha'});
   expect(seat).toHaveAttribute('href', '/replay/seat/Alpha');
@@ -112,7 +130,7 @@ test('Numbers is the default and Text preserves the selected period and labels g
   expect(
     screen.getByRole('button', {name: 'Period: Since the start'})
   ).toBeInTheDocument();
-  expect(screen.getByText('Seat win probability changes')).toBeInTheDocument();
+  expect(screen.getByText('Seat win chance changes')).toBeInTheDocument();
   expect(screen.queryByText('No new counting.')).toBeNull();
 
   fireEvent.click(
@@ -254,7 +272,15 @@ test('count progress, ranked candidates and election movement render with local-
 
   page.rerender(display({...data, local_diagnostics: true}));
   expect(screen.getByText(/Reference f00000001/)).toBeInTheDocument();
-  expect(screen.getByText('All retained movements (7)')).toBeInTheDocument();
+  expect(
+    [...page.container.querySelectorAll('details > summary')].map(
+      summary => summary.textContent
+    )
+  ).toEqual([
+    'Election-wide movement',
+    'Booth and declaration counts (0)',
+    'All retained movements (7)',
+  ]);
   expect(
     screen.getByRole('heading', {name: 'Expected seats'})
   ).toBeInTheDocument();
@@ -369,7 +395,7 @@ test('structured commentary renders headings and escaped bullets and remembers t
     screen.getByRole('heading', {name: 'Key changes:'})
   ).toBeInTheDocument();
   expect(
-    screen.getByRole('link', {name: 'Alpha'}).closest('h3')
+    screen.getByRole('link', {name: 'Alpha'}).closest('h4')
   ).toHaveTextContent('In Alpha (LIB 20.3%):');
   expect(screen.getByRole('link', {name: 'Alpha'})).toHaveAttribute(
     'href',

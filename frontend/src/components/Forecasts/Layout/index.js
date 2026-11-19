@@ -24,6 +24,7 @@ import {
   VoteTotals,
 } from 'components';
 
+import PreferenceFlows from '../PreferenceFlows';
 import styles from './Layout.module.css';
 
 const ForecastLayout = props => {
@@ -164,6 +165,15 @@ const ForecastLayout = props => {
                   />
                 </StandardErrorBoundary>
               )}
+              {mode === 'live' &&
+                forecast.statewidePreferenceFlows?.length > 0 && (
+                  <StandardErrorBoundary>
+                    <PreferenceFlows
+                      forecast={forecast}
+                      windowWidth={windowDimensions.width}
+                    />
+                  </StandardErrorBoundary>
+                )}
               {live?.summary && (
                 <StandardErrorBoundary>{live.summary}</StandardErrorBoundary>
               )}

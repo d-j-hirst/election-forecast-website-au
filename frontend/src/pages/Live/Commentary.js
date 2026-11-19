@@ -68,7 +68,7 @@ function CommentaryBlock({text, render}) {
 
   return (
     <>
-      <h3 className="h6">{render(heading)}</h3>
+      <h4 className="h6">{render(heading)}</h4>
       {points.length > 0 && (
         <ul>
           {points.map((line, index) => (
@@ -128,7 +128,7 @@ export default function Commentary({item, seatLink, code}) {
   const structured = item.format === 'seat-bullets-v1';
   return (
     <section>
-      {item.source === 'local' && <h3 className="h6">Counting update</h3>}
+      {item.source === 'local' && <h4 className="h6">Counting update</h4>}
       {item.source !== 'local' && <CommentaryNotice />}
       {structured && (
         <CommentaryBlock text={item.text?.summary} render={render} />

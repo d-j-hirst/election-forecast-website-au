@@ -11,6 +11,7 @@ import Commentary from './Commentary';
 import {countTime} from 'utils/date';
 import styles from 'components/Forecasts/History/History.module.css';
 import MechanicalChanges, {Counts} from './MechanicalChanges';
+import RecentChangesSection from './RecentChangesSection';
 
 const labels = {
   previous: 'Previous Update',
@@ -151,41 +152,44 @@ export default function UpdateSummary({data, seatLink}) {
               </DropdownButton>
             </ListGroup.Item>
           )}
-          <ListGroup.Item>
+
+          {w && (
+            <ListGroup.Item className="text-center">
+              {yesterday && <div>Reporting day {yesterday.report_date}</div>}
+              <div>
+                {countTime(w.reference_source_time, zone)} to{' '}
+                {countTime(yesterday?.source_time || data.source_time, zone)}
+                {Number.isFinite(w.actual_seconds) &&
+                  ' (' + Math.round(w.actual_seconds / 60) + ' min)'}
+                {diagnostics &&
+                  w.reference_forecast_id &&
+                  ' · Reference ' + w.reference_forecast_id}
+                {w.input_revision_changed && ' · Forecast inputs changed'}
+              </div>
+            </ListGroup.Item>
+          )}
+          <RecentChangesSection title="Counting Progress">
             <Counts progress={count} />
-            {yesterday && <p>Reporting day {yesterday.report_date}</p>}
-            {!w && <p>No comparison available.</p>}
-            {w?.available && (
-              <>
-                <p>
-                  {countTime(w.reference_source_time, zone)} to{' '}
-                  {countTime(yesterday?.source_time || data.source_time, zone)}
-                  {Number.isFinite(w.actual_seconds) &&
-                    ' (' + Math.round(w.actual_seconds / 60) + ' min)'}
-                  {diagnostics &&
-                    w.reference_forecast_id &&
-                    ' · Reference ' + w.reference_forecast_id}
-                  {w.input_revision_changed && ' · Forecast inputs changed'}
-                </p>
-                {display === 'numbers' && (
-                  <MechanicalChanges
-                    comparison={w}
-                    partyAbbr={data.report.partyAbbr}
-                    code={data.run.election}
-                    diagnostics={diagnostics}
-                    seatLink={seatLink}
-                  />
-                )}
-                {display === 'text' && (
-                  <Commentary
-                    item={entry.commentary}
-                    seatLink={seatLink}
-                    code={data.run.election}
-                  />
-                )}
-              </>
-            )}
-          </ListGroup.Item>
+          </RecentChangesSection>
+          {!w && <ListGroup.Item>No comparison available.</ListGroup.Item>}
+          {w && display === 'numbers' && (
+            <MechanicalChanges
+              comparison={w}
+              partyAbbr={data.report.partyAbbr}
+              code={data.run.election}
+              diagnostics={diagnostics}
+              seatLink={seatLink}
+            />
+          )}
+          {w && display === 'text' && (
+            <RecentChangesSection title="Commentary">
+              <Commentary
+                item={entry.commentary}
+                seatLink={seatLink}
+                code={data.run.election}
+              />
+            </RecentChangesSection>
+          )}
         </ListGroup>
       </Card.Body>
     </Card>

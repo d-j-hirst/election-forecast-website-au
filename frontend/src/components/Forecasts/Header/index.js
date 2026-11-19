@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import {countTime, parseDateStringAsUTC} from '../../../utils/date.js';
+import formatCountPercentage from 'utils/formatCountPercentage';
 
 import StandardErrorBoundary from '../../General/StandardErrorBoundary';
 
@@ -13,6 +14,14 @@ const ForecastHeader = props => {
     nowcast: 'Nowcast',
     live: 'Live Forecast',
   };
+
+  const progress = props.mode === 'live' ? props.forecast.countProgress : null;
+  const total = progress?.expected_formal_votes;
+  const fp = formatCountPercentage(progress?.fp_votes, total);
+  const tcp = formatCountPercentage(progress?.tcp_votes, total);
+  const counted = [fp && `FP ${fp}`, tcp && `TCP ${tcp}`]
+    .filter(Boolean)
+    .join(', ');
   return (
     <StandardErrorBoundary>
       <div className={styles.forecastTitle}>
@@ -36,6 +45,7 @@ const ForecastHeader = props => {
             {props.archive !== true && <>{props.forecast.reportLabel}</>}
           </>
         )}
+        {counted && <> · Count progress: {counted}</>}
       </div>
     </StandardErrorBoundary>
   );
