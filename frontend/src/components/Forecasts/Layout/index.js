@@ -108,6 +108,11 @@ const ForecastLayout = props => {
                 sourceTime={publication?.source_time}
                 timeZone={publication?.run.timezone}
                 replayName={replay ? publication?.run.display_name : undefined}
+                replaySnapshotId={
+                  replay && publication?.local_diagnostics === true
+                    ? publication.forecast_id
+                    : undefined
+                }
               />
               <ForecastAlert
                 code={code}

@@ -25,13 +25,15 @@ export default function SeatWinHistory({samples, axis, parties, zone}) {
     const row = {unixDate};
     wins.forEach(([party, name, value]) => {
       const key = JSON.stringify([party, name]);
-      const abbreviation = parties[party] || 'OTH';
+      const abbreviation = parties[party];
       if (!lines.has(key)) {
+        const label =
+          name && abbreviation ? name + ' (' + abbreviation + ')' : name;
         lines.set(key, {
           id: 'p' + lines.size,
-          name: name || emergingLabels[party] || abbreviation,
+          name: label || emergingLabels[party] || abbreviation || 'OTH',
           colour:
-            jsonMap(colours, abbreviation)?.[0] ??
+            jsonMap(colours, abbreviation || 'OTH')?.[0] ??
             otherColours[lines.size % otherColours.length],
           visible: false,
         });

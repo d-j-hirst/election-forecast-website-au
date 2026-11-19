@@ -521,3 +521,76 @@ test('each disclosure remembers opening and closing across visits', async () => 
   expect(disclosure(booth)).not.toHaveAttribute('open');
   expect(disclosure(election)).toHaveAttribute('open');
 });
+
+test('commentary shortens repeat candidate mentions within each development', () => {
+  const alphaLib = '{candidate:Alpha:1}';
+  const alphaInd = '{candidate:Alpha:2}';
+  const betaLib = '{candidate:Beta:1}';
+  const betaCoalition = '{candidate:Beta:3}';
+  const betaJohn = '{candidate:Beta:4}';
+  const betaJune = '{candidate:Beta:5}';
+  const candidate = (seat, label, party) => ({
+    kind: 'candidate',
+    seat,
+    label,
+    party,
+  });
+  const item = {
+    status: 'complete',
+    format: 'seat-bullets-v1',
+    entities: {
+      [alphaLib]: candidate('Alpha', 'Sam Telfer', 'LNP'),
+      [alphaInd]: candidate('Alpha', 'Meghan Petherick', 'IND'),
+      [betaLib]: candidate('Beta', 'Ada Lorne', 'LIB'),
+      [betaCoalition]: candidate('Beta', 'Bert Pine', 'LNP'),
+      [betaJohn]: candidate('Beta', 'John Kerr', 'IND'),
+      [betaJune]: candidate('Beta', 'June Kerr', 'IND'),
+    },
+    text: {
+      summary: `Key changes:\n- ${alphaLib} gained ground.`,
+      developments: [
+        {
+          seats: ['Alpha'],
+          text: `In Alpha:\n- The contest is between ${alphaLib} and ${alphaInd}.\n- At the booth, ${alphaLib} received **85.7%** against ${alphaInd}.`,
+        },
+        {
+          seats: ['Beta'],
+          text: `In Beta:\n- ${betaLib} leads.\n- ${betaLib} gained before ${betaCoalition} caught up.\n- ${betaCoalition} now leads.\n- ${betaJohn} and ${betaJune} both moved.\n- ${betaJune} gained at the next booth.`,
+        },
+      ],
+    },
+  };
+  const data = {
+    run: {election: '2026sa'},
+    schedule: {},
+    report: {},
+    windows: {
+      previous: {
+        comparison: {available: true, win_changes: []},
+        commentary: item,
+      },
+    },
+  };
+
+  render(
+    <React.StrictMode>
+      <MemoryRouter>
+        <UpdateSummary data={data} seatLink={name => '/seat/' + name} />
+      </MemoryRouter>
+    </React.StrictMode>
+  );
+  choose('Display: Numbers', 'Text');
+  expect(
+    screen.getAllByRole('listitem').map(point => point.textContent)
+  ).toEqual([
+    'Sam Telfer LIB gained ground.',
+    'The contest is between Sam Telfer LIB and Meghan Petherick IND.',
+    'At the booth, LIB received 85.7% against Petherick IND.',
+    'Ada Lorne LIB leads.',
+    'Lorne LIB gained before Bert Pine LIB caught up.',
+    'Pine LIB now leads.',
+    'John Kerr IND and June Kerr IND both moved.',
+    'June Kerr IND gained at the next booth.',
+  ]);
+  expect(screen.getByText('85.7%').tagName).toBe('STRONG');
+});

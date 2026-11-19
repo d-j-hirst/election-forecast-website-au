@@ -5,9 +5,11 @@ import DropdownButton from 'react-bootstrap/DropdownButton';
 import ListGroup from 'react-bootstrap/ListGroup';
 import {
   Area,
+  CartesianGrid,
   ComposedChart,
   ErrorBar,
   Line,
+  ReferenceLine,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -28,6 +30,44 @@ function candidateLabel([id, name], parties) {
 
 const pairKey = pair => [...pair].sort((a, b) => a - b).join('/');
 
+// Round the padded interval outward to a regular percentage grid. These
+// spacings all land on 50%, so the majority threshold gets a normal tick
+// whenever it is in view.
+function voteShareAxis(intervals) {
+  const {minVoteTotal, maxVoteTotal} = distributionBounds(intervals);
+  const span = maxVoteTotal - minVoteTotal;
+  let step = 10;
+  if (span <= 10) step = 2;
+  else if (span <= 25) step = 5;
+
+  const padding = Math.max(0.1, span * 0.08);
+  const lower = Math.max(0, Math.floor((minVoteTotal - padding) / step) * step);
+  const upper = Math.min(
+    100,
+    Math.ceil((maxVoteTotal + padding) / step) * step
+  );
+  const ticks = Array.from(
+    {length: (upper - lower) / step + 1},
+    (_, index) => lower + index * step
+  );
+  return {domain: [lower, upper], ticks};
+}
+
+// The emerging categories are optional forecasts. Keep them when either
+// bound shows a possible vote share in the selected period.
+function includeFpCandidate([identity, currentBand], samples) {
+  if (identity[0] !== -2 && identity[0] !== -3) return true;
+  const key = JSON.stringify(identity);
+  const bands = samples
+    .map(
+      sample =>
+        sample.fp.find(([candidate]) => JSON.stringify(candidate) === key)?.[1]
+    )
+    .filter(Boolean);
+  if (!bands.length) bands.push(currentBand);
+  return bands.some(band => band.some(share => share > 0));
+}
+
 // Seat history uses one shared timeline. Retain a row for every publication
 // so Recharts breaks both the median line and the band at missing observations.
 export default function SeatVoteHistory({
@@ -46,7 +86,10 @@ export default function SeatVoteHistory({
   const frequencies = new Map(
     tcpScenarios.map(([pair, frequency]) => [pairKey(pair), frequency])
   );
-  const options = current.map(([identity]) => {
+  const available = tcp
+    ? current
+    : current.filter(entry => includeFpCandidate(entry, samples));
+  const options = available.map(([identity]) => {
     const candidates = tcp ? identity : [identity];
     const names = candidates.map(candidate =>
       candidateLabel(candidate, parties)
@@ -88,12 +131,7 @@ export default function SeatVoteHistory({
     return row;
   });
   const intervals = data.filter(row => row.interval).map(row => row.interval);
-  const {minVoteTotal, maxVoteTotal} = distributionBounds(intervals);
-  const padding = Math.max(0.1, (maxVoteTotal - minVoteTotal) * 0.08);
-  const domain = [
-    Math.max(0, Math.floor((minVoteTotal - padding) * 10) / 10),
-    Math.min(100, Math.ceil((maxVoteTotal + padding) * 10) / 10),
-  ];
+  const {domain, ticks} = voteShareAxis(intervals);
   const palette = jsonMap(colours, selected.party, jsonMap(colours, 'OTH'));
   // A single observation has no area to shade. A whisker keeps both ends
   // of its interval visible even if the scenario disappears immediately.
@@ -153,7 +191,8 @@ export default function SeatVoteHistory({
               domain={domain}
               allowDataOverflow
               unit="%"
-              tickCount={6}
+              ticks={ticks}
+              interval={0}
               width={48}
             />
             <Tooltip
@@ -174,6 +213,13 @@ export default function SeatVoteHistory({
               connectNulls={false}
               isAnimationActive={false}
             />
+            {/* Keep the guides above the shaded interval and below the median. */}
+            <CartesianGrid
+              vertical={false}
+              stroke="#6c757d"
+              strokeOpacity={0.5}
+            />
+            {tcp && <ReferenceLine y={50} stroke="#495057" />}
             <Line
               dataKey="median"
               name="Median"

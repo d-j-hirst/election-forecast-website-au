@@ -6,7 +6,10 @@ import ForecastLayout from './index';
 import {fetchReport} from '../../../utils/report_manager';
 import {History, Seats} from 'components';
 
-jest.mock('../../../utils/report_manager', () => ({fetchReport: jest.fn()}));
+jest.mock('../../../utils/report_manager', () => ({
+  fetchReport: jest.fn(),
+  fetchResults: jest.fn(),
+}));
 // Keep layout/recovery/heading code real; the numerical feature displays have
 // their own tests and need not be given a complete report for this lifecycle test.
 jest.mock('components', () => ({
@@ -93,6 +96,8 @@ test('a replay uses the forecast layout with only its run history and seat links
         },
       },
       source_time: '2026-03-21T08:00:00Z',
+      forecast_id: 'f00000005',
+      local_diagnostics: true,
       run: {
         kind: 'replay',
         display_name: 'sample',
@@ -115,7 +120,9 @@ test('a replay uses the forecast layout with only its run history and seat links
   expect(screen.getByText('Replay update summary')).toBeInTheDocument();
   const status = screen.getByText(/Count observation/);
   expect(status).toHaveTextContent('21 Mar');
-  expect(status).toHaveTextContent('· Count progress: FP 0.3%, TCP 0.1%');
+  expect(status).toHaveTextContent(
+    '· Count progress: FP 0.3%, TCP 0.1% · Snapshot f00000005'
+  );
   expect(History.mock.calls.at(-1)[0]).toMatchObject({
     runPoints: points,
     timeZone: 'Australia/Adelaide',
@@ -167,6 +174,7 @@ test('a replay uses the forecast layout with only its run history and seat links
     ...live,
     publication: {
       ...live.publication,
+      forecast_id: 'f00000006',
       report: {
         ...live.publication.report,
         statewidePreferenceFlows: [
@@ -177,6 +185,9 @@ test('a replay uses the forecast layout with only its run history and seat links
     },
   };
   view.rerender(replayTree(updated));
+  expect(screen.getByText(/Count observation/)).toHaveTextContent(
+    'Snapshot f00000006'
+  );
   expect(
     within(card).getByRole('button', {name: 'Flow: LIB → ON vs ALP'})
   ).toBeInTheDocument();
@@ -194,6 +205,7 @@ test('a replay uses the forecast layout with only its run history and seat links
       ...live,
       publication: {
         ...live.publication,
+        local_diagnostics: false,
         report: {
           ...live.publication.report,
           statewidePreferenceFlows: undefined,
@@ -204,6 +216,23 @@ test('a replay uses the forecast layout with only its run history and seat links
   expect(
     screen.queryByRole('heading', {name: 'Preference Flows'})
   ).not.toBeInTheDocument();
+  expect(screen.getByText(/Count observation/)).not.toHaveTextContent(
+    'Snapshot'
+  );
+
+  view.rerender(
+    replayTree({
+      ...live,
+      replay: false,
+      publication: {
+        ...live.publication,
+        run: {...live.publication.run, kind: 'live'},
+      },
+    })
+  );
+  expect(screen.getByText(/Count observation/)).not.toHaveTextContent(
+    'Snapshot'
+  );
 });
 
 test('an outer render failure recovers on the next healthy election/archive delivery', () => {

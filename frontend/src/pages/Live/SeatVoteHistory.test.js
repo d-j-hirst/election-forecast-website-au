@@ -34,6 +34,20 @@ const choose = (toggle, option) => {
   fireEvent.click(screen.getByRole('button', {name: option}));
 };
 
+const voteTicks = container =>
+  [
+    ...container.querySelectorAll(
+      '.recharts-yAxis .recharts-cartesian-axis-tick-value'
+    ),
+  ].map(tick => tick.textContent);
+const gridLines = container => [
+  ...container.querySelectorAll('.recharts-cartesian-grid-horizontal line'),
+];
+const paintedBefore = (earlier, later) =>
+  Boolean(
+    earlier.compareDocumentPosition(later) & Node.DOCUMENT_POSITION_FOLLOWING
+  );
+
 test('current pairings select conditional TCP histories with visible gaps in line and band', () => {
   const points = snapshots([[ac, bc], [ac], [], [ac], [ab, ac]]);
   const tcpScenarios = [
@@ -69,18 +83,20 @@ test('current pairings select conditional TCP histories with visible gaps in lin
       '21.5% of simulations in the current forecast reach this pairing.'
     )
   ).toBeInTheDocument();
-  const voteTicks = [
-    ...view.container.querySelectorAll(
-      '.recharts-yAxis .recharts-cartesian-axis-tick-value'
-    ),
-  ];
-  expect(voteTicks.length).toBeGreaterThan(1);
-  expect(
-    voteTicks.every(
-      tick =>
-        parseFloat(tick.textContent) > 50 && parseFloat(tick.textContent) < 62
-    )
-  ).toBe(true);
+  expect(voteTicks(view.container)).toEqual([
+    '52%',
+    '54%',
+    '56%',
+    '58%',
+    '60%',
+  ]);
+  expect(gridLines(view.container)).toHaveLength(5);
+  const band = view.container.querySelector('.recharts-area');
+  const grid = view.container.querySelector('.recharts-cartesian-grid');
+  const median = view.container.querySelector('.recharts-line');
+  expect(paintedBefore(band, grid)).toBe(true);
+  expect(paintedBefore(grid, median)).toBe(true);
+  expect(view.container.querySelector('.recharts-reference-line')).toBeNull();
   for (const path of ['.recharts-line-curve', '.recharts-area-area']) {
     const d = view.container.querySelector(path).getAttribute('d');
     expect(d.match(/M/g)).toHaveLength(2);
@@ -96,12 +112,26 @@ test('current pairings select conditional TCP histories with visible gaps in lin
   expect(selector).toHaveTextContent(
     'Final pairing: Ada (A) / Bill (B) (38.0%)'
   );
+  expect(voteTicks(view.container)).toEqual([
+    '46%',
+    '48%',
+    '50%',
+    '52%',
+    '54%',
+  ]);
+  const majority = view.container.querySelector('.recharts-reference-line');
+  expect(majority.querySelector('line').getAttribute('y1')).toBe(
+    gridLines(view.container)[2].getAttribute('y1')
+  );
+  expect(
+    paintedBefore(majority, view.container.querySelector('.recharts-line'))
+  ).toBe(true);
   expect(
     view.container.querySelectorAll('.recharts-errorBar line')
   ).toHaveLength(3);
 });
 
-test('FP candidate identity includes replacements and keeps zero shares', () => {
+test('FP history omits zero-only emerging categories and keeps named candidates', () => {
   const points = [
     [
       '2026-03-21T09:00:00Z',
@@ -111,10 +141,33 @@ test('FP candidate identity includes replacements and keeps zero shares', () => 
           [0, 'Former candidate'],
           [150, 200, 250],
         ],
+        [
+          [-2, null],
+          [0, 0, 10],
+        ],
+        [
+          [-3, null],
+          [0, 0, 0],
+        ],
       ],
       [],
     ],
-    ['2026-03-21T09:01:00Z', [], [[ada, [0, 0, 0]]], []],
+    [
+      '2026-03-21T09:01:00Z',
+      [],
+      [
+        [ada, [0, 0, 0]],
+        [
+          [-2, null],
+          [0, 0, 0],
+        ],
+        [
+          [-3, null],
+          [0, 0, 0],
+        ],
+      ],
+      [],
+    ],
   ];
   const view = render(
     <SeatHistory points={points} parties={parties} zone="UTC" />
@@ -126,9 +179,53 @@ test('FP candidate identity includes replacements and keeps zero shares', () => 
     within(selector.parentElement)
       .getAllByRole('button')
       .map(x => x.textContent)
-  ).toEqual(['Candidate: Ada (A)', 'Ada (A)']);
+  ).toEqual(['Candidate: Ada (A)', 'Ada (A)', 'Emerging independent']);
   expect(view.container.querySelectorAll('.recharts-line-dot')).toHaveLength(1);
+  expect(voteTicks(view.container)).toEqual(['0%', '2%']);
+
+  view.rerender(
+    <SeatHistory points={points.slice(1)} parties={parties} zone="UTC" />
+  );
+  expect(
+    within(selector.parentElement)
+      .getAllByRole('button')
+      .map(x => x.textContent)
+  ).toEqual(['Candidate: Ada (A)', 'Ada (A)']);
 });
+
+test.each([
+  [
+    [127, 240, 349],
+    ['10%', '15%', '20%', '25%', '30%', '35%', '40%'],
+  ],
+  [
+    [17, 240, 464],
+    ['0%', '10%', '20%', '30%', '40%', '50%'],
+  ],
+])(
+  'FP history uses evenly spaced gridlines for interval %j',
+  (band, expected) => {
+    const points = [0, 1].map(i => [
+      '2026-03-21T09:0' + i + ':00Z',
+      [],
+      [[ada, band]],
+      [],
+    ]);
+    const {container} = render(
+      <SeatHistory points={points} parties={parties} zone="UTC" />
+    );
+    choose('Display: Win probability', 'First preference vote');
+    expect(voteTicks(container)).toEqual(expected);
+    expect(gridLines(container)).toHaveLength(expected.length);
+    const positions = gridLines(container).map(line =>
+      Number(line.getAttribute('y1'))
+    );
+    const spacing = positions[0] - positions[1];
+    for (let i = 1; i < positions.length; i += 1) {
+      expect(positions[i - 1] - positions[i]).toBeCloseTo(spacing);
+    }
+  }
+);
 
 test('win history has its own legend below the chart and switches between time and date ticks', () => {
   const points = [
@@ -166,6 +263,7 @@ test('win history has its own legend below the chart and switches between time a
   expect(
     chart.compareDocumentPosition(legend) & Node.DOCUMENT_POSITION_FOLLOWING
   ).toBeTruthy();
+  expect(within(legend).getByText('Ada (A)')).toBeInTheDocument();
   expect(within(legend).getByText('Emerging independent')).toBeInTheDocument();
   expect(within(legend).queryByText('Emerging party')).toBeNull();
   expect(view.container.querySelector('.recharts-yAxis')).toHaveTextContent(

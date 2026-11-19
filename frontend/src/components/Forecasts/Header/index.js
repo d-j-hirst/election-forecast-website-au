@@ -46,6 +46,7 @@ const ForecastHeader = props => {
           </>
         )}
         {counted && <> · Count progress: {counted}</>}
+        {props.replaySnapshotId && <> · Snapshot {props.replaySnapshotId}</>}
       </div>
     </StandardErrorBoundary>
   );
@@ -57,6 +58,7 @@ ForecastHeader.propTypes = {
   sourceTime: PropTypes.string,
   timeZone: PropTypes.string,
   replayName: PropTypes.string,
+  replaySnapshotId: PropTypes.string,
 };
 
 export default ForecastHeader;
