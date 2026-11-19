@@ -103,7 +103,7 @@ SeatsRow.propTypes = {
 };
 
 const SeatsRowSet = props => {
-  let freqs = props.forecast.seatCountFrequencies.sort((el1, el2) => {
+  let freqs = [...props.forecast.seatCountFrequencies].sort((el1, el2) => {
     return el2[1][7] - el1[1][7];
   });
   freqs = freqs.filter(a => a[1][a[1].length - 1] > 0);

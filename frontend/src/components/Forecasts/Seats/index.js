@@ -91,7 +91,7 @@ const SeatRow = props => {
   const asterisk = seatAsterisks.hasOwnProperty(asteriskCode)
     ? seatAsterisks[asteriskCode]
     : '';
-  const incumbentIndex = props.forecast.seatIncumbents[props.index];
+  const incumbentIndex = props.forecast.seatIncumbents?.[props.index];
   const tempAbbr = jsonMap(props.forecast.partyAbbr, incumbentIndex);
   const incumbentAbbr =
     props.forecast.coalitionSeatCountFrequencies && tempAbbr === 'LNP'
@@ -100,7 +100,7 @@ const SeatRow = props => {
         ? 'LNPx'
         : 'LIB'
       : tempAbbr;
-  const margin = props.forecast.seatMargins[props.index];
+  const margin = props.forecast.seatMargins?.[props.index];
 
   const freqs = deepCopy(props.forecast.seatPartyWinFrequencies[props.index]);
   freqs.sort((a, b) => {
@@ -109,16 +109,18 @@ const SeatRow = props => {
     return partyCategory(aName) - partyCategory(bName);
   });
   const detailsLink =
-    props.archiveId !== undefined
+    props.seatLink?.(seatName) ??
+    (props.archiveId !== undefined
       ? `/archive/${props.election}/${props.archiveId}/seat/${getSeatUrl(
           seatName
         )}`
-      : `/seat/${props.election}/${props.mode}/${getSeatUrl(seatName)}`;
+      : `/seat/${props.election}/${props.mode}/${getSeatUrl(seatName)}`);
 
   const winner = getTcpWinner(props.result?.tcp);
 
   let detailsAvailable = true;
   if (
+    !props.seatLink &&
     props.archiveId === undefined &&
     props.election === '2022vic' &&
     props.mode === 'live'
@@ -153,14 +155,18 @@ const SeatRow = props => {
           {asterisk.length > 0 && (
             <TooltipWrapper tooltipText={asterisk}>*</TooltipWrapper>
           )}
-          {' - '}
-          <SmartBadge
-            party={incumbentAbbr}
-            termCode={props.forecast.termCode}
-          />{' '}
-          <TooltipWrapper tooltipText={marginTooltip} placement="bottom">
-            {Number(margin).toFixed(1)}%
-          </TooltipWrapper>
+          {incumbentAbbr && Number.isFinite(margin) && (
+            <>
+              {' - '}
+              <SmartBadge
+                party={incumbentAbbr}
+                termCode={props.forecast.termCode}
+              />{' '}
+              <TooltipWrapper tooltipText={marginTooltip} placement="bottom">
+                {margin.toFixed(1)}%
+              </TooltipWrapper>
+            </>
+          )}
           {useWarning(props.election, seatName) && (
             <>
               {' '}
@@ -197,7 +203,9 @@ const SeatRow = props => {
                 {!showMore && <>&#9660;more</>}
                 {showMore && <>&#9650;less</>}
               </button>
-              {(props.mode !== 'live' || props.election !== '2022sa') && (
+              {(props.seatLink ||
+                props.mode !== 'live' ||
+                props.election !== '2022sa') && (
                 <>
                   {'  |  '}
                   <Link to={detailsLink}>
@@ -227,6 +235,7 @@ const SeatRow = props => {
             forecast={props.forecast}
             windowWidth={props.windowWidth}
             mode={props.mode}
+            automated={Boolean(props.seatLink)}
             result={props.result}
             election={props.election}
           />
@@ -243,6 +252,7 @@ SeatRow.propTypes = {
   mode: PropTypes.string.isRequired,
   windowWidth: PropTypes.number.isRequired,
   archiveId: PropTypes.number,
+  seatLink: PropTypes.func,
 };
 
 const SeatMore = props => {
@@ -263,26 +273,31 @@ const SeatMore = props => {
         index={props.index}
         abbreviated={true}
       />
-      {(props.mode !== 'live' || props.election !== '2022sa') && (
-        <>
-          <SeatFpSection
-            forecast={props.forecast}
-            election={props.election}
-            index={props.index}
-            result={props.result}
-            windowWidth={props.windowWidth}
-            mode={props.mode}
-            abbreviated={true}
-          />
-          <SeatTcpSection
-            forecast={props.forecast}
-            election={props.election}
-            index={props.index}
-            result={props.result}
-            windowWidth={props.windowWidth}
-            abbreviated={true}
-          />
-        </>
+      {(props.automated
+        ? props.forecast.seatFpBands?.[props.index]?.length > 0
+        : props.mode !== 'live' || props.election !== '2022sa') && (
+        <SeatFpSection
+          forecast={props.forecast}
+          election={props.election}
+          index={props.index}
+          result={props.result}
+          windowWidth={props.windowWidth}
+          mode={props.mode}
+          automated={props.automated}
+          abbreviated={true}
+        />
+      )}
+      {(props.automated
+        ? props.forecast.seatTcpBands?.[props.index]?.length > 0
+        : props.mode !== 'live' || props.election !== '2022sa') && (
+        <SeatTcpSection
+          forecast={props.forecast}
+          election={props.election}
+          index={props.index}
+          result={props.result}
+          windowWidth={props.windowWidth}
+          abbreviated={true}
+        />
       )}
       {props.mode !== 'live' &&
         props.forecast.hasOwnProperty('seatSwingFactors') && (
@@ -300,6 +315,7 @@ const SeatMore = props => {
   );
 };
 SeatMore.propTypes = {
+  automated: PropTypes.bool,
   forecast: PropTypes.object.isRequired,
   result: PropTypes.object,
   index: PropTypes.number.isRequired,
@@ -372,7 +388,7 @@ const Seats = props => {
     Object.keys(props.results.seats).length > 0;
 
   const getIndexedMargins = () => {
-    return props.forecast.seatMargins.map((a, index) => [
+    return (props.forecast.seatMargins || []).map((a, index) => [
       index,
       a,
       jsonMap(
@@ -391,12 +407,10 @@ const Seats = props => {
     null,
     a => a >= 0
   );
+  const hasForecastSeats = party =>
+    jsonMap(props.forecast.seatCountFrequencies || [], party)?.at(-1) > 0;
   let libIndex = jsonMapReverse(props.forecast.partyAbbr, 'LIB');
-  if (
-    libIndex &&
-    jsonMap(props.forecast.seatCountFrequencies, libIndex)[14] === 0
-  )
-    libIndex = null;
+  if (libIndex && !hasForecastSeats(libIndex)) libIndex = null;
   let lnpIndex = jsonMapReverse(props.forecast.partyAbbr, 'LNP');
   if (lnpIndex < 0) {
     lnpIndex = jsonMapReverse(props.forecast.partyAbbr.slice(1), 'LNP');
@@ -404,39 +418,20 @@ const Seats = props => {
     // if there are no Nats it will be removed later
     libIndex = lnpIndex;
   }
-  if (
-    lnpIndex &&
-    jsonMap(props.forecast.seatCountFrequencies, lnpIndex)[14] === 0
-  )
-    libIndex = null;
+  if (lnpIndex && !hasForecastSeats(lnpIndex)) libIndex = null;
   let natIndex = jsonMapReverse(props.forecast.partyAbbr, 'NAT');
-  if (
-    natIndex &&
-    jsonMap(props.forecast.seatCountFrequencies, natIndex)[14] === 0
-  ) {
+  if (natIndex && !hasForecastSeats(natIndex)) {
     natIndex = null;
     libIndex = null; // If NAT is null because results are too low, don't need to show LIB either
   }
   // Also don't show LIB if NAT is simply absent
   if (!natIndex && lnpIndex) libIndex = null;
   let onIndex = jsonMapReverse(props.forecast.partyAbbr, 'ON');
-  if (
-    onIndex &&
-    jsonMap(props.forecast.seatCountFrequencies, onIndex)[14] === 0
-  )
-    onIndex = null;
+  if (onIndex && !hasForecastSeats(onIndex)) onIndex = null;
   let uapIndex = jsonMapReverse(props.forecast.partyAbbr, 'UAP');
-  if (
-    uapIndex &&
-    jsonMap(props.forecast.seatCountFrequencies, uapIndex)[14] === 0
-  )
-    uapIndex = null;
+  if (uapIndex && !hasForecastSeats(uapIndex)) uapIndex = null;
   let kapIndex = jsonMapReverse(props.forecast.partyAbbr, 'KAP');
-  if (
-    kapIndex &&
-    jsonMap(props.forecast.seatCountFrequencies, kapIndex)[14] === 0
-  )
-    kapIndex = null;
+  if (kapIndex && !hasForecastSeats(kapIndex)) kapIndex = null;
 
   let sortedIndices = [];
   const getWinnerChance = (seatName, index) => {
@@ -685,12 +680,16 @@ const Seats = props => {
                     Most unexpected
                   </Dropdown.Item>
                 )}
-                <Dropdown.Item as="button" onClick={setSortAlpTppMargin}>
-                  ALP 2PP margin
-                </Dropdown.Item>
-                <Dropdown.Item as="button" onClick={setSortLnpTppMargin}>
-                  {coalitionAbbreviation(props.election)} 2PP margin
-                </Dropdown.Item>
+                {props.forecast.seatMargins?.length > 0 && (
+                  <>
+                    <Dropdown.Item as="button" onClick={setSortAlpTppMargin}>
+                      ALP 2PP margin
+                    </Dropdown.Item>
+                    <Dropdown.Item as="button" onClick={setSortLnpTppMargin}>
+                      {coalitionAbbreviation(props.election)} 2PP margin
+                    </Dropdown.Item>
+                  </>
+                )}
                 <Dropdown.Item as="button" onClick={setSortAlpWinChance}>
                   ALP win chance
                 </Dropdown.Item>
@@ -785,6 +784,7 @@ const Seats = props => {
                 index={index}
                 key={props.forecast.seatNames[index]}
                 mode={props.mode}
+                seatLink={props.seatLink}
                 result={
                   props.results !== null &&
                   props.forecast.seatNames[index] in props.results.seats
@@ -807,6 +807,7 @@ Seats.propTypes = {
   mode: PropTypes.string.isRequired,
   windowWidth: PropTypes.number.isRequired,
   archiveId: PropTypes.number,
+  seatLink: PropTypes.func,
 };
 
 export default Seats;

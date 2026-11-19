@@ -149,7 +149,7 @@ const FpRowSet = props => {
   );
   const [showExplainer, setShowExplainer] = useState(false);
 
-  let freqs = props.forecast.fpFrequencies.sort((el1, el2) => {
+  let freqs = [...props.forecast.fpFrequencies].sort((el1, el2) => {
     return el2[1][7] - el1[1][7];
   });
   if (showCoalition) {
@@ -435,6 +435,7 @@ const VoteTotals = props => {
     showFpTotals = false;
   if (props.mode === 'live' && props.election === '2023nsw')
     showFpTotals = false;
+  if (props.automated) showFpTotals = props.forecast.fpFrequencies?.length > 0;
 
   return (
     <Card className={styles.summary}>
@@ -447,13 +448,15 @@ const VoteTotals = props => {
       <Card.Body className={styles.voteTotalsBody}>
         <ListGroup className={styles.voteTotalsList}>
           {showExplainer && <MainExplainer />}
-          <StandardErrorBoundary>
-            <TppRowSet
-              forecast={props.forecast}
-              results={props.results}
-              windowWidth={props.windowWidth}
-            />
-          </StandardErrorBoundary>
+          {(!props.automated || props.forecast.tppFrequencies?.length > 0) && (
+            <StandardErrorBoundary>
+              <TppRowSet
+                forecast={props.forecast}
+                results={props.results}
+                windowWidth={props.windowWidth}
+              />
+            </StandardErrorBoundary>
+          )}
           {showFpTotals && (
             <StandardErrorBoundary>
               <FpRowSet
@@ -463,7 +466,9 @@ const VoteTotals = props => {
               />
             </StandardErrorBoundary>
           )}
-          {(props.mode !== 'live' || props.election !== '2022sa') &&
+          {(props.automated ||
+            props.mode !== 'live' ||
+            props.election !== '2022sa') &&
             props.forecast.polls !== undefined && (
               <StandardErrorBoundary>
                 <VoteTrendChartSet
@@ -484,6 +489,7 @@ VoteTotals.propTypes = {
   election: PropTypes.string.isRequired,
   windowWidth: PropTypes.number.isRequired,
   isArchive: PropTypes.bool,
+  automated: PropTypes.bool,
 };
 
 export default VoteTotals;

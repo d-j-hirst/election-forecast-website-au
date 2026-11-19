@@ -55,6 +55,42 @@ with `APPEND_SLASH` enabled, adding a slash redirects only to a registered endpo
 
 ## Forecast publication and response caching
 
+### Automated live forecasts and local replays
+
+Apply the forecast migrations before using the automated uploader. Its
+`/forecast-api/live/v1/capabilities` handshake, run registration and forecast
+submissions coexist with the one-off report uploader. Registration and
+publication use the same JWT and submit permission described above. The
+database retains a digest of the exact upload, the compressed numerical report
+and the compact mechanical and commentary data. Keep the frozen originals with
+Polling Analyser if the retention rules need to be reapplied later.
+
+For a local rehearsal, set `DJANGO_LOCAL_REPLAY=1` with development settings
+and restart Django. Use a loopback-only development server and a local
+database. Run the Analyser watcher for a replay, start its reporting worker with
+`--watch <run-directory> --local`, and step its archived feed. Open
+`/<election>/replays/<run-id>` on localhost. Both public and private replays
+open without signing in when the development backend receives a loopback
+request addressed to localhost. The seat links follow that run. The pages
+refresh while visible and display the source observation in the election timezone.
+
+For public live service, register a public run of kind `live`. In Django
+admin select its Live run record and use **Select one public live run as
+official**. The forecast and seat pages then use this run. Clearing its
+official selection restores the legacy source for that election. Both actions
+preserve every stored publication.
+
+Seat histories are derived automatically. To reconstruct a single run after a
+chart-format change, run `python manage.py rebuild_live_seat_history <run-id>`.
+The command publishes the rebuilt blocks together in one transaction.
+Run this once for existing win-only histories to populate the vote-share charts
+from their retained reports. Each seat stores first-preference vote shares for
+every candidate with reported intervals, plus conditional vote shares for up to
+four final pairings occurring in more than 0.1% of simulations at that update.
+The three stored figures are the 5th, 50th and 95th percentiles, rounded to one
+decimal place. Chart selectors follow the current update. Gaps mark earlier
+observations where the selected candidate or pairing had no retained interval.
+
 Public summary, archive-list, history and results requests first read the
 election's current revision from the database. Response bodies are cached under
 keys containing the election identity, response scope and that revision, with a

@@ -13,7 +13,8 @@ class ReportRevisionMigrationTests(TransactionTestCase):
         executor = MigrationExecutor(connection)
         executor.migrate(previous)
         # Restore the current schema even if an assertion in the rehearsal fails.
-        self.addCleanup(lambda: MigrationExecutor(connection).migrate(current))
+        latest = executor.loader.graph.leaf_nodes()
+        self.addCleanup(lambda: MigrationExecutor(connection).migrate(latest))
         apps = executor.loader.project_state(previous).apps
         OldElection = apps.get_model('forecast_api', 'Election')
         OldForecast = apps.get_model('forecast_api', 'Forecast')

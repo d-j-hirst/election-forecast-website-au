@@ -28,7 +28,9 @@ import styles from './History.module.css';
 import {coalitionAbbreviation} from '../../../utils/coalition.js';
 import {colours} from '../../../utils/GraphPartyColours.js';
 import {jsonMap, jsonMapReverse} from '../../../utils/jsonmap.js';
-import {unixDateToStr, unixTimeToStr} from '../../../utils/date.js';
+import {countTime} from '../../../utils/date.js';
+import HistoryPeriodDropdown from './HistoryPeriodDropdown';
+import {ELECTION_NIGHT_MS, historyTime, historyTimeAxis} from './timeAxis';
 
 const tieColour = '#885588';
 
@@ -48,118 +50,9 @@ const GraphTypeEnum = Object.freeze({
   coalitionSeats: 6,
 });
 
-const TickIntervalEnum = Object.freeze({
-  MonthThird: 1,
-  MonthHalf: 2,
-  Month: 3,
-  TwoMonths: 4,
-  ThreeMonths: 5,
-  SixMonths: 6,
-});
-
-const createTicks = (lowUnixDate, highUnixDate) => {
-  const ONE_HOUR = 60 * 60 * 1000;
-  const ONE_DAY = 24 * ONE_HOUR;
-  const lowDateRep = new Date(lowUnixDate);
-  const highDateRep = new Date(highUnixDate);
-  const numDays = Math.round(Math.abs((highDateRep - lowDateRep) / ONE_DAY));
-  const daysToInterval = days => {
-    if (days < 60) return TickIntervalEnum.MonthThird;
-    if (days < 90) return TickIntervalEnum.MonthHalf;
-    if (days < 180) return TickIntervalEnum.Month;
-    if (days < 360) return TickIntervalEnum.TwoMonths;
-    if (days < 540) return TickIntervalEnum.ThreeMonths;
-    return TickIntervalEnum.SixMonths;
-  };
-  const interval = daysToInterval(numDays);
-  const dateInfo = {
-    lowDateDay: lowDateRep.getDate(),
-    highDateDay: highDateRep.getDate(),
-    lowDateMonth: lowDateRep.getMonth(),
-    highDateMonth: highDateRep.getMonth(),
-    lowDateYear: lowDateRep.getFullYear(),
-    highDateYear: highDateRep.getFullYear(),
-  };
-  const customTicks = [];
-  // For shorter periods, just divide the interval into ticks with a certain spacing
-  const collectCustomTicks = tickSpacing => {
-    for (
-      let tick =
-        Math.ceil(lowUnixDate / tickSpacing) * tickSpacing - tickSpacing / 2;
-      tick < highUnixDate;
-      tick += tickSpacing
-    ) {
-      customTicks.push(new Date(tick));
-    }
-    return customTicks;
-  };
-  if (numDays < 1) {
-    return collectCustomTicks(ONE_HOUR);
-  } else if (numDays < 3) {
-    return collectCustomTicks(ONE_HOUR * 12);
-  } else if (numDays < 6) {
-    return collectCustomTicks(ONE_DAY);
-  } else if (numDays < 12) {
-    return collectCustomTicks(ONE_DAY * 2);
-  } else if (numDays < 24) {
-    return collectCustomTicks(ONE_DAY * 4);
-  }
-  // for longer periods, we want the ticks to align with the start of each month
-  for (let year = dateInfo.lowDateYear; year <= dateInfo.highDateYear; ++year) {
-    for (
-      let month =
-        1 * (year === dateInfo.lowDateYear ? dateInfo.lowDateMonth : 0);
-      month <= (year === dateInfo.highDateYear ? dateInfo.highDateMonth : 11);
-      ++month
-    ) {
-      const pushTick = (monthRem, day) => {
-        if (
-          month % monthRem === 0 &&
-          (year > dateInfo.lowDateYear ||
-            month > dateInfo.lowDateMonth ||
-            dateInfo.lowDateDay <= day) &&
-          (year < dateInfo.highDateYear ||
-            month < dateInfo.highDateMonth ||
-            dateInfo.highDateDay >= day)
-        ) {
-          customTicks.push(Date.UTC(year, month, day));
-        }
-      };
-      if (interval === TickIntervalEnum.MonthThird) {
-        pushTick(1, 1);
-        pushTick(1, 11);
-        pushTick(1, 21);
-      } else if (interval === TickIntervalEnum.MonthHalf) {
-        pushTick(1, 1);
-        pushTick(1, 16);
-      } else if (interval === TickIntervalEnum.Month) {
-        pushTick(1, 1);
-      } else if (interval === TickIntervalEnum.TwoMonths) {
-        pushTick(2, 1);
-      } else if (interval === TickIntervalEnum.ThreeMonths) {
-        pushTick(3, 1);
-      } else if (interval === TickIntervalEnum.SixMonths) {
-        pushTick(6, 1);
-      }
-    }
-  }
-  return customTicks;
-};
-
-const genericXAxis = (lowDate, highDate, mode) => {
-  const customTicks = createTicks(lowDate, highDate);
-  return (
-    <XAxis
-      type="number"
-      dataKey="unixDate"
-      domain={[lowDate, highDate]}
-      scale="time"
-      ticks={customTicks}
-      interval={0}
-      tickFormatter={mode === 'live' ? unixTimeToStr : unixDateToStr}
-    />
-  );
-};
+const genericXAxis = (lowDate, highDate, mode, timeZone) => (
+  <XAxis {...historyTimeAxis(lowDate, highDate, mode, timeZone)} />
+);
 
 // Representation of each area in the chart
 // This pattern is repeated many time, so make a template component
@@ -186,10 +79,11 @@ const GovernmentFormationTooltip = ({
   showOneNation,
 }) => {
   if (active && payload && payload.length) {
-    const date = historyPointDisplayDate(payload[0].payload);
-    const thisDate =
-      mode === 'live' ? unixTimeToStr(date) : unixDateToStr(date);
     const p = payload[0].payload;
+    const date = historyPointDisplayDate(p);
+    const thisDate = p.timeZone
+      ? countTime(date, p.timeZone)
+      : historyTime(date, mode);
 
     // Representation of each value in the GovernmentFormationTooltip
     // This pattern is repeated many time, so make a template component
@@ -269,8 +163,6 @@ const GovernmentFormation = props => {
     props.data.map(a => a.unixDate)
   );
 
-  const customTicks = createTicks(lowDate, highDate);
-
   return (
     <ResponsiveContainer width="100%" height={400}>
       <ComposedChart
@@ -284,15 +176,7 @@ const GovernmentFormation = props => {
           left: 20,
         }}
       >
-        <XAxis
-          type="number"
-          dataKey="unixDate"
-          domain={[lowDate, highDate]}
-          scale="time"
-          ticks={customTicks}
-          interval={0}
-          tickFormatter={props.mode === 'live' ? unixTimeToStr : unixDateToStr}
-        />
+        {genericXAxis(lowDate, highDate, props.mode, props.timeZone)}
         <YAxis
           type="number"
           domain={[0, 100]}
@@ -325,6 +209,7 @@ const GovernmentFormation = props => {
   );
 };
 GovernmentFormation.propTypes = {
+  timeZone: PropTypes.string,
   data: PropTypes.array.isRequired,
   mode: PropTypes.string.isRequired,
   termCode: PropTypes.string,
@@ -333,9 +218,11 @@ GovernmentFormation.propTypes = {
 
 const RangeTooltip = ({active, payload, label, mode, obsLabel, dataKey}) => {
   if (active && payload && payload.length) {
-    const date = historyPointDisplayDate(payload[0].payload);
-    const thisDate =
-      mode === 'live' ? unixTimeToStr(date) : unixDateToStr(date);
+    const p = payload[0].payload;
+    const date = historyPointDisplayDate(p);
+    const thisDate = p.timeZone
+      ? countTime(date, p.timeZone)
+      : historyTime(date, mode);
     return (
       <div className={styles.customTooltip}>
         <p>
@@ -432,7 +319,7 @@ const Tpp = props => {
           left: 20,
         }}
       >
-        {genericXAxis(lowDate, highDate, props.mode)}
+        {genericXAxis(lowDate, highDate, props.mode, props.timeZone)}
         <YAxis
           allowDataOverflow={true}
           allowDecimals={false}
@@ -472,6 +359,7 @@ const Tpp = props => {
   );
 };
 Tpp.propTypes = {
+  timeZone: PropTypes.string,
   data: PropTypes.array.isRequired,
   mode: PropTypes.string.isRequired,
   partyAbbr: PropTypes.string.isRequired,
@@ -525,7 +413,7 @@ const Fp = props => {
           left: 20,
         }}
       >
-        {genericXAxis(lowDate, highDate, props.mode)}
+        {genericXAxis(lowDate, highDate, props.mode, props.timeZone)}
         <YAxis
           allowDataOverflow={true}
           allowDecimals={false}
@@ -564,6 +452,7 @@ const Fp = props => {
   );
 };
 Fp.propTypes = {
+  timeZone: PropTypes.string,
   data: PropTypes.array.isRequired,
   mode: PropTypes.string.isRequired,
   partyAbbr: PropTypes.string.isRequired,
@@ -635,7 +524,7 @@ const Seats = props => {
           left: 20,
         }}
       >
-        {genericXAxis(lowDate, highDate, props.mode)}
+        {genericXAxis(lowDate, highDate, props.mode, props.timeZone)}
         <YAxis
           allowDataOverflow={true}
           allowDecimals={false}
@@ -673,6 +562,7 @@ const Seats = props => {
   );
 };
 Seats.propTypes = {
+  timeZone: PropTypes.string,
   data: PropTypes.array.isRequired,
   mode: PropTypes.string.isRequired,
   partyAbbr: PropTypes.string.isRequired,
@@ -682,14 +572,16 @@ Seats.propTypes = {
 
 const Chart = props => {
   const unixDates = props.data.map(a =>
-    new Date(
-      Number(a.date.substring(0, 4)),
-      Number(a.date.substring(5, 7)) - 1,
-      Number(a.date.substring(8, 10)),
-      Number(a.date.substring(11, 13)),
-      Number(a.date.substring(14, 16)),
-      Number(a.date.substring(17, 19))
-    ).getTime()
+    a.sourceTime !== undefined
+      ? Date.parse(a.sourceTime)
+      : new Date(
+          Number(a.date.substring(0, 4)),
+          Number(a.date.substring(5, 7)) - 1,
+          Number(a.date.substring(8, 10)),
+          Number(a.date.substring(11, 13)),
+          Number(a.date.substring(14, 16)),
+          Number(a.date.substring(17, 19))
+        ).getTime()
   );
   const tempDates = unixDates.map(a => a / 86400000);
   const labels = props.data.map(a =>
@@ -697,9 +589,9 @@ const Chart = props => {
   );
   const prevDate = Math.min.apply(Math, tempDates);
   const adjDates = tempDates.map(a => a - prevDate);
-  const alpMaj = props.data.map(a => jsonMap(a.majorityWinPc, 0));
-  const alpMin = props.data.map((a, index) => jsonMap(a.minorityWinPc, 0));
-  const alpMost = props.data.map((a, index) => jsonMap(a.mostSeatsWinPc, 0));
+  const alpMaj = props.data.map(a => jsonMap(a.majorityWinPc, 0, 0));
+  const alpMin = props.data.map(a => jsonMap(a.minorityWinPc, 0, 0));
+  const alpMost = props.data.map(a => jsonMap(a.mostSeatsWinPc, 0, 0));
   const electionYear = parseInt(props.election.slice(0, 4));
   const onPartyIndex =
     electionYear >= 2026 ? jsonMapReverse(props.partyAbbr, 'ON', null) : null;
@@ -736,9 +628,9 @@ const Chart = props => {
         onMost[index]
     )
   );
-  const lnpMost = props.data.map((a, index) => jsonMap(a.mostSeatsWinPc, 1));
-  const lnpMin = props.data.map((a, index) => jsonMap(a.minorityWinPc, 1, 0));
-  const lnpMaj = props.data.map((a, index) => jsonMap(a.majorityWinPc, 1));
+  const lnpMost = props.data.map(a => jsonMap(a.mostSeatsWinPc, 1, 0));
+  const lnpMin = props.data.map(a => jsonMap(a.minorityWinPc, 1, 0));
+  const lnpMaj = props.data.map(a => jsonMap(a.majorityWinPc, 1, 0));
 
   const alpMinStacked = alpMin.map((a, index) => a + alpMaj[index]);
   const alpMostStacked = alpMost.map((a, index) => a + alpMinStacked[index]);
@@ -751,30 +643,36 @@ const Chart = props => {
   const lnpMajStacked = lnpMaj.map((a, index) => a + lnpMinStacked[index]);
 
   const thresholds = [1, 4, 6, 7, 8, 10, 13];
+  const bands = (point, values) =>
+    point.voteTotalThresholds?.length
+      ? [0.5, 5, 25, 50, 75, 95, 99.5].map(
+          q => values[point.voteTotalThresholds.indexOf(q)]
+        )
+      : thresholds.map(i => values[i]);
 
   let tpp =
     props.party === 0 || props.party === 1
-      ? props.data.map(a => thresholds.map(t => a.tppFrequencies[t]))
+      ? props.data.map(a => bands(a, a.tppFrequencies))
       : null;
   if (props.party === 1) tpp = tpp.map(a => a.reverse().map(b => 100 - b));
 
   let fp = props.data.map(a =>
     jsonMap(a.fpFrequencies, props.party, null) !== null
-      ? thresholds.map(t => jsonMap(a.fpFrequencies, props.party)[t])
+      ? bands(a, jsonMap(a.fpFrequencies, props.party))
       : thresholds.map(t => 0)
   );
 
   if (props.type === GraphTypeEnum.coalitionFp) {
     fp = props.data.map(a =>
       a.coalitionFpFrequencies !== null && a.coalitionFpFrequencies.length > 0
-        ? thresholds.map(t => a.coalitionFpFrequencies[t])
+        ? bands(a, a.coalitionFpFrequencies)
         : thresholds.map(t => 0)
     );
   }
 
   let seats = props.data.map(a =>
     jsonMap(a.seatCountFrequencies, props.party, null) !== null
-      ? thresholds.map(t => jsonMap(a.seatCountFrequencies, props.party)[t])
+      ? bands(a, jsonMap(a.seatCountFrequencies, props.party))
       : thresholds.map(t => 0)
   );
 
@@ -782,7 +680,7 @@ const Chart = props => {
     seats = props.data.map(a =>
       a.coalitionSeatCountFrequencies !== null &&
       a.coalitionSeatCountFrequencies.length > 0
-        ? thresholds.map(t => a.coalitionSeatCountFrequencies[t])
+        ? bands(a, a.coalitionSeatCountFrequencies)
         : thresholds.map(t => 0)
     );
   }
@@ -790,6 +688,7 @@ const Chart = props => {
   let chartData = adjDates.map((date, index) => ({
     date: date,
     unixDate: unixDates[index],
+    timeZone: props.timeZone,
     label: labels[index],
     alpMaj: [0, alpMaj[index]],
     alpMin: [alpMaj[index], alpMinStacked[index]],
@@ -826,7 +725,7 @@ const Chart = props => {
       Math,
       chartData.map(a => a.unixDate)
     );
-    chartData = chartData.filter(a => a.unixDate < lowDate + 43200000); // 12-hour period after first result
+    chartData = chartData.filter(a => a.unixDate < lowDate + ELECTION_NIGHT_MS);
   }
   if (chartData.length > 0) {
     const lowDate = Math.min.apply(
@@ -855,7 +754,7 @@ const Chart = props => {
 
   return (
     <>
-      {chartData !== undefined && (
+      {chartData.length > 0 && (
         <>
           {props.type === GraphTypeEnum.governmentFormation && (
             <GovernmentFormation
@@ -863,10 +762,16 @@ const Chart = props => {
               mode={effectiveMode}
               termCode={props.election}
               showOneNation={showOneNation}
+              timeZone={props.timeZone}
             />
           )}
           {props.type === GraphTypeEnum.tpp && (
-            <Tpp data={chartData} partyAbbr={partyAbbr} mode={effectiveMode} />
+            <Tpp
+              data={chartData}
+              partyAbbr={partyAbbr}
+              mode={effectiveMode}
+              timeZone={props.timeZone}
+            />
           )}
           {(props.type === GraphTypeEnum.fp ||
             props.type === GraphTypeEnum.coalitionFp) && (
@@ -875,6 +780,7 @@ const Chart = props => {
               partyAbbr={partyAbbr}
               mode={effectiveMode}
               type={props.type}
+              timeZone={props.timeZone}
             />
           )}
           {(props.type === GraphTypeEnum.seats ||
@@ -885,6 +791,7 @@ const Chart = props => {
               election={props.election}
               mode={effectiveMode}
               type={props.type}
+              timeZone={props.timeZone}
             />
           )}
         </>
@@ -893,6 +800,7 @@ const Chart = props => {
   );
 };
 Chart.propTypes = {
+  timeZone: PropTypes.string,
   data: PropTypes.array.isRequired,
   mode: PropTypes.string.isRequired,
   partyAbbr: PropTypes.array.isRequired,
@@ -948,14 +856,18 @@ const MainExplainer = props => {
 
 const History = props => {
   const [showExplainer, setShowExplainer] = useState(false);
-  const [history, setHistory] = useState([]);
-  const [historyValid, setHistoryValid] = useState(false);
+  const [storedHistory, setHistory] = useState([]);
+  const [storedHistoryValid, setHistoryValid] = useState(false);
+  const fromRun = props.runPoints !== undefined;
   const [graphType, setGraphType] = useState(GraphTypeEnum.governmentFormation);
   const [graphParty, setGraphParty] = useState(0);
   const [eveningOnly, setEveningOnly] = useState(true);
   // const windowDimensions = useWindowDimensions();
 
   useEffect(() => {
+    // Run history is fetched alongside the matching publication revision.
+    // The legacy endpoint and cache are scoped to the election, not the run.
+    if (fromRun) return;
     setHistoryValid(false);
 
     const getElectionSummary = () => {
@@ -1006,8 +918,26 @@ const History = props => {
     };
 
     fetchElectionSummary();
-  }, [props.election, props.mode]);
+  }, [props.election, props.mode, fromRun]);
 
+  const history = fromRun
+    ? props.runPoints
+        .map(([sourceTime, point]) => ({
+          fpFrequencies: [],
+          seatCountFrequencies: [],
+          tppFrequencies: [],
+          coalitionFpFrequencies: [],
+          coalitionSeatCountFrequencies: [],
+          ...point,
+          sourceTime,
+          label: 'Count observation',
+        }))
+        .filter(
+          point =>
+            point.majorityWinPc && point.minorityWinPc && point.mostSeatsWinPc
+        )
+    : storedHistory;
+  const historyValid = fromRun || storedHistoryValid;
   const lastHistoryItem = history.length > 0 ? history.slice(-1)[0] : null;
   const coalitionFpAvailable =
     lastHistoryItem &&
@@ -1042,39 +972,22 @@ const History = props => {
     return title;
   })();
 
-  const eveningSetting = (() => {
-    let title = 'Display: ';
-    if (eveningOnly) title += 'Election night only';
-    else title += 'Include late counting';
-    return title;
-  })();
-
+  const hasForecastSeats = party =>
+    jsonMap(props.forecast.seatCountFrequencies || [], party)?.at(-1) > 0;
   let lnpIndex = jsonMapReverse(props.forecast.partyAbbr, 'LNP');
   // Some reports have LNP = -4 because of the current treatment of coalition partners, but
   // that index doesn't exist for the seat count frequencies, so we need to ignore it
   if (lnpIndex < 0)
     lnpIndex = jsonMapReverse(props.forecast.partyAbbr.slice(1), 'LNP');
-  if (
-    lnpIndex &&
-    jsonMap(props.forecast.seatCountFrequencies, lnpIndex)[14] === 0
-  )
-    lnpIndex = null;
+  if (lnpIndex && !hasForecastSeats(lnpIndex)) lnpIndex = null;
   let libIndex = jsonMapReverse(props.forecast.partyAbbr, 'LIB');
-  if (
-    libIndex &&
-    jsonMap(props.forecast.seatCountFrequencies, libIndex)[14] === 0
-  )
-    libIndex = null;
+  if (libIndex && !hasForecastSeats(libIndex)) libIndex = null;
   if (props.forecast.coalitionSeatCountFrequencies && lnpIndex) {
     libIndex = lnpIndex;
     lnpIndex = null;
   }
   let natIndex = jsonMapReverse(props.forecast.partyAbbr, 'NAT');
-  if (
-    natIndex &&
-    jsonMap(props.forecast.seatCountFrequencies, natIndex)[14] === 0
-  )
-    natIndex = null;
+  if (natIndex && !hasForecastSeats(natIndex)) natIndex = null;
   const grnIndex = jsonMapReverse(props.forecast.partyAbbr, 'GRN');
   const indIndex = jsonMapReverse(
     props.forecast.partyAbbr,
@@ -1083,17 +996,9 @@ const History = props => {
     a => a >= 0
   );
   let onIndex = jsonMapReverse(props.forecast.partyAbbr, 'ON');
-  if (
-    onIndex &&
-    jsonMap(props.forecast.seatCountFrequencies, onIndex)[14] === 0
-  )
-    onIndex = null;
+  if (onIndex && !hasForecastSeats(onIndex)) onIndex = null;
   let uapIndex = jsonMapReverse(props.forecast.partyAbbr, 'UAP');
-  if (
-    uapIndex &&
-    jsonMap(props.forecast.seatCountFrequencies, uapIndex)[14] === 0
-  )
-    uapIndex = null;
+  if (uapIndex && !hasForecastSeats(uapIndex)) uapIndex = null;
 
   const setGraphGovernmentFormation = () => {
     setGraphType(GraphTypeEnum.governmentFormation);
@@ -1178,13 +1083,6 @@ const History = props => {
     setGraphType(GraphTypeEnum.seats);
     setGraphParty(indIndex);
   };
-  const setIsEveningOnly = () => {
-    setEveningOnly(true);
-  };
-  const setNotEveningOnly = () => {
-    setEveningOnly(false);
-  };
-
   return (
     <Card className={styles.summary}>
       <Card.Header className={styles.historyTitle}>
@@ -1306,29 +1204,30 @@ const History = props => {
                   </Dropdown.Item>
                 </DropdownButton>
                 {props.mode === 'live' && (
-                  <DropdownButton
+                  <HistoryPeriodDropdown
                     id="evening-dropdown"
-                    title={eveningSetting}
-                    variant="secondary"
-                  >
-                    <Dropdown.Item as="button" onClick={setIsEveningOnly}>
-                      Election night only
-                    </Dropdown.Item>
-                    <Dropdown.Item as="button" onClick={setNotEveningOnly}>
-                      Include late counting
-                    </Dropdown.Item>
-                  </DropdownButton>
+                    eveningOnly={eveningOnly}
+                    onChange={setEveningOnly}
+                  />
                 )}
               </ListGroup.Item>
-              <Chart
-                data={history}
-                type={graphType}
-                party={graphParty}
-                partyAbbr={props.forecast.partyAbbr}
-                election={props.election}
-                mode={props.mode}
-                eveningOnly={eveningOnly}
-              />
+              {history.length > 0 && (
+                <Chart
+                  data={history}
+                  type={graphType}
+                  party={graphParty}
+                  partyAbbr={props.forecast.partyAbbr}
+                  election={props.election}
+                  mode={props.mode}
+                  eveningOnly={eveningOnly}
+                  timeZone={props.timeZone}
+                />
+              )}
+              {fromRun && history.length === 0 && (
+                <ListGroup.Item>
+                  Forecast history is unavailable for this run.
+                </ListGroup.Item>
+              )}
             </StandardErrorBoundary>
           )}
           {!historyValid && <LoadingMarker text="Loading history" />}
@@ -1342,6 +1241,8 @@ History.propTypes = {
   mode: PropTypes.string.isRequired,
   election: PropTypes.string.isRequired,
   eveningOnly: PropTypes.bool,
+  runPoints: PropTypes.array,
+  timeZone: PropTypes.string,
 };
 
 export default History;

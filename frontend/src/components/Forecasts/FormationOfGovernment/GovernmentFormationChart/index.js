@@ -11,10 +11,9 @@ import {
 } from 'recharts';
 
 import {brightness} from '../../../../utils/brightness.js';
-import {jsonMap, jsonMapReverse} from '../../../../utils/jsonmap.js';
+import governmentOutcomes from '../governmentOutcomes';
 
 import styles from './GovernmentFormationChart.module.css';
-import {coalitionAbbreviation} from 'utils/coalition.js';
 
 const round1 = num =>
   num === null || num === undefined ? 0 : Math.round(num * 10) / 10;
@@ -23,85 +22,10 @@ const RADIAN = Math.PI / 180;
 
 const GovernmentFormationChart = props => {
   const lowerLegendRequired = props.windowWidth < 550;
-  const electionYear = parseInt(props.forecast.termCode.slice(0, 4));
-  const onPartyIndex =
-    electionYear >= 2026
-      ? jsonMapReverse(props.forecast.partyAbbr, 'ON', null)
-      : null;
-  const showOneNation = onPartyIndex !== null;
-
-  const partyOneName = jsonMap(props.forecast.partyAbbr, 0);
-  let otherWins =
-    100 -
-    jsonMap(props.forecast.overallWinPc, 0) -
-    jsonMap(props.forecast.overallWinPc, 1);
-  const onMajority = showOneNation
-    ? jsonMap(props.forecast.majorityWinPc, onPartyIndex, 0)
-    : 0;
-  const onMostSeats = showOneNation
-    ? jsonMap(props.forecast.mostSeatsWinPc, onPartyIndex, 0)
-    : 0;
-  if (showOneNation) {
-    otherWins = Math.max(0, otherWins - onMajority - onMostSeats);
-  }
-  let partyOneVals = [
-    jsonMap(props.forecast.overallWinPc, 0),
-    jsonMap(props.forecast.majorityWinPc, 0),
-    jsonMap(props.forecast.minorityWinPc, 0),
-    jsonMap(props.forecast.mostSeatsWinPc, 0),
-  ];
-  partyOneVals = partyOneVals.map(a => (a === undefined || a === null ? 0 : a));
-  const partyOneTies = Math.max(
-    0,
-    partyOneVals[0] - partyOneVals[1] - partyOneVals[2] - partyOneVals[3]
-  );
-  let partyTwoName = jsonMap(props.forecast.partyAbbr, 1);
-  if (partyTwoName === 'LNP')
-    partyTwoName = coalitionAbbreviation(props.forecast.termCode);
-  let partyTwoVals = [
-    jsonMap(props.forecast.overallWinPc, 1),
-    jsonMap(props.forecast.majorityWinPc, 1),
-    jsonMap(props.forecast.minorityWinPc, 1),
-    jsonMap(props.forecast.mostSeatsWinPc, 1),
-  ];
-  partyTwoVals = partyTwoVals.map(a => (a === undefined || a === null ? 0 : a));
-  const partyTwoTies = Math.max(
-    0,
-    partyTwoVals[0] - partyTwoVals[1] - partyTwoVals[2] - partyTwoVals[3]
-  );
-  const allTies = partyOneTies + partyTwoTies;
-
-  const data = [
-    {name: partyOneName + ' majority', value: round1(partyOneVals[1])},
-    {name: partyOneName + ' minority', value: round1(partyOneVals[2])},
-    {name: partyOneName + ' most seats', value: round1(partyOneVals[3])},
-    {name: 'Exact ties', value: round1(allTies)},
-    {name: 'Any other party leads', value: round1(otherWins)},
-    {name: partyTwoName + ' most seats', value: round1(partyTwoVals[3])},
-    {name: partyTwoName + ' minority', value: round1(partyTwoVals[2])},
-    {name: partyTwoName + ' majority', value: round1(partyTwoVals[1])},
-  ];
-
-  const colors = [
-    '#dc3545',
-    '#ec7480',
-    '#f5a3ab',
-    '#885588',
-    '#888888',
-    '#87b2e7',
-    '#5792da',
-    '#1467cc',
-  ];
-
-  if (showOneNation) {
-    data.splice(
-      5,
-      0,
-      {name: 'ON most seats', value: round1(onMostSeats)},
-      {name: 'ON majority', value: round1(onMajority)}
-    );
-    colors.splice(5, 0, '#ffc388', '#ff7f00');
-  }
+  const data = governmentOutcomes(props.forecast).map(row => ({
+    ...row,
+    value: round1(row.value),
+  }));
 
   const chartHeight = lowerLegendRequired
     ? props.windowWidth < 360
@@ -125,7 +49,7 @@ const GovernmentFormationChart = props => {
 
     if (value < 3.5) return null;
 
-    const fillColor = brightness(colors[index]) > 130 ? 'black' : 'white';
+    const fillColor = brightness(data[index].color) > 130 ? 'black' : 'white';
 
     return (
       <text
@@ -178,8 +102,8 @@ const GovernmentFormationChart = props => {
           isAnimationActive={false}
           label={renderCustomizedLabel}
         >
-          {data.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
+          {data.map(entry => (
+            <Cell key={entry.id} fill={entry.color} />
           ))}
         </Pie>
         <Tooltip content={<ChartTooltip />} isAnimationActive={false} />

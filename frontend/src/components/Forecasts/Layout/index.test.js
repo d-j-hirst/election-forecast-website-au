@@ -4,6 +4,7 @@ import {MemoryRouter} from 'react-router-dom';
 import {HelmetProvider} from 'react-helmet-async';
 import ForecastLayout from './index';
 import {fetchReport} from '../../../utils/report_manager';
+import {History, Seats} from 'components';
 
 jest.mock('../../../utils/report_manager', () => ({fetchReport: jest.fn()}));
 // Keep layout/recovery/heading code real; the numerical feature displays have
@@ -21,9 +22,14 @@ jest.mock('components', () => ({
   FormationOfGovernment: () => null,
   VoteTotals: () => <p>Vote totals loaded</p>,
   SeatTotals: () => null,
-  History: () => null,
-  Seats: () => null,
+  History: jest.fn(),
+  Seats: jest.fn(),
 }));
+
+beforeEach(() => {
+  History.mockReturnValue(null);
+  Seats.mockReturnValue(null);
+});
 
 const tree = (code, id) => (
   <HelmetProvider>
@@ -42,6 +48,43 @@ const report = date => ({
   reportMode: 'RF',
   reportDate: date,
   reportLabel: 'Example',
+});
+
+test('a replay uses the forecast layout with only its run history and seat links', () => {
+  fetchReport.mockClear();
+  const points = [['2026-03-21T08:00:00Z', {}]];
+  const seatLink = seat => '/2026sa/replays/sample/seat/' + seat.toLowerCase();
+  const live = {
+    replay: true,
+    publication: {
+      report: {...report('2026-11-18T00:00:00'), reportMode: 'LF'},
+      source_time: '2026-03-21T08:00:00Z',
+      run: {
+        kind: 'replay',
+        display_name: 'sample',
+        timezone: 'Australia/Adelaide',
+      },
+      points,
+    },
+    summary: <p>Replay update summary</p>,
+    seatLink,
+  };
+  render(
+    <HelmetProvider>
+      <MemoryRouter>
+        <ForecastLayout code="2026sa" mode="live" live={live} />
+      </MemoryRouter>
+    </HelmetProvider>
+  );
+  expect(screen.getByText('Vote totals loaded')).toBeInTheDocument();
+  expect(screen.getByText('Replay update summary')).toBeInTheDocument();
+  expect(screen.getByText(/Count observation/)).toHaveTextContent('21 Mar');
+  expect(History.mock.calls.at(-1)[0]).toMatchObject({
+    runPoints: points,
+    timeZone: 'Australia/Adelaide',
+  });
+  expect(Seats.mock.calls.at(-1)[0]).toMatchObject({seatLink, results: null});
+  expect(fetchReport).not.toHaveBeenCalled();
 });
 
 test('an outer render failure recovers on the next healthy election/archive delivery', () => {

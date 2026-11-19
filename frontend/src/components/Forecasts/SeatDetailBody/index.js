@@ -35,7 +35,7 @@ const ReturnToMain = props => {
 
   return (
     <ListGroup.Item className={styles.returnToMain}>
-      <Link to={linkUrl}>
+      <Link to={props.returnUrl || linkUrl}>
         <div>
           <strong>&#187;</strong>back to seat list
         </div>
@@ -47,10 +47,11 @@ ReturnToMain.propTypes = {
   archive: PropTypes.number,
   election: PropTypes.string.isRequired,
   mode: PropTypes.string.isRequired,
+  returnUrl: PropTypes.string,
 };
 
 const SeatSummary = props => {
-  const incumbentIndex = props.forecast.seatIncumbents[props.index];
+  const incumbentIndex = props.forecast.seatIncumbents?.[props.index];
   const tempAbbr = jsonMap(props.forecast.partyAbbr, incumbentIndex);
   const incumbentAbbr =
     props.forecast.coalitionSeatCountFrequencies && tempAbbr === 'LNP'
@@ -59,7 +60,7 @@ const SeatSummary = props => {
         ? 'LNPx'
         : 'LIB'
       : tempAbbr;
-  const margin = props.forecast.seatMargins[props.index];
+  const margin = props.forecast.seatMargins?.[props.index];
 
   const freqs = deepCopy(props.forecast.seatPartyWinFrequencies[props.index]);
   freqs.sort((a, b) => {
@@ -73,11 +74,16 @@ const SeatSummary = props => {
   // const thresholds = [[0,2,0],[2,4,1],[4,6,2],[6,8,3],[8,10,4],[10,12,5],[12,14,6]];
   return (
     <ListGroup.Item className={styles.seatsItem}>
-      <div className={styles.seatsTopLeft}>
-        Held by{' '}
-        <SmartBadge party={incumbentAbbr} termCode={props.forecast.termCode} />{' '}
-        {Number(margin).toFixed(1)}%
-      </div>
+      {incumbentAbbr && Number.isFinite(margin) && (
+        <div className={styles.seatsTopLeft}>
+          Held by{' '}
+          <SmartBadge
+            party={incumbentAbbr}
+            termCode={props.forecast.termCode}
+          />{' '}
+          {Number(margin).toFixed(1)}%
+        </div>
+      )}
       <WinnerBarDist
         forecast={props.forecast}
         freqSet={freqs}
@@ -129,7 +135,7 @@ const SeatDetailBody = props => {
   const [showExplainer, setShowExplainer] = useState(false);
 
   const seatName = props.forecast.seatNames[props.index];
-  const result = props.results !== null ? props.results.seats[seatName] : null;
+  const result = props.results?.seats?.[seatName] ?? null;
 
   return (
     <Card className={styles.summary}>
@@ -155,6 +161,7 @@ const SeatDetailBody = props => {
               archive={props.archive}
               election={props.election}
               mode={props.mode}
+              returnUrl={props.returnUrl}
             />
           </StandardErrorBoundary>
           <StandardErrorBoundary>
@@ -176,9 +183,25 @@ const SeatDetailBody = props => {
               index={props.index}
             />
           </StandardErrorBoundary>
-          {(props.mode !== 'live' || props.election !== '2022sa') && (
+          {(props.automated
+            ? props.forecast.seatFpBands?.[props.index]?.length > 0
+            : props.mode !== 'live' || props.election !== '2022sa') && (
             <StandardErrorBoundary>
               <SeatFpSection
+                forecast={props.forecast}
+                election={props.election}
+                mode={props.mode}
+                index={props.index}
+                result={result}
+                windowWidth={props.windowWidth}
+                automated={props.automated}
+              />
+            </StandardErrorBoundary>
+          )}
+          {(!props.automated ||
+            props.forecast.seatTcpBands?.[props.index]?.length > 0) && (
+            <StandardErrorBoundary>
+              <SeatTcpSection
                 forecast={props.forecast}
                 election={props.election}
                 mode={props.mode}
@@ -188,16 +211,6 @@ const SeatDetailBody = props => {
               />
             </StandardErrorBoundary>
           )}
-          <StandardErrorBoundary>
-            <SeatTcpSection
-              forecast={props.forecast}
-              election={props.election}
-              mode={props.mode}
-              index={props.index}
-              result={result}
-              windowWidth={props.windowWidth}
-            />
-          </StandardErrorBoundary>
           {props.mode !== 'live' &&
             props.forecast.hasOwnProperty('seatSwingFactors') && (
               <StandardErrorBoundary>
@@ -224,6 +237,8 @@ SeatDetailBody.propTypes = {
   results: PropTypes.object,
   archive: PropTypes.number,
   windowWidth: PropTypes.number,
+  returnUrl: PropTypes.string,
+  automated: PropTypes.bool,
 };
 
 export default SeatDetailBody;

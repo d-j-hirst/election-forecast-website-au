@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import {parseDateStringAsUTC} from '../../../utils/date.js';
+import {countTime, parseDateStringAsUTC} from '../../../utils/date.js';
 
 import StandardErrorBoundary from '../../General/StandardErrorBoundary';
 
@@ -16,16 +16,26 @@ const ForecastHeader = props => {
   return (
     <StandardErrorBoundary>
       <div className={styles.forecastTitle}>
-        {props.forecast.electionName} - {modeNames[props.mode]}
+        {props.forecast.electionName || props.forecast.termCode} -{' '}
+        {modeNames[props.mode]}
+        {props.replayName && <strong> - Replay ({props.replayName})</strong>}
         {props.archive === true ? <strong>{' - Archive'}</strong> : ''}
       </div>
       <div className={styles.forecastUpdateInfo}>
-        {props.archive === true ? 'Produced at ' : 'Last updated at '}
-        {parseDateStringAsUTC(props.forecast.reportDate)} because&nbsp;of:&nbsp;
-        {props.archive === true && (
-          <strong>{props.forecast.reportLabel}</strong>
+        {props.sourceTime && (
+          <>Count observation · {countTime(props.sourceTime, props.timeZone)}</>
         )}
-        {props.archive !== true && <>{props.forecast.reportLabel}</>}
+        {!props.sourceTime && (
+          <>
+            {props.archive === true ? 'Produced at ' : 'Last updated at '}
+            {parseDateStringAsUTC(props.forecast.reportDate)}{' '}
+            because&nbsp;of:&nbsp;
+            {props.archive === true && (
+              <strong>{props.forecast.reportLabel}</strong>
+            )}
+            {props.archive !== true && <>{props.forecast.reportLabel}</>}
+          </>
+        )}
       </div>
     </StandardErrorBoundary>
   );
@@ -34,6 +44,9 @@ ForecastHeader.propTypes = {
   forecast: PropTypes.object.isRequired,
   mode: PropTypes.string.isRequired,
   archive: PropTypes.bool,
+  sourceTime: PropTypes.string,
+  timeZone: PropTypes.string,
+  replayName: PropTypes.string,
 };
 
 export default ForecastHeader;

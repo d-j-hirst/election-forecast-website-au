@@ -68,6 +68,7 @@ const SeatFpSection = props => {
   const someExcluded = sortedFreqs.length < fpFreqs.length;
 
   const hideMajorParties =
+    !props.automated &&
     props.mode === 'live' &&
     props.election !== '2019nsw' &&
     props.election !== '2026sa';
@@ -148,6 +149,7 @@ const SeatFpSection = props => {
   );
 };
 SeatFpSection.propTypes = {
+  automated: PropTypes.bool,
   mode: PropTypes.string.isRequired,
   election: PropTypes.string.isRequired,
   forecast: PropTypes.object.isRequired,

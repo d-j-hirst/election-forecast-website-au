@@ -1,6 +1,7 @@
 import React from 'react';
 import {BrowserRouter, Navigate, Route, Routes} from 'react-router-dom';
 import RouteFocus from '../components/MainContent/RouteFocus';
+import Live from '../pages/Live';
 
 import {
   ABOUT_URL,
@@ -44,6 +45,10 @@ const AllRoutes = () => {
     <BrowserRouter>
       <RouteFocus />
       <Routes>
+        <Route path="/:code/replays/:runId" element={<Live />} />
+        <Route path="/:code/replays/:runId/seat/:seat" element={<Live />} />
+        <Route path="/forecast/:code/live" element={<Live />} />
+        <Route path="/seat/:code/live/:seat" element={<Live />} />
         <Route path={ARCHIVE_LIST_URL} element={<ArchiveList />} />
         <Route path={ARCHIVE_SEAT_URL} element={<ArchiveSeat />} />
         <Route path={ARCHIVE_URL} element={<Archive />} />

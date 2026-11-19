@@ -54,3 +54,17 @@ export const unixDateToStr = unixDate =>
   toShortIsoString(utcDateToLocal(new Date(unixDate))).slice(0, 10);
 export const unixTimeToStr = unixDate =>
   toShortIsoString(utcDateToLocal(new Date(unixDate))).slice(11, 16);
+
+// Automated publications carry an observation instant and the election's zone.
+export const countTime = (value, zone) => {
+  if (!value) return 'Pre-count reference';
+  return new Intl.DateTimeFormat('en-AU', {
+    timeZone: zone,
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    second: '2-digit',
+    timeZoneName: 'short',
+  }).format(new Date(value));
+};

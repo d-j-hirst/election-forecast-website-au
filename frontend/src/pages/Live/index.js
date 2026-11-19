@@ -1,0 +1,87 @@
+import React, {useEffect} from 'react';
+import PropTypes from 'prop-types';
+import {useParams} from 'react-router-dom';
+import {ForecastLayout, SeatDetails} from 'components';
+import {getSeatUrl} from 'utils/seaturls';
+import useLiveRun from './useLiveRun';
+import UpdateSummary from './UpdateSummary';
+import SeatHistory from './SeatHistory';
+
+const findSeat = (names, slug) => names.find(name => getSeatUrl(name) === slug);
+
+function LivePage({code, runId, seat}) {
+  const replay = !!runId;
+  const base =
+    'forecast-api/live/v1/' +
+    (replay ? 'replays/' + code + '/' + runId : 'official/' + code);
+  const {data, error} = useLiveRun(base, seat, findSeat);
+  const electionLink = replay
+    ? '/' + code + '/replays/' + runId
+    : '/forecast/' + code + '/live';
+  const seatLink = name =>
+    (replay ? electionLink + '/seat/' : '/seat/' + code + '/live/') +
+    encodeURIComponent(getSeatUrl(name));
+  const seatName =
+    data?.report && seat && findSeat(data.report.seatNames, seat);
+  const title = [
+    seatName,
+    data?.run?.display_name,
+    replay ? 'Live replay' : 'Live forecast',
+  ]
+    .filter(Boolean)
+    .join(' · ');
+  useEffect(() => {
+    if (!data?.legacy)
+      document.title = title + ' | Australian Election Forecasts';
+  }, [title, data?.legacy]);
+  // The poller owns run-specific data and URLs. The existing layouts own
+  // the forecast presentation, including the fallback to historical reports.
+  const live = data?.legacy
+    ? undefined
+    : {publication: data, error, replay, seatLink};
+  if (seat) {
+    if (live) {
+      live.returnUrl = electionLink + '#seats';
+      if (seatName) {
+        const parties = Object.fromEntries(data.report.partyAbbr || []);
+        const seatIndex = data.report.seatNames.indexOf(seatName);
+        live.history = (
+          <SeatHistory
+            points={data.points}
+            parties={parties}
+            zone={data.run.timezone}
+            tcpScenarios={data.report.seatTcpScenarios?.[seatIndex]}
+          />
+        );
+      }
+    }
+    return <SeatDetails code={code} seat={seat} mode="live" live={live} />;
+  }
+  if (live && data?.report) {
+    live.summary = (
+      <UpdateSummary key={data.run.run_id} data={data} seatLink={seatLink} />
+    );
+  }
+  return (
+    <ForecastLayout code={code} mode="live" isArchive={false} live={live} />
+  );
+}
+
+export default function Live() {
+  const {code, runId, seat} = useParams();
+  // Route changes start a fresh reader so private or stale data cannot flash.
+  return (
+    <LivePage
+      key={JSON.stringify([code, runId, seat])}
+      code={code}
+      runId={runId}
+      seat={seat}
+    />
+  );
+}
+
+LivePage.propTypes = {
+  code: PropTypes.string.isRequired,
+  runId: PropTypes.string,
+  seat: PropTypes.string,
+};

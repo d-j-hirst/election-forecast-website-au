@@ -16,7 +16,7 @@ import {
 
 import {getIndexFromSeatUrl} from 'utils/seaturls';
 import {useWindowDimensions} from '../../../utils/window.js';
-import {fetchReport} from '../../../utils/report_manager.js';
+import {fetchReport, fetchResults} from '../../../utils/report_manager.js';
 
 import styles from './SeatDetails.module.css';
 
@@ -25,16 +25,21 @@ const SeatDetails = props => {
   const id = props.id;
   const seat = props.seat;
   const inputMode = props.mode;
-  const [forecast, setForecast] = useState({});
-  // -2 means "haven't got around to checking the forecast yet"
-  // -1 means "didn't find a matching seat"
-  const [seatIndex, setSeatIndex] = useState(-2);
-  const [forecastValid, setForecastValid] = useState(false);
+  const {live} = props;
+  const automated = Boolean(live);
+  const replay = Boolean(live?.replay);
+  const publication = live?.publication;
+  const [storedForecast, setForecast] = useState({});
+  const [storedForecastValid, setForecastValid] = useState(false);
   const [results, setResults] = useState({});
   const [resultsValid, setResultsValid] = useState(false);
   const windowDimensions = useWindowDimensions();
 
   useEffect(() => {
+    if (automated) {
+      if (!replay) fetchResults({code, setResults, setResultsValid});
+      return;
+    }
     fetchReport({
       code: code,
       archiveId: id,
@@ -44,28 +49,30 @@ const SeatDetails = props => {
       setResults: setResults,
       setResultsValid: setResultsValid,
     });
-  }, [code, id, inputMode, seat]);
+  }, [code, id, inputMode, seat, automated, replay]);
 
+  const forecast = automated ? publication?.report : storedForecast;
+  const forecastValid = automated ? Boolean(forecast) : storedForecastValid;
+  const seatIndex = forecastValid
+    ? getIndexFromSeatUrl(forecast.seatNames, seat)
+    : -1;
   useEffect(() => {
-    if (forecastValid) {
-      const tempSeatIndex = getIndexFromSeatUrl(forecast.seatNames, seat);
-      setSeatIndex(tempSeatIndex);
-      if (tempSeatIndex === -1) return;
-      document.title = `AEF - ${forecast.seatNames[tempSeatIndex]} ${
+    if (!automated && seatIndex >= 0) {
+      document.title = `AEF - ${forecast.seatNames[seatIndex]} ${
         forecast.electionName
       } ${forecast.reportMode === 'NC' ? 'nowcast' : 'forecast'}`;
     }
-  }, [forecastValid, forecast, seat]);
+  }, [automated, forecast, seatIndex]);
 
   const modeNames = {RF: 'regular', NC: 'nowcast', LF: 'live'};
-  const mode = forecastValid ? modeNames[forecast.reportMode] : '';
+  const mode = automated ? 'live' : modeNames[forecast.reportMode];
 
   const effectiveResults =
-    forecast.reportMode !== 'NC' && resultsValid ? results : null;
+    !replay && forecast?.reportMode !== 'NC' && resultsValid ? results : null;
 
   return (
     <div className={styles.site}>
-      {props.isArchive && (
+      {(props.isArchive || replay) && (
         <Helmet>
           {/* Archived forecasts shouldn't be indexed by search engines etc., they're
               for people specifically looking at the history performance of the AEF forecast
@@ -78,7 +85,7 @@ const SeatDetails = props => {
         Archived reports have no current mode selected in the summary links. */}
       <ForecastsNav
         election={code}
-        mode={props.isArchive ? 'other' : inputMode}
+        mode={props.isArchive || replay ? 'other' : inputMode}
       />
       {/* Stable loaded-state identities also recover nested sections after a new
         report/results delivery; route identity covers changes before it arrives. */}
@@ -88,12 +95,16 @@ const SeatDetails = props => {
         resetKeys={[code, id, inputMode, seat, forecast, results]}
       >
         <StandardErrorBoundary>
+          {live?.error && <p role="status">{live.error}</p>}
           {forecastValid && seatIndex >= 0 && (
             <>
               <ForecastHeader
                 mode={mode}
                 forecast={forecast}
                 archive={props.isArchive}
+                sourceTime={publication?.source_time}
+                timeZone={publication?.run.timezone}
+                replayName={replay ? publication?.run.display_name : undefined}
               />
               <ForecastAlert
                 forecast={forecast}
@@ -102,6 +113,7 @@ const SeatDetails = props => {
                 isArchive={props.isArchive}
                 showInitially={props.isArchive !== true}
                 results={effectiveResults}
+                runKind={publication?.run.kind}
               />
               <StandardErrorBoundary>
                 <SeatDetailBody
@@ -112,8 +124,13 @@ const SeatDetails = props => {
                   index={seatIndex}
                   results={effectiveResults}
                   windowWidth={windowDimensions.width}
+                  returnUrl={live?.returnUrl}
+                  automated={automated}
                 />
               </StandardErrorBoundary>
+              {live?.history && (
+                <StandardErrorBoundary>{live.history}</StandardErrorBoundary>
+              )}
             </>
           )}
           {forecastValid && seatIndex === -1 && (
@@ -123,8 +140,13 @@ const SeatDetails = props => {
               special characters are replaced with single hyphens.
             </>
           )}
-          {forecastValid && seatIndex === -2 && <LoadingMarker />}
-          {!forecastValid && <LoadingMarker />}
+          {!forecastValid && !live?.error && (
+            <LoadingMarker
+              text={
+                publication ? 'Waiting for the first count update.' : undefined
+              }
+            />
+          )}
         </StandardErrorBoundary>
       </MainContent>
       <Footer />
@@ -137,6 +159,7 @@ SeatDetails.propTypes = {
   id: PropTypes.number,
   seat: PropTypes.string.isRequired,
   isArchive: PropTypes.bool,
+  live: PropTypes.object,
 };
 
 export default SeatDetails;

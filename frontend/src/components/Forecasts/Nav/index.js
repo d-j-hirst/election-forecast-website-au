@@ -1,4 +1,5 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
+import {getDirect} from 'utils/sdk';
 import PropTypes from 'prop-types';
 
 import {Link, useLocation} from 'react-router-dom';
@@ -115,6 +116,20 @@ const pastElections = [
 ];
 
 const ForecastsNav = props => {
+  const [officialElection, setOfficialElection] = useState(null);
+  useEffect(() => {
+    if (live_elections.includes(props.election)) return;
+    let active = true;
+    getDirect('forecast-api/live/v1/official/' + props.election + '/head')
+      .then(response => {
+        if (active && response.ok && response.data.run)
+          setOfficialElection(props.election);
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, [props.election]);
   const [electionsExpanded, setElectionsExpanded] = useState(false);
   const [modesExpanded, setModesExpanded] = useState(false);
   const pastElection = pastElections.find(([code]) => code === props.election);
@@ -240,7 +255,8 @@ const ForecastsNav = props => {
                 mode="archives"
                 activeMode={props.mode}
               />
-              {live_elections.includes(props.election) && (
+              {(live_elections.includes(props.election) ||
+                officialElection === props.election) && (
                 <ModeNav
                   text="Live"
                   election={props.election}

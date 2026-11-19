@@ -89,3 +89,47 @@ class Forecast(models.Model):
     def __str__(self):
         return (self.label + " - " + self.election.name + " - " + 
                 self.mode + " - " + str(self.date).split('+')[0])
+
+
+class LiveRun(models.Model):
+    """Registration survives restarts. Only an operator can select an official run."""
+
+    run_id = models.SlugField(primary_key=True, max_length=255)
+    election = models.CharField(max_length=32, db_index=True)
+    registration = models.JSONField()
+    official = models.BooleanField(default=False)
+    revision = models.PositiveBigIntegerField(default=0)
+    latest = models.ForeignKey('LivePublication', null=True, on_delete=models.SET_NULL,
+                               related_name='+')
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=['election'], condition=models.Q(official=True),
+                                               name='one_official_live_run')]
+
+    def __str__(self):
+        return self.run_id
+
+
+class LivePublication(models.Model):
+    run = models.ForeignKey(LiveRun, on_delete=models.CASCADE)
+    forecast_id = models.CharField(max_length=9)
+    source_time = models.DateTimeField(null=True)
+    published_at = models.DateTimeField(auto_now_add=True)
+    digest = models.CharField(max_length=64)
+    # Independent compressed bodies keep timeline reads away from full reports.
+    report = models.BinaryField()
+    updates = models.BinaryField()
+    history_point = models.JSONField(null=True)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=['run', 'forecast_id'], name='unique_live_publication')]
+
+
+class SeatHistoryBlock(models.Model):
+    run = models.ForeignKey(LiveRun, on_delete=models.CASCADE)
+    seat = models.CharField(max_length=160)
+    block = models.PositiveIntegerField()
+    points = models.BinaryField()
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=['run', 'seat', 'block'], name='unique_seat_history_block')]

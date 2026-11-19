@@ -1,9 +1,15 @@
 from django.urls import path
 
 from . import views
+from . import live
 
 app_name = 'forecast_api'
 urlpatterns = [
+    path('live/v1/capabilities', live.Capabilities.as_view()),
+    path('live/v1/runs', live.RegisterRun.as_view()),
+    path('live/v1/runs/<slug:run_id>/forecasts/<str:identity>', live.PublishForecast.as_view()),
+    path('live/v1/official/<str:code>/<slug:part>', live.ReadRun.as_view()),
+    path('live/v1/replays/<str:code>/<slug:run_id>/<slug:part>', live.ReadRun.as_view()),
     path('submit-report',
          views.SubmitReportResponse.as_view(),  # type: ignore
          name='submit-report'),

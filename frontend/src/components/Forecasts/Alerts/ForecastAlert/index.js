@@ -192,7 +192,21 @@ const ForecastAlert = props => {
               </div>
             </>
           )}
-          {isLive && (
+          {isLive && props.runKind === 'replay' && (
+            <div>
+              This <strong>replay</strong> shows how the experimental live
+              forecast for {props.forecast.electionName || props.code} changes
+              as historical count updates arrive.
+            </div>
+          )}
+          {isLive && props.runKind === 'live' && (
+            <div>
+              This experimental <strong>live forecast</strong> for{' '}
+              {props.forecast.electionName || props.code} incorporates official
+              results as they are reported.
+            </div>
+          )}
+          {isLive && !props.runKind && (
             <>
               <div>
                 This {oldElec ? 'was' : 'is'} an{' '}
@@ -349,6 +363,7 @@ ForecastAlert.propTypes = {
   results: PropTypes.object,
   isArchive: PropTypes.bool,
   showInitially: PropTypes.bool,
+  runKind: PropTypes.oneOf(['live', 'replay']),
 };
 
 export default ForecastAlert;

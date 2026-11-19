@@ -7,10 +7,15 @@ const partyReplace = (array, oldItem, newItem) => {
   if (onPos !== -1) {
     array.partyAbbr[onPos][1] = newItem;
   }
-  if (array.polls[oldItem] !== undefined) {
+  if (array.polls?.[oldItem] !== undefined) {
     array.polls[newItem] = array.polls[oldItem];
     delete array.polls[oldItem];
   }
+};
+
+export const prepareForecastReport = report => {
+  partyReplace(report, 'ONP', 'ON');
+  return report;
 };
 
 const returnUsingData = (resp, settings) => {
@@ -94,7 +99,7 @@ const integrateNewForecast = input => {
   const settings = input.settings;
   const data = input.data;
   if (data.new === false) return;
-  partyReplace(data.report, 'ONP', 'ON');
+  prepareForecastReport(data.report);
   // No system currently set up to cache archived forecasts
   if (data.archiveId === undefined) {
     if (data.new === false) {
@@ -112,11 +117,21 @@ const integrateNewForecast = input => {
   settings.setForecastValid(true);
 };
 
+// Official automated runs use the same published result markers as the
+// historical live page. Replay callers omit this fetch.
+export const fetchResults = settings => {
+  settings.setResultsValid(false);
+  checkForCachedResults(settings);
+  getElectionResults(settings)
+    .then(integrateNewResults)
+    .catch(e => {
+      console.log(e);
+    });
+};
+
 export const fetchReport = settings => {
   settings.setForecastValid(false);
-  settings.setResultsValid(false);
-
-  checkForCachedResults(settings);
+  fetchResults(settings);
 
   if (settings.archiveId !== undefined) {
     getArchiveSummary(settings)
@@ -135,10 +150,4 @@ export const fetchReport = settings => {
         console.log(e);
       });
   }
-
-  getElectionResults(settings)
-    .then(integrateNewResults)
-    .catch(e => {
-      console.log(e);
-    });
 };

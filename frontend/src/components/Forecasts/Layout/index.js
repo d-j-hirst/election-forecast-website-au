@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import {Helmet} from 'react-helmet-async';
 
 import {useWindowDimensions} from '../../../utils/window.js';
-import {fetchReport} from '../../../utils/report_manager.js';
+import {fetchReport, fetchResults} from '../../../utils/report_manager.js';
 import {isOutlook} from '../../../utils/outlook.js';
 
 import {
@@ -30,13 +30,23 @@ const ForecastLayout = props => {
   const code = props.code;
   const id = props.id;
   const inputMode = props.mode;
-  const [forecast, setForecast] = useState({});
-  const [forecastValid, setForecastValid] = useState(false);
+  const {live} = props;
+  const automated = Boolean(live);
+  const replay = Boolean(live?.replay);
+  const publication = live?.publication;
+  const [storedForecast, setForecast] = useState({});
+  const [storedForecastValid, setForecastValid] = useState(false);
   const [results, setResults] = useState({});
   const [resultsValid, setResultsValid] = useState(false);
   const windowDimensions = useWindowDimensions();
 
   useEffect(() => {
+    // Automated pages already receive their report and history from the
+    // run poller. Only official forecasts can display final-result markers.
+    if (automated) {
+      if (!replay) fetchResults({code, setResults, setResultsValid});
+      return;
+    }
     fetchReport({
       code: code,
       mode: inputMode,
@@ -46,17 +56,19 @@ const ForecastLayout = props => {
       setResults: setResults,
       setResultsValid: setResultsValid,
     });
-  }, [code, id, inputMode]);
+  }, [code, id, inputMode, automated, replay]);
 
+  const forecast = automated ? publication?.report : storedForecast;
+  const forecastValid = automated ? Boolean(forecast) : storedForecastValid;
   const modeNames = {RF: 'regular', NC: 'nowcast', LF: 'live'};
-  const mode = forecastValid ? modeNames[forecast.reportMode] : '';
+  const mode = automated ? 'live' : modeNames[forecast.reportMode];
 
   const effectiveResults =
-    forecast.reportMode !== 'NC' && resultsValid ? results : null;
+    !replay && forecast?.reportMode !== 'NC' && resultsValid ? results : null;
 
   return (
     <div className={styles.site}>
-      {props.isArchive && (
+      {(props.isArchive || replay) && (
         <Helmet>
           {/* Archived forecasts shouldn't be indexed by search engines etc.,
             they're for people specifically looking at the historical performance
@@ -69,22 +81,32 @@ const ForecastLayout = props => {
         Archived reports have no current mode selected in the summary links. */}
       <ForecastsNav
         election={code}
-        mode={props.isArchive ? 'other' : inputMode}
+        mode={props.isArchive || replay ? 'other' : inputMode}
       />
       {/* These state objects keep their identity until a load replaces the data;
         unlike inline render objects, they reset failed sections only on delivery. */}
       <MainContent
         className={styles.content}
-        title={`${props.isArchive ? 'Archived forecast' : 'Forecast'}: ${code}`}
+        title={`${
+          replay
+            ? 'Live replay'
+            : props.isArchive
+            ? 'Archived forecast'
+            : 'Forecast'
+        }: ${code}`}
         resetKeys={[code, id, inputMode, forecast, results]}
       >
         <StandardErrorBoundary>
+          {live?.error && <p role="status">{live.error}</p>}
           {forecastValid && (
             <>
               <ForecastHeader
                 archive={props.isArchive}
                 forecast={forecast}
                 mode={mode}
+                sourceTime={publication?.source_time}
+                timeZone={publication?.run.timezone}
+                replayName={replay ? publication?.run.display_name : undefined}
               />
               <ForecastAlert
                 code={code}
@@ -92,6 +114,7 @@ const ForecastLayout = props => {
                 isArchive={props.isArchive}
                 mode={mode}
                 results={effectiveResults}
+                runKind={publication?.run.kind}
               />
               <MethodsChangesAlert
                 isArchive={props.isArchive}
@@ -113,20 +136,23 @@ const ForecastLayout = props => {
                   election={code}
                   forecast={forecast}
                   isArchive={props.isArchive}
+                  automated={automated}
                   mode={mode}
                   results={effectiveResults}
                   windowWidth={windowDimensions.width}
                 />
               </StandardErrorBoundary>
-              <StandardErrorBoundary>
-                <SeatTotals
-                  election={code}
-                  forecast={forecast}
-                  mode={mode}
-                  results={effectiveResults}
-                  windowWidth={windowDimensions.width}
-                />
-              </StandardErrorBoundary>
+              {(!automated || forecast.seatCountFrequencies?.length > 0) && (
+                <StandardErrorBoundary>
+                  <SeatTotals
+                    election={code}
+                    forecast={forecast}
+                    mode={mode}
+                    results={effectiveResults}
+                    windowWidth={windowDimensions.width}
+                  />
+                </StandardErrorBoundary>
+              )}
               {isOutlook(code) && (
                 /* move this downward to deemphasise when in outlook mode */
                 <StandardErrorBoundary>
@@ -138,12 +164,17 @@ const ForecastLayout = props => {
                   />
                 </StandardErrorBoundary>
               )}
+              {live?.summary && (
+                <StandardErrorBoundary>{live.summary}</StandardErrorBoundary>
+              )}
               <StandardErrorBoundary>
                 <History
                   election={code}
                   forecast={forecast}
                   mode={mode}
                   windowWidth={windowDimensions.width}
+                  runPoints={publication?.points}
+                  timeZone={publication?.run.timezone}
                 />
               </StandardErrorBoundary>
               <StandardErrorBoundary>
@@ -154,11 +185,18 @@ const ForecastLayout = props => {
                   mode={mode}
                   results={effectiveResults}
                   windowWidth={windowDimensions.width}
+                  seatLink={live?.seatLink}
                 />
               </StandardErrorBoundary>
             </>
           )}
-          {!forecastValid && <LoadingMarker />}
+          {!forecastValid && !live?.error && (
+            <LoadingMarker
+              text={
+                publication ? 'Waiting for the first count update.' : undefined
+              }
+            />
+          )}
         </StandardErrorBoundary>
       </MainContent>
       <Footer />
@@ -170,6 +208,7 @@ ForecastLayout.propTypes = {
   code: PropTypes.string.isRequired,
   id: PropTypes.number,
   mode: PropTypes.string,
+  live: PropTypes.object,
 };
 
 export default ForecastLayout;

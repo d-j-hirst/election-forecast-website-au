@@ -37,6 +37,39 @@
     flex-wrap: wrap;
 }
 
+.historyOptions :global(.dropdown),
+.historyOptions :global(.dropdown-menu),
+.historyOptions :global(.dropdown-toggle) {
+    max-width: 100%;
+}
+
+.historyOptions :global(.dropdown-toggle),
+.historyOptions :global(.dropdown-item) {
+    white-space: normal;
+}
+
+.winLegend {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4px 16px;
+    margin: 0 0 8px;
+    padding: 0 12px;
+    list-style: none;
+}
+
+.winLegend li {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.winLegend span {
+    width: 16px;
+    height: 3px;
+    flex: none;
+}
+
 .customTooltip {
     border: 1px solid;
     padding: 4px;
