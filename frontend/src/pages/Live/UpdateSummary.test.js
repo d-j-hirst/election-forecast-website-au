@@ -351,6 +351,43 @@ test('period choices exclude unavailable windows and follow the most recent refe
   expect(screen.getByText('No comparison available.')).toBeInTheDocument();
 });
 
+test('Recent Changes restores both dropdowns and forgets a period that becomes unavailable', () => {
+  const comparison = {available: true, win_changes: []};
+  const data = {
+    run: {election: '2026sa'},
+    schedule: {},
+    report: {},
+    windows: {previous: {comparison}, '15m': {comparison}},
+  };
+  const page = data => (
+    <MemoryRouter>
+      <UpdateSummary data={data} seatLink={seat => '/seat/' + seat} />
+    </MemoryRouter>
+  );
+  const hasDropdowns = period => {
+    expect(
+      screen.getByRole('button', {name: `Period: ${period}`})
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', {name: 'Display: Text'})
+    ).toBeInTheDocument();
+  };
+
+  let view = render(page(data));
+  choose('Period: Previous Update', '15 minutes');
+  choose('Display: Numbers', 'Text');
+  view.unmount();
+
+  view = render(page(data));
+  hasDropdowns('15 minutes');
+  view.rerender(page({...data, windows: {previous: {comparison}}}));
+  hasDropdowns('Previous Update');
+  view.unmount();
+
+  render(page(data));
+  hasDropdowns('Previous Update');
+});
+
 test('structured commentary renders headings and escaped bullets and remembers the collapsed notice', () => {
   const data = {
     run: {election: '2026sa'},
@@ -363,6 +400,8 @@ test('structured commentary renders headings and escaped bullets and remembers t
           status: 'complete',
           format: 'seat-bullets-v1',
           entities: {
+            '{party:1}': {kind: 'party', label: 'LNP', party: 'LNP'},
+            '{party:4}': {kind: 'party', label: 'ON', party: 'ON'},
             '{seat:Alpha}': {
               kind: 'seat',
               label: 'Alpha',
@@ -372,7 +411,7 @@ test('structured commentary renders headings and escaped bullets and remembers t
           },
           text: {
             summary:
-              'Key changes:\n- The estimate now sits at **51.5%**.\n- <img src=x> is literal text.',
+              'Key changes:\n- {party:4} gained a seat. {party:1} held steady at **6 seats**.\n- <img src=x> is literal text.',
             developments: [
               {
                 seats: ['Alpha'],
@@ -403,11 +442,14 @@ test('structured commentary renders headings and escaped bullets and remembers t
   );
   expect(screen.getAllByRole('listitem').map(item => item.textContent)).toEqual(
     [
-      'The estimate now sits at 51.5%.',
+      'ON gained a seat. LIB held steady at 6 seats.',
       '<img src=x> is literal text.',
       'The new count was 200 votes.',
     ]
   );
+  const headline = screen.getAllByRole('listitem')[0];
+  expect(within(headline).getByText('ON')).toHaveClass('on-badge');
+  expect(within(headline).getByText('LIB')).toHaveClass('lnp-badge');
   expect(screen.getByText('200 votes').tagName).toBe('STRONG');
   expect(page.container.querySelector('img[src="x"]')).toBeNull();
   expect(screen.getByRole('alert')).toHaveClass('alert-info');
@@ -418,7 +460,9 @@ test('structured commentary renders headings and escaped bullets and remembers t
   page.unmount();
 
   render(display);
-  choose('Display: Numbers', 'Text');
+  expect(
+    screen.getByRole('button', {name: 'Display: Text'})
+  ).toBeInTheDocument();
   expect(screen.queryByText(/large language model/)).toBeNull();
   fireEvent.click(
     screen.getByRole('button', {name: 'Show AI commentary notice'})

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import Card from 'react-bootstrap/Card';
 import Dropdown from 'react-bootstrap/Dropdown';
@@ -12,6 +12,7 @@ import {countTime} from 'utils/date';
 import styles from 'components/Forecasts/History/History.module.css';
 import MechanicalChanges, {Counts} from './MechanicalChanges';
 import RecentChangesSection from './RecentChangesSection';
+import useStoredString from './useStoredString';
 
 const labels = {
   previous: 'Previous Update',
@@ -78,17 +79,31 @@ function availablePeriods(windows, sourceTime, yesterday) {
 }
 
 export default function UpdateSummary({data, seatLink}) {
-  const [choice, setChoice] = useState('previous');
+  const [choice, setChoice] = useStoredString(
+    'liveRecentChanges:period',
+    'previous'
+  );
+  const [displayChoice, setDisplay] = useStoredString(
+    'liveRecentChanges:display',
+    'numbers'
+  );
   const [showHelp, setShowHelp] = useState(false);
-  // The choice follows the reader between periods and incoming reports for
-  // this run. A new visit starts with the mechanical comparisons.
-  const [display, setDisplay] = useState('numbers');
+  const display = Object.hasOwn(displayLabels, displayChoice)
+    ? displayChoice
+    : 'numbers';
   const available = availablePeriods(
     data.windows,
     data.source_time,
     data.yesterday
   );
-  const selected = available.includes(choice) ? choice : available[0];
+  const choiceAvailable = available.includes(choice);
+  const selected = choiceAvailable ? choice : available[0];
+
+  // Retire a period once a new snapshot stops offering it. The menu can
+  // display the first available window while Previous Update is missing.
+  useEffect(() => {
+    if (!choiceAvailable && choice !== 'previous') setChoice('previous');
+  }, [choice, choiceAvailable, setChoice]);
   const entry = data.windows[selected];
   const w = entry?.comparison;
   const yesterday = selected === 'yesterday' && data.yesterday;

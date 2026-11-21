@@ -83,6 +83,20 @@ function inline(text, entities, seatLink, code, formatCandidate) {
         );
       const entity = entities?.[part];
       if (!entity || typeof entity.label !== 'string') return part;
+      if (
+        entity.kind === 'party' &&
+        typeof entity.party === 'string' &&
+        entity.party
+      ) {
+        return (
+          <SmartBadge
+            key={i}
+            party={entity.party}
+            text={entity.label}
+            termCode={code}
+          />
+        );
+      }
       if (entity.kind === 'seat') {
         const hasMargin = Number.isFinite(entity.holder_margin);
         return (
@@ -188,23 +202,89 @@ CommentaryBlock.propTypes = {
   formatCandidates: PropTypes.func,
 };
 
+// The replay trial appends an unassigned separator and the rule-written
+// summary after all original developments. Each subsequent development is a
+// district in that edition. A marker mentioned inside seat prose is ordinary
+// text. Older publications, including yesterday's frozen report, stand alone.
+const ruleEditionPrefix = '[[AEF_RULE_BASED_COMMENTARY_V1]]\n';
+
+function writerEditions(text) {
+  const rows = text?.developments;
+  if (!Array.isArray(rows)) return null;
+  const divider = rows.findIndex(
+    row =>
+      Array.isArray(row?.seats) &&
+      row.seats.length === 0 &&
+      typeof row.text === 'string' &&
+      row.text.startsWith(ruleEditionPrefix) &&
+      row.text.slice(ruleEditionPrefix.length).trim()
+  );
+  if (divider < 0) return null;
+  return {
+    original: {...text, developments: rows.slice(0, divider)},
+    rules: {
+      summary: rows[divider].text.slice(ruleEditionPrefix.length),
+      developments: rows.slice(divider + 1),
+    },
+  };
+}
+
 export default function Commentary({item, seatLink, code}) {
-  if (item?.status !== 'complete')
+  const [preferRules, setPreferRules] = useStoredBoolean(
+    'liveRecentChanges:ruleBased'
+  );
+  const editions = writerEditions(item?.text);
+  const primaryAvailable = item?.status === 'complete';
+  if (!primaryAvailable && !editions)
     return <p>Commentary unavailable. {item?.reason}</p>;
+  const showRules = Boolean(editions && (preferRules || !primaryAvailable));
+  const text = showRules ? editions.rules : editions?.original || item.text;
   const render = (value, formatCandidate) =>
     inline(value, item.entities, seatLink, code, formatCandidate);
   const formatCandidates = text =>
     repeatedCandidateLabels(text, item.entities, code);
-  const structured = item.format === 'seat-bullets-v1';
+  const structured = showRules
+    ? text.summary.startsWith('Key changes:\n')
+    : item.format === 'seat-bullets-v1';
   return (
     <section>
-      {item.source === 'local' && <h4 className="h6">Counting update</h4>}
-      {item.source !== 'local' && <CommentaryNotice />}
-      {structured && (
-        <CommentaryBlock text={item.text?.summary} render={render} />
+      {editions && primaryAvailable && (
+        <div
+          role="group"
+          aria-label="Commentary writer"
+          className="btn-group mb-3"
+        >
+          <Button
+            size="sm"
+            variant={showRules ? 'outline-primary' : 'primary'}
+            aria-pressed={!showRules}
+            onClick={() => setPreferRules(false)}
+          >
+            AI commentary
+          </Button>
+          <Button
+            size="sm"
+            variant={showRules ? 'primary' : 'outline-primary'}
+            aria-pressed={showRules}
+            onClick={() => setPreferRules(true)}
+          >
+            Rule-based commentary
+          </Button>
+        </div>
       )}
-      {!structured && item.text?.summary && <p>{render(item.text.summary)}</p>}
-      {(item.text?.developments || []).map((d, i) => {
+      {editions && !primaryAvailable && (
+        <>
+          <p>AI commentary unavailable. {item.reason}</p>
+          <h4 className="h6">Rule-based commentary</h4>
+        </>
+      )}
+      {!showRules && item.source === 'local' && (
+        <h4 className="h6">Counting update</h4>
+      )}
+      {!showRules && item.source !== 'local' && <CommentaryNotice />}
+      {structured && <CommentaryBlock text={text?.summary} render={render} />}
+      {!structured && text?.summary && <p>{render(text.summary)}</p>}
+      {(text?.developments || []).map((d, i) => {
         const text = d.text || d.explanation;
         if (structured) {
           return (
