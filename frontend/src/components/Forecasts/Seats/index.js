@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import useStoredString from 'pages/Live/useStoredString';
 import PropTypes from 'prop-types';
 
 import Alert from 'react-bootstrap/Alert';
@@ -19,7 +20,7 @@ import {SmartBadge} from '../../General/PartyBadge';
 import InfoIcon from '../../General/InfoIcon';
 import TooltipWrapper from '../../General/TooltipWrapper';
 
-import {coalitionAbbreviation} from '../../../utils/coalition.js';
+import {seatCoalitionLabel, seatPartyCode} from '../../../utils/coalition.js';
 import {deepCopy} from '../../../utils/deepcopy.js';
 import {jsonMap, jsonMapReverse} from '../../../utils/jsonmap.js';
 import {partyCategory} from '../../../utils/partyclass.js';
@@ -93,13 +94,11 @@ const SeatRow = props => {
     : '';
   const incumbentIndex = props.forecast.seatIncumbents?.[props.index];
   const tempAbbr = jsonMap(props.forecast.partyAbbr, incumbentIndex);
-  const incumbentAbbr =
-    props.forecast.coalitionSeatCountFrequencies && tempAbbr === 'LNP'
-      ? props.forecast.termCode.slice(4) === 'fed' &&
-        seatInRegion(seatName, 'qld')
-        ? 'LNPx'
-        : 'LIB'
-      : tempAbbr;
+  const incumbentAbbr = seatPartyCode(
+    tempAbbr,
+    props.forecast.termCode,
+    seatName
+  );
   const margin = props.forecast.seatMargins?.[props.index];
 
   const freqs = deepCopy(props.forecast.seatPartyWinFrequencies[props.index]);
@@ -379,9 +378,11 @@ const Seats = props => {
   });
 
   const [showExplainer, setShowExplainer] = useState(false);
-  const [sortType, setSortType] = useState(SortTypeEnum.competitiveness);
-  const [sortParty, setSortParty] = useState(0);
-  const [filter, setFilter] = useState('all');
+  const [sortKey, setSortKey] = useStoredString(
+    'seats:order',
+    'competitiveness'
+  );
+  const [savedFilter, setFilter] = useStoredString('seats:region', 'all');
   const resultsAvailable =
     props.results !== null &&
     props.results.seats !== undefined &&
@@ -433,6 +434,61 @@ const Seats = props => {
   let kapIndex = jsonMapReverse(props.forecast.partyAbbr, 'KAP');
   if (kapIndex && !hasForecastSeats(kapIndex)) kapIndex = null;
 
+  const isFederal = props.election.substring(4) === 'fed';
+  const filter =
+    isFederal &&
+    ['nsw', 'vic', 'qld', 'wa', 'sa', 'tas', 'act', 'nt'].includes(savedFilter)
+      ? savedFilter
+      : 'all';
+  // Store the meaning of the option rather than a party index which may
+  // represent a different party in another election. The same list drives
+  // both the menu and the fallback when a saved choice is unavailable.
+  const coalition = seatCoalitionLabel(props.election);
+  const options = [
+    ['competitiveness', 'Competitiveness', SortTypeEnum.competitiveness],
+    ['alphabetical', 'Alphabetical order', SortTypeEnum.alphabetical],
+    resultsAvailable && [
+      'unexpected',
+      'Most unexpected',
+      SortTypeEnum.mostUnexpected,
+    ],
+    props.forecast.seatMargins?.length && [
+      'alpMargin',
+      'ALP 2PP margin',
+      SortTypeEnum.alpTppMargin,
+    ],
+    props.forecast.seatMargins?.length && [
+      'lnpMargin',
+      coalition + ' 2PP margin',
+      SortTypeEnum.lnpTppMargin,
+    ],
+    ['ALP', 'ALP win chance', SortTypeEnum.winChance, 0],
+    lnpIndex && [
+      'coalition',
+      coalition + ' win chance',
+      SortTypeEnum.lnpWinChance,
+      1,
+    ],
+    ...[
+      ['GRN', grnIndex],
+      ['LIB', libIndex],
+      ['NAT', natIndex],
+      ['IND', indIndex],
+      ['ON', onIndex],
+      ['UAP', uapIndex],
+      ['KAP', kapIndex],
+      ['Emerging party', -3],
+    ]
+      .filter(([, id]) => id != null)
+      .map(([abbr, id]) => [
+        abbr,
+        abbr + ' win chance',
+        SortTypeEnum.winChance,
+        id,
+      ]),
+  ].filter(Boolean);
+  const selected = options.find(([key]) => key === sortKey) || options[0];
+  const [, sortTitle, sortType, sortParty] = selected;
   let sortedIndices = [];
   const getWinnerChance = (seatName, index) => {
     const result = props.results.seats[seatName];
@@ -533,32 +589,6 @@ const Seats = props => {
     seatInRegion(props.forecast.seatNames[val], filter)
   );
 
-  const sortTitle = (() => {
-    let title = 'Sort by: ';
-    const partyAbbr = (() => {
-      if (sortParty === -2) return 'Emerging IND ';
-      if (sortParty === -3) return 'Emerging party ';
-      if (sortParty === libIndex) return 'LIB ';
-      if (sortParty === natIndex) return 'NAT ';
-      return jsonMap(props.forecast.partyAbbr, sortParty);
-    })();
-    if (sortType === SortTypeEnum.competitiveness) title += 'Competitiveness';
-    else if (sortType === SortTypeEnum.alphabetical)
-      title += 'Alphabetical order';
-    else if (sortType === SortTypeEnum.alpTppMargin) title += 'ALP 2PP margin';
-    else if (sortType === SortTypeEnum.lnpTppMargin)
-      title += `${coalitionAbbreviation(props.election)} 2PP margin`;
-    else if (sortType === SortTypeEnum.winChance)
-      title += `${partyAbbr} win chance`;
-    else if (sortType === SortTypeEnum.lnpWinChance)
-      title += `${coalitionAbbreviation(props.election)} win chance`;
-    else if (sortType === SortTypeEnum.mostUnexpected)
-      title += 'Most unexpected';
-    return title;
-  })();
-
-  const isFederal = props.election.substring(4) === 'fed';
-
   const filterTitle = (() => {
     let title = 'Filter:';
     if (filter === 'all') {
@@ -568,62 +598,6 @@ const Seats = props => {
     }
     return title;
   })();
-
-  const setSortCompetitiveness = () => {
-    setSortType(SortTypeEnum.competitiveness);
-  };
-  const setSortAlphabetical = () => {
-    setSortType(SortTypeEnum.alphabetical);
-  };
-  const setSortAlpTppMargin = () => {
-    setSortType(SortTypeEnum.alpTppMargin);
-  };
-  const setSortLnpTppMargin = () => {
-    setSortType(SortTypeEnum.lnpTppMargin);
-  };
-  const setSortAlpWinChance = () => {
-    setSortType(SortTypeEnum.winChance);
-    setSortParty(0);
-  };
-  const setSortLnpWinChance = () => {
-    setSortType(SortTypeEnum.lnpWinChance);
-    setSortParty(1);
-  };
-  const setSortLibWinChance = () => {
-    setSortType(SortTypeEnum.winChance);
-    setSortParty(1);
-  };
-  const setSortNatWinChance = () => {
-    setSortType(SortTypeEnum.winChance);
-    setSortParty(natIndex);
-  };
-  const setSortGrnWinChance = () => {
-    setSortType(SortTypeEnum.winChance);
-    setSortParty(grnIndex);
-  };
-  const setSortIndWinChance = () => {
-    setSortType(SortTypeEnum.winChance);
-    setSortParty(indIndex);
-  };
-  const setSortOnWinChance = () => {
-    setSortType(SortTypeEnum.winChance);
-    setSortParty(onIndex);
-  };
-  const setSortUapWinChance = () => {
-    setSortType(SortTypeEnum.winChance);
-    setSortParty(uapIndex);
-  };
-  const setSortKapWinChance = () => {
-    setSortType(SortTypeEnum.winChance);
-    setSortParty(kapIndex);
-  };
-  const setSortMostUnexpected = () => {
-    setSortType(SortTypeEnum.mostUnexpected);
-  };
-  const setSortEmergingPartyWinChance = () => {
-    setSortType(SortTypeEnum.winChance);
-    setSortParty(-3);
-  };
 
   const setFilterAll = () => {
     setFilter('all');
@@ -666,79 +640,19 @@ const Seats = props => {
             <ListGroup.Item className={styles.seatOptions}>
               <DropdownButton
                 id="sort-dropdown"
-                title={sortTitle}
+                title={'Sort by: ' + sortTitle}
                 variant="secondary"
               >
-                <Dropdown.Item as="button" onClick={setSortCompetitiveness}>
-                  Competitiveness
-                </Dropdown.Item>
-                <Dropdown.Item as="button" onClick={setSortAlphabetical}>
-                  Alphabetical order
-                </Dropdown.Item>
-                {resultsAvailable && (
-                  <Dropdown.Item as="button" onClick={setSortMostUnexpected}>
-                    Most unexpected
+                {options.map(([key, label]) => (
+                  <Dropdown.Item
+                    as="button"
+                    key={key}
+                    active={key === selected[0]}
+                    onClick={() => setSortKey(key)}
+                  >
+                    {label}
                   </Dropdown.Item>
-                )}
-                {props.forecast.seatMargins?.length > 0 && (
-                  <>
-                    <Dropdown.Item as="button" onClick={setSortAlpTppMargin}>
-                      ALP 2PP margin
-                    </Dropdown.Item>
-                    <Dropdown.Item as="button" onClick={setSortLnpTppMargin}>
-                      {coalitionAbbreviation(props.election)} 2PP margin
-                    </Dropdown.Item>
-                  </>
-                )}
-                <Dropdown.Item as="button" onClick={setSortAlpWinChance}>
-                  ALP win chance
-                </Dropdown.Item>
-                {lnpIndex && (
-                  <Dropdown.Item as="button" onClick={setSortLnpWinChance}>
-                    {coalitionAbbreviation(props.election)} win chance
-                  </Dropdown.Item>
-                )}
-                {grnIndex && (
-                  <Dropdown.Item as="button" onClick={setSortGrnWinChance}>
-                    GRN win chance
-                  </Dropdown.Item>
-                )}
-                {libIndex && (
-                  <Dropdown.Item as="button" onClick={setSortLibWinChance}>
-                    LIB win chance
-                  </Dropdown.Item>
-                )}
-                {natIndex && (
-                  <Dropdown.Item as="button" onClick={setSortNatWinChance}>
-                    NAT win chance
-                  </Dropdown.Item>
-                )}
-                {indIndex && (
-                  <Dropdown.Item as="button" onClick={setSortIndWinChance}>
-                    IND win chance
-                  </Dropdown.Item>
-                )}
-                {onIndex && (
-                  <Dropdown.Item as="button" onClick={setSortOnWinChance}>
-                    ON win chance
-                  </Dropdown.Item>
-                )}
-                {uapIndex && (
-                  <Dropdown.Item as="button" onClick={setSortUapWinChance}>
-                    UAP win chance
-                  </Dropdown.Item>
-                )}
-                {kapIndex && (
-                  <Dropdown.Item as="button" onClick={setSortKapWinChance}>
-                    KAP win chance
-                  </Dropdown.Item>
-                )}
-                <Dropdown.Item
-                  as="button"
-                  onClick={setSortEmergingPartyWinChance}
-                >
-                  Emerging party win chance
-                </Dropdown.Item>
+                ))}
               </DropdownButton>
               {isFederal && (
                 <DropdownButton

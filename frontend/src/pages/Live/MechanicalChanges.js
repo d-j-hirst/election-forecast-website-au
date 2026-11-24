@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import {Link} from 'react-router-dom';
 import {SmartBadge} from '../../components/General/PartyBadge';
 import governmentOutcomes from 'components/Forecasts/FormationOfGovernment/governmentOutcomes';
+import {seatPartyCode, seriesPartyCode} from 'utils/coalition';
 import formatCountPercentage from 'utils/formatCountPercentage';
 import RecentChangesSection from './RecentChangesSection';
 import useStoredBoolean from './useStoredBoolean';
@@ -54,7 +55,7 @@ MovementValue.propTypes = {
   seatCount: PropTypes.bool,
 };
 
-function CandidateMovements({rows, parties, code}) {
+function CandidateMovements({rows, parties, code, seat}) {
   return (
     <ul className="list-unstyled mb-2">
       {rows.map(row => {
@@ -66,7 +67,11 @@ function CandidateMovements({rows, parties, code}) {
         return (
           <li key={row.party_id}>
             {row.identity?.name && row.identity.name + ' '}
-            <SmartBadge party={party} termCode={code} text={badge} />{' '}
+            <SmartBadge
+              party={seatPartyCode(party, code, seat)}
+              termCode={code}
+              text={badge}
+            />{' '}
             <MovementValue
               before={row.before}
               after={row.after}
@@ -242,7 +247,8 @@ function electionMovements(statewide, partyAbbr, code, diagnostics) {
     add(
       voteRows,
       `fp-${party}`,
-      parties[party] || `Party ${party}`,
+      seriesPartyCode(parties[party], party, partyAbbr, code) ||
+        `Party ${party}`,
       'first preferences',
       before?.fp_percentiles_by_party?.[party]?.[50],
       bands?.[50]
@@ -253,7 +259,8 @@ function electionMovements(statewide, partyAbbr, code, diagnostics) {
       add(
         seatRows,
         `seats-${party}`,
-        parties[party] || `Party ${party}`,
+        seriesPartyCode(parties[party], party, partyAbbr, code) ||
+          `Party ${party}`,
         '',
         before?.expectedSeats?.[party],
         value
@@ -335,7 +342,12 @@ export default function MechanicalChanges({
           <strong>
             <Link to={seatLink(seat)}>{seat}</Link>
           </strong>
-          <CandidateMovements rows={candidates} parties={parties} code={code} />
+          <CandidateMovements
+            rows={candidates}
+            parties={parties}
+            code={code}
+            seat={seat}
+          />
         </li>
       ))}
     </ol>
@@ -374,6 +386,7 @@ Counts.propTypes = {
   progress: PropTypes.object,
 };
 CandidateMovements.propTypes = {
+  seat: PropTypes.string.isRequired,
   rows: PropTypes.array.isRequired,
   parties: PropTypes.object.isRequired,
   code: PropTypes.string.isRequired,

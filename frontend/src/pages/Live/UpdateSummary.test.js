@@ -569,6 +569,7 @@ test('each disclosure remembers opening and closing across visits', async () => 
 test('commentary shortens repeat candidate mentions within each development', () => {
   const alphaLib = '{candidate:Alpha:1}';
   const alphaInd = '{candidate:Alpha:2}';
+  const emerging = '{candidate:Alpha:-2}';
   const betaLib = '{candidate:Beta:1}';
   const betaCoalition = '{candidate:Beta:3}';
   const betaJohn = '{candidate:Beta:4}';
@@ -585,17 +586,26 @@ test('commentary shortens repeat candidate mentions within each development', ()
     entities: {
       [alphaLib]: candidate('Alpha', 'Sam Telfer', 'LNP'),
       [alphaInd]: candidate('Alpha', 'Meghan Petherick', 'IND'),
+      [emerging]: candidate('Alpha', 'IND', 'IND'),
+      '{seat:Alpha}': {
+        kind: 'seat',
+        seat: 'Alpha',
+        label: 'Alpha',
+        holder_party: 'LNP',
+      },
+      '{party:-4}': {kind: 'party', party: 'LNP', label: 'LNP'},
+      '{party:1}': {kind: 'party', party: 'LNP', label: 'LNP'},
       [betaLib]: candidate('Beta', 'Ada Lorne', 'LIB'),
       [betaCoalition]: candidate('Beta', 'Bert Pine', 'LNP'),
       [betaJohn]: candidate('Beta', 'John Kerr', 'IND'),
       [betaJune]: candidate('Beta', 'June Kerr', 'IND'),
     },
     text: {
-      summary: `Key changes:\n- ${alphaLib} gained ground.`,
+      summary: `Key changes:\n- ${alphaLib} gained ground in {seat:Alpha}. {party:1} held steady. {party:-4} gained a seat.`,
       developments: [
         {
           seats: ['Alpha'],
-          text: `In Alpha:\n- The contest is between ${alphaLib} and ${alphaInd}.\n- At the booth, ${alphaLib} received **85.7%** against ${alphaInd}.`,
+          text: `In Alpha:\n- The contest is between ${alphaLib} and ${alphaInd}.\n- At the booth, ${alphaLib} received **85.7%** against ${alphaInd}.\n- The win chance for ${emerging} fell from **1.4%** to **0.1%**.`,
         },
         {
           seats: ['Beta'],
@@ -605,9 +615,15 @@ test('commentary shortens repeat candidate mentions within each development', ()
     },
   };
   const data = {
-    run: {election: '2026sa'},
+    run: {election: '2022vic'},
     schedule: {},
-    report: {},
+    report: {
+      partyAbbr: [
+        [-4, 'LNP'],
+        [1, 'LNP'],
+        [4, 'NAT'],
+      ],
+    },
     windows: {
       previous: {
         comparison: {available: true, win_changes: []},
@@ -627,9 +643,10 @@ test('commentary shortens repeat candidate mentions within each development', ()
   expect(
     screen.getAllByRole('listitem').map(point => point.textContent)
   ).toEqual([
-    'Sam Telfer LIB gained ground.',
+    'Sam Telfer LIB gained ground in Alpha (LIB). LIB held steady. L–NC gained a seat.',
     'The contest is between Sam Telfer LIB and Meghan Petherick IND.',
     'At the booth, LIB received 85.7% against Petherick IND.',
+    'The win chance for IND fell from 1.4% to 0.1%.',
     'Ada Lorne LIB leads.',
     'Lorne LIB gained before Bert Pine LIB caught up.',
     'Pine LIB now leads.',
@@ -637,4 +654,48 @@ test('commentary shortens repeat candidate mentions within each development', ()
     'June Kerr IND gained at the next booth.',
   ]);
   expect(screen.getByText('85.7%').tagName).toBe('STRONG');
+});
+
+test('call bulletin survives an unavailable commentary and appears in both displays', () => {
+  const calls = [
+    {action: 'called', party: '1', seats: ['Bendigo', 'Ryan'], others: 2},
+    {action: 'withdrawn', party: '-2', seats: ['Beta'], others: 0},
+  ];
+  const data = {
+    run: {election: '2025fed', timezone: 'Australia/Sydney'},
+    schedule: {},
+    report: {termCode: '2025fed', partyAbbr: [[1, 'LNP']]},
+    source_time: '2025-05-03T10:00:00Z',
+    windows: {
+      previous: {
+        comparison: {available: true, win_changes: []},
+        commentary: {
+          status: 'unavailable',
+          reason: 'Deadline',
+          seat_call_changes: calls,
+        },
+      },
+    },
+  };
+  render(
+    <MemoryRouter>
+      <UpdateSummary data={data} seatLink={s => '/seat/' + s} />
+    </MemoryRouter>
+  );
+  const checkBulletin = () => {
+    const call = screen.getByRole('link', {name: 'Bendigo'}).closest('li');
+    expect(call).toHaveTextContent('Called for LIB/LNP');
+    expect(call).toHaveTextContent('Bendigo, Ryan and 2 other seats');
+    expect(within(call).getByText('LIB')).toHaveClass('lib-badge');
+    expect(within(call).getByText('LNP')).toHaveClass('lnp-badge');
+    const withdrawal = screen.getByRole('link', {name: 'Beta'}).closest('li');
+    expect(withdrawal).toHaveTextContent('Call withdrawn for IND*');
+    expect(within(withdrawal).getByText('IND*')).toHaveClass('indx-badge');
+  };
+  checkBulletin();
+  choose('Display: Numbers', 'Text');
+  checkBulletin();
+  expect(screen.getByText('Glossary').parentElement).toHaveTextContent(
+    'TCP = two-candidate preferred'
+  );
 });

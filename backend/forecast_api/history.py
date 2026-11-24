@@ -64,6 +64,8 @@ def build_history_point(
         'mostSeatsWinPc': report['mostSeatsWinPc'],
         'overallWinPc': report['overallWinPc'],
         'tppFrequencies': report['tppFrequencies'],
+        **({key: report[key] for key in ('statewidePreferenceFlows', 'voteTotalThresholds', 'partyAbbr') if key in report}
+           if report.get('statewidePreferenceFlows') else {}),
         'fpFrequencies': report.get('fpFrequencies', []),
         'coalitionFpFrequencies': report.get(
             'coalitionFpFrequencies', []

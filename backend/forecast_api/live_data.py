@@ -93,6 +93,20 @@ def compact_booths(booths):
     return {'available': True, 'events': events, 'shortlist_omitted': omitted}
 
 
+def election_history_point(report):
+    """Keep the statewide chart quantities from one publication. An older
+    report can lack preference estimates. When they exist, retain the parties
+    and percentile scale needed to interpret this particular observation."""
+    point = {key: report[key] for key in (
+        'majorityWinPc', 'minorityWinPc', 'mostSeatsWinPc', 'overallWinPc', 'tppFrequencies',
+        'fpFrequencies', 'seatCountFrequencies', 'coalitionFpFrequencies',
+        'coalitionSeatCountFrequencies', 'voteTotalThresholds') if key in report}
+    if report.get('statewidePreferenceFlows'):
+        point['statewidePreferenceFlows'] = report['statewidePreferenceFlows']
+        point['partyAbbr'] = report.get('partyAbbr', [])
+    return point
+
+
 def compact_updates(body):
     result = {key: body[key] for key in ('forecast', 'released_at', 'commentary',
               'commentary_requests', 'commentary_evidence', 'retained_reports',
@@ -102,7 +116,7 @@ def compact_updates(body):
         kept = {key: window[key] for key in ('available', 'reason', 'reference_forecast_id',
                 'reference_source_time', 'actual_seconds', 'requested_seconds', 'report_date',
                 'reporting_timezone', 'requested_reference_time', 'input_revision_changed',
-                'statewide', 'count_activity', 'commentary_decision') if key in window}
+                'statewide', 'count_activity', 'commentary_decision', 'seat_call_changes', 'noteworthy_booth_warnings') if key in window}
         if window['available']:
             kept.update(movements(window['win_changes']))
             kept['booth_changes'] = compact_booths(window.get('booth_changes', {}))
@@ -203,12 +217,13 @@ def write_seat_points(run, forecast_id, report):
     SeatHistoryBlock.objects.bulk_update(updates, ['points'])
 
 
-def seat_series(run, seat):
+def seat_series(run, seat, timeline=None):
     blocks = SeatHistoryBlock.objects.filter(run=run, seat=seat).values_list('points', flat=True)
     points = {}
     for blob in blocks:
         points.update(unpack(blob))
-    timeline = run.livepublication_set.exclude(source_time=None).order_by('source_time', 'forecast_id')
+    if timeline is None:
+        timeline = run.livepublication_set.exclude(source_time=None).order_by('source_time', 'forecast_id')
     series = []
     for identity, time in timeline.values_list('forecast_id', 'source_time'):
         point = points.get(str(int(identity[1:])), [])

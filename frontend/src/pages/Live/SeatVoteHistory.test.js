@@ -10,6 +10,8 @@ jest.mock('recharts', () => ({
     require('react').cloneElement(children, {width: 640, height: 280}),
 }));
 
+beforeEach(() => localStorage.clear());
+
 const ada = [0, 'Ada'];
 const bill = [1, 'Bill'];
 const cora = [2, 'Cora'];

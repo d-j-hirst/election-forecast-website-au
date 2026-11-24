@@ -14,7 +14,7 @@ import TooltipWrapper from '../../General/TooltipWrapper';
 
 import {deepCopy} from '../../../utils/deepcopy.js';
 import {jsonMap} from '../../../utils/jsonmap.js';
-import {seatInRegion} from '../../../utils/seatregion.js';
+import {seatPartyCode} from 'utils/coalition';
 import {distributionBounds} from '../../../utils/distributionBounds';
 
 import styles from '../Seats/Seats.module.css';
@@ -103,18 +103,16 @@ const SeatTcpRowPair = props => {
   if (freqSet1[0] === -2) partyAbbr1 = 'IndX';
   if (freqSet1[0] === -3) partyAbbr1 = 'EOth';
 
-  if (props.forecast.coalitionSeatCountFrequencies) {
-    if (
-      props.forecast.termCode.slice(4) !== 'fed' ||
-      !seatInRegion(props.seatName, 'qld')
-    ) {
-      if (partyAbbr0 === 'LNP') partyAbbr0 = 'LIB';
-      if (partyAbbr1 === 'LNP') partyAbbr1 = 'LIB';
-    } else {
-      if (partyAbbr0 === 'LNP') partyAbbr0 = 'LNPx';
-      if (partyAbbr1 === 'LNP') partyAbbr1 = 'LNPx';
-    }
-  }
+  partyAbbr0 = seatPartyCode(
+    partyAbbr0,
+    props.forecast.termCode,
+    props.seatName
+  );
+  partyAbbr1 = seatPartyCode(
+    partyAbbr1,
+    props.forecast.termCode,
+    props.seatName
+  );
 
   const cand0Name =
     'seatCandidateNames' in props.forecast

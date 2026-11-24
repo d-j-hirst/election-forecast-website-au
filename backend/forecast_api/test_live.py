@@ -111,6 +111,56 @@ class PublicationTests(TestCase):
         self.assertEqual(reader.get(replay+'latest').data['forecast_id'],'f00000002')
         self.assertEqual(reader.get(self.base+'/replays/2022vic/demo/head').status_code,404)
 
+    def test_replay_steps_use_observation_order_and_limit_both_histories(self):
+        self.send('origin')
+        for number, minute in [(8, 1), (2, 0), (5, 1)]:
+            report = dict(termCode='2026sa', seatNames=['Sample'], seatPartyWinFrequencies=[[[0, number]]])
+            self.send(f'f{number:08}', f'2026-03-21T09:0{minute}:00Z', report=report,
+                      comparisons={'previous': {'available': False, 'reason': str(number)}})
+        base = self.base + '/replays/2026sa/demo/'
+        select = '?snapshot=f00000005'
+        page = self.api.get(base + 'latest' + select).data
+        self.assertEqual(page['report']['seatPartyWinFrequencies'][0][0][1], 5)
+        self.assertEqual(page['windows']['previous']['comparison']['reason'], '5')
+        self.assertEqual(page['replay_navigation'], dict(first='f00000002', previous='f00000002',
+                                                         next='f00000008', position=2, total=3))
+        self.assertIsNone(self.api.get(base + 'latest?snapshot=f00000002').data['replay_navigation']['previous'])
+        self.assertIsNone(self.api.get(base + 'latest').data['replay_navigation']['next'])
+        for path in ('history' + select, 'seat-history' + select + '&seat=Sample'):
+            self.assertEqual(len(self.api.get(base + path).data['points']), 2)
+        self.assertEqual(self.api.get(base + 'latest?snapshot=f00000003').status_code, 404)
+        self.assertEqual(self.api.get(base + 'latest' + select, REMOTE_ADDR='192.0.2.5').status_code, 404)
+        self.assertEqual(self.api.get(self.base + '/official/2026sa/head' + select).status_code, 404)
+
+    def test_calls_warnings_and_preference_history_reach_the_public_views(self):
+        url = self.base + '/replays/2026sa/demo/'
+        calls = [dict(action='called', party='0', seats=['Sample'], others=0)]
+        groups = dict(today=dict(available=True, win_changes=[], seat_call_changes=calls))
+        report = dict(termCode='2026sa', seatNames=['Sample'], seatPartyWinFrequencies=[[[0, 100]]],
+            partyAbbr=[[0, 'ALP'], [1, 'LIB'], [2, 'ON']], seatCalls={'Sample': {'party': '0', 'since': 'f00000001'}},
+            possibleBoothErrors={'Sample': [dict(booth='Hall', confidencePercent=80.0, level='medium')]},
+            voteTotalThresholds=[0.1, 0.5, 1, 2.5, 5, 10, 25, 50, 75, 90, 95, 97.5, 99, 99.5, 99.9],
+            statewidePreferenceFlows=[dict(sourceParty=0, destinationParty=1, otherFinalist=2, percentiles=[60]*15)])
+        sent = self.send('f00000001', '2026-03-21T11:00:00Z', report=report, comparisons=groups,
+                         commentary={'today': {'status': 'unavailable', 'seat_call_changes': calls}})
+        self.assertEqual(sent.status_code, 200)
+        latest = self.api.get(url+'latest').data
+        for key in ('seatCalls', 'possibleBoothErrors'):
+            self.assertEqual(latest['report'][key], report[key])
+        for key in ('commentary', 'comparison'):
+            self.assertEqual(latest['windows']['today'][key]['seat_call_changes'], calls)
+        original = self.api.get(url+'history').data['points'][0][1]
+        LivePublication.objects.filter(forecast_id='f00000001').update(history_point={})
+        call_command('rebuild_live_seat_history', 'demo')
+        point = self.api.get(url+'history').data['points'][0][1]
+        self.assertEqual(original, point)
+        for key in ('statewidePreferenceFlows', 'partyAbbr', 'voteTotalThresholds'):
+            self.assertEqual(point[key], report[key])
+        self.send('f00000002', '2026-03-22T11:00:00Z', retained_reports={'yesterday': {
+            'available': True, 'source_forecast_id': 'f00000001', 'source_window': 'today'}})
+        yesterday = self.api.get(url+'latest').data['windows']['yesterday']
+        self.assertEqual(yesterday['commentary']['seat_call_changes'], calls)
+
     def test_reference_arriving_after_latest(self):
         ref = dict(available=True, source_forecast_id='f00000001', source_window='today')
         self.send('f00000002','2026-03-22T10:00:00Z',retained_reports={'yesterday':ref})

@@ -19,7 +19,7 @@ import InfoIcon from '../../General/InfoIcon';
 
 import {deepCopy} from '../../../utils/deepcopy.js';
 import {jsonMap} from '../../../utils/jsonmap.js';
-import {seatInRegion} from '../../../utils/seatregion.js';
+import {seatPartyCode} from 'utils/coalition';
 import {getTcpWinner} from '../../../utils/seatresults.js';
 import {useWarning} from '../../../utils/seatwarnings.js';
 
@@ -53,13 +53,11 @@ ReturnToMain.propTypes = {
 const SeatSummary = props => {
   const incumbentIndex = props.forecast.seatIncumbents?.[props.index];
   const tempAbbr = jsonMap(props.forecast.partyAbbr, incumbentIndex);
-  const incumbentAbbr =
-    props.forecast.coalitionSeatCountFrequencies && tempAbbr === 'LNP'
-      ? props.forecast.termCode.slice(4) === 'fed' &&
-        seatInRegion(props.seatName, 'qld')
-        ? 'LNPx'
-        : 'LIB'
-      : tempAbbr;
+  const incumbentAbbr = seatPartyCode(
+    tempAbbr,
+    props.forecast.termCode,
+    props.seatName
+  );
   const margin = props.forecast.seatMargins?.[props.index];
 
   const freqs = deepCopy(props.forecast.seatPartyWinFrequencies[props.index]);

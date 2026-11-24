@@ -99,6 +99,7 @@ const ForecastLayout = props => {
       >
         <StandardErrorBoundary>
           {live?.error && <p role="status">{live.error}</p>}
+          {live?.navigation}
           {forecastValid && (
             <>
               <ForecastHeader

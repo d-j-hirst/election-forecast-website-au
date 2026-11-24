@@ -1,4 +1,5 @@
-import React, {useState} from 'react';
+import React from 'react';
+import useStoredString from 'pages/Live/useStoredString';
 import PropTypes from 'prop-types';
 import Card from 'react-bootstrap/Card';
 import Dropdown from 'react-bootstrap/Dropdown';
@@ -10,6 +11,7 @@ import {
   historyTimeAxis,
 } from 'components/Forecasts/History/timeAxis';
 import styles from 'components/Forecasts/History/History.module.css';
+import useStoredBoolean from './useStoredBoolean';
 import SeatWinHistory from './SeatWinHistory';
 import SeatVoteHistory from './SeatVoteHistory';
 
@@ -20,8 +22,12 @@ const measures = {
 };
 
 export default function SeatHistory({points, parties, zone, tcpScenarios}) {
-  const [measure, setMeasure] = useState('wins');
-  const [eveningOnly, setEveningOnly] = useState(true);
+  const [choice, setMeasure] = useStoredString('seatHistory:measure', 'wins');
+  const measure = Object.hasOwn(measures, choice) ? choice : 'wins';
+  const [eveningOnly, setEveningOnly] = useStoredBoolean(
+    'seatHistory:evening',
+    true
+  );
   const samples = points.map(([time, wins, fp = [], tcp = []]) => ({
     unixDate: Date.parse(time),
     wins,

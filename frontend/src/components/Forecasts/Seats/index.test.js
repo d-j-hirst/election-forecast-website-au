@@ -76,6 +76,28 @@ describe.each([
   ['full seat detail', SeatDetailBody],
 ])('%s winner markers', (_name, Component) => {
   test.each([
+    ['2022vic', 'Ripon', 'LIB'],
+    ['2022qld', 'Example', 'LNP'],
+    ['2025fed', 'Ryan', 'LNP'],
+    ['2025fed', 'Bendigo', 'LIB'],
+  ])('labels the holder and call for %s %s', (term, seat, label) => {
+    const forecast = makeForecast([seat]);
+    forecast.termCode = term;
+    forecast.seatIncumbents = [1];
+    forecast.seatCalls = {[seat]: {party: '1', since: 'f00000001'}};
+    renderSeatView(Component, forecast, null);
+    expect(screen.getByText('Called for ' + label)).toBeInTheDocument();
+    expect(screen.getAllByText(label).length).toBeGreaterThan(0);
+  });
+
+  test('overlays the called party on its seat bar', () => {
+    const forecast = makeForecast();
+    forecast.seatCalls = {Alpha: {party: '0', since: 'f00000001'}};
+    renderSeatView(Component, forecast, null);
+    expect(screen.getByText('Called for ALP')).toBeInTheDocument();
+  });
+
+  test.each([
     [{ALP: 45, LNP: 55}, 'lnp-bg'],
     [{LNP: 55, ALP: 45}, 'lnp-bg'],
     [{ALP: 40, GRN: 60}, 'grn-bg'],

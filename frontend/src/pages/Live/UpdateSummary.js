@@ -7,6 +7,9 @@ import ListGroup from 'react-bootstrap/ListGroup';
 import Alert from 'react-bootstrap/Alert';
 import InfoIcon from 'components/General/InfoIcon';
 import seatTotalsStyles from 'components/Forecasts/SeatTotals/SeatTotals.module.css';
+import {SmartBadge} from 'components/General/PartyBadge';
+import {calledPartyCodes} from 'utils/calledParty';
+import {Link} from 'react-router-dom';
 import Commentary from './Commentary';
 import {countTime} from 'utils/date';
 import styles from 'components/Forecasts/History/History.module.css';
@@ -106,6 +109,36 @@ export default function UpdateSummary({data, seatLink}) {
   }, [choice, choiceAvailable, setChoice]);
   const entry = data.windows[selected];
   const w = entry?.comparison;
+  const callChanges =
+    entry?.commentary?.seat_call_changes ?? w?.seat_call_changes;
+  const callList = Boolean(callChanges?.length) && (
+    <ul>
+      {callChanges.map(({action, party, seats, others}) => (
+        <li key={action + party}>
+          {action === 'called' ? 'Called for ' : 'Call withdrawn for '}
+          {calledPartyCodes(data.report, party, seats).map((code, i) => (
+            <React.Fragment key={code}>
+              {i > 0 && '/'}
+              <SmartBadge party={code} text={code} termCode={data.run.election} />
+            </React.Fragment>
+          ))}
+          {' — '}
+          {seats.map((seat, i) => (
+            <React.Fragment key={seat}>
+              {i > 0 && ', '}
+              <Link to={seatLink(seat)}>{seat}</Link>
+            </React.Fragment>
+          ))}
+          {others > 0 &&
+            (seats.length ? ' and ' : '') +
+              others +
+              (seats.length ? ' other' : '') +
+              (others === 1 ? ' seat' : ' seats')}
+          .
+        </li>
+      ))}
+    </ul>
+  );
   const yesterday = selected === 'yesterday' && data.yesterday;
   const zone =
     w?.reporting_timezone ||
@@ -186,6 +219,11 @@ export default function UpdateSummary({data, seatLink}) {
           <RecentChangesSection title="Counting Progress">
             <Counts progress={count} />
           </RecentChangesSection>
+          {display === 'numbers' && callList && (
+            <RecentChangesSection title="Seat calls">
+              {callList}
+            </RecentChangesSection>
+          )}
           {!w && <ListGroup.Item>No comparison available.</ListGroup.Item>}
           {w && display === 'numbers' && (
             <MechanicalChanges
@@ -198,11 +236,23 @@ export default function UpdateSummary({data, seatLink}) {
           )}
           {w && display === 'text' && (
             <RecentChangesSection title="Commentary">
+              {callList && (
+                <section aria-label="Seat calls">
+                  <h4 className="h6">Seat calls</h4>
+                  {callList}
+                </section>
+              )}
               <Commentary
                 item={entry.commentary}
+                parties={data.report.partyAbbr}
                 seatLink={seatLink}
                 code={data.run.election}
               />
+              <small className="text-muted d-block mt-3">
+                <strong>Glossary</strong> · pp = percentage point · FP = first
+                preference (primary vote)
+                {' · '}TCP = two-candidate preferred
+              </small>
             </RecentChangesSection>
           )}
         </ListGroup>

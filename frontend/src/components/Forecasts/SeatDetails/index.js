@@ -96,6 +96,7 @@ const SeatDetails = props => {
       >
         <StandardErrorBoundary>
           {live?.error && <p role="status">{live.error}</p>}
+          {live?.navigation}
           {forecastValid && seatIndex >= 0 && (
             <>
               <ForecastHeader
@@ -133,6 +134,27 @@ const SeatDetails = props => {
                   automated={automated}
                 />
               </StandardErrorBoundary>
+              {forecast.possibleBoothErrors?.[forecast.seatNames[seatIndex]]
+                ?.length > 0 && (
+                <section className="card card-body my-2">
+                  <h2 className="h5">Possible booth errors</h2>
+                  <p>
+                    Confidence is how often the model applies a correction
+                    because the reported preference split looks unusual compared
+                    with other booths.
+                  </p>
+                  <ul className="mb-0">
+                    {forecast.possibleBoothErrors[
+                      forecast.seatNames[seatIndex]
+                    ].map((row, i) => (
+                      <li key={i}>
+                        <strong>{row.booth}</strong> — {row.level} confidence (
+                        {row.confidencePercent.toFixed(1)}%)
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              )}
               {live?.history && (
                 <StandardErrorBoundary>{live.history}</StandardErrorBoundary>
               )}

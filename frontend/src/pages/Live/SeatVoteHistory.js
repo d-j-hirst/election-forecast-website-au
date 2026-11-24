@@ -1,4 +1,5 @@
-import React, {useState} from 'react';
+import React from 'react';
+import useStoredString from 'pages/Live/useStoredString';
 import PropTypes from 'prop-types';
 import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
@@ -79,7 +80,10 @@ export default function SeatVoteHistory({
   zone,
   tcpScenarios = [],
 }) {
-  const [choice, setChoice] = useState('');
+  const [choice, setChoice] = useStoredString(
+    'seatHistory:candidate:' + measure,
+    ''
+  );
   const tcp = measure === 'tcp';
   // Scenario frequency is a proportion of all simulations in the latest
   // report. The plotted vote shares are conditional on that exact pairing.

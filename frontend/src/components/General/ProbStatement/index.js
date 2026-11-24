@@ -11,7 +11,7 @@ import {
   getWillPhrase,
   getProbPhrase,
 } from '../../../utils/phrases.js';
-import {seatInRegion} from '../../../utils/seatregion.js';
+import {seatPartyCode} from 'utils/coalition';
 
 const interpretOth = (code, text) =>
   code === undefined ||
@@ -30,20 +30,12 @@ const ProbStatement = props => {
   let partyAbbr = '';
   if (!noParty) {
     partyAbbr = standardiseParty(props.party, props.forecast);
-    if (
-      props.useLiberals &&
-      props.forecast.coalitionSeatCountFrequencies &&
-      partyAbbr === 'lnp'
-    ) {
-      if (
-        props.forecast.termCode.slice(4) === 'fed' &&
-        seatInRegion(props.seatName, 'qld')
-      ) {
-        partyAbbr = 'lnpx';
-      } else {
-        partyAbbr = 'lib';
-      }
-    }
+    if (props.useLiberals)
+      partyAbbr = seatPartyCode(
+        partyAbbr,
+        props.forecast.termCode,
+        props.seatName
+      );
     if (props.party === -2) partyAbbr = 'indx';
     if (props.party === -3) partyAbbr = 'eoth';
     text = interpretOth(props.text, 'An emerging party');

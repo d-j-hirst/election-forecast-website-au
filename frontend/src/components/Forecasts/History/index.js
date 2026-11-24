@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react';
+import useStoredString from 'pages/Live/useStoredString';
 import PropTypes from 'prop-types';
 
 import Alert from 'react-bootstrap/Alert';
@@ -29,6 +30,8 @@ import {coalitionAbbreviation} from '../../../utils/coalition.js';
 import {colours} from '../../../utils/GraphPartyColours.js';
 import {jsonMap, jsonMapReverse} from '../../../utils/jsonmap.js';
 import {countTime} from '../../../utils/date.js';
+import useStoredBoolean from 'pages/Live/useStoredBoolean';
+import {flowOptions} from '../PreferenceFlows';
 import HistoryPeriodDropdown from './HistoryPeriodDropdown';
 import {ELECTION_NIGHT_MS, historyTime, historyTimeAxis} from './timeAxis';
 
@@ -48,6 +51,7 @@ const GraphTypeEnum = Object.freeze({
   seats: 4,
   coalitionFp: 5,
   coalitionSeats: 6,
+  flow: 7,
 });
 
 const genericXAxis = (lowDate, highDate, mode, timeZone) => (
@@ -366,26 +370,26 @@ Tpp.propTypes = {
 };
 
 const Fp = props => {
-  // Remove certain outliers so that the chart is more readable
-  const modifiedLowFp = Math.min.apply(
-    Math,
-    props.data.map(a =>
-      historyPointDisplayDate(a) > 1718668800000 &&
-      historyPointDisplayDate(a) < 1721347200000
-        ? 100
-        : Math.floor(a['fp1-5'][0])
-    )
+  const colourKey = jsonMap(colours, props.partyAbbr) ? props.partyAbbr : 'OTH';
+  const measured = props.data.filter(row => row.fpMedian != null);
+  if (!measured.length) return <p>No measurements in this period.</p>;
+  // The inherited date exclusion concerns archived primary-vote estimates.
+  // A flow can use all its measured dates. Null points stay in the chart so
+  // the line breaks wherever the requested flow was missing.
+  const scalePoints = measured.filter(
+    row =>
+      props.type === GraphTypeEnum.flow ||
+      historyPointDisplayDate(row) <= 1718668800000 ||
+      historyPointDisplayDate(row) >= 1721347200000
+  );
+  const bounds = scalePoints.length ? scalePoints : measured;
+  const modifiedLowFp = Math.min(
+    ...bounds.map(row => Math.floor(row['fp1-5'][0]))
   );
   let lowFp = modifiedLowFp;
   while (lowFp % 4 >= 1) --lowFp;
-  const modifiedHighFp = Math.max.apply(
-    Math,
-    props.data.map(a =>
-      historyPointDisplayDate(a) > 1718668800000 &&
-      historyPointDisplayDate(a) < 1721347200000
-        ? 0
-        : Math.floor(a['fp95-99'][1]) + 1
-    )
+  const modifiedHighFp = Math.max(
+    ...bounds.map(row => Math.floor(row['fp95-99'][1]) + 1)
   );
   let highFp = modifiedHighFp;
   while ((highFp - lowFp) % 4 >= 1) ++highFp;
@@ -424,24 +428,28 @@ const Fp = props => {
           type="number"
           width={25}
         />
-        {genericChartArea('fp1-5', props.partyAbbr, 3, 'none')}
-        {genericChartArea('fp5-25', props.partyAbbr, 2, 'none')}
-        {genericChartArea('fp25-75', props.partyAbbr, 1, 'none')}
-        {genericChartArea('fp75-95', props.partyAbbr, 2, 'none')}
-        {genericChartArea('fp95-99', props.partyAbbr, 3, 'none')}
+        {genericChartArea('fp1-5', colourKey, 3, 'none')}
+        {genericChartArea('fp5-25', colourKey, 2, 'none')}
+        {genericChartArea('fp25-75', colourKey, 1, 'none')}
+        {genericChartArea('fp75-95', colourKey, 2, 'none')}
+        {genericChartArea('fp95-99', colourKey, 3, 'none')}
         <Line
           dataKey="fpMedian"
           type="stepAfter"
           activeDot={false}
-          dot={false}
+          dot={props.type === GraphTypeEnum.flow ? {r: 2} : false}
           isAnimationActive={false}
-          stroke={jsonMap(colours, props.partyAbbr)[0]}
+          stroke={jsonMap(colours, colourKey)[0]}
         />
         <Tooltip
           content={
             <RangeTooltip
               mode={props.mode}
-              obsLabel="Vote total"
+              obsLabel={
+                props.type === GraphTypeEnum.flow
+                  ? 'Preference flow'
+                  : 'Vote total'
+              }
               dataKey="fp"
             />
           }
@@ -670,6 +678,22 @@ const Chart = props => {
     );
   }
 
+  if (props.type === GraphTypeEnum.flow) {
+    // An older publication may have no measurement of this flow. Leave a gap
+    // at that timestamp. A missing split cannot be read as zero preferences.
+    fp = props.data.map(point => {
+      const rows = flowOptions({
+        ...point,
+        termCode: props.election,
+        partyAbbr: point.partyAbbr || props.partyAbbr,
+      });
+      const match = rows.find(
+        row => row.key === props.flow.key && row.label === props.flow.label
+      );
+      return match ? bands(point, match.rows[0].freqSet[1]) : null;
+    });
+  }
+
   let seats = props.data.map(a =>
     jsonMap(a.seatCountFrequencies, props.party, null) !== null
       ? bands(a, jsonMap(a.seatCountFrequencies, props.party))
@@ -706,12 +730,12 @@ const Chart = props => {
     'tpp75-95': tpp ? [tpp[index][4], tpp[index][5]] : null,
     'tpp95-99': tpp ? [tpp[index][5], tpp[index][6]] : null,
     tppMedian: tpp ? tpp[index][3] : null,
-    'fp1-5': [fp[index][0], fp[index][1]],
-    'fp5-25': [fp[index][1], fp[index][2]],
-    'fp25-75': [fp[index][2], fp[index][4]],
-    'fp75-95': [fp[index][4], fp[index][5]],
-    'fp95-99': [fp[index][5], fp[index][6]],
-    fpMedian: fp[index][3],
+    'fp1-5': fp[index] ? [fp[index][0], fp[index][1]] : null,
+    'fp5-25': fp[index] ? [fp[index][1], fp[index][2]] : null,
+    'fp25-75': fp[index] ? [fp[index][2], fp[index][4]] : null,
+    'fp75-95': fp[index] ? [fp[index][4], fp[index][5]] : null,
+    'fp95-99': fp[index] ? [fp[index][5], fp[index][6]] : null,
+    fpMedian: fp[index]?.[3] ?? null,
     'seats1-5': [seats[index][0], seats[index][1]],
     'seats5-25': [seats[index][1], seats[index][2]],
     'seats25-75': [seats[index][2], seats[index][4]],
@@ -773,7 +797,8 @@ const Chart = props => {
               timeZone={props.timeZone}
             />
           )}
-          {(props.type === GraphTypeEnum.fp ||
+          {(props.type === GraphTypeEnum.flow ||
+            props.type === GraphTypeEnum.fp ||
             props.type === GraphTypeEnum.coalitionFp) && (
             <Fp
               data={chartData}
@@ -800,6 +825,7 @@ const Chart = props => {
   );
 };
 Chart.propTypes = {
+  flow: PropTypes.object,
   timeZone: PropTypes.string,
   data: PropTypes.array.isRequired,
   mode: PropTypes.string.isRequired,
@@ -844,6 +870,11 @@ const MainExplainer = props => {
           the election, not the voting intention at that point in time!
         </li>
         <li>
+          <i>Preference flows:</i> Live reports show the estimated share of the
+          source party’s voters preferring the named destination over the other
+          finalist. Each line uses the destination party’s colour.
+        </li>
+        <li>
           <i>Seats:</i> Shows the forecast number of seats won for significant
           parties as well as collective known independents at that point in
           time. A black horizonal line indicates the number of seats required
@@ -859,9 +890,11 @@ const History = props => {
   const [storedHistory, setHistory] = useState([]);
   const [storedHistoryValid, setHistoryValid] = useState(false);
   const fromRun = props.runPoints !== undefined;
-  const [graphType, setGraphType] = useState(GraphTypeEnum.governmentFormation);
-  const [graphParty, setGraphParty] = useState(0);
-  const [eveningOnly, setEveningOnly] = useState(true);
+  const [choice, setChoice] = useStoredString('history:quantity', 'government');
+  const [eveningOnly, setEveningOnly] = useStoredBoolean(
+    'history:evening',
+    true
+  );
   // const windowDimensions = useWindowDimensions();
 
   useEffect(() => {
@@ -948,30 +981,6 @@ const History = props => {
     Object.hasOwn(lastHistoryItem, 'coalitionSeatCountFrequencies') &&
     lastHistoryItem.coalitionSeatCountFrequencies.length > 0;
 
-  const title = (() => {
-    let title = 'Display: ';
-    let partyAbbr = jsonMap(props.forecast.partyAbbr, graphParty);
-    if (coalitionFpAvailable && graphParty === 1) partyAbbr = 'LIB';
-    if (graphType === GraphTypeEnum.governmentFormation) {
-      title += 'Formation of Government';
-    } else if (graphType === GraphTypeEnum.tpp) {
-      if (graphParty === 1) {
-        title += `${coalitionAbbreviation(props.election)} two-party preferred`;
-      } else {
-        title += `${partyAbbr} two-party preferred`;
-      }
-    } else if (graphType === GraphTypeEnum.fp) {
-      title += `${partyAbbr} first preferences`;
-    } else if (graphType === GraphTypeEnum.seats) {
-      title += `${partyAbbr} seats`;
-    } else if (graphType === GraphTypeEnum.coalitionFp) {
-      title += `${coalitionAbbreviation(props.election)} first preferences`;
-    } else if (graphType === GraphTypeEnum.coalitionSeats) {
-      title += `${coalitionAbbreviation(props.election)} seats`;
-    }
-    return title;
-  })();
-
   const hasForecastSeats = party =>
     jsonMap(props.forecast.seatCountFrequencies || [], party)?.at(-1) > 0;
   let lnpIndex = jsonMapReverse(props.forecast.partyAbbr, 'LNP');
@@ -1000,89 +1009,70 @@ const History = props => {
   let uapIndex = jsonMapReverse(props.forecast.partyAbbr, 'UAP');
   if (uapIndex && !hasForecastSeats(uapIndex)) uapIndex = null;
 
-  const setGraphGovernmentFormation = () => {
-    setGraphType(GraphTypeEnum.governmentFormation);
-  };
-  const setGraphAlpTpp = () => {
-    setGraphType(GraphTypeEnum.tpp);
-    setGraphParty(0);
-  };
-  const setGraphLnpTpp = () => {
-    setGraphType(GraphTypeEnum.tpp);
-    setGraphParty(1);
-  };
-  const setGraphCoalitionFp = () => {
-    setGraphType(GraphTypeEnum.coalitionFp);
-    setGraphParty(1);
-  };
-  const setGraphAlpFp = () => {
-    setGraphType(GraphTypeEnum.fp);
-    setGraphParty(0);
-  };
-  const setGraphLnpFp = () => {
-    setGraphType(GraphTypeEnum.fp);
-    setGraphParty(lnpIndex);
-  };
-  const setGraphLibFp = () => {
-    setGraphType(GraphTypeEnum.fp);
-    setGraphParty(libIndex);
-  };
-  const setGraphNatFp = () => {
-    setGraphType(GraphTypeEnum.fp);
-    setGraphParty(natIndex);
-  };
-  const setGraphGrnFp = () => {
-    setGraphType(GraphTypeEnum.fp);
-    setGraphParty(grnIndex);
-  };
-  const setGraphOnFp = () => {
-    setGraphType(GraphTypeEnum.fp);
-    setGraphParty(onIndex);
-  };
-  const setGraphUapFp = () => {
-    setGraphType(GraphTypeEnum.fp);
-    setGraphParty(uapIndex);
-  };
-  const setGraphOthFp = () => {
-    setGraphType(GraphTypeEnum.fp);
-    setGraphParty(-1);
-  };
-  const setGraphCoalitionSeats = () => {
-    setGraphType(GraphTypeEnum.coalitionSeats);
-    setGraphParty(1);
-  };
-  const setGraphAlpSeats = () => {
-    setGraphType(GraphTypeEnum.seats);
-    setGraphParty(0);
-  };
-  const setGraphLnpSeats = () => {
-    setGraphType(GraphTypeEnum.seats);
-    setGraphParty(lnpIndex);
-  };
-  const setGraphLibSeats = () => {
-    setGraphType(GraphTypeEnum.seats);
-    setGraphParty(libIndex);
-  };
-  const setGraphNatSeats = () => {
-    setGraphType(GraphTypeEnum.seats);
-    setGraphParty(natIndex);
-  };
-  const setGraphGrnSeats = () => {
-    setGraphType(GraphTypeEnum.seats);
-    setGraphParty(grnIndex);
-  };
-  const setGraphOnSeats = () => {
-    setGraphType(GraphTypeEnum.seats);
-    setGraphParty(onIndex);
-  };
-  const setGraphUapSeats = () => {
-    setGraphType(GraphTypeEnum.seats);
-    setGraphParty(uapIndex);
-  };
-  const setGraphIndSeats = () => {
-    setGraphType(GraphTypeEnum.seats);
-    setGraphParty(indIndex);
-  };
+  const coalition = coalitionAbbreviation(props.election);
+  const choices = [
+    [
+      'government',
+      'Formation of government',
+      GraphTypeEnum.governmentFormation,
+      0,
+    ],
+    ['alp-tpp', 'ALP two-party-preferred', GraphTypeEnum.tpp, 0],
+    ['coalition-tpp', coalition + ' two-party-preferred', GraphTypeEnum.tpp, 1],
+  ];
+  // Store semantic keys so a refreshed page can resolve the selection against
+  // the latest party roster. History offers precisely the flows in the table.
+  const flowChoices = flowOptions(props.forecast);
+  const partyRows = [
+    ['alp', 'ALP', 0],
+    ['coalition', coalition, lnpIndex],
+    ['lib', 'LIB', libIndex],
+    ['nat', 'NAT', natIndex],
+    ['grn', 'GRN', grnIndex],
+    ['on', 'ON', onIndex],
+    ['uap', 'UAP', uapIndex],
+  ];
+  if (props.mode !== 'live' || props.election !== '2022sa') {
+    if (coalitionFpAvailable)
+      choices.push([
+        'combined-fp',
+        coalition + ' first preferences',
+        GraphTypeEnum.coalitionFp,
+        1,
+      ]);
+    for (const [key, label, id] of [...partyRows, ['others', 'OTH', -1]]) {
+      if (id != null)
+        choices.push([
+          key + '-fp',
+          label + ' first preferences',
+          GraphTypeEnum.fp,
+          id,
+        ]);
+    }
+  }
+  if (coalitionSeatsAvailable)
+    choices.push([
+      'combined-seats',
+      coalition + ' seats',
+      GraphTypeEnum.coalitionSeats,
+      1,
+    ]);
+  for (const [key, label, id] of [...partyRows, ['ind', 'IND', indIndex]]) {
+    if (id != null)
+      choices.push([key + '-seats', label + ' seats', GraphTypeEnum.seats, id]);
+  }
+  for (const flow of flowChoices) {
+    choices.push([
+      'flow:' + flow.key,
+      flow.label,
+      GraphTypeEnum.flow,
+      flow.rows[0].freqSet[0],
+      flow,
+    ]);
+  }
+  const selected = choices.find(([key]) => key === choice) || choices[0];
+  const [, label, graphType, graphParty, flow] = selected;
+  const title = 'Display: ' + label;
   return (
     <Card className={styles.summary}>
       <Card.Header className={styles.historyTitle}>
@@ -1103,105 +1093,16 @@ const History = props => {
                   title={title}
                   variant="secondary"
                 >
-                  <Dropdown.Item
-                    as="button"
-                    onClick={setGraphGovernmentFormation}
-                  >
-                    Formation of government
-                  </Dropdown.Item>
-                  <Dropdown.Item as="button" onClick={setGraphAlpTpp}>
-                    ALP two-party-preferred
-                  </Dropdown.Item>
-                  <Dropdown.Item as="button" onClick={setGraphLnpTpp}>
-                    {coalitionAbbreviation(props.election)} two-party-preferred
-                  </Dropdown.Item>
-                  {(props.mode !== 'live' || props.election !== '2022sa') && (
-                    <>
-                      <Dropdown.Item as="button" onClick={setGraphAlpFp}>
-                        ALP first preferences
-                      </Dropdown.Item>
-                      {coalitionFpAvailable && (
-                        <Dropdown.Item
-                          as="button"
-                          onClick={setGraphCoalitionFp}
-                        >
-                          {coalitionAbbreviation(props.election)} first
-                          preferences
-                        </Dropdown.Item>
-                      )}
-                      {lnpIndex && (
-                        <Dropdown.Item as="button" onClick={setGraphLnpFp}>
-                          {coalitionAbbreviation(props.election)} first
-                          preferences
-                        </Dropdown.Item>
-                      )}
-                      {libIndex && (
-                        <Dropdown.Item as="button" onClick={setGraphLibFp}>
-                          LIB first preferences
-                        </Dropdown.Item>
-                      )}
-                      {natIndex && (
-                        <Dropdown.Item as="button" onClick={setGraphNatFp}>
-                          NAT first preferences
-                        </Dropdown.Item>
-                      )}
-                      <Dropdown.Item as="button" onClick={setGraphGrnFp}>
-                        GRN first preferences
-                      </Dropdown.Item>
-                      {onIndex && (
-                        <Dropdown.Item as="button" onClick={setGraphOnFp}>
-                          ON first preferences
-                        </Dropdown.Item>
-                      )}
-                      {uapIndex && (
-                        <Dropdown.Item as="button" onClick={setGraphUapFp}>
-                          UAP first preferences
-                        </Dropdown.Item>
-                      )}
-                      <Dropdown.Item as="button" onClick={setGraphOthFp}>
-                        OTH first preferences
-                      </Dropdown.Item>
-                    </>
-                  )}
-                  <Dropdown.Item as="button" onClick={setGraphAlpSeats}>
-                    ALP seats
-                  </Dropdown.Item>
-                  {coalitionSeatsAvailable && (
-                    <Dropdown.Item as="button" onClick={setGraphCoalitionSeats}>
-                      {coalitionAbbreviation(props.election)} seats
+                  {choices.map(([key, description]) => (
+                    <Dropdown.Item
+                      as="button"
+                      key={key}
+                      active={key === selected[0]}
+                      onClick={() => setChoice(key)}
+                    >
+                      {description}
                     </Dropdown.Item>
-                  )}
-                  {lnpIndex && (
-                    <Dropdown.Item as="button" onClick={setGraphLnpSeats}>
-                      {coalitionAbbreviation(props.election)} seats
-                    </Dropdown.Item>
-                  )}
-                  {libIndex && (
-                    <Dropdown.Item as="button" onClick={setGraphLibSeats}>
-                      LIB seats
-                    </Dropdown.Item>
-                  )}
-                  {natIndex && (
-                    <Dropdown.Item as="button" onClick={setGraphNatSeats}>
-                      NAT seats
-                    </Dropdown.Item>
-                  )}
-                  <Dropdown.Item as="button" onClick={setGraphGrnSeats}>
-                    GRN seats
-                  </Dropdown.Item>
-                  {onIndex && (
-                    <Dropdown.Item as="button" onClick={setGraphOnSeats}>
-                      ON seats
-                    </Dropdown.Item>
-                  )}
-                  {uapIndex && (
-                    <Dropdown.Item as="button" onClick={setGraphUapSeats}>
-                      UAP seats
-                    </Dropdown.Item>
-                  )}
-                  <Dropdown.Item as="button" onClick={setGraphIndSeats}>
-                    IND seats
-                  </Dropdown.Item>
+                  ))}
                 </DropdownButton>
                 {props.mode === 'live' && (
                   <HistoryPeriodDropdown
@@ -1215,6 +1116,7 @@ const History = props => {
                 <Chart
                   data={history}
                   type={graphType}
+                  flow={flow}
                   party={graphParty}
                   partyAbbr={props.forecast.partyAbbr}
                   election={props.election}

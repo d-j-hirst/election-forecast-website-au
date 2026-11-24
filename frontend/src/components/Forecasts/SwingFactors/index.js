@@ -6,6 +6,7 @@ import {HashLink as Link} from 'react-router-hash-link';
 import ListGroup from 'react-bootstrap/ListGroup';
 
 import TooltipPercentage from '../../General/TooltipPercentage';
+import {seatCoalitionLabel} from 'utils/coalition';
 import {SmartBadge} from '../../General/PartyBadge';
 import InfoIcon from '../../General/InfoIcon';
 
@@ -18,11 +19,8 @@ const SortedTcpSwingRow = props => {
         <strong>
           <TooltipPercentage value={Math.abs(props.swing)} label="" />
         </strong>{' '}
-        to{' '}
-        <SmartBadge
-          party={props.swing > 0 ? 'alp' : 'lnp'}
-          termCode={props.forecast.termCode}
-        />
+        to {props.swing > 0 && <SmartBadge party="alp" />}
+        {props.swing <= 0 && seatCoalitionLabel(props.forecast.termCode)}
         {' -'} {props.description}
       </div>
     </ListGroup.Item>

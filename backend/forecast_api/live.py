@@ -9,7 +9,7 @@ from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from django.conf import settings
 from django.db import transaction
-from django.db.models import F
+from django.db.models import F, Q
 from django.http import Http404
 from django.http.request import split_domain_port
 from django.shortcuts import get_object_or_404
@@ -20,7 +20,7 @@ from rest_framework.views import APIView
 
 from auth_api.mixins import ApiAuthMixin
 from forecast_api.live_data import (
-    compact_updates, pack, recover_movements, seat_points, seat_series, unpack, write_seat_points,
+    compact_updates, election_history_point, pack, recover_movements, seat_points, seat_series, unpack, write_seat_points,
 )
 from forecast_api.models import LivePublication, LiveRun
 from forecast_api.submit import SubmitForecastPermission
@@ -105,14 +105,9 @@ def store_publication(run, identity, digest, body):
         list(seat_points(report))
     else:
         source = instant(forecast['source_time'])
-    # Store a small election chart point beside the shared timeline. Older reports
-    # can omit distributions; each consumer selects the quantities it can display.
-    history = {key: report[key] for key in ('majorityWinPc', 'minorityWinPc', 'mostSeatsWinPc',
-            'overallWinPc', 'tppFrequencies', 'fpFrequencies', 'seatCountFrequencies',
-            'coalitionFpFrequencies', 'coalitionSeatCountFrequencies', 'voteTotalThresholds') if key in report}
     record = LivePublication.objects.create(run=run, forecast_id=identity, digest=digest,
         source_time=source, report=pack(report), updates=pack(compact_updates(body)),
-        history_point=None if origin else history)
+        history_point=None if origin else election_history_point(report))
     if not origin:
         write_seat_points(run, identity, report)
         latest = run.livepublication_set.filter(pk=run.latest_id).values_list('source_time', 'forecast_id').first()
@@ -159,7 +154,7 @@ def public_window(updates, name):
     # Keep request/account diagnostics in the stored package. Only expose fields
     # used to render current or legacy commentary.
     visible = {key: commentary[key] for key in ('status', 'reason', 'source', 'format', 'kind',
-               'text', 'entities', 'metrics', 'metric_contexts') if key in commentary}
+               'text', 'entities', 'metrics', 'metric_contexts', 'seat_call_changes') if key in commentary}
     # Legacy prose cites compact evidence by ID within its own request. A
     # retained daily report must resolve these against its original publication.
     prose = commentary.get('text') or {}
@@ -198,10 +193,9 @@ def retained_window(run, reference):
     return resolved, public_window(previous, window)
 
 
-def latest_body(run):
-    if not run.latest_id:
+def publication_body(run, record):
+    if record is None:
         return {}
-    record = run.latest
     updates = unpack(record.updates)
     report = unpack(record.report)
     windows = {name: public_window(updates, name) for name in updates['comparisons']}
@@ -238,6 +232,9 @@ class ReadRun(APIView):
     @transaction.atomic
     def get(self, request, code, part, run_id=None):
         local = self.is_local_rehearsal(request)
+        snapshot = request.query_params.get('snapshot')
+        if snapshot is not None and (not local or run_id is None):
+            raise Http404
         if run_id is not None:
             if not local:
                 raise Http404
@@ -250,14 +247,32 @@ class ReadRun(APIView):
                     return Response({'legacy': True}, headers={'Cache-Control': 'no-store'})
                 raise Http404
         data = {'run': run.registration, 'revision': run.revision}
+        # Use the same chronology that selects the live head, including its
+        # tie-break for two forecasts at the same observation time. The origin
+        # is a comparison baseline and has no feed observation of its own.
+        timeline = run.livepublication_set.exclude(source_time=None).order_by('source_time', 'forecast_id')
+        if snapshot is not None:
+            selected = get_object_or_404(timeline.only('forecast_id', 'source_time') if part != 'latest'
+                                         else timeline, forecast_id=snapshot)
+            through = timeline.filter(Q(source_time__lt=selected.source_time) |
+                                      Q(source_time=selected.source_time, forecast_id__lte=snapshot))
+        else:
+            through = timeline
         if part == 'latest':
-            data.update(latest_body(run))
+            record = selected if snapshot is not None else run.latest
+            data.update(publication_body(run, record))
             data['local_diagnostics'] = local
+            if local and run_id is not None and record is not None:
+                ids = list(timeline.values_list('forecast_id', flat=True))
+                index = ids.index(record.forecast_id)
+                data['replay_navigation'] = {
+                    'previous': ids[index - 1] if index else None,
+                    'next': ids[index + 1] if index + 1 < len(ids) else None,
+                    'first': ids[0], 'position': index + 1, 'total': len(ids)}
         elif part == 'seat-history':
-            data['points'] = seat_series(run, request.query_params.get('seat', ''))
+            data['points'] = seat_series(run, request.query_params.get('seat', ''), through)
         elif part == 'history':
-            data['points'] = list(run.livepublication_set.exclude(source_time=None)
-                                  .order_by('source_time', 'forecast_id').values_list('source_time', 'history_point'))
+            data['points'] = list(through.values_list('source_time', 'history_point'))
         elif part != 'head':
             raise Http404
         return Response(data, headers={'Cache-Control': 'private, no-store'})

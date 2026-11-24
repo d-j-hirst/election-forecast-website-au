@@ -4,19 +4,18 @@ import {Link} from 'react-router-dom';
 import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
 import InfoIcon from 'components/General/InfoIcon';
-import {coalitionAbbreviation} from 'utils/coalition';
+import {seatPartyCode, seriesPartyCode} from 'utils/coalition';
 import {standardiseParty} from 'utils/partyclass';
 import {SmartBadge} from '../../components/General/PartyBadge';
 import useStoredBoolean from './useStoredBoolean';
 
 // Group by what the reader sees on the badge. In SA, for example, both
 // LIB and the coalition's LNP code are displayed as LIB.
-function candidateBadgeKey(party, code) {
-  const abbreviation = party.toLowerCase();
-  if (abbreviation === 'lnp') return coalitionAbbreviation(code).toLowerCase();
+function candidateBadgeKey(party, code, seat) {
+  const abbreviation = seatPartyCode(party, code, seat).toLowerCase();
   if (abbreviation === 'lnpx') return 'lnp';
   if (abbreviation === 'eoth') return '???';
-  return standardiseParty(party);
+  return standardiseParty(abbreviation);
 }
 
 function repeatedCandidateLabels(text, entities, code) {
@@ -28,7 +27,7 @@ function repeatedCandidateLabels(text, entities, code) {
       continue;
     if (!entity.party || typeof entity.label !== 'string') continue;
     candidates.set(token, {
-      badge: candidateBadgeKey(entity.party, code),
+      badge: candidateBadgeKey(entity.party, code, entity.seat),
       words: entity.label.trim().split(/\s+/),
     });
   }
@@ -64,7 +63,7 @@ function repeatedCandidateLabels(text, entities, code) {
 
 // Render only the two emphasis markers and documented entity tokens. Strings
 // and labels go through React text nodes, including unrecognised placeholders.
-function inline(text, entities, seatLink, code, formatCandidate) {
+function inline(text, entities, seatLink, code, parties, formatCandidate) {
   if (typeof text !== 'string') return null;
   return text
     .split(/(\*\*[^*]+\*\*|\{(?:seat|candidate|party):[^{}]+\})/g)
@@ -77,6 +76,7 @@ function inline(text, entities, seatLink, code, formatCandidate) {
               entities,
               seatLink,
               code,
+              parties,
               formatCandidate
             )}
           </strong>
@@ -91,7 +91,12 @@ function inline(text, entities, seatLink, code, formatCandidate) {
         return (
           <SmartBadge
             key={i}
-            party={entity.party}
+            party={seriesPartyCode(
+              entity.party,
+              part.slice(7, -1),
+              parties,
+              code
+            )}
             text={entity.label}
             termCode={code}
           />
@@ -110,7 +115,14 @@ function inline(text, entities, seatLink, code, formatCandidate) {
               <>
                 {' ('}
                 {entity.holder_party && (
-                  <SmartBadge party={entity.holder_party} termCode={code} />
+                  <SmartBadge
+                    party={seatPartyCode(
+                      entity.holder_party,
+                      code,
+                      entity.seat || entity.label
+                    )}
+                    termCode={code}
+                  />
                 )}
                 {entity.holder_party && hasMargin && ' '}
                 {hasMargin && `${entity.holder_margin.toFixed(1)}%`}
@@ -126,11 +138,19 @@ function inline(text, entities, seatLink, code, formatCandidate) {
         !entity.party
       )
         return entity.label;
-      const label = formatCandidate?.(part, entity.label) ?? entity.label;
+      // For an unnamed candidate the exporter uses the party code as the label.
+      // The badge already identifies that candidate, including on first mention.
+      const label =
+        entity.label.trim().toLowerCase() === entity.party.trim().toLowerCase()
+          ? ''
+          : formatCandidate?.(part, entity.label) ?? entity.label;
       return (
         <React.Fragment key={i}>
           {label && label + ' '}
-          <SmartBadge party={entity.party} termCode={code} />
+          <SmartBadge
+            party={seatPartyCode(entity.party, code, entity.seat)}
+            termCode={code}
+          />
         </React.Fragment>
       );
     });
@@ -229,7 +249,7 @@ function writerEditions(text) {
   };
 }
 
-export default function Commentary({item, seatLink, code}) {
+export default function Commentary({item, seatLink, code, parties = []}) {
   const [preferRules, setPreferRules] = useStoredBoolean(
     'liveRecentChanges:ruleBased'
   );
@@ -240,7 +260,7 @@ export default function Commentary({item, seatLink, code}) {
   const showRules = Boolean(editions && (preferRules || !primaryAvailable));
   const text = showRules ? editions.rules : editions?.original || item.text;
   const render = (value, formatCandidate) =>
-    inline(value, item.entities, seatLink, code, formatCandidate);
+    inline(value, item.entities, seatLink, code, parties, formatCandidate);
   const formatCandidates = text =>
     repeatedCandidateLabels(text, item.entities, code);
   const structured = showRules
@@ -333,6 +353,7 @@ export default function Commentary({item, seatLink, code}) {
 
 Commentary.propTypes = {
   item: PropTypes.object,
+  parties: PropTypes.array,
   seatLink: PropTypes.func.isRequired,
   code: PropTypes.string.isRequired,
 };

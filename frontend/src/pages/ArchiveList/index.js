@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react';
+import useStoredString from 'pages/Live/useStoredString';
 import PropTypes from 'prop-types';
 import {useParams, Link} from 'react-router-dom';
 
@@ -78,7 +79,14 @@ const ArchiveList = () => {
   const [electionName, setElectionName] = useState('');
   const [archiveList, setArchiveList] = useState({});
   const [archiveListValid, setArchiveListValid] = useState(false);
-  const [filter, setFilter] = useState(FilterEnum.regular);
+  const [choice, saveFilter] = useStoredString(
+    'archive:mode',
+    String(FilterEnum.regular)
+  );
+  const filter = Object.values(FilterEnum).includes(Number(choice))
+    ? Number(choice)
+    : FilterEnum.regular;
+  const setFilter = value => saveFilter(String(value));
   const windowDimensions = useWindowDimensions();
 
   useEffect(() => {

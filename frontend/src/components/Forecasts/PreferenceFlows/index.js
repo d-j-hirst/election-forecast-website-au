@@ -1,17 +1,18 @@
-import React, {useState} from 'react';
+import React from 'react';
+import useStoredString from 'pages/Live/useStoredString';
 import PropTypes from 'prop-types';
 import Card from 'react-bootstrap/Card';
 import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import ListGroup from 'react-bootstrap/ListGroup';
-import {coalitionAbbreviation} from 'utils/coalition';
+import {coalitionAbbreviation, seriesPartyCode} from 'utils/coalition';
 import {distributionBounds} from 'utils/distributionBounds';
 import VoteShareRow from '../VoteTotals/VoteShareRow';
 import styles from '../VoteTotals/VoteTotals.module.css';
 import historyStyles from '../History/History.module.css';
 
 // The optional live table uses the same 15 ordered percentiles as vote totals.
-function flowOptions(forecast) {
+export function flowOptions(forecast) {
   const {statewidePreferenceFlows, partyAbbr, voteTotalThresholds} = forecast;
   if (
     !Array.isArray(statewidePreferenceFlows) ||
@@ -23,14 +24,20 @@ function flowOptions(forecast) {
 
   const parties = new Map(partyAbbr);
   const label = party =>
-    party === 'LNP' ? coalitionAbbreviation(forecast.termCode) : party;
+    party === 'LNPx'
+      ? 'LNP'
+      : party === 'LNP'
+      ? coalitionAbbreviation(forecast.termCode)
+      : party;
   const options = [];
 
   for (const flow of statewidePreferenceFlows) {
     if (!flow) continue;
     const {sourceParty, destinationParty, otherFinalist, percentiles} = flow;
     const ids = [sourceParty, destinationParty, otherFinalist];
-    const [source, destination, other] = ids.map(id => parties.get(id));
+    const [source, destination, other] = ids.map(id =>
+      seriesPartyCode(parties.get(id), id, partyAbbr, forecast.termCode)
+    );
     if (
       ![source, destination, other].every(
         party => typeof party === 'string' && party
@@ -65,7 +72,7 @@ function flowOptions(forecast) {
 }
 
 export default function PreferenceFlows({forecast, windowWidth}) {
-  const [key, setKey] = useState(null);
+  const [key, setKey] = useStoredString('forecast:preference-flow', '');
   const options = flowOptions(forecast);
   if (!options.length) return null;
 

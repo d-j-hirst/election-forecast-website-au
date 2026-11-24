@@ -1,4 +1,5 @@
-import React, {useState} from 'react';
+import React from 'react';
+import useStoredString from 'pages/Live/useStoredString';
 import PropTypes from 'prop-types';
 
 import {
@@ -88,9 +89,8 @@ VoteTrendTooltip.propTypes = {
 };
 
 const VoteTrendChart = props => {
-  const [isFp, setIsFp] = useState(false);
-  const [party, setParty] = useState('ALP');
-  const [pollType, setPollType] = useState('base');
+  const [measure, setMeasure] = useStoredString('trend:measure', 'TPP:ALP');
+  const [savedPollType, setPollType] = useStoredString('trend:polls', 'base');
 
   if (props.forecast.polls === undefined) {
     console.log(
@@ -108,6 +108,16 @@ const VoteTrendChart = props => {
       undefined
     );
   };
+
+  const [kind, abbr] = measure.split(':');
+  const isFp = kind === 'FP' && partyHasFpTrend(abbr);
+  const party = isFp || (kind === 'TPP' && abbr === 'LNP') ? abbr : 'ALP';
+  const pollType = (isFp
+    ? ['base', 'adjusted']
+    : ['base', 'adjusted', 'reported']
+  ).includes(savedPollType)
+    ? savedPollType
+    : 'base';
 
   const getTrendFromAbbr = abbr => {
     return jsonMap(props.forecast.fpTrend, getPartyIndexFromAbbr(abbr));
@@ -229,16 +239,13 @@ const VoteTrendChart = props => {
   };
 
   const setAlpTpp = () => {
-    setIsFp(false);
-    setParty('ALP');
+    setMeasure('TPP:ALP');
   };
   const setLnpTpp = () => {
-    setIsFp(false);
-    setParty('LNP');
+    setMeasure('TPP:LNP');
   };
   const setGenericFp = party => {
-    setIsFp(true);
-    setParty(party);
+    setMeasure('FP:' + party);
     if (pollType === 'reported') setPollsBase();
   };
   const setAlpFp = () => {

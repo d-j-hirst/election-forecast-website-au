@@ -85,3 +85,25 @@ test('moving from an archived to a current seat restores current introduction co
   expect(screen.getByRole('alert')).not.toHaveTextContent('archived');
   expect(screen.getByRole('link', {name: 'nowcast'})).toBeInTheDocument();
 });
+
+test('shows a warning only in the district with an unusual preference count', () => {
+  fetchReport.mockImplementation(settings => {
+    settings.setForecast({
+      termCode: '2026sa',
+      reportMode: 'LF',
+      electionName: 'Synthetic election',
+      seatNames: ['Alpha'],
+      possibleBoothErrors: {
+        Alpha: [{booth: 'Hall', level: 'high', confidencePercent: 99.7}],
+      },
+    });
+    settings.setForecastValid(true);
+  });
+  render(tree('2026sa', true));
+  expect(
+    screen.getByRole('heading', {name: 'Possible booth errors'})
+  ).toBeInTheDocument();
+  expect(screen.getByText('Hall').parentElement).toHaveTextContent(
+    'high confidence (99.7%)'
+  );
+});

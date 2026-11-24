@@ -4,7 +4,7 @@ import {prepareForecastReport} from 'utils/report_manager';
 
 // Each mounted route owns one request loop. A head check is cheap enough to
 // continue while showing a legacy live page awaiting official run selection.
-export default function useLiveRun(base, seatSlug, findSeat) {
+export default function useLiveRun(base, seatSlug, findSeat, snapshot) {
   const [data, setData] = useState(null);
   const [error, setError] = useState('');
   useEffect(() => {
@@ -12,7 +12,10 @@ export default function useLiveRun(base, seatSlug, findSeat) {
     let busy = false;
     let version;
     const read = async path => {
-      const response = await getDirect(base + '/' + path, {
+      const selection = snapshot && path !== 'head'
+        ? (path.includes('?') ? '&' : '?') + 'snapshot=' + encodeURIComponent(snapshot)
+        : '';
+      const response = await getDirect(base + '/' + path + selection, {
         signal: controller.signal,
       });
       if (!response.ok)
@@ -78,6 +81,6 @@ export default function useLiveRun(base, seatSlug, findSeat) {
       clearInterval(timer);
       document.removeEventListener('visibilitychange', refresh);
     };
-  }, [base, seatSlug, findSeat]);
+  }, [base, seatSlug, findSeat, snapshot]);
   return {data, error};
 }
