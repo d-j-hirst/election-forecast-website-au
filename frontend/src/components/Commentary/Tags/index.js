@@ -5,33 +5,28 @@ import {Link} from 'react-router-dom';
 
 import styles from './Tags.module.css';
 
-const Tags = props => {
-  return (
-    <div className={styles.tagBar}>
-      <div className={styles.tagLink}>Tags:</div>
-      <div className={props.thisTag === null ? styles.thisTag : styles.tagLink}>
-        {props.thisTag !== null && <Link to={'/commentary'}>All posts</Link>}
-        {props.thisTag === null && <div>All posts</div>}
-      </div>
-      {props.allTags.map((tag, index) => {
-        const whichClass =
-          tag === props.thisTag ? styles.thisTag : styles.tagLink;
-        return (
-          <div className={whichClass} key={index}>
-            {tag !== props.thisTag && (
-              <Link to={`/commentary?tag=${tag}`}>{tag}</Link>
-            )}
-            {tag === props.thisTag && <div>{tag}</div>}
-          </div>
-        );
-      })}
-    </div>
-  );
-};
+const Tags = ({allTags, thisTag}) => (
+  <nav aria-label="Commentary tags" className={styles.tagBar}>
+    <span>Tags:</span>
+    {[null, ...allTags].map(tag => (
+      <Link
+        key={tag === null ? 'all' : 'tag-' + tag}
+        className="btn btn-secondary btn-sm"
+        aria-current={tag === thisTag ? 'page' : undefined}
+        to={
+          tag === null
+            ? '/commentary'
+            : '/commentary?tag=' + encodeURIComponent(tag)
+        }
+      >
+        {tag ?? 'All posts'}
+      </Link>
+    ))}
+  </nav>
+);
 Tags.propTypes = {
   allTags: PropTypes.array.isRequired,
   thisTag: PropTypes.string,
-  returnLink: PropTypes.bool.isRequired,
 };
 
 export default Tags;

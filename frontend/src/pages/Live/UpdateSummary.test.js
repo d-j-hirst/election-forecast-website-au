@@ -111,7 +111,7 @@ test('Numbers is the default and Text preserves the selected period and labels g
 
   choose('Display: Numbers', 'Text');
   expect(screen.getByText(/large language model/)).toBeInTheDocument();
-  expect(headings()).toEqual(['Counting Progress', 'Commentary']);
+  expect(headings()).toEqual(['Counting Progress', 'Highlights']);
   expectTimestampFirst();
   expect(screen.getByText('54%').tagName).toBe('STRONG');
   const seat = screen.getByRole('link', {name: 'Alpha'});
@@ -217,6 +217,7 @@ test('count progress, ranked candidates and election movement render with local-
     </MemoryRouter>
   );
   const page = render(display(data));
+  expect(screen.getByText('45.0%', {selector: 'strong'})).toBeInTheDocument();
   const fp = screen.getByText('First preferences', {selector: 'strong'});
   expect(fp.closest('p')).toHaveTextContent(
     'First preferences counted: 4,500 of 10,000 expected formal votes (45.0%).'

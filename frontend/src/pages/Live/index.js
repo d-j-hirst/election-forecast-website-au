@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useMemo} from 'react';
 import PropTypes from 'prop-types';
 import {useLocation, useNavigate, useParams} from 'react-router-dom';
 import {ForecastLayout, SeatDetails} from 'components';
@@ -7,31 +7,45 @@ import {getSeatUrl} from 'utils/seaturls';
 import useLiveRun from './useLiveRun';
 import UpdateSummary from './UpdateSummary';
 import SeatHistory from './SeatHistory';
+import ReplayNavigation from './ReplayNavigation';
 
 const findSeat = (names, slug) => names.find(name => getSeatUrl(name) === slug);
 
-function LivePage({code, runId, seat}) {
+function LivePage({code, runId, seat, replayHistories}) {
   const replay = !!runId;
   const location = useLocation();
   const navigate = useNavigate();
-  const snapshot = replay ? new URLSearchParams(location.search).get('snapshot') : null;
+  const snapshot = replay
+    ? new URLSearchParams(location.search).get('snapshot')
+    : null;
   const base =
     'forecast-api/live/v1/' +
     (replay ? 'replays/' + code + '/' + runId : 'official/' + code);
-  const {data, error} = useLiveRun(base, seat, findSeat, snapshot);
+  const {data, error} = useLiveRun(
+    base,
+    seat,
+    findSeat,
+    snapshot,
+    replayHistories
+  );
   const selection = snapshot ? '?snapshot=' + encodeURIComponent(snapshot) : '';
   const selectSnapshot = id => {
     const params = new URLSearchParams(location.search);
     if (id) params.set('snapshot', id);
     else params.delete('snapshot');
-    navigate({pathname: location.pathname, search: params.toString(), hash: location.hash});
+    navigate({
+      pathname: location.pathname,
+      search: params.toString(),
+      hash: location.hash,
+    });
   };
   const electionLink = replay
     ? '/' + code + '/replays/' + runId
     : '/forecast/' + code + '/live';
   const seatLink = name =>
     (replay ? electionLink + '/seat/' : '/seat/' + code + '/live/') +
-    encodeURIComponent(getSeatUrl(name)) + selection;
+    encodeURIComponent(getSeatUrl(name)) +
+    selection;
   const seatName =
     data?.report && seat && findSeat(data.report.seatNames, seat);
   const title = [
@@ -51,20 +65,16 @@ function LivePage({code, runId, seat}) {
     ? undefined
     : {publication: data, error, replay, seatLink};
   const step = data?.replay_navigation;
-  if (replay && step) {
-    const loading = Boolean(snapshot && snapshot !== data.forecast_id);
+  if (replay && step && data.replayTimeline) {
     live.navigation = (
-      <nav aria-label="Replay snapshots" className="d-flex align-items-center flex-wrap gap-2 my-2">
-        <button className="btn btn-outline-secondary btn-sm" disabled={loading || !step.previous}
-          onClick={() => selectSnapshot(step.first)}>First</button>
-        <button className="btn btn-outline-primary btn-sm" disabled={loading || !step.previous}
-          onClick={() => selectSnapshot(step.previous)}>Back</button>
-        <span aria-live="polite">Snapshot {step.position} of {step.total}</span>
-        <button className="btn btn-outline-primary btn-sm" disabled={loading || !step.next}
-          onClick={() => selectSnapshot(step.next)}>Forward</button>
-        {snapshot && <button className="btn btn-link btn-sm" onClick={() => selectSnapshot(null)}>Follow latest</button>}
-      </nav>
+      <ReplayNavigation
+        publication={data}
+        snapshot={snapshot}
+        selectSnapshot={selectSnapshot}
+      />
     );
+  } else if (replay && step) {
+    live.navigation = <p role="status">Loading replay history…</p>;
   }
   if (seat) {
     if (live) {
@@ -101,18 +111,26 @@ function LivePage({code, runId, seat}) {
 
 export default function Live() {
   const {code, runId, seat} = useParams();
+  // A visit to a replay owns its statewide chart and the seats opened so far.
+  // Preserve these across snapshot and seat links; release them on leaving.
+  const replayHistories = useMemo(
+    () => (code && runId ? new Map() : null),
+    [code, runId]
+  );
   // Route changes start a fresh reader so private or stale data cannot flash.
   return (
     <LivePage
       key={JSON.stringify([code, runId, seat])}
       code={code}
       runId={runId}
+      replayHistories={replayHistories}
       seat={seat}
     />
   );
 }
 
 LivePage.propTypes = {
+  replayHistories: PropTypes.instanceOf(Map),
   code: PropTypes.string.isRequired,
   runId: PropTypes.string,
   seat: PropTypes.string,

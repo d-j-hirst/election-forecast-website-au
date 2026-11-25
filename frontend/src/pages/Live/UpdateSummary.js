@@ -46,7 +46,7 @@ function RecentChangesHelp() {
       <hr />
       <p>
         The booth list shows selected new or revised counts. Choose{' '}
-        <strong>Text</strong> for a commentary summary when one is available.
+        <strong>Text</strong> for written highlights when one is available.
       </p>
     </Alert>
   );
@@ -95,7 +95,7 @@ export default function UpdateSummary({data, seatLink}) {
     ? displayChoice
     : 'numbers';
   const available = availablePeriods(
-    data.windows,
+    data.windows || {},
     data.source_time,
     data.yesterday
   );
@@ -107,7 +107,7 @@ export default function UpdateSummary({data, seatLink}) {
   useEffect(() => {
     if (!choiceAvailable && choice !== 'previous') setChoice('previous');
   }, [choice, choiceAvailable, setChoice]);
-  const entry = data.windows[selected];
+  const entry = data.windows?.[selected];
   const w = entry?.comparison;
   const callChanges =
     entry?.commentary?.seat_call_changes ?? w?.seat_call_changes;
@@ -119,7 +119,11 @@ export default function UpdateSummary({data, seatLink}) {
           {calledPartyCodes(data.report, party, seats).map((code, i) => (
             <React.Fragment key={code}>
               {i > 0 && '/'}
-              <SmartBadge party={code} text={code} termCode={data.run.election} />
+              <SmartBadge
+                party={code}
+                text={code}
+                termCode={data.run.election}
+              />
             </React.Fragment>
           ))}
           {' — '}
@@ -143,7 +147,7 @@ export default function UpdateSummary({data, seatLink}) {
   const zone =
     w?.reporting_timezone ||
     (yesterday && yesterday.timezone) ||
-    data.schedule.timezone ||
+    data.schedule?.timezone ||
     data.run.timezone;
   const diagnostics = data.local_diagnostics === true;
   const count = yesterday
@@ -235,7 +239,7 @@ export default function UpdateSummary({data, seatLink}) {
             />
           )}
           {w && display === 'text' && (
-            <RecentChangesSection title="Commentary">
+            <RecentChangesSection title="Highlights">
               {callList && (
                 <section aria-label="Seat calls">
                   <h4 className="h6">Seat calls</h4>
@@ -244,6 +248,8 @@ export default function UpdateSummary({data, seatLink}) {
               )}
               <Commentary
                 item={entry.commentary}
+                period={selected}
+                seconds={w.actual_seconds}
                 parties={data.report.partyAbbr}
                 seatLink={seatLink}
                 code={data.run.election}

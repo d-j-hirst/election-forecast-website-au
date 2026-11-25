@@ -33,3 +33,8 @@ failed sections. The retry button does not make another API request.
 Create the `.env` file as outlined above, but for `REACT_APP_BASE_BACKEND_URL` give the URL of your website (including the `https://`). Also create the jsconfig.json.
 
 The build now needs to be produced and transferred to for backend to send. In order to build we first need `react-scripts` so run `npm install react-scripts` in folder `frontend`. After first installing any other new packages with `npm install`, run `npm run build` to create a build (this may take some time), then run `prepare_files.sh` which will sort various files into a "root" folder. See the backend readme for the final instructions on how to collect these static files.
+
+The production `npm run build` starts with a fresh ESLint check. The development
+server and release builder otherwise share a cache that can report old errors
+after a source file has been corrected. This only clears the generated lint
+cache at build time; ordinary editing retains incremental checks.

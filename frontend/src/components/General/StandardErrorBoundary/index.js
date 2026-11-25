@@ -11,7 +11,7 @@ const ErrorFallback = ({resetErrorBoundary}) => (
     <p role="alert">Something went wrong displaying this section.</p>
     <button
       type="button"
-      className="btn btn-outline-secondary btn-sm"
+      className="btn btn-secondary btn-sm"
       onClick={event => {
         const main = event.currentTarget.closest('main');
         // Retry rendering the available data; this action does not refetch it.

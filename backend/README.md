@@ -73,6 +73,28 @@ database. Run the Analyser watcher for a replay, start its reporting worker with
 open without signing in when the development backend receives a loopback
 request addressed to localhost. The seat links follow that run. The pages
 refresh while visible and display the source observation in the election timezone.
+When the last intended forecast has arrived, use the **Mark selected replays as
+complete** action under Live runs in Django admin. The replay keeps every
+published snapshot, including quiet updates. Completed pages stop background
+checks and still support First, Back and Forward. A new publication automatically
+reopens the replay. An already-open completed page picks it up on navigation or
+refresh. Replay responses use gzip when supported by the client. When you
+reopen a completed replay or visit it in another tab, the browser checks
+with the local server before reusing its copy of the report and chart history.
+A new publication or a history rebuild makes the next request fetch fresh data.
+The Analyser upload manager can also mark a replay complete remotely with
+`--complete-replay RUN_ID` and the usual destination flags. The authenticated
+server checks that it holds every publication in the local run, including
+matching checksums, before it marks the replay complete.
+
+The Modes bar offers **Live Replay** only for elections listed in
+`DJANGO_PUBLIC_REPLAY_ELECTIONS` (a comma-separated list, empty by default).
+Enable an election after uploading a replay registered with public visibility.
+The link opens the series whose first counted forecast was published most
+recently. An origin alone does not qualify. Older public series keep their URLs.
+Private registrations remain local. Hosted readers see observation times and
+Highlights; local diagnostic references and the expanded movement list are
+available in the loopback rehearsal view.
 
 For public live service, register a public run of kind `live`. In Django
 admin select its Live run record and use **Select one public live run as
@@ -158,3 +180,21 @@ script leaves this activation step to the operator.
 
 The release-script checks run without installing dependencies or touching a
 working database: `bash tests/test_routine_update.sh` from the repository root.
+
+### Publish human-written Commentary
+
+The Analyser upload manager can create or revise an article in the site's
+top-menu Commentary section. Apply the Commentary migration with
+`python manage.py migrate`. Grant the uploader's Django account **Can add
+commentary** and **Can change commentary** for this operation. Existing forecast
+publication permissions are independent.
+
+Send a UTF-8 plain-text file with a stable article key, a title when creating
+the article, and optional tags. The authenticated endpoint is
+`PUT /commentary-api/publish/<key>/`. It acknowledges the key and the numeric
+article ID on that server. Reusing the key updates the existing public URL and
+preserves the original publication date. Omitted titles and tags are preserved.
+Paragraphs and line breaks are displayed as written, and HTML in the uploaded
+text is shown literally. Articles edited directly in Django retain their usual
+formatting. To attach a key to an existing admin article, specify its exact
+unique title in `existing_title`.

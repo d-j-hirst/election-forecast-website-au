@@ -82,7 +82,7 @@ const ForecastLayout = props => {
         Archived reports have no current mode selected in the summary links. */}
       <ForecastsNav
         election={code}
-        mode={props.isArchive || replay ? 'other' : inputMode}
+        mode={replay ? 'replay' : props.isArchive ? 'other' : inputMode}
       />
       {/* These state objects keep their identity until a load replaces the data;
         unlike inline render objects, they reset failed sections only on delivery. */}

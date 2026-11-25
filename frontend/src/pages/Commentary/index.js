@@ -35,7 +35,7 @@ const Commentary = () => {
 
     const getCommentaries = () => {
       let url = `commentary-api/all-commentaries?page=${page}`;
-      if (tag) url += `&tag=${tag}`;
+      if (tag) url += `&tag=${encodeURIComponent(tag)}`;
       return getDirect(url).then(resp => {
         if (!resp.ok) throw Error("Couldn't find commentary data");
         return resp.data;
@@ -73,7 +73,7 @@ const Commentary = () => {
         className={styles.content}
         resetKeys={[page, tag, commentaries]}
       >
-        <CommentaryHeader />
+        <CommentaryHeader returnLink={false} />
         <StandardErrorBoundary>
           {commentariesValid && (
             <>
@@ -84,6 +84,9 @@ const Commentary = () => {
               />
               <CommentaryTags allTags={allTags} thisTag={tag} />
               <div className={styles.mainText}>
+                {commentaries.length === 0 && (
+                  <p>No commentary published for this selection.</p>
+                )}
                 {commentaries.map((commentary, index) => (
                   <StandardErrorBoundary key={index}>
                     <CommentaryItem

@@ -206,6 +206,9 @@ AUTH_USER_MODEL = 'users.User'
 
 PRODUCTION_SETTINGS: bool = bool(env.bool('DJANGO_PRODUCTION_SETTINGS', default=False))
 LOCAL_REPLAY_ENABLED = DEBUG and not PRODUCTION_SETTINGS and env.bool('DJANGO_LOCAL_REPLAY', default=False)
+# A hosted election gains a replay link only after the operator enables it and
+# a series registered as public has an actual forecast available to read.
+PUBLIC_REPLAY_ELECTIONS = env.list('DJANGO_PUBLIC_REPLAY_ELECTIONS', default=[])
 
 JWT_EXPIRATION_DELTA_DEFAULT = 2.628e+6
 JWT_AUTH = {

@@ -15,7 +15,8 @@ const CommentaryItem = props => {
     headingLink += `${symbol}returnPage=${props.returnPage}`;
     symbol = '&';
   }
-  if (props.returnTag) headingLink += `${symbol}returnTag=${props.returnTag}`;
+  if (props.returnTag)
+    headingLink += `${symbol}returnTag=${encodeURIComponent(props.returnTag)}`;
   return (
     <>
       {props.headingLink && (
@@ -27,18 +28,26 @@ const CommentaryItem = props => {
       )}
       {!props.headingLink && <h4>{props.commentary.title}</h4>}
       <p>
-        {props.commentary.tags.join(', ')} - posted at{' '}
-        {parseDateStringAsUTC(props.commentary.date)}
+        {props.commentary.tags.map(tag => (
+          <Link
+            key={tag}
+            className="btn btn-secondary btn-sm me-1"
+            to={'/commentary?tag=' + encodeURIComponent(tag)}
+          >
+            {tag}
+          </Link>
+        ))}
+        Posted at {parseDateStringAsUTC(props.commentary.date)}
       </p>
       <SanitizeHtml html={props.commentary.text} />
     </>
   );
 };
 CommentaryItem.propTypes = {
-  commentary: PropTypes.number.isRequired,
-  returnPage: PropTypes.string.isRequired,
-  returnTag: PropTypes.string.isRequired,
-  headingLink: PropTypes.string.isRequired,
+  commentary: PropTypes.object.isRequired,
+  returnPage: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  returnTag: PropTypes.string,
+  headingLink: PropTypes.bool.isRequired,
 };
 
 export default CommentaryItem;

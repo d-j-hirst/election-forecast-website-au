@@ -23,7 +23,7 @@ import GovernmentFormationChart from './GovernmentFormationChart';
 import styles from './FormationOfGovernment.module.css';
 
 const MajorityWinGovernmentRow = props => {
-  const party = parseInt(props.partyIndex);
+  const party = props.partyIndex;
   const partyAbbr = standardiseParty(party, props.forecast);
   let prob = jsonMap(props.forecast.majorityWinPc, party);
   if (prob === undefined) prob = 0;
@@ -48,7 +48,7 @@ MajorityWinGovernmentRow.propTypes = {
 };
 
 const MinorityWinGovernmentRow = props => {
-  const party = parseInt(props.partyIndex);
+  const party = props.partyIndex;
   const partyAbbr = standardiseParty(party, props.forecast);
   let prob = jsonMap(props.forecast.minorityWinPc, party);
   if (prob === undefined) prob = 0;
@@ -79,11 +79,11 @@ const MinorityWinGovernmentRow = props => {
 };
 MinorityWinGovernmentRow.propTypes = {
   forecast: PropTypes.object.isRequired,
-  partyIndex: PropTypes.string.isRequired,
+  partyIndex: PropTypes.number.isRequired,
 };
 
 const MostSeatsRow = props => {
-  const party = parseInt(props.partyIndex);
+  const party = props.partyIndex;
   const partyAbbr = standardiseParty(party, props.forecast);
   let prob = jsonMap(props.forecast.mostSeatsWinPc, party);
   if (prob === undefined) prob = 0;
@@ -227,7 +227,7 @@ const OthersExplainer = props => {
 
 const OverallWinGovernmentRow = props => {
   const [showExplainer, setShowExplainer] = useState(false);
-  const party = parseInt(props.partyIndex);
+  const party = props.partyIndex;
   let probMajority = jsonMap(props.forecast.majorityWinPc, party);
   let probMinority = jsonMap(props.forecast.minorityWinPc, party);
   if (probMajority === undefined) probMajority = 0;
@@ -265,6 +265,8 @@ const OverallWinGovernmentRow = props => {
           </div>
           {props.detailHandler !== undefined && (
             <Button
+              variant="secondary"
+              size="sm"
               onClick={props.detailHandler}
               className={styles.formationOfGovernmentExpand}
             >
@@ -284,7 +286,7 @@ const OverallWinGovernmentRow = props => {
 OverallWinGovernmentRow.propTypes = {
   excludedPartyIndex: PropTypes.number,
   forecast: PropTypes.object.isRequired,
-  partyIndex: PropTypes.string.isRequired,
+  partyIndex: PropTypes.number.isRequired,
   text: PropTypes.string,
   detailHandler: PropTypes.func,
   expanded: PropTypes.bool,
@@ -320,7 +322,7 @@ const MajorPartyCollapsibleRows = props => {
 };
 MajorPartyCollapsibleRows.propTypes = {
   forecast: PropTypes.object.isRequired,
-  partyIndex: PropTypes.string.isRequired,
+  partyIndex: PropTypes.number.isRequired,
 };
 
 const OneNationGovernmentRow = props => {
@@ -405,6 +407,8 @@ const HungParliamentMainRow = props => {
           </div>
           {props.detailHandler !== undefined && (
             <Button
+              variant="secondary"
+              size="sm"
               onClick={props.detailHandler}
               className={styles.formationOfGovernmentExpand}
             >
@@ -502,7 +506,7 @@ const OthersCollapsibleRows = props => {
   return (
     <>
       <OverallWinGovernmentRow
-        partyIndex="-1"
+        partyIndex={-1}
         forecast={props.forecast}
         excludedPartyIndex={props.excludedPartyIndex}
         detailHandler={detailHandler}
@@ -596,8 +600,8 @@ const FormationOfGovernment = props => {
     return probMajority + probMinority;
   };
 
-  const higherProbParty = partyProb(0) > partyProb(1) ? '0' : '1';
-  const lowerProbParty = higherProbParty === '0' ? '1' : '0';
+  const higherProbParty = partyProb(0) > partyProb(1) ? 0 : 1;
+  const lowerProbParty = higherProbParty === 0 ? 1 : 0;
   const electionYear = parseInt(props.forecast.termCode.slice(0, 4));
   const onPartyIndex =
     electionYear >= 2026

@@ -67,7 +67,7 @@ const ModeNav = props => {
   const {pathname} = useLocation();
   const thisClass =
     props.activeMode === props.mode ? styles.navselected : styles.navitem;
-  const linkUrl = '/forecast/' + props.election + '/' + props.mode;
+  const linkUrl = props.to || '/forecast/' + props.election + '/' + props.mode;
   return (
     <Nav.Link
       as={Link}
@@ -86,6 +86,7 @@ const ModeNav = props => {
   );
 };
 ModeNav.propTypes = {
+  to: PropTypes.string,
   activeMode: PropTypes.string.isRequired,
   election: PropTypes.string.isRequired,
   text: PropTypes.string.isRequired,
@@ -116,20 +117,31 @@ const pastElections = [
 ];
 
 const ForecastsNav = props => {
-  const [officialElection, setOfficialElection] = useState(null);
+  const [availability, setAvailability] = useState(null);
   useEffect(() => {
-    if (live_elections.includes(props.election)) return;
     let active = true;
-    getDirect('forecast-api/live/v1/official/' + props.election + '/head')
+    getDirect('forecast-api/live/v1/official/' + props.election + '/head', {
+      headers: {Accept: 'application/json'},
+    })
       .then(response => {
-        if (active && response.ok && response.data.run)
-          setOfficialElection(props.election);
+        if (
+          active &&
+          response.ok &&
+          (response.data?.run || response.data?.latest_public_replay)
+        )
+          setAvailability({
+            election: props.election,
+            official: !!response.data.run,
+            replay: response.data.latest_public_replay,
+          });
       })
       .catch(() => {});
     return () => {
       active = false;
     };
   }, [props.election]);
+  const available =
+    availability?.election === props.election ? availability : null;
   const [electionsExpanded, setElectionsExpanded] = useState(false);
   const [modesExpanded, setModesExpanded] = useState(false);
   const pastElection = pastElections.find(([code]) => code === props.election);
@@ -138,7 +150,8 @@ const ForecastsNav = props => {
   // archived report: no current mode is selected, and all mode links stay usable.
   let effectiveMode = props.mode;
   if (props.mode === 'other') effectiveMode = 'regular';
-  if (props.mode === 'live') effectiveMode = 'regular';
+  if (props.mode === 'live' || props.mode === 'replay')
+    effectiveMode = 'regular';
   if (props.mode === '') effectiveMode = 'regular';
   return (
     <>
@@ -256,12 +269,26 @@ const ForecastsNav = props => {
                 activeMode={props.mode}
               />
               {(live_elections.includes(props.election) ||
-                officialElection === props.election) && (
+                available?.official) && (
                 <ModeNav
                   text="Live"
                   election={props.election}
                   mode="live"
                   activeMode={props.mode}
+                />
+              )}
+              {available?.replay && (
+                <ModeNav
+                  text="Live Replay"
+                  election={props.election}
+                  mode="replay"
+                  activeMode={props.mode}
+                  to={
+                    '/' +
+                    props.election +
+                    '/replays/' +
+                    encodeURIComponent(available.replay)
+                  }
                 />
               )}
             </Navbar.Collapse>

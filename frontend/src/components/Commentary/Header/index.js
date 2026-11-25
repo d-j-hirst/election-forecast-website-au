@@ -12,21 +12,24 @@ const CommentaryHeader = props => {
     returnLink += `${symbol}page=${props.returnPage}`;
     symbol = '&';
   }
-  if (props.returnTag) returnLink += `${symbol}tag=${props.returnTag}`;
+  if (props.returnTag)
+    returnLink += `${symbol}tag=${encodeURIComponent(props.returnTag)}`;
   return (
     <>
       <h1 className={`${styles.commentaryTitle} page-heading`}>Commentary</h1>
       {props.returnLink && (
         <div className={styles.commentaryReturn}>
-          <Link to={returnLink}>Return to commentary list</Link>
+          <Link className="btn btn-secondary btn-sm" to={returnLink}>
+            Return to commentary list
+          </Link>
         </div>
       )}
     </>
   );
 };
 CommentaryHeader.propTypes = {
-  returnPage: PropTypes.string.isRequired,
-  returnTag: PropTypes.string.isRequired,
+  returnPage: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  returnTag: PropTypes.string,
   returnLink: PropTypes.bool.isRequired,
 };
 

@@ -25,8 +25,13 @@ export function Counts({progress}) {
     return (
       <p key={label} className="mb-0">
         <strong>{label}</strong> counted: {votes.format(counted)}
-        {percentage &&
-          ` of ${votes.format(total)} expected formal votes (${percentage})`}
+        {percentage && (
+          <>
+            {' '}
+            of {votes.format(total)} expected formal votes (
+            <strong>{percentage}</strong>)
+          </>
+        )}
         .
       </p>
     );

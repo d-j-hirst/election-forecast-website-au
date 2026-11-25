@@ -10,6 +10,48 @@ code {
     monospace;
 }
 
+/* Keep the site's normal grey controls and distinguish the selected filter. */
+.btn.btn-secondary[aria-current="page"],
+.btn.btn-secondary[aria-pressed="true"] {
+  background-color: var(--bs-btn-active-bg);
+  text-decoration: underline;
+  text-underline-offset: .18em;
+}
+
+.replay-controls {
+  position: relative;
+  background: var(--bs-body-bg, #fff);
+  padding: .375rem .25rem;
+}
+.replay-controls-pinned {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+.replay-pin {
+  position: absolute;
+  right: .25rem;
+  top: .375rem;
+}
+.replay-steps {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .375rem;
+  padding-right: 2.8rem;
+}
+.replay-position {
+  display: inline-grid;
+  place-items: center;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.replay-position > span { grid-area: 1 / 1; }
+.replay-position-size::before {
+  content: attr(data-size);
+  visibility: hidden;
+}
+
 /* Tooltips sometimes need to be properly formatted with newlines, this allows them to be so */
 .tooltip {
   white-space: pre-wrap !important;

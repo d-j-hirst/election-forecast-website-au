@@ -1,7 +1,7 @@
 from commentary_api.models import Commentary, Tag
 
 from django.http import Http404
-from django.shortcuts import get_list_or_404, get_object_or_404
+from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from django.core.paginator import Paginator
 
@@ -14,11 +14,12 @@ def serve_commentaries(page, tag):
         page = int(page)
     except ValueError:
         raise Http404("Invalid page number")
+    # Public reads need only the long-established article fields. This also
+    # lets the current Commentary page stay available during the schema rollout.
+    commentaries = Commentary.objects.defer('publication_key').prefetch_related('tags').order_by('-date', '-pk')
     if tag is not None:
-        commentaries: Any = get_list_or_404(Commentary.objects.filter(tags__name=tag).order_by('-date'))
-    else:
-        commentaries: Any = get_list_or_404(Commentary.objects.order_by('-date'))
-    all_tags: Any = get_list_or_404(Tag.objects.all())
+        commentaries = commentaries.filter(tags__name=tag).distinct()
+    all_tags = Tag.objects.order_by('name').values_list('name', flat=True).distinct()
     paginator = Paginator(commentaries, ITEMS_PER_PAGE)
     page_commentaries = paginator.get_page(page)
     if page_commentaries is None:
@@ -30,12 +31,12 @@ def serve_commentaries(page, tag):
                                 "tags": [a.name for a in commentary.tags.all()]
                                } for commentary in page_commentaries],
                 "pageCount": paginator.num_pages,
-                "allTags": [a.name for a in all_tags]}
+                "allTags": list(all_tags)}
     return Response(response)
 
 
 def serve_commentary(id):
-    commentary: Any = get_object_or_404(Commentary, id=id)
+    commentary: Any = get_object_or_404(Commentary.objects.defer('publication_key'), id=id)
     response = {"id": commentary.id, 
                 "title": commentary.title,
                 "date": commentary.date,

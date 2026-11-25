@@ -1,3 +1,4 @@
+import gzip
 import hashlib
 import json
 
@@ -5,6 +6,8 @@ from django.contrib.auth import get_user_model
 from django.core.management import call_command
 from django.test import TestCase, override_settings
 from rest_framework.test import APIClient
+from django.contrib import admin
+from unittest.mock import patch
 
 from forecast_api.live_data import compact_booths, movements, pack, seat_series
 from forecast_api.models import LiveRun, LivePublication, Forecast, SeatHistoryBlock
@@ -22,12 +25,12 @@ class PublicationTests(TestCase):
                         visibility='private', election_date='2026-03-21')
         self.assertEqual(self.api.post(self.base+'/runs', self.run, format='json').status_code, 200)
 
-    def send(self, identity, time=None, run=None, **extra):
+    def send(self, identity, time=None, run=None, fingerprint=None, **extra):
         run = run or self.run
         body = dict(run=run, schema_version=1, frozen=True, released_at='2026-11-01T02:00:00Z',
                     forecast=dict(forecast_id=identity, source_time=time, origin=identity=='origin',
                                   simulation='test', input_revision='1', input_fingerprint='test',
-                                  source_fingerprint=None, model_revision='1', iterations=1000,
+                                  source_fingerprint=fingerprint, model_revision='1', iterations=1000,
                                   source_timezone='Australia/Adelaide', delivered_at='2026-11-01T01:59:00Z',
                                   completed_at='2026-11-01T02:00:00Z'),
                     report=dict(termCode=run['election'], seatNames=['Sample'], seatPartyWinFrequencies=[[[0, 72.314]]]),
@@ -37,6 +40,21 @@ class PublicationTests(TestCase):
         return self.api.post(self.base+'/runs/'+run['run_id']+'/forecasts/'+identity, raw,
                 content_type='application/json', HTTP_IDEMPOTENCY_KEY=run['run_id']+'/'+identity,
                 HTTP_X_CONTENT_SHA256=hashlib.sha256(raw).hexdigest())
+
+    def test_duplicate_observation_after_restart_preserves_history_and_original_receipt(self):
+        first = self.send('f00000001', '2026-03-21T20:00:00+11:00', fingerprint='capture-a')
+        duplicate = self.send('f00000002', '2026-03-21T09:00:00Z', fingerprint='capture-a')
+        self.assertEqual(duplicate.status_code, 409)
+        self.assertEqual(duplicate.data['existing_forecast_id'], 'f00000001')
+        self.assertEqual(LiveRun.objects.get().revision, 1)
+        self.assertEqual(LivePublication.objects.count(), 1)
+        repeat = self.send('f00000001', '2026-03-21T20:00:00+11:00', fingerprint='capture-a')
+        self.assertEqual(repeat.data['published_at'], first.data['published_at'])
+        self.assertEqual(self.send('f00000002', '2026-03-21T09:00:00Z', fingerprint='capture-b').status_code, 200)
+        self.assertEqual(self.send('f00000003', '2026-03-21T09:05:00Z', fingerprint='capture-a').status_code, 200)
+        other = dict(self.run, run_id='another-replay')
+        self.api.post(self.base+'/runs', other, format='json')
+        self.assertEqual(self.send('f00000001', '2026-03-21T09:00:00Z', other, fingerprint='capture-a').status_code, 200)
 
     def test_immutable_publications_and_late_rebuild(self):
         self.assertEqual(self.send('origin').data['latest_forecast_id'], None)
@@ -84,6 +102,32 @@ class PublicationTests(TestCase):
         call_command('rebuild_live_seat_history', run.pk)
         self.assertEqual(seat_series(run, 'Sample'), series)
 
+    def test_modes_discovers_only_enabled_public_series_with_a_published_count(self):
+        public = APIClient(HTTP_HOST='testserver')
+        def register(name):
+            run = dict(self.run, run_id=name, visibility='public')
+            self.assertEqual(self.api.post(self.base+'/runs', run, format='json').status_code, 200)
+            return run
+        head = self.base + '/official/2026sa/head'
+        first, second, empty = [register(name) for name in ('z-first', 'a-second', 'empty')]
+        self.send('f00000001', '2026-03-21T08:00:00Z', run=first)
+        self.send('f00000001', '2026-03-21T08:00:00Z', run=second)
+        self.send('f00000002', '2026-03-21T08:01:00Z', run=first)
+        self.send('origin', run=empty)
+        replay = self.base + '/replays/2026sa/'
+        self.assertEqual(public.get(head).data, {'legacy': True})
+        self.assertEqual(public.get(replay+'a-second/latest').status_code, 404)
+        with self.settings(PUBLIC_REPLAY_ELECTIONS=['2026sa']):
+            self.assertEqual(public.get(head).data, {'legacy': True, 'latest_public_replay': 'a-second'})
+            response = public.get(replay+'a-second/latest?snapshot=f00000001')
+            self.assertEqual(response.status_code, 200)
+            self.assertFalse(response.data['local_diagnostics'])
+            self.assertEqual(response.data['replay_navigation']['total'], 1)
+            self.assertEqual(public.get(replay+'a-second/replay-history').status_code, 200)
+            self.assertEqual(public.get(replay+'demo/latest').status_code, 404)
+            self.assertEqual(public.get(replay+'empty/head').status_code, 404)
+            self.assertEqual(public.get(self.base+'/official/2026sa/latest').status_code, 404)
+
     def test_isolation_and_replay_visibility(self):
         reader = APIClient(HTTP_HOST='localhost')
         official = dict(self.run,run_id='official',kind='live',visibility='public')
@@ -111,6 +155,96 @@ class PublicationTests(TestCase):
         self.assertEqual(reader.get(replay+'latest').data['forecast_id'],'f00000002')
         self.assertEqual(reader.get(self.base+'/replays/2022vic/demo/head').status_code,404)
 
+    def test_compressed_complete_replay_preserves_every_snapshot(self):
+        replay = self.base + '/replays/2026sa/demo/'
+        # The two reports have the same votes. Each remains addressable.
+        self.send('f00000001', '2026-03-21T09:00:00Z')
+        self.send('f00000002', '2026-03-21T09:05:00Z')
+        self.assertFalse(self.api.get(replay + 'head').data['replay_complete'])
+        operator = admin.site._registry[LiveRun]
+        with patch.object(operator, 'message_user'):
+            operator.complete_replays(None, LiveRun.objects.filter(pk='demo'))
+        for identity in ['f00000001', 'f00000002']:
+            url = replay + 'latest?snapshot=' + identity
+            plain = self.api.get(url)
+            compressed = self.api.get(url, HTTP_ACCEPT_ENCODING='gzip')
+            self.assertTrue(plain.data['replay_complete'])
+            self.assertEqual(plain.data['forecast_id'], identity)
+            self.assertEqual(plain.data['replay_navigation']['total'], 2)
+            self.assertNotIn('Content-Encoding', plain)
+            self.assertEqual(compressed['Content-Encoding'], 'gzip')
+            self.assertIn('Accept-Encoding', compressed['Vary'])
+            self.assertEqual(gzip.decompress(compressed.content), plain.content)
+        self.send('f00000002', '2026-03-21T09:05:00Z')
+        self.assertTrue(self.api.get(replay + 'head').data['replay_complete'])
+        self.send('f00000003', '2026-03-21T09:01:00Z')
+        self.assertFalse(self.api.get(replay + 'head').data['replay_complete'])
+        self.assertEqual(self.api.get(replay + 'latest').data['replay_navigation']['total'], 3)
+
+    def test_second_tab_revalidates_completed_replay_after_checking_access(self):
+        base = self.base + '/replays/2026sa/demo/'
+        self.send('f00000001', '2026-03-21T09:00:00Z')
+        self.assertEqual(self.api.get(base + 'latest')['Cache-Control'], 'private, no-store')
+        operator = admin.site._registry[LiveRun]
+        with patch.object(operator, 'message_user'):
+            operator.complete_replays(None, LiveRun.objects.filter(pk='demo'))
+        tags = {}
+        for path in ('latest', 'latest?snapshot=f00000001', 'replay-history', 'replay-history?seat=Sample'):
+            url = base + path
+            page = self.api.get(url)
+            tags[path] = page['ETag']
+            with patch('forecast_api.live.publication_body', side_effect=AssertionError), \
+                 patch('forecast_api.live.replay_history', side_effect=AssertionError):
+                again = self.api.get(url, HTTP_IF_NONE_MATCH=page['ETag'], HTTP_ACCEPT_ENCODING='gzip')
+                self.assertEqual((again.status_code, again.content), (304, b''))
+                self.assertEqual(again['Cache-Control'], 'private, no-cache')
+                self.assertEqual(again['ETag'], page['ETag'])
+        self.assertEqual(len(set(tags.values())), len(tags))
+        latest = base + 'latest'
+        check = {'HTTP_IF_NONE_MATCH': tags['latest']}
+        self.assertEqual(self.api.get(latest, REMOTE_ADDR='192.0.2.5', **check).status_code, 404)
+        self.assertEqual(self.api.get(latest + '?snapshot=f99999999', **check).status_code, 404)
+        call_command('rebuild_live_seat_history', 'demo')
+        rebuilt = self.api.get(latest, **check)
+        self.assertEqual(rebuilt.status_code, 200)
+        self.assertNotEqual(rebuilt['ETag'], tags['latest'])
+        self.send('f00000002', '2026-03-21T09:05:00Z')
+        reopened = self.api.get(latest, HTTP_IF_NONE_MATCH=rebuilt['ETag'])
+        self.assertEqual(reopened.status_code, 200)
+        self.assertEqual(reopened.data['forecast_id'], 'f00000002')
+        self.assertEqual(reopened['Cache-Control'], 'private, no-store')
+
+    def test_remote_replay_completion_checks_permissions_and_exact_manifest(self):
+        self.send('origin')
+        self.send('f00000002', '2026-03-21T09:05:00Z')
+        manifest = dict(LivePublication.objects.values_list('forecast_id', 'digest'))
+        url = self.base + '/runs/demo/complete'
+        body = {'election': '2026sa', 'publications': manifest}
+        reader = APIClient()
+        self.assertIn(reader.post(url, body, format='json').status_code, (401, 403))
+        reader.force_authenticate(get_user_model().objects.create_user('reader@example.test', None))
+        self.assertEqual(reader.post(url, body, format='json').status_code, 403)
+        for bad in ({'f00000002': manifest['f00000002']}, dict(manifest, f00000001='a'*64),
+                    dict(manifest, origin='0'*64)):
+            response = self.api.post(url, dict(body, publications=bad), format='json')
+            self.assertEqual(response.status_code, 409)
+        self.assertEqual(self.api.post(url, dict(body, publications={}), format='json').status_code, 400)
+        self.assertIsNone(LiveRun.objects.get().replay_completed_at)
+        with override_settings(LOCAL_REPLAY_ENABLED=False):
+            done = self.api.post(url, body, format='json', REMOTE_ADDR='192.0.2.5')
+            self.assertEqual(done.status_code, 200)
+            self.assertEqual(done.data['snapshot_count'], 1)
+            self.assertEqual(self.api.post(url, body, format='json').data, done.data)
+            self.assertEqual(reader.get(self.base + '/replays/2026sa/demo/head').status_code, 404)
+        # A late addition keeps the same newest forecast but invalidates the
+        # old manifest. A retry from an older client cannot re-complete it.
+        self.send('f00000001', '2026-03-21T09:00:00Z')
+        self.assertEqual(self.api.post(url, body, format='json').status_code, 409)
+        self.assertIsNone(LiveRun.objects.get().replay_completed_at)
+        official = dict(self.run, run_id='official', kind='live', visibility='public')
+        self.api.post(self.base + '/runs', official, format='json')
+        self.assertEqual(self.api.post(self.base + '/runs/official/complete', body, format='json').status_code, 404)
+
     def test_replay_steps_use_observation_order_and_limit_both_histories(self):
         self.send('origin')
         for number, minute in [(8, 1), (2, 0), (5, 1)]:
@@ -131,6 +265,36 @@ class PublicationTests(TestCase):
         self.assertEqual(self.api.get(base + 'latest?snapshot=f00000003').status_code, 404)
         self.assertEqual(self.api.get(base + 'latest' + select, REMOTE_ADDR='192.0.2.5').status_code, 404)
         self.assertEqual(self.api.get(self.base + '/official/2026sa/head' + select).status_code, 404)
+
+    def test_replay_history_sync_handles_late_insert_and_rebuild(self):
+        def publish(n):
+            self.send(f'f{n:08}', '2026-03-21T09:00:00Z', report=dict(termCode='2026sa',
+                      seatNames=['Sample'], seatPartyWinFrequencies=[[[0, n]]]))
+        self.send('origin')
+        publish(40)
+        base = self.base + '/replays/2026sa/demo/'
+        def sync(seat, previous=None):
+            query = {'seat': 'Sample'} if seat else {}
+            if previous:
+                query.update(after=previous['cursor'], revision=previous['revision'])
+            return self.api.get(base + 'replay-history', query).data
+        initial = [sync(seat) for seat in (False, True)]
+        publish(2)
+        for seat, old in enumerate(initial):
+            batch = sync(seat, old)
+            self.assertTrue(batch['incremental'])
+            self.assertEqual(batch['ids'], ['f00000002', 'f00000040'])
+            self.assertEqual(batch['cursor'], 'f00000002')
+            path = 'seat-history?seat=Sample' if seat else 'history'
+            points = self.api.get(base + path).data['points']
+            self.assertEqual(batch['updates'], [('f00000002', points[0])])
+            self.assertEqual(old['updates'], [('f00000040', points[1])])
+            self.assertEqual(sync(seat, batch)['updates'], [])
+        call_command('rebuild_live_seat_history', 'demo')
+        refreshed = sync(True, batch)
+        self.assertFalse(refreshed['incremental'])
+        self.assertEqual(len(refreshed['updates']), 2)
+        self.assertEqual(self.api.get(base + 'replay-history', REMOTE_ADDR='192.0.2.5').status_code, 404)
 
     def test_calls_warnings_and_preference_history_reach_the_public_views(self):
         url = self.base + '/replays/2026sa/demo/'

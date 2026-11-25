@@ -187,7 +187,7 @@ function CommentaryNotice() {
   if (collapsed) {
     return (
       <Button
-        variant="info"
+        variant="secondary"
         size="sm"
         className="mb-3"
         onClick={() => setCollapsed(false)}
@@ -249,23 +249,57 @@ function writerEditions(text) {
   };
 }
 
-export default function Commentary({item, seatLink, code, parties = []}) {
+// Older frozen editions used this exact standalone sentence when the writer
+// found no story. Real booth reports and notices about missing evidence keep
+// their original text, including any separate seat-call bulletin.
+function quietSummary(text, period, seconds) {
+  if (
+    text?.developments?.length ||
+    text?.summary !==
+      'Counting was updated with little change in the projected winners.'
+  )
+    return text?.summary;
+  const periods = {
+    previous: 'since the previous forecast',
+    since_start: 'since counting began',
+    today: "since the forecast used as today's starting point",
+    yesterday: 'during this reporting day',
+  };
+  const elapsed = Number.isFinite(seconds)
+    ? `over the ${Number(
+        (seconds / 60).toPrecision(6)
+      )}-minute comparison period`
+    : 'over this comparison period';
+  return `There were no significant changes to the results ${
+    periods[period] || elapsed
+  }.`;
+}
+
+export default function Commentary({
+  item,
+  seatLink,
+  code,
+  parties = [],
+  period,
+  seconds,
+}) {
   const [preferRules, setPreferRules] = useStoredBoolean(
     'liveRecentChanges:ruleBased'
   );
   const editions = writerEditions(item?.text);
   const primaryAvailable = item?.status === 'complete';
   if (!primaryAvailable && !editions)
-    return <p>Commentary unavailable. {item?.reason}</p>;
+    return <p>No highlights are available for this period.</p>;
   const showRules = Boolean(editions && (preferRules || !primaryAvailable));
   const text = showRules ? editions.rules : editions?.original || item.text;
   const render = (value, formatCandidate) =>
     inline(value, item.entities, seatLink, code, parties, formatCandidate);
   const formatCandidates = text =>
     repeatedCandidateLabels(text, item.entities, code);
-  const structured = showRules
-    ? text.summary.startsWith('Key changes:\n')
-    : item.format === 'seat-bullets-v1';
+  const summary = quietSummary(text, period, seconds);
+  const structured =
+    summary?.startsWith('Key changes:\n') &&
+    (showRules || item.format === 'seat-bullets-v1');
   return (
     <section>
       {editions && primaryAvailable && (
@@ -276,7 +310,7 @@ export default function Commentary({item, seatLink, code, parties = []}) {
         >
           <Button
             size="sm"
-            variant={showRules ? 'outline-primary' : 'primary'}
+            variant="secondary"
             aria-pressed={!showRules}
             onClick={() => setPreferRules(false)}
           >
@@ -284,7 +318,7 @@ export default function Commentary({item, seatLink, code, parties = []}) {
           </Button>
           <Button
             size="sm"
-            variant={showRules ? 'primary' : 'outline-primary'}
+            variant="secondary"
             aria-pressed={showRules}
             onClick={() => setPreferRules(true)}
           >
@@ -292,18 +326,9 @@ export default function Commentary({item, seatLink, code, parties = []}) {
           </Button>
         </div>
       )}
-      {editions && !primaryAvailable && (
-        <>
-          <p>AI commentary unavailable. {item.reason}</p>
-          <h4 className="h6">Rule-based commentary</h4>
-        </>
-      )}
-      {!showRules && item.source === 'local' && (
-        <h4 className="h6">Counting update</h4>
-      )}
       {!showRules && item.source !== 'local' && <CommentaryNotice />}
-      {structured && <CommentaryBlock text={text?.summary} render={render} />}
-      {!structured && text?.summary && <p>{render(text.summary)}</p>}
+      {structured && <CommentaryBlock text={summary} render={render} />}
+      {!structured && summary && <p>{render(summary)}</p>}
       {(text?.developments || []).map((d, i) => {
         const text = d.text || d.explanation;
         if (structured) {
@@ -353,6 +378,8 @@ export default function Commentary({item, seatLink, code, parties = []}) {
 
 Commentary.propTypes = {
   item: PropTypes.object,
+  period: PropTypes.string,
+  seconds: PropTypes.number,
   parties: PropTypes.array,
   seatLink: PropTypes.func.isRequired,
   code: PropTypes.string.isRequired,

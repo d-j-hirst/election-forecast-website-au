@@ -13,23 +13,34 @@ const getBaseConfig = method => ({
 // convert the response to straight data, removing any extraneous information
 // by convert text to parsed JSON if that's possible, and then passing
 // it on along with the status code and whether request was ok
-const serializeResponse = response => {
-  return response
-    .text()
-    .then(text => {
-      return text ? JSON.parse(text) : {};
-    })
-    .then(data => ({status: response.status, ok: response.ok, data}));
+const serializeResponse = async (response, allowLegacyHtml = false) => {
+  const text = await response.text();
+  const result = {status: response.status, ok: response.ok};
+  try {
+    return {...result, data: text ? JSON.parse(text) : {}};
+  } catch (error) {
+    // Some older deployments serve the frontend shell for unknown API routes.
+    // An official live-page lookup can still open the archived forecast there.
+    if (
+      allowLegacyHtml &&
+      response.ok &&
+      !response.redirected &&
+      /^\s*(?:<!doctype\s+html\b|<html\b)/i.test(text)
+    )
+      return {...result, legacyApiMissing: true};
+    if (!response.ok) return {...result, data: null};
+    throw error;
+  }
 };
 
 // Generic function for using GET from a given (relative) url from the API.
 // Note that this does not perform 401/403 checking and will silently
 // fail if HTTP errors occur (though they will be present in the response)
-export const getDirect = (url, options) =>
+export const getDirect = (url, {allowLegacyHtml, ...options} = {}) =>
   fetch(`${BASE_BACKEND_URL}/${url}`, {
     ...getBaseConfig('get'),
     ...options,
-  }).then(serializeResponse);
+  }).then(response => serializeResponse(response, allowLegacyHtml));
 
 // Generic function for using POST from a given (relative) url from the API.
 // additional fetch() options can be given using an object for the

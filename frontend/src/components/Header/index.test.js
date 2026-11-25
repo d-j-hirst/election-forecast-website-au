@@ -4,6 +4,10 @@ import {MemoryRouter} from 'react-router-dom';
 import Header from './index';
 import ForecastsNav from '../Forecasts/Nav';
 import MainContent from '../MainContent';
+import {getDirect} from 'utils/sdk';
+
+jest.mock('utils/sdk', () => ({getDirect: jest.fn()}));
+beforeEach(() => getDirect.mockResolvedValue({ok: true, data: {legacy: true}}));
 
 const shell = (width = 320, election = '2026vic', mode = 'regular') => (
   <MemoryRouter initialEntries={[`/forecast/${election}/${mode}`]}>
@@ -110,3 +114,16 @@ test.each([
     }
   }
 );
+
+test('Live Replay links to the published series alongside the existing Live mode', async () => {
+  getDirect.mockResolvedValue({ok: true, data: {legacy: true, latest_public_replay: 'vic-series'}});
+  render(shell(1200, '2022vic', 'replay'));
+  expect(await screen.findByRole('link', {name: 'Live Replay'})).toHaveAttribute('href', '/2022vic/replays/vic-series');
+  expect(screen.getByRole('link', {name: 'Live'})).toHaveAttribute('href', '/forecast/2022vic/live');
+});
+
+test('an election without a published replay keeps its historical live link', () => {
+  render(shell(1200, '2022vic'));
+  expect(screen.queryByRole('link', {name: 'Live Replay'})).toBeNull();
+  expect(screen.getByRole('link', {name: 'Live'})).toBeInTheDocument();
+});

@@ -106,7 +106,13 @@ const SeatsRowSet = props => {
   let freqs = [...props.forecast.seatCountFrequencies].sort((el1, el2) => {
     return el2[1][7] - el1[1][7];
   });
-  freqs = freqs.filter(a => a[1][a[1].length - 1] > 0);
+  // Keep the Emerging Parties row visible as its last projected seat disappears.
+  // Both this category and grouped Others can have the abbreviation OTH.
+  freqs = freqs.filter(
+    ([party, quantiles]) =>
+      quantiles[quantiles.length - 1] > 0 ||
+      jsonMap(props.forecast.partyName, party) === 'Emerging Party'
+  );
   const canShowCoalition =
     Object.hasOwn(props.forecast, 'coalitionSeatCountFrequencies') &&
     props.forecast.coalitionSeatCountFrequencies.length > 0;

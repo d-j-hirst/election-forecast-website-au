@@ -217,8 +217,10 @@ def write_seat_points(run, forecast_id, report):
     SeatHistoryBlock.objects.bulk_update(updates, ['points'])
 
 
-def seat_series(run, seat, timeline=None):
+def seat_series(run, seat, timeline=None, blocks_needed=None):
     blocks = SeatHistoryBlock.objects.filter(run=run, seat=seat).values_list('points', flat=True)
+    if blocks_needed is not None:
+        blocks = blocks.filter(block__in=blocks_needed)
     points = {}
     for blob in blocks:
         points.update(unpack(blob))
@@ -234,4 +236,26 @@ def seat_series(run, seat, timeline=None):
         else:
             series.append([time, point['wins'], point['fp'], point['tcp']])
     return series
+
+
+def replay_history(run, timeline, seat, after, revision):
+    """Sync one chart. Upload order identifies additions; observation order
+    determines where to display them, including late and equal-time returns."""
+    entries = list(timeline.values_list('pk', 'forecast_id'))
+    by_id = {identity: pk for pk, identity in entries}
+    # Each upload advances the revision once. A rebuild also advances it but
+    # can revise existing points, so a gap unexplained by uploads needs a new
+    # baseline. An origin arriving late can cause a harmless full refresh.
+    since = by_id.get(after)
+    added = [identity for pk, identity in entries if since is not None and pk > since]
+    incremental = since is not None and str(run.revision - len(added)) == revision
+    updates = timeline.filter(pk__gt=since) if incremental else timeline
+    ids = added if incremental else list(by_id)
+    if seat is None:
+        points = list(updates.values_list('source_time', 'history_point'))
+    else:
+        blocks = {int(identity[1:]) // 32 for identity in added} if incremental else None
+        points = seat_series(run, seat, updates, blocks)
+    return {'ids': list(by_id), 'updates': list(zip(ids, points)), 'incremental': incremental,
+            'cursor': max(entries)[1] if entries else None}
 

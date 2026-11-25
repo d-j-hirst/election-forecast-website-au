@@ -1,28 +1,8 @@
-
 .pageBar {
     display: flex;
-    flex-direction: row;
-    text-align: center;
-}
-
-.thisPage {
-    padding: 0px 8px;
-    margin: 0px 3px;
-    min-width: 30px;
-    height: 30px;
-    border: 1px solid #888888;
-    border-radius: 4px;
-    flex-direction: row;
-    vertical-align: middle;
-}
-
-.pageLink {
-    padding: 0px 8px;
-    margin: 0px 3px;
-    min-width: 30px;
-    height: 30px;
-    border: 1px solid #888888;
-    border-radius: 4px;
-    flex-direction: row;
-    vertical-align: middle;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: .35rem;
+    margin-block: .4rem;
 }

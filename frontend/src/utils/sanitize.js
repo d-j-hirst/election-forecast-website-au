@@ -32,6 +32,6 @@ export const SanitizeHtml = props => {
   return <div dangerouslySetInnerHTML={sanitize(props.html, props.options)} />;
 };
 SanitizeHtml.propTypes = {
-  html: PropTypes.object.isRequired,
+  html: PropTypes.string.isRequired,
   options: PropTypes.any,
 };

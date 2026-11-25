@@ -49,12 +49,9 @@
 }
 
 .formationOfGovernmentExpand {
-    padding: 0px 0px 0px 8px !important;
-    cursor: pointer;
-    font-size: 14px !important;
-    color: black !important;
-    border-style: none !important;
-    background-color: transparent !important;
+    align-self: center;
+    margin-left: .5rem;
+    white-space: nowrap;
 }
 
 .majorRowArranger {

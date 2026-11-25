@@ -98,6 +98,7 @@ class LiveRun(models.Model):
     election = models.CharField(max_length=32, db_index=True)
     registration = models.JSONField()
     official = models.BooleanField(default=False)
+    replay_completed_at = models.DateTimeField(null=True, editable=False)
     revision = models.PositiveBigIntegerField(default=0)
     latest = models.ForeignKey('LivePublication', null=True, on_delete=models.SET_NULL,
                                related_name='+')

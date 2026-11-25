@@ -85,7 +85,7 @@ const SeatDetails = props => {
         Archived reports have no current mode selected in the summary links. */}
       <ForecastsNav
         election={code}
-        mode={props.isArchive || replay ? 'other' : inputMode}
+        mode={replay ? 'replay' : props.isArchive ? 'other' : inputMode}
       />
       {/* Stable loaded-state identities also recover nested sections after a new
         report/results delivery; route identity covers changes before it arrives. */}
