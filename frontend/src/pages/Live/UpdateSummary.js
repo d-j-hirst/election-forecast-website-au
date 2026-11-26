@@ -39,14 +39,17 @@ function RecentChangesHelp() {
       <hr />
       <p>
         <strong>Numbers</strong> highlights changes in seat win chances,
-        government outcomes and projected vote shares. A rise from 40% to 45% is
-        a rise of 5 percentage points. The count percentages use the forecast’s
-        estimate of the total formal vote.
+        government outcomes and projected vote shares during that time period. A
+        rise from 40% to 45% is a rise of 5 percentage points. The count
+        percentages use the forecast’s estimate of the total formal vote.
       </p>
       <hr />
       <p>
-        The booth list shows selected new or revised counts. Choose{' '}
-        <strong>Text</strong> for written highlights when one is available.
+        <strong>Text</strong> picks out the most relevant forecast changes and
+        the counting that helps explain them. It lists the key changes first,
+        then describes the seats with the most significant changes in more
+        detail. This can include polling place results, preference flows and
+        other inputs that may not be available elsewhere on this site.
       </p>
     </Alert>
   );

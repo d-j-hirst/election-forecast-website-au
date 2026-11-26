@@ -1,4 +1,7 @@
-import React from 'react';
+import React, {useState} from 'react';
+import Alert from 'react-bootstrap/Alert';
+import InfoIcon from 'components/General/InfoIcon';
+import TooltipWrapper from 'components/General/TooltipWrapper';
 import useStoredString from 'pages/Live/useStoredString';
 import PropTypes from 'prop-types';
 import Card from 'react-bootstrap/Card';
@@ -76,7 +79,46 @@ export function flowOptions(forecast) {
   return options;
 }
 
+function PreferenceFlowsHelp() {
+  return (
+    <Alert variant="info" className={styles.alert}>
+      <p>
+        This part of the simulation report covers the{' '}
+        <strong>preference flows</strong> projected between parties. Each option
+        shows how voters who gave their first preference to one party divide
+        between two other parties. Each row shows the projected percentage of
+        those voters who rank that row&apos;s party ahead of the other.
+      </p>
+      <hr />
+      <p>
+        The outer numbers show the range from the{' '}
+        <TooltipWrapper tooltipText="5% of simulations give a lower share">
+          <strong>5th percentile</strong>
+        </TooltipWrapper>{' '}
+        to the{' '}
+        <TooltipWrapper tooltipText="5% of simulations give a higher share">
+          <strong>95th percentile</strong>
+        </TooltipWrapper>
+        , with the{' '}
+        <TooltipWrapper tooltipText="The middle estimate across simulations">
+          <strong>median</strong>
+        </TooltipWrapper>{' '}
+        in bold between them. Numbers outside this range are possible but quite
+        unlikely.
+      </p>
+      <hr />
+      <p>
+        Coloured bars show the range of possible preference flows. The darker
+        shading shows the more likely ranges, with progressively lighter shading
+        for less likely ranges. Hover over or tap on the bars for the exact
+        percentages they represent.
+      </p>
+    </Alert>
+  );
+}
+
 export default function PreferenceFlows({forecast, windowWidth}) {
+  const [showHelp, setShowHelp] = useState(false);
   const [key, setKey] = useStoredString('forecast:preference-flow', '');
   const options = flowOptions(forecast);
   if (!options.length) return null;
@@ -91,12 +133,17 @@ export default function PreferenceFlows({forecast, windowWidth}) {
       <Card.Header
         role="heading"
         aria-level={2}
+        aria-label="Preference Flows"
         className={styles.voteTotalsTitle}
       >
-        <strong>Preference Flows</strong>
+        <strong>
+          Preference Flows&nbsp;
+          <InfoIcon onClick={() => setShowHelp(!showHelp)} />
+        </strong>
       </Card.Header>
       <Card.Body className={styles.voteTotalsBody}>
         <ListGroup className={styles.voteTotalsList}>
+          {showHelp && <PreferenceFlowsHelp />}
           <ListGroup.Item className={historyStyles.historyOptions}>
             <DropdownButton
               id="preference-flow-dropdown"

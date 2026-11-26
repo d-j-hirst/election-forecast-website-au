@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {Link} from 'react-router-dom';
 import Alert from 'react-bootstrap/Alert';
+import {publicReplayLinks} from 'config/publicReplayLinks';
 import InfoIcon from 'components/General/InfoIcon';
 import useStoredBoolean from 'pages/Live/useStoredBoolean';
 import styles from './VictorianLiveAnnouncement.module.css';
@@ -57,11 +58,11 @@ export default function VictorianLiveAnnouncement({counting, seat}) {
         <p>
           The live forecast has been tested by replaying previous elections in
           full. Step through the{' '}
-          <Link to="/2026sa/replays/2026sa-public?snapshot=f00000002">
+          <Link to={publicReplayLinks['2026sa']}>
             2026 South Australian election replay
           </Link>{' '}
           or the{' '}
-          <Link to="/2022vic/replays/2022vic-public?snapshot=f00000002">
+          <Link to={publicReplayLinks['2022vic']}>
             2022 Victorian election replay
           </Link>{' '}
           to see how it would have responded as results came in.

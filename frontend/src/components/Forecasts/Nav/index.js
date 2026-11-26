@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import {publicReplayLinks} from 'config/publicReplayLinks';
 import {getDirect} from 'utils/sdk';
 import PropTypes from 'prop-types';
 
@@ -93,6 +94,9 @@ ModeNav.propTypes = {
   mode: PropTypes.string.isRequired,
 };
 
+// Keep newly published series available across navigation in this browser session.
+const replayLinks = new Map(Object.entries(publicReplayLinks));
+
 const live_elections = [
   '2026sa',
   '2025fed',
@@ -132,6 +136,16 @@ const ForecastsNav = props => {
               : null
           );
         }
+        if (active && response.ok && response.data?.latest_public_replay) {
+          const {latest_public_replay: run, replay_start_snapshot: start} =
+            response.data;
+          const path =
+            '/' + props.election + '/replays/' + encodeURIComponent(run);
+          replayLinks.set(
+            props.election,
+            start ? path + '?snapshot=' + encodeURIComponent(start) : path
+          );
+        }
         if (
           active &&
           response.ok &&
@@ -140,8 +154,6 @@ const ForecastsNav = props => {
           setAvailability({
             election: props.election,
             official: !!response.data.run,
-            replay: response.data.latest_public_replay,
-            replayStart: response.data.replay_start_snapshot,
           });
       })
       .catch(() => {});
@@ -149,6 +161,7 @@ const ForecastsNav = props => {
       active = false;
     };
   }, [props.election, onCountStatus]);
+  const replayLink = replayLinks.get(props.election);
   const available =
     availability?.election === props.election ? availability : null;
   const [electionsExpanded, setElectionsExpanded] = useState(false);
@@ -286,21 +299,13 @@ const ForecastsNav = props => {
                   activeMode={props.mode}
                 />
               )}
-              {available?.replay && (
+              {replayLink && (
                 <ModeNav
                   text="Live Replay"
                   election={props.election}
                   mode="replay"
                   activeMode={props.mode}
-                  to={
-                    '/' +
-                    props.election +
-                    '/replays/' +
-                    encodeURIComponent(available.replay) +
-                    (available.replayStart
-                      ? '?snapshot=' + encodeURIComponent(available.replayStart)
-                      : '')
-                  }
+                  to={replayLink}
                 />
               )}
             </Navbar.Collapse>

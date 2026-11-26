@@ -1,5 +1,5 @@
 import React from 'react';
-import {fireEvent, render, screen, within} from '@testing-library/react';
+import {fireEvent, render, screen, waitFor, within} from '@testing-library/react';
 import {MemoryRouter} from 'react-router-dom';
 import Header from './index';
 import ForecastsNav from '../Forecasts/Nav';
@@ -115,15 +115,26 @@ test.each([
   }
 );
 
+test('released replay links stay visible while switching elections before status arrives', () => {
+  getDirect.mockReturnValue(new Promise(() => {}));
+  const view = render(shell(1200, '2022vic'));
+  for (const code of ['2022vic', '2026sa', '2022vic']) {
+    view.rerender(shell(1200, code, 'nowcast'));
+    expect(screen.getByRole('link', {name: 'Live Replay'})).toHaveAttribute(
+      'href', '/' + code + '/replays/' + code + '-public?snapshot=f00000002'
+    );
+  }
+});
+
 test('Live Replay links to the published series alongside the existing Live mode', async () => {
   getDirect.mockResolvedValue({ok: true, data: {legacy: true, latest_public_replay: 'vic-series', replay_start_snapshot: 'f00000005'}});
   render(shell(1200, '2022vic', 'replay'));
-  expect(await screen.findByRole('link', {name: 'Live Replay'})).toHaveAttribute('href', '/2022vic/replays/vic-series?snapshot=f00000005');
+  await waitFor(() => expect(screen.getByRole('link', {name: 'Live Replay'})).toHaveAttribute('href', '/2022vic/replays/vic-series?snapshot=f00000005'));
   expect(screen.getByRole('link', {name: 'Live'})).toHaveAttribute('href', '/forecast/2022vic/live');
 });
 
 test('an election without a published replay keeps its historical live link', () => {
-  render(shell(1200, '2022vic'));
+  render(shell(1200, '2025fed'));
   expect(screen.queryByRole('link', {name: 'Live Replay'})).toBeNull();
   expect(screen.getByRole('link', {name: 'Live'})).toBeInTheDocument();
 });

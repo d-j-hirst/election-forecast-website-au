@@ -142,6 +142,11 @@ test('a replay uses the forecast layout with only its run history and seat links
   ).toBeTruthy();
 
   const card = heading.closest('.card');
+  const helpButton = within(heading).getByAltText('Information');
+  fireEvent.click(helpButton);
+  expect(within(card).getByText('5th percentile')).toBeVisible();
+  fireEvent.click(helpButton);
+  expect(within(card).queryByText('5th percentile')).toBeNull();
   const bars = () => card.querySelectorAll('[style*="height: 30px"]');
   const shares = () =>
     within(card)
