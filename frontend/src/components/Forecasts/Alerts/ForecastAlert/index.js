@@ -213,8 +213,8 @@ const ForecastAlert = props => {
               system would have handled the{' '}
               {liveElectionName(props.forecast) || props.code} as results came
               in. Use the <strong>Back</strong> and <strong>Forward</strong>{' '}
-              buttons in the control panel above to step through the replay
-              one update at a time.
+              buttons in the control panel above to step through the replay one
+              update at a time.
               {props.hasRecentChanges && (
                 <>
                   {' '}
