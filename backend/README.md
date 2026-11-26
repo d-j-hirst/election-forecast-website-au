@@ -88,8 +88,9 @@ server checks that it holds every publication in the local run, including
 matching checksums, before it marks the replay complete.
 
 The Modes bar offers **Live Replay** only for elections listed in
-`DJANGO_PUBLIC_REPLAY_ELECTIONS` (a comma-separated list, empty by default).
-Enable an election after uploading a replay registered with public visibility.
+`DJANGO_PUBLIC_REPLAY_ELECTIONS` (a comma-separated list, defaulting to `2026sa,2022vic`). An explicit empty list
+turns off public replay access. Enable further elections after uploading a replay
+registered with public visibility.
 The link opens the series whose first counted forecast was published most
 recently. An origin alone does not qualify. Older public series keep their URLs.
 Private registrations remain local. Hosted readers see observation times and

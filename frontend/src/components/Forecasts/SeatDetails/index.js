@@ -18,7 +18,9 @@ import {getIndexFromSeatUrl} from 'utils/seaturls';
 import {useWindowDimensions} from '../../../utils/window.js';
 import {fetchReport, fetchResults} from '../../../utils/report_manager.js';
 
+import VictorianLiveAnnouncement from '../Alerts/VictorianLiveAnnouncement';
 import styles from './SeatDetails.module.css';
+import seatLayout from '../Seats/Seats.module.css';
 
 const SeatDetails = props => {
   const code = props.code;
@@ -26,6 +28,11 @@ const SeatDetails = props => {
   const seat = props.seat;
   const inputMode = props.mode;
   const {live} = props;
+  const [countingElection, setCountingElection] = useState(null);
+  const announceLive =
+    code === '2026vic' &&
+    !props.isArchive &&
+    ['regular', 'nowcast'].includes(inputMode);
   const automated = Boolean(live);
   const replay = Boolean(live?.replay);
   const publication = live?.publication;
@@ -85,6 +92,7 @@ const SeatDetails = props => {
         Archived reports have no current mode selected in the summary links. */}
       <ForecastsNav
         election={code}
+        onCountStatus={announceLive ? setCountingElection : undefined}
         mode={replay ? 'replay' : props.isArchive ? 'other' : inputMode}
       />
       {/* Stable loaded-state identities also recover nested sections after a new
@@ -105,13 +113,19 @@ const SeatDetails = props => {
                 archive={props.isArchive}
                 sourceTime={publication?.source_time}
                 timeZone={publication?.run.timezone}
-                replayName={replay ? publication?.run.display_name : undefined}
+                replay={replay}
                 replaySnapshotId={
                   replay && publication?.local_diagnostics === true
                     ? publication.forecast_id
                     : undefined
                 }
               />
+              {announceLive && (
+                <VictorianLiveAnnouncement
+                  counting={countingElection === code}
+                  seat={seat}
+                />
+              )}
               <ForecastAlert
                 forecast={forecast}
                 code={code}
@@ -136,7 +150,9 @@ const SeatDetails = props => {
               </StandardErrorBoundary>
               {forecast.possibleBoothErrors?.[forecast.seatNames[seatIndex]]
                 ?.length > 0 && (
-                <section className="card card-body my-2">
+                <section
+                  className={`card card-body my-2 ${seatLayout.detailWidth}`}
+                >
                   <h2 className="h5">Possible booth errors</h2>
                   <p>
                     Confidence is how often the model applies a correction
@@ -148,8 +164,8 @@ const SeatDetails = props => {
                       forecast.seatNames[seatIndex]
                     ].map((row, i) => (
                       <li key={i}>
-                        <strong>{row.booth}</strong> — {row.level} confidence (
-                        {row.confidencePercent.toFixed(1)}%)
+                        <strong>{row.booth}</strong> â€” {row.level} confidence
+                        ({row.confidencePercent.toFixed(1)}%)
                       </li>
                     ))}
                   </ul>

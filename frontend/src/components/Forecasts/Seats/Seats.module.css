@@ -1,7 +1,10 @@
-.summary {
-    text-align: center;
+.summary, .detailWidth {
     max-width: 600px;
     width: 100%;
+}
+
+.summary {
+    text-align: center;
     margin: auto;
     border-color: #CCCCCC;
     border-radius: 20px 20px 2px 2px !important;

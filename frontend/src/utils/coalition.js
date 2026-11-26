@@ -16,6 +16,29 @@ export function seatPartyCode(party, termCode, seat) {
   return 'LIB';
 }
 
+// Swing factors describe a district's Labor-versus-Coalition contest. Use
+// its named candidates and modelled FP rows; the negative ID for the
+// combined Coalition total never represents an individual candidate.
+export function seatCoalitionBadge(forecast, index) {
+  const ids = new Set();
+  for (const [id] of forecast.seatCandidateNames?.[index] || []) {
+    ids.add(Number(id));
+  }
+  for (const [id, bands] of forecast.seatFpBands?.[index] || []) {
+    if (bands.some(share => share > 0)) ids.add(Number(id));
+  }
+  const parties = (forecast.partyAbbr || [])
+    .filter(([id]) => Number(id) >= 0 && ids.has(Number(id)))
+    .map(([, abbr]) => abbr);
+  const liberal = parties.includes('LIB') || parties.includes('LNP');
+  const national = parties.includes('NAT');
+  if (liberal && !national)
+    return seatPartyCode('LIB', forecast.termCode, forecast.seatNames[index]);
+  if (national && !liberal) return 'NAT';
+  // Both partners stand, or an older forecast doesn't identify candidates.
+  return 'LNP';
+}
+
 // Split reports carry the combined Coalition at -4 and the Liberals at 1.
 // Older unsplit aggregate series still represent the whole Coalition.
 export function seriesPartyCode(party, id, parties, termCode) {

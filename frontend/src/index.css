@@ -20,6 +20,8 @@ code {
 
 .replay-controls {
   position: relative;
+  border: 1px solid #ccc;
+  border-radius: .375rem;
   background: var(--bs-body-bg, #fff);
   padding: .375rem .25rem;
 }
@@ -40,6 +42,8 @@ code {
   gap: .375rem;
   padding-right: 2.8rem;
 }
+/* Leave room for the pinned replay controls when opening its introduction link. */
+#recent-changes { scroll-margin-top: 7rem; }
 .replay-position {
   display: inline-grid;
   place-items: center;

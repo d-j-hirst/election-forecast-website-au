@@ -93,6 +93,11 @@ def compact_booths(booths):
     return {'available': True, 'events': events, 'shortlist_omitted': omitted}
 
 
+def has_counted_votes(report):
+    progress = report.get('countProgress') or {}
+    return any((progress.get(field) or 0) > 0 for field in ('fp_votes', 'tcp_votes'))
+
+
 def election_history_point(report):
     """Keep the statewide chart quantities from one publication. An older
     report can lack preference estimates. When they exist, retain the parties
@@ -101,6 +106,10 @@ def election_history_point(report):
         'majorityWinPc', 'minorityWinPc', 'mostSeatsWinPc', 'overallWinPc', 'tppFrequencies',
         'fpFrequencies', 'seatCountFrequencies', 'coalitionFpFrequencies',
         'coalitionSeatCountFrequencies', 'voteTotalThresholds') if key in report}
+    # The polling forecast can link to the live count as soon as results arrive.
+    # Keep this small flag with the chart data so a navigation request never
+    # needs to decompress a complete forecast just to check for votes.
+    point['has_counted_votes'] = has_counted_votes(report)
     if report.get('statewidePreferenceFlows'):
         point['statewidePreferenceFlows'] = report['statewidePreferenceFlows']
         point['partyAbbr'] = report.get('partyAbbr', [])

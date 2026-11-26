@@ -75,7 +75,7 @@ const ModeNav = props => {
       eventKey={linkUrl}
       aria-current={
         props.activeMode === props.mode
-          ? pathname.replace(/\/$/, '') === linkUrl
+          ? pathname.replace(/\/$/, '') === linkUrl.split('?')[0]
             ? 'page'
             : 'true'
           : undefined
@@ -118,12 +118,20 @@ const pastElections = [
 
 const ForecastsNav = props => {
   const [availability, setAvailability] = useState(null);
+  const {onCountStatus} = props;
   useEffect(() => {
     let active = true;
     getDirect('forecast-api/live/v1/official/' + props.election + '/head', {
       headers: {Accept: 'application/json'},
     })
       .then(response => {
+        if (active && onCountStatus) {
+          onCountStatus(
+            response.ok && response.data?.counting_started
+              ? props.election
+              : null
+          );
+        }
         if (
           active &&
           response.ok &&
@@ -133,13 +141,14 @@ const ForecastsNav = props => {
             election: props.election,
             official: !!response.data.run,
             replay: response.data.latest_public_replay,
+            replayStart: response.data.replay_start_snapshot,
           });
       })
       .catch(() => {});
     return () => {
       active = false;
     };
-  }, [props.election]);
+  }, [props.election, onCountStatus]);
   const available =
     availability?.election === props.election ? availability : null;
   const [electionsExpanded, setElectionsExpanded] = useState(false);
@@ -287,7 +296,10 @@ const ForecastsNav = props => {
                     '/' +
                     props.election +
                     '/replays/' +
-                    encodeURIComponent(available.replay)
+                    encodeURIComponent(available.replay) +
+                    (available.replayStart
+                      ? '?snapshot=' + encodeURIComponent(available.replayStart)
+                      : '')
                   }
                 />
               )}
@@ -301,6 +313,7 @@ const ForecastsNav = props => {
 ForecastsNav.propTypes = {
   election: PropTypes.string.isRequired,
   mode: PropTypes.string.isRequired,
+  onCountStatus: PropTypes.func,
 };
 
 export default ForecastsNav;

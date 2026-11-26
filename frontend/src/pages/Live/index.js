@@ -4,6 +4,7 @@ import {useLocation, useNavigate, useParams} from 'react-router-dom';
 import {ForecastLayout, SeatDetails} from 'components';
 import {seatPartyCode} from 'utils/coalition';
 import {getSeatUrl} from 'utils/seaturls';
+import liveElectionName from 'utils/liveElectionName';
 import useLiveRun from './useLiveRun';
 import UpdateSummary from './UpdateSummary';
 import SeatHistory from './SeatHistory';
@@ -48,13 +49,9 @@ function LivePage({code, runId, seat, replayHistories}) {
     selection;
   const seatName =
     data?.report && seat && findSeat(data.report.seatNames, seat);
-  const title = [
-    seatName,
-    data?.run?.display_name,
-    replay ? 'Live replay' : 'Live forecast',
-  ]
-    .filter(Boolean)
-    .join(' · ');
+  const electionName = liveElectionName(data?.report) || code;
+  const modeTitle = replay ? 'Live Replay' : 'Live Forecast';
+  const title = [seatName, electionName, modeTitle].filter(Boolean).join(' - ');
   useEffect(() => {
     if (!data?.legacy)
       document.title = title + ' | Australian Election Forecasts';

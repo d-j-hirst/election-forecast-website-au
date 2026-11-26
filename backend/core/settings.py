@@ -206,9 +206,9 @@ AUTH_USER_MODEL = 'users.User'
 
 PRODUCTION_SETTINGS: bool = bool(env.bool('DJANGO_PRODUCTION_SETTINGS', default=False))
 LOCAL_REPLAY_ENABLED = DEBUG and not PRODUCTION_SETTINGS and env.bool('DJANGO_LOCAL_REPLAY', default=False)
-# A hosted election gains a replay link only after the operator enables it and
-# a series registered as public has an actual forecast available to read.
-PUBLIC_REPLAY_ELECTIONS = env.list('DJANGO_PUBLIC_REPLAY_ELECTIONS', default=[])
+# A release can offer completed public replays by default. Operators can override
+# this list, including with an empty value. Private runs remain loopback-only.
+PUBLIC_REPLAY_ELECTIONS = env.list('DJANGO_PUBLIC_REPLAY_ELECTIONS', default=['2026sa', '2022vic'])
 
 JWT_EXPIRATION_DELTA_DEFAULT = 2.628e+6
 JWT_AUTH = {

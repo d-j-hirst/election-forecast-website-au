@@ -6,7 +6,7 @@ import {HashLink as Link} from 'react-router-hash-link';
 import ListGroup from 'react-bootstrap/ListGroup';
 
 import TooltipPercentage from '../../General/TooltipPercentage';
-import {seatCoalitionLabel} from 'utils/coalition';
+import {seatCoalitionBadge} from 'utils/coalition';
 import {SmartBadge} from '../../General/PartyBadge';
 import InfoIcon from '../../General/InfoIcon';
 
@@ -19,8 +19,7 @@ const SortedTcpSwingRow = props => {
         <strong>
           <TooltipPercentage value={Math.abs(props.swing)} label="" />
         </strong>{' '}
-        to {props.swing > 0 && <SmartBadge party="alp" />}
-        {props.swing <= 0 && seatCoalitionLabel(props.forecast.termCode)}
+        to <SmartBadge party={props.party} termCode={props.termCode} />
         {' -'} {props.description}
       </div>
     </ListGroup.Item>
@@ -28,7 +27,8 @@ const SortedTcpSwingRow = props => {
 };
 SortedTcpSwingRow.propTypes = {
   description: PropTypes.string.isRequired,
-  forecast: PropTypes.object.isRequired,
+  party: PropTypes.string.isRequired,
+  termCode: PropTypes.string,
   swing: PropTypes.number.isRequired,
 };
 
@@ -61,6 +61,7 @@ const SwingFactorsExplainer = props => {
 const SeatTcpSwingFactors = props => {
   const [showExplainer, setShowExplainer] = useState(false);
   const seatName = props.forecast.seatNames[props.index];
+  const coalition = seatCoalitionBadge(props.forecast, props.index);
   const sortedSwingFactors = props.forecast.seatSwingFactors[props.index]
     .map(a => a.split(';'))
     .map(a => [a[0], parseFloat(a[1])])
@@ -82,7 +83,8 @@ const SeatTcpSwingFactors = props => {
       {sortedSwingFactors.map(a => (
         <SortedTcpSwingRow
           description={a[0]}
-          forecast={props.forecast}
+          party={a[1] > 0 ? 'ALP' : coalition}
+          termCode={props.forecast.termCode}
           key={a[0]}
           swing={a[1]}
         />

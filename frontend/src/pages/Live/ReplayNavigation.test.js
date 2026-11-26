@@ -28,7 +28,7 @@ test('a first visit shows the report while the replay history is still downloadi
     <Route path="/:code/replays/:runId" element={<Live />} />
   </Routes></MemoryRouter>);
   await screen.findByText('Loading replay history…');
-  expect(document.title).toContain('Live replay');
+  expect(document.title).toBe('2022vic - Live Replay | Australian Election Forecasts');
   expect(screen.getByText('0 chart points')).toBeInTheDocument();
   await act(async () => finishHistory({ok: true, data: {run, revision: 1, ids: [id],
     updates: [[id, ['2022-11-26T08:00:00Z', {}]]], cursor: id}}));

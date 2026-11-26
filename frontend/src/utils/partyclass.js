@@ -49,6 +49,11 @@ export const partyColorClass = (party, forecast) => {
   return sParty;
 };
 
+// The feed can label the emerging independent IND, just like a named
+// independent. Use the separate badge colour for that candidate category.
+export const seatHistoryColourClass = (id, party) =>
+  Number(id) === -2 ? 'indx' : partyColorClass(party || 'OTH');
+
 export const bgClass = (party, forecast) => {
   party = partyColorClass(party, forecast);
   return party.toLowerCase() + '-bg';

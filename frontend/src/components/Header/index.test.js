@@ -116,9 +116,9 @@ test.each([
 );
 
 test('Live Replay links to the published series alongside the existing Live mode', async () => {
-  getDirect.mockResolvedValue({ok: true, data: {legacy: true, latest_public_replay: 'vic-series'}});
+  getDirect.mockResolvedValue({ok: true, data: {legacy: true, latest_public_replay: 'vic-series', replay_start_snapshot: 'f00000005'}});
   render(shell(1200, '2022vic', 'replay'));
-  expect(await screen.findByRole('link', {name: 'Live Replay'})).toHaveAttribute('href', '/2022vic/replays/vic-series');
+  expect(await screen.findByRole('link', {name: 'Live Replay'})).toHaveAttribute('href', '/2022vic/replays/vic-series?snapshot=f00000005');
   expect(screen.getByRole('link', {name: 'Live'})).toHaveAttribute('href', '/forecast/2022vic/live');
 });
 

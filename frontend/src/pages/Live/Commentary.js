@@ -291,6 +291,7 @@ export default function Commentary({
   if (!primaryAvailable && !editions)
     return <p>No highlights are available for this period.</p>;
   const showRules = Boolean(editions && (preferRules || !primaryAvailable));
+  const rulesText = showRules || item.kind === 'rules_based';
   const text = showRules ? editions.rules : editions?.original || item.text;
   const render = (value, formatCandidate) =>
     inline(value, item.entities, seatLink, code, parties, formatCandidate);
@@ -326,7 +327,13 @@ export default function Commentary({
           </Button>
         </div>
       )}
-      {!showRules && item.source !== 'local' && <CommentaryNotice />}
+      {rulesText && (
+        <p className="small text-muted text-center">
+          These highlights use fixed rules to summarise changes in the count and
+          forecast. They can miss or misinterpret what drove an unusual change.
+        </p>
+      )}
+      {!rulesText && item.source !== 'local' && <CommentaryNotice />}
       {structured && <CommentaryBlock text={summary} render={render} />}
       {!structured && summary && <p>{render(summary)}</p>}
       {(text?.developments || []).map((d, i) => {

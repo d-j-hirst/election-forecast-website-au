@@ -9,11 +9,9 @@ import {
   YAxis,
 } from 'recharts';
 import {countTime} from 'utils/date';
-import {colours} from 'utils/GraphPartyColours';
-import {jsonMap} from 'utils/jsonmap';
+import {seatHistoryColourClass} from 'utils/partyclass';
 import styles from 'components/Forecasts/History/History.module.css';
 
-const otherColours = ['#7655a3', '#02778a', '#944875', '#766820', '#464c59'];
 const emergingLabels = {'-2': 'Emerging independent', '-3': 'Emerging party'};
 const MIN_WIN_BASIS_POINTS = 1;
 
@@ -32,9 +30,7 @@ export default function SeatWinHistory({samples, axis, parties, zone}) {
         lines.set(key, {
           id: 'p' + lines.size,
           name: label || emergingLabels[party] || abbreviation || 'OTH',
-          colour:
-            jsonMap(colours, abbreviation || 'OTH')?.[0] ??
-            otherColours[lines.size % otherColours.length],
+          colour: `var(--${seatHistoryColourClass(party, abbreviation)})`,
           visible: false,
         });
       }
@@ -84,7 +80,7 @@ export default function SeatWinHistory({samples, axis, parties, zone}) {
       </ResponsiveContainer>
       <ul className={styles.winLegend} aria-label="Win probability legend">
         {visible.map(line => (
-          <li key={line.id}>
+          <li key={line.id} style={{color: line.colour}}>
             <span aria-hidden="true" style={{backgroundColor: line.colour}} />
             {line.name}
           </li>

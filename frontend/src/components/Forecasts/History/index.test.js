@@ -40,7 +40,11 @@ test('live flow history follows its destination colour, breaks at missing estima
   };
   const points = [rows, rows, [], rows, rows].map((flows, i) => [
     '2026-03-21T09:0' + i + ':00Z',
-    {...base, partyAbbr: forecast.partyAbbr, statewidePreferenceFlows: flows},
+    {
+      ...base,
+      partyAbbr: [[0, 'ALP'], [1, 'LIB'], [2, 'ONP']],
+      statewidePreferenceFlows: flows,
+    },
   ]);
   const page = data => (
     <History

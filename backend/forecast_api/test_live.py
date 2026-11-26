@@ -41,6 +41,13 @@ class PublicationTests(TestCase):
                 content_type='application/json', HTTP_IDEMPOTENCY_KEY=run['run_id']+'/'+identity,
                 HTTP_X_CONTENT_SHA256=hashlib.sha256(raw).hexdigest())
 
+    @override_settings(DATA_UPLOAD_MAX_MEMORY_SIZE=100, LIVE_FORECAST_MAX_UPLOAD_BYTES=4096)
+    def test_forecast_has_a_separate_bounded_upload_limit(self):
+        with self.settings(LIVE_FORECAST_MAX_UPLOAD_BYTES=500):
+            self.assertEqual(self.send('origin').status_code, 413)
+        self.assertFalse(LivePublication.objects.exists())
+        self.assertEqual(self.send('origin').status_code, 200)
+
     def test_duplicate_observation_after_restart_preserves_history_and_original_receipt(self):
         first = self.send('f00000001', '2026-03-21T20:00:00+11:00', fingerprint='capture-a')
         duplicate = self.send('f00000002', '2026-03-21T09:00:00Z', fingerprint='capture-a')
@@ -102,6 +109,7 @@ class PublicationTests(TestCase):
         call_command('rebuild_live_seat_history', run.pk)
         self.assertEqual(seat_series(run, 'Sample'), series)
 
+    @override_settings(PUBLIC_REPLAY_ELECTIONS=[])
     def test_modes_discovers_only_enabled_public_series_with_a_published_count(self):
         public = APIClient(HTTP_HOST='testserver')
         def register(name):
@@ -118,7 +126,8 @@ class PublicationTests(TestCase):
         self.assertEqual(public.get(head).data, {'legacy': True})
         self.assertEqual(public.get(replay+'a-second/latest').status_code, 404)
         with self.settings(PUBLIC_REPLAY_ELECTIONS=['2026sa']):
-            self.assertEqual(public.get(head).data, {'legacy': True, 'latest_public_replay': 'a-second'})
+            self.assertEqual(public.get(head).data, {'legacy': True, 'latest_public_replay': 'a-second',
+                                                    'replay_start_snapshot': 'f00000001'})
             response = public.get(replay+'a-second/latest?snapshot=f00000001')
             self.assertEqual(response.status_code, 200)
             self.assertFalse(response.data['local_diagnostics'])
@@ -127,6 +136,43 @@ class PublicationTests(TestCase):
             self.assertEqual(public.get(replay+'demo/latest').status_code, 404)
             self.assertEqual(public.get(replay+'empty/head').status_code, 404)
             self.assertEqual(public.get(self.base+'/official/2026sa/latest').status_code, 404)
+
+    @override_settings(PUBLIC_REPLAY_ELECTIONS=['2026sa'])
+    def test_replay_menu_finds_first_votes_in_archived_and_out_of_order_updates(self):
+        run = dict(self.run, run_id='menu-start', visibility='public')
+        self.api.post(self.base + '/runs', run, format='json')
+        head = self.base + '/official/2026sa/head'
+
+        def publish(number, minute, fp=0, tcp=0):
+            report = dict(termCode='2026sa', seatNames=['Sample'], seatPartyWinFrequencies=[[[0, 60]]],
+                          countProgress={'fp_votes': fp, 'tcp_votes': tcp})
+            response = self.send(f'f{number:08}', f'2026-03-21T08:{minute:02}:00Z', run=run, report=report)
+            self.assertEqual(response.status_code, 200)
+
+        self.send('origin', run=run)
+        publish(1, 5)
+        publish(2, 10)
+        self.assertEqual(self.api.get(head).data['replay_start_snapshot'], 'f00000001')
+        publish(3, 30, fp=60)
+        LivePublication.objects.filter(run_id=run['run_id']).update(history_point={})
+        self.assertEqual(self.api.get(head).data['replay_start_snapshot'], 'f00000003')
+        with patch('forecast_api.live.unpack', side_effect=AssertionError('menu unpacked an archived report twice')):
+            self.assertEqual(self.api.get(head).data['replay_start_snapshot'], 'f00000003')
+        publish(4, 20, tcp=12)
+        self.assertEqual(self.api.get(head).data['replay_start_snapshot'], 'f00000004')
+
+    def test_official_head_distinguishes_zero_feed_from_first_votes(self):
+        official = dict(self.run, run_id='victoria', election='2026vic', kind='live', visibility='public')
+        self.api.post(self.base + '/runs', official, format='json')
+        LiveRun.objects.filter(pk='victoria').update(official=True)
+        head = self.base + '/official/2026vic/head'
+        self.assertIs(self.api.get(head).data['counting_started'], False)
+        for i, votes in enumerate((0, 62), 1):
+            report = dict(termCode='2026vic', seatNames=['Sample'], seatPartyWinFrequencies=[[[0, 60]]],
+                          countProgress={'fp_votes': votes})
+            self.assertEqual(self.send(f'f{i:08}', f'2026-11-28T07:0{i}:00Z',
+                                       run=official, report=report).status_code, 200)
+            self.assertIs(self.api.get(head).data['counting_started'], votes > 0)
 
     def test_isolation_and_replay_visibility(self):
         reader = APIClient(HTTP_HOST='localhost')

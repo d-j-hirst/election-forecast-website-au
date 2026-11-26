@@ -4,6 +4,7 @@ import json
 import re
 from datetime import date, datetime
 from decimal import InvalidOperation
+from functools import lru_cache
 from ipaddress import ip_address
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
@@ -22,7 +23,7 @@ from rest_framework.views import APIView
 
 from auth_api.mixins import ApiAuthMixin
 from forecast_api.live_data import (
-    compact_updates, election_history_point, pack, recover_movements, replay_history, seat_points, seat_series, unpack, write_seat_points,
+    compact_updates, election_history_point, has_counted_votes, pack, recover_movements, replay_history, seat_points, seat_series, unpack, write_seat_points,
 )
 from forecast_api.models import LivePublication, LiveRun
 from forecast_api.submit import SubmitForecastPermission
@@ -140,7 +141,12 @@ class PublishForecast(ApiAuthMixin, APIView):
     permission_classes = [IsAuthenticated & SubmitForecastPermission]
 
     def post(self, request, run_id, identity):
-        raw = request.body
+        # A full election can exceed the site's ordinary request-body limit.
+        # Read this authenticated upload with its own bound before decoding JSON.
+        limit = getattr(settings, 'LIVE_FORECAST_MAX_UPLOAD_BYTES', 64 * 1024 * 1024)
+        raw = request.read(limit + 1)
+        if len(raw) > limit:
+            return Response({'detail': 'Forecast exceeds the live upload size limit.'}, status=413)
         digest = hashlib.sha256(raw).hexdigest()
         require(re.fullmatch(r'origin|f[0-9]{8}', identity)
                 and request.headers.get('Idempotency-Key') == run_id + '/' + identity
@@ -282,6 +288,28 @@ def public_replays(code):
                                   registration__visibility='public', latest__isnull=False)
 
 
+@lru_cache(maxsize=32)
+def replay_start_snapshot(run_version):
+    """Find the first votes, or the first delivery while all are empty. Cache by
+    run, revision and creation of its first publication so late arrivals and
+    replacement series are picked up without a database write on a page visit."""
+    run_id, _, _ = run_version
+    timeline = LivePublication.objects.filter(
+        run_id=run_id, source_time__isnull=False).order_by('source_time', 'forecast_id')
+    first = None
+    rows = timeline.values_list('pk', 'forecast_id', 'history_point__has_counted_votes')
+    for pk, forecast_id, counted in rows.iterator(chunk_size=32):
+        first = first or forecast_id
+        if counted is None:
+            # Replays published before the count flag still contain the original
+            # FP and TCP totals. Only inspect reports up to the first votes.
+            counted = has_counted_votes(unpack(LivePublication.objects.values_list(
+                'report', flat=True).get(pk=pk)))
+        if counted:
+            return forecast_id
+    return first
+
+
 def replay_choice(code):
     if code not in settings.PUBLIC_REPLAY_ELECTIONS:
         return {}
@@ -289,8 +317,10 @@ def replay_choice(code):
     # later should not displace a newer series in the Modes bar.
     latest = public_replays(code).annotate(started=Min(
         'livepublication__published_at', filter=Q(livepublication__source_time__isnull=False)
-    )).order_by('-started', '-run_id').values_list('run_id', flat=True).first()
-    return {'latest_public_replay': latest} if latest else {}
+    )).order_by('-started', '-run_id').values_list('run_id', 'revision', 'started').first()
+    if latest is None:
+        return {}
+    return {'latest_public_replay': latest[0], 'replay_start_snapshot': replay_start_snapshot(latest)}
 
 
 class ReadRun(APIView):
@@ -324,6 +354,9 @@ class ReadRun(APIView):
                     return Response({'legacy': True, **choices}, headers={'Cache-Control': 'no-store'})
                 raise Http404
         data = {'run': run.registration, 'revision': run.revision, **choices}
+        if part == 'head' and run_id is None:
+            data['counting_started'] = bool(run.latest_id) and LivePublication.objects.filter(
+                pk=run.latest_id, history_point__has_counted_votes=True).exists()
         if run_id is not None:
             data['replay_complete'] = run.replay_completed_at is not None
         # Use the same chronology that selects the live head, including its

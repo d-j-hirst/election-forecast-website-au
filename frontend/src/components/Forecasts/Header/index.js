@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import {countTime, parseDateStringAsUTC} from '../../../utils/date.js';
+import liveElectionName from 'utils/liveElectionName';
 import formatCountPercentage from 'utils/formatCountPercentage';
 
 import StandardErrorBoundary from '../../General/StandardErrorBoundary';
@@ -25,9 +26,10 @@ const ForecastHeader = props => {
   return (
     <StandardErrorBoundary>
       <div className={styles.forecastTitle}>
-        {props.forecast.electionName || props.forecast.termCode} -{' '}
-        {modeNames[props.mode]}
-        {props.replayName && <strong> - Replay ({props.replayName})</strong>}
+        {props.replay
+          ? liveElectionName(props.forecast)
+          : props.forecast.electionName || props.forecast.termCode}{' '}
+        - {props.replay ? 'Live Replay' : modeNames[props.mode]}
         {props.archive === true ? <strong>{' - Archive'}</strong> : ''}
       </div>
       <div className={styles.forecastUpdateInfo}>
@@ -57,7 +59,7 @@ ForecastHeader.propTypes = {
   archive: PropTypes.bool,
   sourceTime: PropTypes.string,
   timeZone: PropTypes.string,
-  replayName: PropTypes.string,
+  replay: PropTypes.bool,
   replaySnapshotId: PropTypes.string,
 };
 

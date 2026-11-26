@@ -6,6 +6,7 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import ListGroup from 'react-bootstrap/ListGroup';
 import {coalitionAbbreviation, seriesPartyCode} from 'utils/coalition';
+import {partyAliases} from 'utils/partyAliases';
 import {distributionBounds} from 'utils/distributionBounds';
 import VoteShareRow from '../VoteTotals/VoteShareRow';
 import styles from '../VoteTotals/VoteTotals.module.css';
@@ -22,7 +23,11 @@ export function flowOptions(forecast) {
   )
     return [];
 
-  const parties = new Map(partyAbbr);
+  // Compact history retains the producer's abbreviations. Resolve the same
+  // display identities as the current report without mutating cached points.
+  const parties = new Map(
+    partyAbbr.map(([id, code]) => [id, partyAliases.get(code) || code])
+  );
   const label = party =>
     party === 'LNPx'
       ? 'LNP'

@@ -17,8 +17,7 @@ import {
   YAxis,
 } from 'recharts';
 import {countTime} from 'utils/date';
-import {colours} from 'utils/GraphPartyColours';
-import {jsonMap} from 'utils/jsonmap';
+import {seatHistoryColourClass} from 'utils/partyclass';
 import {distributionBounds} from 'utils/distributionBounds';
 import styles from 'components/Forecasts/History/History.module.css';
 
@@ -108,7 +107,10 @@ export default function SeatVoteHistory({
       key: JSON.stringify(identity),
       label: names.join(' / ') + (proportion ? ' (' + proportion + ')' : ''),
       candidate: names[0],
-      party: parties[candidates[0][0]],
+      colourClass: seatHistoryColourClass(
+        candidates[0][0],
+        parties[candidates[0][0]]
+      ),
       proportion,
     };
   });
@@ -136,7 +138,7 @@ export default function SeatVoteHistory({
   });
   const intervals = data.filter(row => row.interval).map(row => row.interval);
   const {domain, ticks} = voteShareAxis(intervals);
-  const palette = jsonMap(colours, selected.party, jsonMap(colours, 'OTH'));
+  const colour = `var(--${selected.colourClass})`;
   // A single observation has no area to shade. A whisker keeps both ends
   // of its interval visible even if the scenario disappears immediately.
   data.forEach((row, i) => {
@@ -200,10 +202,11 @@ export default function SeatVoteHistory({
               width={48}
             />
             <Tooltip
+              itemStyle={{color: colour}}
               labelFormatter={v => countTime(v, zone)}
               formatter={value =>
                 Array.isArray(value)
-                  ? value.map(v => v.toFixed(1) + '%').join(' – ')
+                  ? value.map(v => v.toFixed(1) + '%').join(' â€“ ')
                   : value.toFixed(1) + '%'
               }
             />
@@ -211,7 +214,7 @@ export default function SeatVoteHistory({
               dataKey="interval"
               name="90% interval"
               type="stepAfter"
-              fill={palette[2]}
+              fill={`var(--${selected.colourClass}-light)`}
               fillOpacity={0.8}
               stroke="none"
               connectNulls={false}
@@ -228,13 +231,13 @@ export default function SeatVoteHistory({
               dataKey="median"
               name="Median"
               type="stepAfter"
-              stroke={palette[0]}
+              stroke={colour}
               strokeWidth={2}
               dot={{r: 2}}
               connectNulls={false}
               isAnimationActive={false}
             >
-              <ErrorBar dataKey="whisker" width={3} stroke={palette[0]} />
+              <ErrorBar dataKey="whisker" width={3} stroke={colour} />
             </Line>
           </ComposedChart>
         </ResponsiveContainer>

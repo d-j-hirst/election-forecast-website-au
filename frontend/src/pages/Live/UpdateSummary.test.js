@@ -8,8 +8,23 @@ import {
 } from '@testing-library/react';
 import {MemoryRouter} from 'react-router-dom';
 import UpdateSummary from './UpdateSummary';
+import Commentary from './Commentary';
 
 beforeEach(() => localStorage.clear());
+
+test('the rules note follows the selected writer for standalone and paired editions', () => {
+  const rules = {status: 'complete', source: 'local', kind: 'rules_based', text: {summary: 'Rules text'}};
+  const show = item => <MemoryRouter><Commentary item={item} seatLink={() => '/'} code="2022vic" /></MemoryRouter>;
+  const page = render(show(rules));
+  expect(screen.getByText(/use fixed rules/)).toBeInTheDocument();
+  page.rerender(show({status: 'complete', text: {summary: 'AI text', developments: [
+    {seats: [], text: '[[AEF_RULE_BASED_COMMENTARY_V1]]\nRules text'},
+  ]}}));
+  expect(screen.queryByText(/use fixed rules/)).toBeNull();
+  fireEvent.click(screen.getByRole('button', {name: 'Rule-based commentary'}));
+  expect(screen.getByText(/use fixed rules/)).toBeInTheDocument();
+  expect(screen.queryByText(/large language model/)).toBeNull();
+});
 
 const choose = (toggle, option) => {
   fireEvent.click(screen.getByRole('button', {name: toggle}));

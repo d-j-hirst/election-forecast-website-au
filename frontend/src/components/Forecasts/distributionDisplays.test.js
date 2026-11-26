@@ -4,6 +4,7 @@ import VoteTotals from './VoteTotals';
 import SeatTotals from './SeatTotals';
 import SeatFp from './SeatFp';
 import SeatTcp from './SeatTcp';
+import SeatTcpSwingFactors from './SwingFactors';
 
 const band = value => Array(15).fill(value);
 const forecast = () => ({
@@ -95,6 +96,23 @@ test.each([320, 1000])(
     verifyPair(charts.slice(2));
   }
 );
+
+test.each([
+  [[1], [], 'LIB'],
+  [[], [7], 'NAT'],
+  [[7], [1], 'L–NC'],
+  [[], [], 'L–NC'],
+])('swing factors use the district Coalition badge for %j and %j', (named, projected, expected) => {
+  const data = forecast();
+  data.termCode = '2026vic';
+  data.partyAbbr.push([7, 'NAT'], [-4, 'LNP']);
+  data.seatCandidateNames = [named.map(id => [id, 'Candidate'])];
+  data.seatFpBands = [[[-4, band(50)], [1, band(0)], ...projected.map(id => [id, band(20)])]];
+  data.seatSwingFactors = [['Local factor;-2', 'State factor;1']];
+  const page = render(<SeatTcpSwingFactors forecast={data} index={0} />);
+  expect(page.getByText(expected)).toBeInTheDocument();
+  expect(page.getByText('ALP')).toBeInTheDocument();
+});
 
 test('seat totals share a scale with result and half-seat padding', () => {
   const {container} = render(

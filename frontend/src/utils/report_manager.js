@@ -1,4 +1,5 @@
 import {getDirect} from 'utils/sdk';
+import {partyAliases} from './partyAliases';
 
 const modeTitles = {RF: 'General Forecast', NC: 'Nowcast', LF: 'Live Forecast'};
 
@@ -14,7 +15,8 @@ const partyReplace = (array, oldItem, newItem) => {
 };
 
 export const prepareForecastReport = report => {
-  partyReplace(report, 'ONP', 'ON');
+  for (const [source, display] of partyAliases)
+    partyReplace(report, source, display);
   return report;
 };
 

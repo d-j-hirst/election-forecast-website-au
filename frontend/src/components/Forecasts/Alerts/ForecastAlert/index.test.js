@@ -79,6 +79,23 @@ test('successful dismissal preserves the existing saved preference and reopen ac
   expect(screen.getByText('Known potential issues:')).toBeInTheDocument();
 });
 
+test('replay instructions start fresh, then share collapse and reopen across replays', () => {
+  localStorage.setItem(storageKey, 'true');
+  const view = render(tree({code: '2022vic', runKind: 'replay', hasRecentChanges: true}));
+  expect(screen.getByRole('alert')).toHaveTextContent('Back and Forward');
+  expect(screen.getByRole('link', {name: 'Recent Changes'})).toHaveAttribute('href', '#recent-changes');
+  expect(screen.getByRole('alert')).not.toHaveTextContent('experimental');
+  fireEvent.click(screen.getByLabelText('Close alert'));
+  view.unmount();
+  const second = render(tree({runKind: 'replay'}));
+  fireEvent.click(screen.getByRole('button', {name: /show replay instructions/i}));
+  expect(screen.queryByRole('link', {name: 'Recent Changes'})).toBeNull();
+  second.unmount();
+  render(tree({code: '2025fed', runKind: 'replay'}));
+  expect(screen.getByRole('alert')).toHaveTextContent('Back and Forward');
+  expect(localStorage.getItem(storageKey)).toBe('true');
+});
+
 test('non-live introductions do not use the live preference', () => {
   const read = jest.spyOn(Storage.prototype, 'getItem');
   const write = jest.spyOn(Storage.prototype, 'setItem');

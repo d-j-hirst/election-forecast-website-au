@@ -8,6 +8,7 @@ import Button from 'react-bootstrap/Button';
 
 import InfoIcon from '../../../General/InfoIcon';
 import {ExtLink} from '../../../../utils/extlink.js';
+import liveElectionName from 'utils/liveElectionName';
 import {isOutlook} from '../../../../utils/outlook.js';
 
 import quantityMarkerExample from './assets/quantity-marker-example.png';
@@ -56,20 +57,23 @@ const pastElections = {
   },
 };
 const liveAlertStorageKey = 'liveForecastAlertClosed';
+// Readers see the replay controls introduction once even if they previously
+// dismissed an official forecast notice. All replays share this preference.
+const replayAlertStorageKey = 'liveReplayControlsIntroductionClosed';
 
 // A saved preference is optional: blocked browser storage must not prevent the
-// report from rendering. Keep the existing key and acknowledgement policy.
-const wasLiveAlertDismissed = () => {
+// report from rendering.
+const wasLiveAlertDismissed = key => {
   try {
-    return localStorage.getItem(liveAlertStorageKey) === 'true';
+    return localStorage.getItem(key) === 'true';
   } catch (error) {
     return false;
   }
 };
 
-const rememberLiveAlertDismissal = () => {
+const saveDismissal = (key, closed) => {
   try {
-    localStorage.setItem(liveAlertStorageKey, 'true');
+    localStorage.setItem(key, String(closed));
   } catch (error) {
     // The current page still dismisses the introduction when persistence fails.
   }
@@ -89,18 +93,29 @@ const ForecastAlert = props => {
   const current = !(oldElec || isArchive);
   const isWarning = isNowcast || isLive || isThisOutlook || props.isArchive;
   const alertVariant = isWarning ? 'warning' : 'info';
+  const replay = props.runKind === 'replay';
+  const storageKey = replay ? replayAlertStorageKey : liveAlertStorageKey;
+  const earlierMethod =
+    !props.runKind &&
+    props.code !== '2026vic' &&
+    Number(props.code.slice(0, 4)) <= 2026;
   const defaultShow = props.showInitially === undefined || props.showInitially;
   const [show, setShow] = useState(
-    () => defaultShow && (!isLive || !wasLiveAlertDismissed())
+    () => defaultShow && (!isLive || !wasLiveAlertDismissed(storageKey))
   );
 
   useEffect(() => {
-    setShow(defaultShow && (!isLive || !wasLiveAlertDismissed()));
-  }, [defaultShow, isLive]);
+    setShow(defaultShow && (!isLive || !wasLiveAlertDismissed(storageKey)));
+  }, [defaultShow, isLive, storageKey]);
 
   const closeAlert = () => {
     setShow(false);
-    if (isLive) rememberLiveAlertDismissal();
+    if (isLive) saveDismissal(storageKey, true);
+  };
+
+  const openAlert = () => {
+    setShow(true);
+    if (replay) saveDismissal(storageKey, false);
   };
 
   if (show) {
@@ -194,14 +209,24 @@ const ForecastAlert = props => {
           )}
           {isLive && props.runKind === 'replay' && (
             <div>
-              This <strong>replay</strong> shows how the experimental live
-              forecast for {props.forecast.electionName || props.code} changes
-              as historical count updates arrive.
+              This <strong>replay</strong> shows how the current live forecast
+              system would have handled the{' '}
+              {liveElectionName(props.forecast) || props.code} as results came
+              in. Use the <strong>Back</strong> and <strong>Forward</strong>{' '}
+              buttons in the control panel above to step through the replay
+              one update at a time.
+              {props.hasRecentChanges && (
+                <>
+                  {' '}
+                  See <a href="#recent-changes">Recent Changes</a> for a summary
+                  of what changed at each update.
+                </>
+              )}
             </div>
           )}
           {isLive && props.runKind === 'live' && (
             <div>
-              This experimental <strong>live forecast</strong> for{' '}
+              This <strong>live forecast</strong> for the{' '}
               {props.forecast.electionName || props.code} incorporates official
               results as they are reported.
             </div>
@@ -209,8 +234,14 @@ const ForecastAlert = props => {
           {isLive && !props.runKind && (
             <>
               <div>
-                This {oldElec ? 'was' : 'is'} an{' '}
-                {isArchive ? <strong>archived</strong> : ''} experimental{' '}
+                This {oldElec ? 'was' : 'is'}{' '}
+                {isArchive || earlierMethod ? 'an' : 'a'}{' '}
+                {isArchive && (
+                  <>
+                    <strong>archived</strong>{' '}
+                  </>
+                )}
+                {earlierMethod && 'experimental '}
                 <strong>live forecast</strong> of the{' '}
                 {props.forecast.electionName}, incorporating official election
                 results as they {oldElec ? 'were' : 'are'} reported. Please be
@@ -350,8 +381,8 @@ const ForecastAlert = props => {
     );
   } else {
     return (
-      <Button onClick={() => setShow(true)} variant={alertVariant}>
-        Show introduction alert ▼
+      <Button onClick={openAlert} variant={alertVariant}>
+        {replay ? 'Show replay instructions' : 'Show introduction alert'} ▼
       </Button>
     );
   }
@@ -363,6 +394,7 @@ ForecastAlert.propTypes = {
   results: PropTypes.object,
   isArchive: PropTypes.bool,
   showInitially: PropTypes.bool,
+  hasRecentChanges: PropTypes.bool,
   runKind: PropTypes.oneOf(['live', 'replay']),
 };
 

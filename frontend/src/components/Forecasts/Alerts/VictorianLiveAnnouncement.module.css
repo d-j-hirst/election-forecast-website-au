@@ -1,0 +1,32 @@
+.announcement {
+    width: 100%;
+    max-width: 710px;
+    margin: 0 auto .5rem;
+    text-align: left;
+    border-radius: 20px 20px 2px 2px !important;
+    /* Bootstrap reserves extra room on the right for the close button.
+       Give the heading equal space on both sides so its centre stays fixed. */
+    padding-inline: var(--bs-alert-padding-x, 1rem) !important;
+}
+.announcementHeader {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-inline: 1.75rem;
+    gap: .5rem;
+    font-size: 1.125rem;
+    text-align: center;
+}
+.reopen {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-end: 0;
+    padding: 1rem;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font-size: .875rem;
+}
+.announcement p {
+    margin: .5rem 0 0;
+}

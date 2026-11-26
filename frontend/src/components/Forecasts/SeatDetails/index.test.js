@@ -83,6 +83,7 @@ test('moving from an archived to a current seat restores current introduction co
   expect(screen.getByRole('alert')).toHaveTextContent('archived');
   view.rerender(tree('2026vic', false));
   expect(screen.getByRole('alert')).not.toHaveTextContent('archived');
+  expect(screen.getByRole('region', {name: 'Victorian live forecast'})).toHaveTextContent('Live forecast from election night');
   expect(screen.getByRole('link', {name: 'nowcast'})).toBeInTheDocument();
 });
 

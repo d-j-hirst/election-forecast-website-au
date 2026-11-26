@@ -154,7 +154,7 @@ export default function UpdateSummary({data, seatLink}) {
     ? w?.statewide?.after?.countProgress
     : data.report.countProgress ?? w?.statewide?.after?.countProgress;
   return (
-    <Card className={styles.summary}>
+    <Card id="recent-changes" className={styles.summary}>
       <Card.Header
         role="heading"
         aria-level={2}
@@ -254,7 +254,7 @@ export default function UpdateSummary({data, seatLink}) {
                 seatLink={seatLink}
                 code={data.run.election}
               />
-              <small className="text-muted d-block mt-3">
+              <small className="text-muted text-center d-block mt-3">
                 <strong>Glossary</strong> · pp = percentage point · FP = first
                 preference (primary vote)
                 {' · '}TCP = two-candidate preferred

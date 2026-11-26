@@ -25,6 +25,7 @@ import {
 } from 'components';
 
 import PreferenceFlows from '../PreferenceFlows';
+import VictorianLiveAnnouncement from '../Alerts/VictorianLiveAnnouncement';
 import styles from './Layout.module.css';
 
 const ForecastLayout = props => {
@@ -32,6 +33,11 @@ const ForecastLayout = props => {
   const id = props.id;
   const inputMode = props.mode;
   const {live} = props;
+  const [countingElection, setCountingElection] = useState(null);
+  const announceLive =
+    code === '2026vic' &&
+    !props.isArchive &&
+    ['regular', 'nowcast'].includes(inputMode);
   const automated = Boolean(live);
   const replay = Boolean(live?.replay);
   const publication = live?.publication;
@@ -82,6 +88,7 @@ const ForecastLayout = props => {
         Archived reports have no current mode selected in the summary links. */}
       <ForecastsNav
         election={code}
+        onCountStatus={announceLive ? setCountingElection : undefined}
         mode={replay ? 'replay' : props.isArchive ? 'other' : inputMode}
       />
       {/* These state objects keep their identity until a load replaces the data;
@@ -108,13 +115,18 @@ const ForecastLayout = props => {
                 mode={mode}
                 sourceTime={publication?.source_time}
                 timeZone={publication?.run.timezone}
-                replayName={replay ? publication?.run.display_name : undefined}
+                replay={replay}
                 replaySnapshotId={
                   replay && publication?.local_diagnostics === true
                     ? publication.forecast_id
                     : undefined
                 }
               />
+              {announceLive && (
+                <VictorianLiveAnnouncement
+                  counting={countingElection === code}
+                />
+              )}
               <ForecastAlert
                 code={code}
                 forecast={forecast}
@@ -122,6 +134,7 @@ const ForecastLayout = props => {
                 mode={mode}
                 results={effectiveResults}
                 runKind={publication?.run.kind}
+                hasRecentChanges={Boolean(live?.summary)}
               />
               <MethodsChangesAlert
                 isArchive={props.isArchive}
