@@ -58,9 +58,22 @@ function LivePage({code, runId, seat, replayHistories}) {
   }, [title, data?.legacy]);
   // The poller owns run-specific data and URLs. The existing layouts own
   // the forecast presentation, including the fallback to historical reports.
-  const live = data?.legacy
-    ? undefined
-    : {publication: data, error, replay, seatLink};
+  const victorianLive = !replay && code === '2026vic';
+  const live =
+    data?.legacy && !victorianLive
+      ? undefined
+      : {publication: data?.legacy ? undefined : data, error, replay, seatLink};
+  const progress = data?.report?.countProgress;
+  if (!replay && data?.forecast_id === 'origin') {
+    live.countNotice =
+      'Forecast before counting. No votes have been reported yet.';
+  } else if (victorianLive && data && !data.report) {
+    live.countNotice =
+      'Waiting for the first Victorian live forecast. This page updates automatically.';
+  } else if (victorianLive && progress?.fp_votes === 0 && !progress.tcp_votes) {
+    live.countNotice =
+      'The VEC feed reports zero votes so far. This page updates automatically.';
+  }
   const step = data?.replay_navigation;
   if (replay && step && data.replayTimeline) {
     live.navigation = (
@@ -86,6 +99,7 @@ function LivePage({code, runId, seat, replayHistories}) {
         const seatIndex = data.report.seatNames.indexOf(seatName);
         live.history = (
           <SeatHistory
+            election={code}
             points={data.points}
             parties={parties}
             zone={data.run.timezone}
@@ -96,7 +110,7 @@ function LivePage({code, runId, seat, replayHistories}) {
     }
     return <SeatDetails code={code} seat={seat} mode="live" live={live} />;
   }
-  if (live && data?.report) {
+  if (live && data?.report && data.forecast_id !== 'origin') {
     live.summary = (
       <UpdateSummary key={data.run.run_id} data={data} seatLink={seatLink} />
     );

@@ -32,8 +32,9 @@ import {jsonMap, jsonMapReverse} from '../../../utils/jsonmap.js';
 import {countTime} from '../../../utils/date.js';
 import useStoredBoolean from 'pages/Live/useStoredBoolean';
 import {flowOptions} from '../PreferenceFlows';
+import {validDeviation} from '../VoteCategoryDeviations';
 import HistoryPeriodDropdown from './HistoryPeriodDropdown';
-import {ELECTION_NIGHT_MS, historyTime, historyTimeAxis} from './timeAxis';
+import {liveHistoryPoints, historyTime, historyTimeAxis} from './timeAxis';
 
 const tieColour = '#885588';
 
@@ -52,6 +53,7 @@ const GraphTypeEnum = Object.freeze({
   coalitionFp: 5,
   coalitionSeats: 6,
   flow: 7,
+  categoryTpp: 8,
 });
 
 const genericXAxis = (lowDate, highDate, mode, timeZone) => (
@@ -235,29 +237,39 @@ const RangeTooltip = ({active, payload, label, mode, obsLabel, dataKey}) => {
           Forecast {mode === 'live' ? 'time' : 'date'}: {thisDate}
           <br />
         </p>
-        <p className={styles.smallTooltipText}>
-          {obsLabel} percentiles (
-          <span className={styles.outerProbsText}>5%</span>
-          <span className={styles.innerProbsText}>-25%</span>-
-          <strong>median</strong>-
-          <span className={styles.innerProbsText}>75%-</span>
-          <span className={styles.outerProbsText}>95%</span>)
-        </p>
-        <p>
-          <span className={styles.outerProbsText}>
-            {round2(payload[0].payload[`${dataKey}5-25`][0])}
-          </span>
-          <span className={styles.innerProbsText}>
-            {` - ${round2(payload[0].payload[`${dataKey}25-75`][0])} - `}
-          </span>
-          <strong>{round2(payload[0].payload[`${dataKey}Median`])}</strong>
-          <span className={styles.innerProbsText}>
-            {` - ${round2(payload[0].payload[`${dataKey}25-75`][1])} - `}
-          </span>
-          <span className={styles.outerProbsText}>
-            {round2(payload[0].payload[`${dataKey}75-95`][1])}
-          </span>
-        </p>
+        {p[`${dataKey}5-25`] == null && (
+          <p>
+            {obsLabel}: <strong>{round2(p[`${dataKey}Median`])}</strong>. Range
+            unavailable.
+          </p>
+        )}
+        {p[`${dataKey}5-25`] != null && (
+          <>
+            <p className={styles.smallTooltipText}>
+              {obsLabel} percentiles (
+              <span className={styles.outerProbsText}>5%</span>
+              <span className={styles.innerProbsText}>-25%</span>-
+              <strong>median</strong>-
+              <span className={styles.innerProbsText}>75%-</span>
+              <span className={styles.outerProbsText}>95%</span>)
+            </p>
+            <p>
+              <span className={styles.outerProbsText}>
+                {round2(payload[0].payload[`${dataKey}5-25`][0])}
+              </span>
+              <span className={styles.innerProbsText}>
+                {` - ${round2(payload[0].payload[`${dataKey}25-75`][0])} - `}
+              </span>
+              <strong>{round2(payload[0].payload[`${dataKey}Median`])}</strong>
+              <span className={styles.innerProbsText}>
+                {` - ${round2(payload[0].payload[`${dataKey}25-75`][1])} - `}
+              </span>
+              <span className={styles.outerProbsText}>
+                {round2(payload[0].payload[`${dataKey}75-95`][1])}
+              </span>
+            </p>
+          </>
+        )}
       </div>
     );
   }
@@ -379,19 +391,21 @@ const Fp = props => {
   const scalePoints = measured.filter(
     row =>
       props.type === GraphTypeEnum.flow ||
+      props.type === GraphTypeEnum.categoryTpp ||
       historyPointDisplayDate(row) <= 1718668800000 ||
       historyPointDisplayDate(row) >= 1721347200000
   );
   const bounds = scalePoints.length ? scalePoints : measured;
   const modifiedLowFp = Math.min(
-    ...bounds.map(row => Math.floor(row['fp1-5'][0]))
+    ...bounds.map(row => Math.floor(row['fp1-5']?.[0] ?? row.fpMedian))
   );
-  let lowFp = modifiedLowFp;
-  while (lowFp % 4 >= 1) --lowFp;
+  const categoryTpp = props.type === GraphTypeEnum.categoryTpp;
+  let lowFp = categoryTpp ? Math.min(0, modifiedLowFp) : modifiedLowFp;
+  lowFp = 4 * Math.floor(lowFp / 4);
   const modifiedHighFp = Math.max(
-    ...bounds.map(row => Math.floor(row['fp95-99'][1]) + 1)
+    ...bounds.map(row => Math.floor(row['fp95-99']?.[1] ?? row.fpMedian) + 1)
   );
-  let highFp = modifiedHighFp;
+  let highFp = categoryTpp ? Math.max(0, modifiedHighFp) : modifiedHighFp;
   while ((highFp - lowFp) % 4 >= 1) ++highFp;
   const numTicks = (highFp - lowFp) / 4 + 1;
 
@@ -428,6 +442,7 @@ const Fp = props => {
           type="number"
           width={25}
         />
+        {categoryTpp && <ReferenceLine y={0} stroke="#666" />}
         {genericChartArea('fp1-5', colourKey, 3, 'none')}
         {genericChartArea('fp5-25', colourKey, 2, 'none')}
         {genericChartArea('fp25-75', colourKey, 1, 'none')}
@@ -437,7 +452,9 @@ const Fp = props => {
           dataKey="fpMedian"
           type="stepAfter"
           activeDot={false}
-          dot={props.type === GraphTypeEnum.flow ? {r: 2} : false}
+          dot={
+            props.type === GraphTypeEnum.flow || categoryTpp ? {r: 2} : false
+          }
           isAnimationActive={false}
           stroke={jsonMap(colours, colourKey)[0]}
         />
@@ -448,6 +465,8 @@ const Fp = props => {
               obsLabel={
                 props.type === GraphTypeEnum.flow
                   ? 'Preference flow'
+                  : categoryTpp
+                  ? 'ALP TPP deviation (pp)'
                   : 'Vote total'
               }
               dataKey="fp"
@@ -694,6 +713,19 @@ const Chart = props => {
     });
   }
 
+  const categoryPoints = [];
+  if (props.type === GraphTypeEnum.categoryTpp) {
+    fp = props.data.map((point, index) => {
+      const row = point.voteCategoryDeviations?.find(
+        category => category.key === props.categoryKey
+      );
+      if (!validDeviation(row?.tpp)) return null;
+      if (row.tpp.length === 15) return bands(point, row.tpp);
+      categoryPoints[index] = row.tpp[0];
+      return null;
+    });
+  }
+
   let seats = props.data.map(a =>
     jsonMap(a.seatCountFrequencies, props.party, null) !== null
       ? bands(a, jsonMap(a.seatCountFrequencies, props.party))
@@ -735,7 +767,7 @@ const Chart = props => {
     'fp25-75': fp[index] ? [fp[index][2], fp[index][4]] : null,
     'fp75-95': fp[index] ? [fp[index][4], fp[index][5]] : null,
     'fp95-99': fp[index] ? [fp[index][5], fp[index][6]] : null,
-    fpMedian: fp[index]?.[3] ?? null,
+    fpMedian: fp[index]?.[3] ?? categoryPoints[index] ?? null,
     'seats1-5': [seats[index][0], seats[index][1]],
     'seats5-25': [seats[index][1], seats[index][2]],
     'seats25-75': [seats[index][2], seats[index][4]],
@@ -744,12 +776,8 @@ const Chart = props => {
     seatsMedian: seats[index][3],
   }));
 
-  if (props.mode === 'live' && props.eveningOnly) {
-    const lowDate = Math.min.apply(
-      Math,
-      chartData.map(a => a.unixDate)
-    );
-    chartData = chartData.filter(a => a.unixDate < lowDate + ELECTION_NIGHT_MS);
+  if (props.mode === 'live') {
+    chartData = liveHistoryPoints(chartData, props.election, props.eveningOnly);
   }
   if (chartData.length > 0) {
     const lowDate = Math.min.apply(
@@ -797,7 +825,8 @@ const Chart = props => {
               timeZone={props.timeZone}
             />
           )}
-          {(props.type === GraphTypeEnum.flow ||
+          {(props.type === GraphTypeEnum.categoryTpp ||
+            props.type === GraphTypeEnum.flow ||
             props.type === GraphTypeEnum.fp ||
             props.type === GraphTypeEnum.coalitionFp) && (
             <Fp
@@ -825,6 +854,7 @@ const Chart = props => {
   );
 };
 Chart.propTypes = {
+  categoryKey: PropTypes.string,
   flow: PropTypes.object,
   timeZone: PropTypes.string,
   data: PropTypes.array.isRequired,
@@ -1070,8 +1100,28 @@ const History = props => {
       flow,
     ]);
   }
+  if (props.showCategoryDeviations) {
+    // Additional vote types qualify by projected size. Keep a measured series
+    // selectable even when that category later falls below the threshold.
+    const categories = new Map();
+    for (const capture of [props.forecast, ...history]) {
+      for (const row of capture.voteCategoryDeviations || []) {
+        if (!categories.has(row.key) && validDeviation(row.tpp))
+          categories.set(row.key, row);
+      }
+    }
+    for (const category of categories.values())
+      choices.push([
+        'category-tpp:' + category.key,
+        category.label + ' – ALP TPP deviation (pp)',
+        GraphTypeEnum.categoryTpp,
+        0,
+        undefined,
+        category.key,
+      ]);
+  }
   const selected = choices.find(([key]) => key === choice) || choices[0];
-  const [, label, graphType, graphParty, flow] = selected;
+  const [, label, graphType, graphParty, flow, categoryKey] = selected;
   const title = 'Display: ' + label;
   return (
     <Card className={styles.summary}>
@@ -1117,6 +1167,7 @@ const History = props => {
                   data={history}
                   type={graphType}
                   flow={flow}
+                  categoryKey={categoryKey}
                   party={graphParty}
                   partyAbbr={props.forecast.partyAbbr}
                   election={props.election}
@@ -1144,6 +1195,7 @@ History.propTypes = {
   election: PropTypes.string.isRequired,
   eveningOnly: PropTypes.bool,
   runPoints: PropTypes.array,
+  showCategoryDeviations: PropTypes.bool,
   timeZone: PropTypes.string,
 };
 

@@ -61,12 +61,19 @@ const ProbBar = props => {
   const barClass = jsonMap(classes, Math.abs(offsetFromMid));
 
   let tooltipText = '';
-  if (props.valType === undefined || props.valType === 'percentage') {
+  if (
+    props.valType === undefined ||
+    props.valType === 'percentage' ||
+    props.valType === 'points'
+  ) {
+    const unit = props.valType === 'points' ? ' pp' : '%';
     tooltipText =
       Number(lf).toFixed(1) +
-      '% - ' +
+      unit +
+      ' - ' +
       Number(rf).toFixed(1) +
-      '%\nPercentile ' +
+      unit +
+      '\nPercentile ' +
       formatWholeOrFixed(props.thresholdLevels[lt]) +
       ' - ' +
       formatWholeOrFixed(props.thresholdLevels[rt]) +

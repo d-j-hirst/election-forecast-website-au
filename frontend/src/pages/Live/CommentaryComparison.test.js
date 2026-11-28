@@ -36,18 +36,33 @@ function page(item, period = 'previous') {
 beforeEach(() => localStorage.clear());
 
 test('quiet historical and current highlights use the same unheaded notice', () => {
-  const archived = 'Counting was updated with little change in the projected winners.';
-  const quiet = 'There were no significant changes to the results since the previous forecast.';
-  const item = summary => ({status: 'complete', source: 'local', format: 'seat-bullets-v1', text: {summary, developments: []}});
+  const archived =
+    'Counting was updated with little change in the projected winners.';
+  const quiet =
+    'There were no significant changes to the results since the previous forecast.';
+  const item = summary => ({
+    status: 'complete',
+    source: 'local',
+    format: 'seat-bullets-v1',
+    text: {summary, developments: []},
+  });
   const view = render(page(item(archived)));
   expect(screen.getByText(quiet).tagName).toBe('P');
   view.rerender(page(item(quiet)));
   expect(screen.getByText(quiet).tagName).toBe('P');
   expect(screen.queryByText('Counting update')).toBeNull();
   view.rerender(page(item(archived), 'since_start'));
-  expect(screen.getByText('There were no significant changes to the results since counting began.')).toBeInTheDocument();
-  view.rerender(page(item('No new counting occurred since the previous forecast.')));
-  expect(screen.getByText('No new counting occurred since the previous forecast.')).toBeInTheDocument();
+  expect(
+    screen.getByText(
+      'There were no significant changes to the results since counting began.'
+    )
+  ).toBeInTheDocument();
+  view.rerender(
+    page(item('No new counting occurred since the previous forecast.'))
+  );
+  expect(
+    screen.getByText('No new counting occurred since the previous forecast.')
+  ).toBeInTheDocument();
 });
 
 test('switching writers preserves formatting and the choice across windows and older reports', () => {
@@ -91,7 +106,9 @@ test('switching writers preserves formatting and the choice across windows and o
 test('an unavailable AI edition can still carry a rule-written report', () => {
   render(page({...trial, status: 'unavailable', reason: 'Deadline reached.'}));
   expect(screen.queryByText(/AI commentary unavailable/)).toBeNull();
-  expect(screen.queryByRole('heading', {name: 'Rule-based commentary'})).toBeNull();
+  expect(
+    screen.queryByRole('heading', {name: 'Rule-based commentary'})
+  ).toBeNull();
   expect(screen.getByText('Rule-based headline.')).toBeInTheDocument();
   expect(screen.queryByRole('group', {name: 'Commentary writer'})).toBeNull();
   expect(

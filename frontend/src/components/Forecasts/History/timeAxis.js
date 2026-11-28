@@ -1,6 +1,28 @@
 import {unixDateToStr, unixTimeToStr} from 'utils/date';
 
-export const ELECTION_NIGHT_MS = 12 * 60 * 60 * 1000;
+const ELECTION_NIGHT_MS = 12 * 60 * 60 * 1000;
+const QLD_2024_PRE_COUNT_TIME = Date.parse('2024-10-26T17:30:00+10:00');
+
+// The election-night chart covers 12 hours from its first plotted forecast.
+// Queensland's 2024 replay opens with a pre-count capture from the previous
+// evening. Plot it at 5:30 pm Brisbane time to show the starting forecast
+// beside the first returns. Both chart periods use this opening point.
+export function liveHistoryPoints(points, election, eveningOnly) {
+  const plotted =
+    election === '2024qld'
+      ? points.map(point =>
+          point.unixDate < QLD_2024_PRE_COUNT_TIME
+            ? {...point, unixDate: QLD_2024_PRE_COUNT_TIME}
+            : point
+        )
+      : points;
+  if (!eveningOnly) return plotted;
+  const start = plotted.reduce(
+    (first, point) => Math.min(first, point.unixDate),
+    Infinity
+  );
+  return plotted.filter(point => point.unixDate < start + ELECTION_NIGHT_MS);
+}
 
 const TickIntervalEnum = Object.freeze({
   MonthThird: 1,

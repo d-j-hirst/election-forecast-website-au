@@ -7,7 +7,7 @@ import DropdownButton from 'react-bootstrap/DropdownButton';
 import ListGroup from 'react-bootstrap/ListGroup';
 import HistoryPeriodDropdown from 'components/Forecasts/History/HistoryPeriodDropdown';
 import {
-  ELECTION_NIGHT_MS,
+  liveHistoryPoints,
   historyTimeAxis,
 } from 'components/Forecasts/History/timeAxis';
 import styles from 'components/Forecasts/History/History.module.css';
@@ -21,7 +21,13 @@ const measures = {
   tcp: 'Two-candidate preferred vote',
 };
 
-export default function SeatHistory({points, parties, zone, tcpScenarios}) {
+export default function SeatHistory({
+  points,
+  parties,
+  zone,
+  tcpScenarios,
+  election,
+}) {
   const [choice, setMeasure] = useStoredString('seatHistory:measure', 'wins');
   const measure = Object.hasOwn(measures, choice) ? choice : 'wins';
   const [eveningOnly, setEveningOnly] = useStoredBoolean(
@@ -37,14 +43,11 @@ export default function SeatHistory({points, parties, zone, tcpScenarios}) {
   // Match the election history's first 12 hours. Candidate and pairing
   // choices still come from the latest publication, regardless of this window.
   const current = samples.at(-1);
-  const start = samples[0]?.unixDate;
-  const displayed = eveningOnly
-    ? samples.filter(sample => sample.unixDate < start + ELECTION_NIGHT_MS)
-    : samples;
+  const displayed = liveHistoryPoints(samples, election, eveningOnly);
   const axis =
     current &&
     historyTimeAxis(
-      start,
+      displayed[0].unixDate,
       displayed.at(-1).unixDate,
       eveningOnly ? 'live' : 'liveEx',
       zone
@@ -110,6 +113,7 @@ export default function SeatHistory({points, parties, zone, tcpScenarios}) {
 }
 
 SeatHistory.propTypes = {
+  election: PropTypes.string,
   points: PropTypes.array.isRequired,
   parties: PropTypes.object.isRequired,
   zone: PropTypes.string.isRequired,

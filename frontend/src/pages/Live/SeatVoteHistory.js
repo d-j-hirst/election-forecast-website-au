@@ -206,7 +206,7 @@ export default function SeatVoteHistory({
               labelFormatter={v => countTime(v, zone)}
               formatter={value =>
                 Array.isArray(value)
-                  ? value.map(v => v.toFixed(1) + '%').join(' â€“ ')
+                  ? value.map(v => v.toFixed(1) + '%').join(' – ')
                   : value.toFixed(1) + '%'
               }
             />

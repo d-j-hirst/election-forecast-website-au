@@ -83,6 +83,24 @@ test.each(['/', '/forecast'])(
   }
 );
 
+test.each(['/forecast/2026vic/live', '/seat/2026vic/live/mordialloc'])(
+  'the unselected election-night page at %s waits for its official forecast',
+  async path => {
+    getDirect.mockImplementation(url =>
+      url.endsWith('/official/2026vic/head')
+        ? Promise.resolve({ok: true, data: {legacy: true}})
+        : new Promise(() => {})
+    );
+    open(path);
+    expect(
+      await screen.findByText(/Waiting for the first Victorian live forecast/)
+    ).toBeVisible();
+    expect(getDirect).not.toHaveBeenCalledWith(
+      'forecast-api/election-summary/2026vic/live'
+    );
+  }
+);
+
 test('the legacy methodology route still reaches Methods', () => {
   open('/methodology');
   expect(window.location.pathname).toBe('/methods');

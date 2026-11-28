@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import {displayPartyCode} from '../../../utils/partyAliases';
 import TooltipWrapper from '../TooltipWrapper';
 
 import {
@@ -181,7 +182,7 @@ export const SsfBadge = props => {
 };
 
 export const SmartBadge = props => {
-  const partyName = props.party.toLowerCase();
+  const partyName = displayPartyCode(props.party).toLowerCase();
   if (partyName === 'alp') return <AlpBadge />;
   if (partyName === 'grn') return <GrnBadge />;
   if (partyName === 'ind')

@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {fireEvent, render, screen} from '@testing-library/react';
 import StandardErrorBoundary from './index';
 import MainContent from '../../MainContent';
@@ -7,6 +8,8 @@ const Child = ({fail}) => {
   if (fail) throw new Error('Synthetic display failure');
   return <p>Readable section</p>;
 };
+
+Child.propTypes = {fail: PropTypes.bool.isRequired};
 
 let errors;
 beforeEach(() => {

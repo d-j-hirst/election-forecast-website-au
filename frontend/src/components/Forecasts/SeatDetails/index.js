@@ -28,7 +28,6 @@ const SeatDetails = props => {
   const seat = props.seat;
   const inputMode = props.mode;
   const {live} = props;
-  const [countingElection, setCountingElection] = useState(null);
   const announceLive =
     code === '2026vic' &&
     !props.isArchive &&
@@ -92,7 +91,6 @@ const SeatDetails = props => {
         Archived reports have no current mode selected in the summary links. */}
       <ForecastsNav
         election={code}
-        onCountStatus={announceLive ? setCountingElection : undefined}
         mode={replay ? 'replay' : props.isArchive ? 'other' : inputMode}
       />
       {/* Stable loaded-state identities also recover nested sections after a new
@@ -104,6 +102,9 @@ const SeatDetails = props => {
       >
         <StandardErrorBoundary>
           {live?.error && <p role="status">{live.error}</p>}
+          {live?.countNotice && !live.error && (
+            <p role="status">{live.countNotice}</p>
+          )}
           {live?.navigation}
           {forecastValid && seatIndex >= 0 && (
             <>
@@ -112,6 +113,7 @@ const SeatDetails = props => {
                 forecast={forecast}
                 archive={props.isArchive}
                 sourceTime={publication?.source_time}
+                beforeCount={publication?.forecast_id === 'origin'}
                 timeZone={publication?.run.timezone}
                 replay={replay}
                 replaySnapshotId={
@@ -120,12 +122,7 @@ const SeatDetails = props => {
                     : undefined
                 }
               />
-              {announceLive && (
-                <VictorianLiveAnnouncement
-                  counting={countingElection === code}
-                  seat={seat}
-                />
-              )}
+              {announceLive && <VictorianLiveAnnouncement seat={seat} />}
               <ForecastAlert
                 forecast={forecast}
                 code={code}
@@ -164,8 +161,8 @@ const SeatDetails = props => {
                       forecast.seatNames[seatIndex]
                     ].map((row, i) => (
                       <li key={i}>
-                        <strong>{row.booth}</strong> â€” {row.level} confidence
-                        ({row.confidencePercent.toFixed(1)}%)
+                        <strong>{row.booth}</strong> — {row.level} confidence (
+                        {row.confidencePercent.toFixed(1)}%)
                       </li>
                     ))}
                   </ul>
@@ -183,7 +180,7 @@ const SeatDetails = props => {
               special characters are replaced with single hyphens.
             </>
           )}
-          {!forecastValid && !live?.error && (
+          {!forecastValid && !live?.error && !live?.countNotice && (
             <LoadingMarker
               text={
                 publication ? 'Waiting for the first count update.' : undefined

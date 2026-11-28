@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {publicReplayLinks} from 'config/publicReplayLinks';
+import useVictorianLiveOpening from 'config/useVictorianLiveOpening';
 import {getDirect} from 'utils/sdk';
 import PropTypes from 'prop-types';
 
@@ -122,20 +123,13 @@ const pastElections = [
 
 const ForecastsNav = props => {
   const [availability, setAvailability] = useState(null);
-  const {onCountStatus} = props;
+  const scheduledLive = useVictorianLiveOpening(props.election === '2026vic');
   useEffect(() => {
     let active = true;
     getDirect('forecast-api/live/v1/official/' + props.election + '/head', {
       headers: {Accept: 'application/json'},
     })
       .then(response => {
-        if (active && onCountStatus) {
-          onCountStatus(
-            response.ok && response.data?.counting_started
-              ? props.election
-              : null
-          );
-        }
         if (active && response.ok && response.data?.latest_public_replay) {
           const {latest_public_replay: run, replay_start_snapshot: start} =
             response.data;
@@ -160,10 +154,14 @@ const ForecastsNav = props => {
     return () => {
       active = false;
     };
-  }, [props.election, onCountStatus]);
+  }, [props.election]);
   const replayLink = replayLinks.get(props.election);
   const available =
     availability?.election === props.election ? availability : null;
+  const showLive =
+    props.election === '2026vic'
+      ? scheduledLive
+      : live_elections.includes(props.election) || available?.official;
   const [electionsExpanded, setElectionsExpanded] = useState(false);
   const [modesExpanded, setModesExpanded] = useState(false);
   const pastElection = pastElections.find(([code]) => code === props.election);
@@ -290,8 +288,7 @@ const ForecastsNav = props => {
                 mode="archives"
                 activeMode={props.mode}
               />
-              {(live_elections.includes(props.election) ||
-                available?.official) && (
+              {showLive && (
                 <ModeNav
                   text="Live"
                   election={props.election}
@@ -318,7 +315,6 @@ const ForecastsNav = props => {
 ForecastsNav.propTypes = {
   election: PropTypes.string.isRequired,
   mode: PropTypes.string.isRequired,
-  onCountStatus: PropTypes.func,
 };
 
 export default ForecastsNav;

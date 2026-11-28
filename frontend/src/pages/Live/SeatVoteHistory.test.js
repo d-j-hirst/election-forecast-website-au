@@ -93,6 +93,16 @@ test('current pairings select conditional TCP histories with visible gaps in lin
     '60%',
   ]);
   expect(gridLines(view.container)).toHaveLength(5);
+  const chart = view.container.querySelector('.recharts-wrapper');
+  const dot = chart.querySelectorAll('.recharts-line-dot')[1];
+  const hover = new MouseEvent('mouseover', {bubbles: true});
+  // Recharts reads page coordinates, which jsdom does not calculate.
+  Object.defineProperties(hover, {
+    pageX: {value: Number(dot.getAttribute('cx'))},
+    pageY: {value: Number(dot.getAttribute('cy'))},
+  });
+  fireEvent(chart, hover);
+  expect(screen.getByText('54.0% – 58.0%')).toBeInTheDocument();
   const band = view.container.querySelector('.recharts-area');
   const grid = view.container.querySelector('.recharts-cartesian-grid');
   const median = view.container.querySelector('.recharts-line');

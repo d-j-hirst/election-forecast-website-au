@@ -8,6 +8,7 @@ app_name = 'forecast_api'
 urlpatterns = [
     path('live/v1/capabilities', live.Capabilities.as_view()),
     path('live/v1/runs', live.RegisterRun.as_view()),
+    path('live/v1/runs/<slug:run_id>/official', live.SelectOfficialRun.as_view()),
     path('live/v1/runs/<slug:run_id>/complete', live.CompleteReplay.as_view()),
     path('live/v1/runs/<slug:run_id>/forecasts/<str:identity>', live.PublishForecast.as_view()),
     path('live/v1/official/<str:code>/<slug:part>', live.ReadRun.as_view()),

@@ -65,6 +65,13 @@ database retains a digest of the exact upload, the compressed numerical report
 and the compact mechanical and commentary data. Keep the frozen originals with
 Polling Analyser if the retention rules need to be reapplied later.
 
+The publisher can designate a registered public live run with
+`--select-official RUN_ID` and the usual destination flags. This requires the
+forecast submit permission. Repeating the command selects the same run. Use
+Django admin to switch away from an already-selected run. Before any timestamped
+feed arrives, the official page can show the uploaded start-of-counting reference.
+The first timestamped report starts the history and supersedes the reference.
+
 For a local rehearsal, set `DJANGO_LOCAL_REPLAY=1` with development settings
 and restart Django. Use a loopback-only development server and a local
 database. Run the Analyser watcher for a replay, start its reporting worker with

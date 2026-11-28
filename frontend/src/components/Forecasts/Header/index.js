@@ -36,7 +36,13 @@ const ForecastHeader = props => {
         {props.sourceTime && (
           <>Count observation · {countTime(props.sourceTime, props.timeZone)}</>
         )}
-        {!props.sourceTime && (
+        {props.beforeCount && (
+          <>
+            Pre-count forecast prepared at{' '}
+            {parseDateStringAsUTC(props.forecast.reportDate)}
+          </>
+        )}
+        {!props.sourceTime && !props.beforeCount && (
           <>
             {props.archive === true ? 'Produced at ' : 'Last updated at '}
             {parseDateStringAsUTC(props.forecast.reportDate)}{' '}
@@ -58,6 +64,7 @@ ForecastHeader.propTypes = {
   mode: PropTypes.string.isRequired,
   archive: PropTypes.bool,
   sourceTime: PropTypes.string,
+  beforeCount: PropTypes.bool,
   timeZone: PropTypes.string,
   replay: PropTypes.bool,
   replaySnapshotId: PropTypes.string,

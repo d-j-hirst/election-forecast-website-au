@@ -45,27 +45,35 @@ const VoteShareRow = props => {
     <ListGroup.Item className={styles.voteTotalsItem}>
       <div className={styles.rowLeftSection}>
         <div className={styles.rowParty}>
-          <SmartBadge
-            party={partyAbbr}
-            text={props.partyAbbr}
-            termCode={props.forecast.termCode}
-          />
+          {props.rowLabel || (
+            <SmartBadge
+              party={partyAbbr}
+              text={props.partyAbbr}
+              termCode={props.forecast.termCode}
+            />
+          )}
         </div>
         <div className={outerStyle}>
           {' '}
           <TooltipPercentage
             value={props.freqSet[1][4]}
+            unit={props.unit}
             label="5th percentile"
           />
         </div>
         <div className={styles.rowDash}> - </div>
         <div className={innerStyle}>
-          <TooltipPercentage value={props.freqSet[1][7]} label="Median" />
+          <TooltipPercentage
+            value={props.freqSet[1][7]}
+            unit={props.unit}
+            label="Median"
+          />
         </div>
         <div className={styles.rowDash}> - </div>
         <div className={outerStyle}>
           <TooltipPercentage
             value={props.freqSet[1][10]}
+            unit={props.unit}
             label="95th percentile"
           />
         </div>
@@ -79,7 +87,7 @@ const VoteShareRow = props => {
         thresholdLevels={props.forecast.voteTotalThresholds}
         pluralNoun={props.pluralNoun ?? 'vote totals'}
         result={props.result}
-        valType="percentage"
+        valType={props.unit ? 'points' : 'percentage'}
         width={Math.min(props.windowWidth - 100, 420)}
       />
     </ListGroup.Item>
@@ -92,6 +100,8 @@ VoteShareRow.propTypes = {
   showCoalition: PropTypes.bool,
   partyAbbr: PropTypes.string,
   pluralNoun: PropTypes.string,
+  rowLabel: PropTypes.string,
+  unit: PropTypes.string,
   maxVoteTotal: PropTypes.number.isRequired,
   minVoteTotal: PropTypes.number.isRequired,
   windowWidth: PropTypes.number.isRequired,

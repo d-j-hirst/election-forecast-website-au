@@ -113,6 +113,12 @@ def election_history_point(report):
     if report.get('statewidePreferenceFlows'):
         point['statewidePreferenceFlows'] = report['statewidePreferenceFlows']
         point['partyAbbr'] = report.get('partyAbbr', [])
+    # History graphs show Labor TPP by category. Keep the FP distributions
+    # in the selected report so replay history stays compact.
+    if report.get('voteCategoryDeviations'):
+        point['voteCategoryDeviations'] = [
+            {key: row[key] for key in ('key', 'label', 'tpp')}
+            for row in report['voteCategoryDeviations'] if row.get('tpp')]
     return point
 
 

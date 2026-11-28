@@ -89,6 +89,14 @@ test('a replay uses the forecast layout with only its run history and seat links
           0.1, 0.5, 1, 2.5, 5, 10, 25, 50, 75, 90, 95, 97.5, 99, 99.5, 99.9,
         ],
         statewidePreferenceFlows: flows,
+        voteCategoryDeviations: [
+          {
+            key: 'vote_type/Postal',
+            label: 'Postal',
+            tpp: Array(15).fill(-1),
+            fp: {0: Array(15).fill(0.25), 2: [0]},
+          },
+        ],
         countProgress: {
           fp_votes: 3932,
           tcp_votes: 600,
@@ -141,6 +149,27 @@ test('a replay uses the forecast layout with only its run history and seat links
     heading.compareDocumentPosition(recent) & Node.DOCUMENT_POSITION_FOLLOWING
   ).toBeTruthy();
 
+  const deviations = screen.getByRole('heading', {
+    name: /Vote Type Deviations/,
+  });
+  expect(
+    heading.compareDocumentPosition(deviations) &
+      Node.DOCUMENT_POSITION_FOLLOWING
+  ).toBeTruthy();
+  expect(
+    deviations.compareDocumentPosition(recent) &
+      Node.DOCUMENT_POSITION_FOLLOWING
+  ).toBeTruthy();
+  expect(
+    within(deviations.closest('.card')).getByText('ALP TPP')
+  ).toBeInTheDocument();
+  expect(
+    within(deviations.closest('.card')).getAllByText('-1.0 pp')
+  ).toHaveLength(3);
+
+  expect(
+    within(deviations.closest('.card')).getByText('Range unavailable')
+  ).toBeInTheDocument();
   const card = heading.closest('.card');
   const helpButton = within(heading).getByAltText('Information');
   fireEvent.click(helpButton);
@@ -218,6 +247,9 @@ test('a replay uses the forecast layout with only its run history and seat links
       },
     })
   );
+  expect(
+    screen.queryByRole('heading', {name: /Vote Type Deviations/})
+  ).not.toBeInTheDocument();
   expect(
     screen.queryByRole('heading', {name: 'Preference Flows'})
   ).not.toBeInTheDocument();

@@ -9,7 +9,7 @@ from ipaddress import ip_address
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from django.conf import settings
-from django.db import transaction
+from django.db import IntegrityError, transaction
 from django.db.models import F, Min, Q
 from django.http import Http404
 from django.http.request import split_domain_port
@@ -78,6 +78,27 @@ class RegisterRun(ApiAuthMixin, APIView):
         if data != run.registration:
             return Response({'detail': 'Registration conflicts with existing run.'}, status=409)
         return Response({'run_id': run.pk})
+
+
+class SelectOfficialRun(ApiAuthMixin, APIView):
+    """Let the publisher explicitly open an election's official public run."""
+    permission_classes = [IsAuthenticated & SubmitForecastPermission]
+
+    def post(self, request, run_id):
+        require(isinstance(request.data, dict) and isinstance(request.data.get('election'), str),
+                'Supply the election for the saved run.')
+        run = get_object_or_404(LiveRun, pk=run_id, election=request.data['election'],
+                                registration__kind='live', registration__visibility='public')
+        # The database permits one official run per election. An identical retry
+        # succeeds; replacing another public count remains an explicit admin action.
+        try:
+            with transaction.atomic():
+                LiveRun.objects.filter(pk=run.pk).update(official=True)
+        except IntegrityError:
+            if not LiveRun.objects.filter(election=run.election, official=True).exclude(pk=run.pk).exists():
+                raise
+            return Response({'detail': 'Another run is already official for this election.'}, status=409)
+        return Response({'run_id': run.pk, 'election': run.election, 'official': True})
 
 
 class DuplicateObservation(Exception):
@@ -389,6 +410,11 @@ class ReadRun(APIView):
                 return conditional
         if part == 'latest':
             record = selected if snapshot is not None else run.latest
+            # A registered official run can open with the forecast made before
+            # counting. The reference has no feed timestamp. The first real
+            # delivery, including a zero, takes over and starts the history.
+            if run_id is None and record is None:
+                record = run.livepublication_set.filter(forecast_id='origin').first()
             data.update(publication_body(run, record))
             data['local_diagnostics'] = local
             if run_id is not None and record is not None:

@@ -3,16 +3,18 @@ import PropTypes from 'prop-types';
 import {Link} from 'react-router-dom';
 import Alert from 'react-bootstrap/Alert';
 import {publicReplayLinks} from 'config/publicReplayLinks';
+import useVictorianLiveOpening from 'config/useVictorianLiveOpening';
 import InfoIcon from 'components/General/InfoIcon';
 import useStoredBoolean from 'pages/Live/useStoredBoolean';
 import styles from './VictorianLiveAnnouncement.module.css';
 
 // The announcement belongs to the current Victorian polling forecast. Its
 // disclosure follows the reader between the statewide and district pages.
-export default function VictorianLiveAnnouncement({counting, seat}) {
+export default function VictorianLiveAnnouncement({seat}) {
   const [collapsed, setCollapsed] = useStoredBoolean(
     '2026vic:liveAnnouncementCollapsed'
   );
+  const showLink = useVictorianLiveOpening(true);
   const livePath = seat
     ? '/seat/2026vic/live/' + seat
     : '/forecast/2026vic/live';
@@ -30,10 +32,10 @@ export default function VictorianLiveAnnouncement({counting, seat}) {
       <div className={styles.announcementHeader}>
         <InfoIcon inactive />
         <strong>
-          {counting && (
+          {showLink && (
             <Link to={livePath}>Follow the live Victorian forecast</Link>
           )}
-          {!counting && 'Live forecast from election night'}
+          {!showLink && 'Live forecast from election night'}
         </strong>
         {collapsed && (
           <button
@@ -51,8 +53,8 @@ export default function VictorianLiveAnnouncement({counting, seat}) {
       </div>
       <div id="vic-live-details" hidden={collapsed}>
         <p>
-          {counting
-            ? 'The live forecast is updating as results come in and will continue through to the end of the count.'
+          {showLink
+            ? 'The live forecast is open. It will update as results come in throughout the count.'
             : 'For the upcoming Victorian election, the live forecast will update as results come in, starting on election night and continuing through to the end of the count.'}
         </p>
         <p>
@@ -73,6 +75,5 @@ export default function VictorianLiveAnnouncement({counting, seat}) {
 }
 
 VictorianLiveAnnouncement.propTypes = {
-  counting: PropTypes.bool.isRequired,
   seat: PropTypes.string,
 };

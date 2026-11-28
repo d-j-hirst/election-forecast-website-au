@@ -1,5 +1,12 @@
 import React from 'react';
-import {fireEvent, render, screen, waitFor, within} from '@testing-library/react';
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from '@testing-library/react';
 import {MemoryRouter} from 'react-router-dom';
 import Header from './index';
 import ForecastsNav from '../Forecasts/Nav';
@@ -115,22 +122,57 @@ test.each([
   }
 );
 
+test('an already-selected Victorian run enters the Modes menu at the scheduled opening', async () => {
+  jest.useFakeTimers();
+  try {
+    jest.setSystemTime(new Date('2026-11-28T06:29:59Z'));
+    getDirect.mockResolvedValue({ok: true, data: {run: {run_id: 'vic'}}});
+    await act(async () => {
+      render(shell(1200, '2026vic'));
+    });
+    expect(screen.queryByRole('link', {name: 'Live'})).toBeNull();
+    act(() => jest.advanceTimersByTime(1000));
+    expect(screen.getByRole('link', {name: 'Live'})).toHaveAttribute(
+      'href',
+      '/forecast/2026vic/live'
+    );
+  } finally {
+    jest.useRealTimers();
+  }
+});
+
 test('released replay links stay visible while switching elections before status arrives', () => {
   getDirect.mockReturnValue(new Promise(() => {}));
   const view = render(shell(1200, '2022vic'));
   for (const code of ['2022vic', '2026sa', '2022vic']) {
     view.rerender(shell(1200, code, 'nowcast'));
     expect(screen.getByRole('link', {name: 'Live Replay'})).toHaveAttribute(
-      'href', '/' + code + '/replays/' + code + '-public?snapshot=f00000002'
+      'href',
+      '/' + code + '/replays/' + code + '-public?snapshot=f00000002'
     );
   }
 });
 
 test('Live Replay links to the published series alongside the existing Live mode', async () => {
-  getDirect.mockResolvedValue({ok: true, data: {legacy: true, latest_public_replay: 'vic-series', replay_start_snapshot: 'f00000005'}});
+  getDirect.mockResolvedValue({
+    ok: true,
+    data: {
+      legacy: true,
+      latest_public_replay: 'vic-series',
+      replay_start_snapshot: 'f00000005',
+    },
+  });
   render(shell(1200, '2022vic', 'replay'));
-  await waitFor(() => expect(screen.getByRole('link', {name: 'Live Replay'})).toHaveAttribute('href', '/2022vic/replays/vic-series?snapshot=f00000005'));
-  expect(screen.getByRole('link', {name: 'Live'})).toHaveAttribute('href', '/forecast/2022vic/live');
+  await waitFor(() =>
+    expect(screen.getByRole('link', {name: 'Live Replay'})).toHaveAttribute(
+      'href',
+      '/2022vic/replays/vic-series?snapshot=f00000005'
+    )
+  );
+  expect(screen.getByRole('link', {name: 'Live'})).toHaveAttribute(
+    'href',
+    '/forecast/2022vic/live'
+  );
 });
 
 test('an election without a published replay keeps its historical live link', () => {

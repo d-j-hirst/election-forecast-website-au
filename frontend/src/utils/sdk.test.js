@@ -1,13 +1,11 @@
 import {getDirect} from './sdk';
 
 test('only opted-in successful HTML can stand in for an absent legacy API', async () => {
-  jest
-    .spyOn(global, 'fetch')
-    .mockResolvedValue({
-      status: 200,
-      ok: true,
-      text: async () => '<!doctype html><html></html>',
-    });
+  jest.spyOn(global, 'fetch').mockResolvedValue({
+    status: 200,
+    ok: true,
+    text: async () => '<!doctype html><html></html>',
+  });
   try {
     expect(
       await getDirect('official/head', {allowLegacyHtml: true})

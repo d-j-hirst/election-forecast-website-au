@@ -25,6 +25,7 @@ import {
 } from 'components';
 
 import PreferenceFlows from '../PreferenceFlows';
+import VoteCategoryDeviations from '../VoteCategoryDeviations';
 import VictorianLiveAnnouncement from '../Alerts/VictorianLiveAnnouncement';
 import styles from './Layout.module.css';
 
@@ -33,7 +34,6 @@ const ForecastLayout = props => {
   const id = props.id;
   const inputMode = props.mode;
   const {live} = props;
-  const [countingElection, setCountingElection] = useState(null);
   const announceLive =
     code === '2026vic' &&
     !props.isArchive &&
@@ -88,7 +88,6 @@ const ForecastLayout = props => {
         Archived reports have no current mode selected in the summary links. */}
       <ForecastsNav
         election={code}
-        onCountStatus={announceLive ? setCountingElection : undefined}
         mode={replay ? 'replay' : props.isArchive ? 'other' : inputMode}
       />
       {/* These state objects keep their identity until a load replaces the data;
@@ -106,6 +105,9 @@ const ForecastLayout = props => {
       >
         <StandardErrorBoundary>
           {live?.error && <p role="status">{live.error}</p>}
+          {live?.countNotice && !live.error && (
+            <p role="status">{live.countNotice}</p>
+          )}
           {live?.navigation}
           {forecastValid && (
             <>
@@ -114,6 +116,7 @@ const ForecastLayout = props => {
                 forecast={forecast}
                 mode={mode}
                 sourceTime={publication?.source_time}
+                beforeCount={publication?.forecast_id === 'origin'}
                 timeZone={publication?.run.timezone}
                 replay={replay}
                 replaySnapshotId={
@@ -122,11 +125,7 @@ const ForecastLayout = props => {
                     : undefined
                 }
               />
-              {announceLive && (
-                <VictorianLiveAnnouncement
-                  counting={countingElection === code}
-                />
-              )}
+              {announceLive && <VictorianLiveAnnouncement />}
               <ForecastAlert
                 code={code}
                 forecast={forecast}
@@ -193,6 +192,15 @@ const ForecastLayout = props => {
                     />
                   </StandardErrorBoundary>
                 )}
+              {publication?.local_diagnostics === true &&
+                forecast.voteCategoryDeviations?.length > 0 && (
+                  <StandardErrorBoundary>
+                    <VoteCategoryDeviations
+                      forecast={forecast}
+                      windowWidth={windowDimensions.width}
+                    />
+                  </StandardErrorBoundary>
+                )}
               {live?.summary && (
                 <StandardErrorBoundary>{live.summary}</StandardErrorBoundary>
               )}
@@ -203,6 +211,9 @@ const ForecastLayout = props => {
                   mode={mode}
                   windowWidth={windowDimensions.width}
                   runPoints={publication?.points}
+                  showCategoryDeviations={
+                    publication?.local_diagnostics === true
+                  }
                   timeZone={publication?.run.timezone}
                 />
               </StandardErrorBoundary>
@@ -219,7 +230,7 @@ const ForecastLayout = props => {
               </StandardErrorBoundary>
             </>
           )}
-          {!forecastValid && !live?.error && (
+          {!forecastValid && !live?.error && !live?.countNotice && (
             <LoadingMarker
               text={
                 publication ? 'Waiting for the first count update.' : undefined

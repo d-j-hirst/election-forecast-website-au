@@ -161,6 +161,34 @@ class PublicationTests(TestCase):
         publish(4, 20, tcp=12)
         self.assertEqual(self.api.get(head).data['replay_start_snapshot'], 'f00000004')
 
+    def test_remote_selection_serves_origin_until_first_feed_without_creating_history(self):
+        first = dict(self.run, run_id='vic-first', election='2026vic', kind='live', visibility='public')
+        second = dict(first, run_id='vic-second')
+        for run in (first, second):
+            self.assertEqual(self.api.post(self.base + '/runs', run, format='json').status_code, 200)
+        route = self.base + '/runs/vic-first/official'
+        election = {'election': '2026vic'}
+        public = APIClient()
+        self.assertIn(public.post(route, election, format='json').status_code, (401, 403))
+        self.assertEqual(self.api.post(self.base + '/runs/demo/official', {'election': '2026sa'}, format='json').status_code, 404)
+        self.assertEqual(self.api.post(route, {'election': '2022vic'}, format='json').status_code, 404)
+        self.assertEqual(self.send('origin', run=first).status_code, 200)
+        base = self.base + '/official/2026vic/'
+        self.assertTrue(public.get(base + 'head').data['legacy'])
+        for attempt in range(2):
+            self.assertEqual(self.api.post(route, election, format='json').data,
+                             {'run_id': 'vic-first', 'election': '2026vic', 'official': True})
+        self.assertEqual(self.api.post(self.base + '/runs/vic-second/official', election, format='json').status_code, 409)
+        preview = public.get(base + 'latest').data
+        self.assertEqual((preview['forecast_id'], preview['source_time'], preview['report']['seatNames']),
+                         ('origin', None, ['Sample']))
+        self.assertFalse(public.get(base + 'head').data['counting_started'])
+        self.assertEqual(public.get(base + 'history').data['points'], [])
+        self.assertEqual(public.get(base + 'seat-history?seat=Sample').data['points'], [])
+        self.assertEqual(self.send('f00000001', '2026-11-28T07:00:00Z', run=first).status_code, 200)
+        self.assertEqual(public.get(base + 'latest').data['forecast_id'], 'f00000001')
+        self.assertEqual(len(public.get(base + 'history').data['points']), 1)
+
     def test_official_head_distinguishes_zero_feed_from_first_votes(self):
         official = dict(self.run, run_id='victoria', election='2026vic', kind='live', visibility='public')
         self.api.post(self.base + '/runs', official, format='json')
@@ -349,13 +377,14 @@ class PublicationTests(TestCase):
         report = dict(termCode='2026sa', seatNames=['Sample'], seatPartyWinFrequencies=[[[0, 100]]],
             partyAbbr=[[0, 'ALP'], [1, 'LIB'], [2, 'ON']], seatCalls={'Sample': {'party': '0', 'since': 'f00000001'}},
             possibleBoothErrors={'Sample': [dict(booth='Hall', confidencePercent=80.0, level='medium')]},
+            voteCategoryDeviations=[dict(key='vote_type/Postal', label='Postal', tpp=[-1]*15, fp={'0': [1]*15})],
             voteTotalThresholds=[0.1, 0.5, 1, 2.5, 5, 10, 25, 50, 75, 90, 95, 97.5, 99, 99.5, 99.9],
             statewidePreferenceFlows=[dict(sourceParty=0, destinationParty=1, otherFinalist=2, percentiles=[60]*15)])
         sent = self.send('f00000001', '2026-03-21T11:00:00Z', report=report, comparisons=groups,
                          commentary={'today': {'status': 'unavailable', 'seat_call_changes': calls}})
         self.assertEqual(sent.status_code, 200)
         latest = self.api.get(url+'latest').data
-        for key in ('seatCalls', 'possibleBoothErrors'):
+        for key in ('seatCalls', 'possibleBoothErrors', 'voteCategoryDeviations'):
             self.assertEqual(latest['report'][key], report[key])
         for key in ('commentary', 'comparison'):
             self.assertEqual(latest['windows']['today'][key]['seat_call_changes'], calls)
@@ -364,6 +393,7 @@ class PublicationTests(TestCase):
         call_command('rebuild_live_seat_history', 'demo')
         point = self.api.get(url+'history').data['points'][0][1]
         self.assertEqual(original, point)
+        self.assertEqual(point['voteCategoryDeviations'], [dict(key='vote_type/Postal', label='Postal', tpp=[-1]*15)])
         for key in ('statewidePreferenceFlows', 'partyAbbr', 'voteTotalThresholds'):
             self.assertEqual(point[key], report[key])
         self.send('f00000002', '2026-03-22T11:00:00Z', retained_reports={'yesterday': {

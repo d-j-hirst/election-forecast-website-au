@@ -156,12 +156,25 @@ function inline(text, entities, seatLink, code, parties, formatCandidate) {
     });
 }
 
+// Saved publications can predate the exporter's ten-seat-bullet limit. Keep
+// their editorial order, including statewide headlines after the local ones.
+function visibleKeyChanges(lines) {
+  let seatBullets = 0;
+  return lines.filter(line => {
+    if (!/\{(?:seat|candidate):[^{}]+\}/.test(line)) return true;
+    seatBullets += 1;
+    return seatBullets <= 10;
+  });
+}
+
 // The exporter prefixes each point with a marker and supplies the heading.
 // Use the same inline token renderer as the older paragraph format.
 function CommentaryBlock({text, render, formatCandidates}) {
   if (typeof text !== 'string' || !text.trim()) return null;
   const [heading, ...lines] = text.trim().split(/\r?\n/);
-  const points = lines.filter(line => line.trim());
+  const bullets = lines.filter(line => line.trim());
+  const points =
+    heading === 'Key changes:' ? visibleKeyChanges(bullets) : bullets;
   const candidateLabel = formatCandidates?.(text);
 
   return (

@@ -12,14 +12,88 @@ import Commentary from './Commentary';
 
 beforeEach(() => localStorage.clear());
 
+test('saved Key changes show ten local bullets and retain statewide and detailed updates', () => {
+  const lines = Array.from(
+    {length: 12},
+    (_, i) => `- Update ${i + 1} in {seat:Alpha}.`
+  );
+  const item = {
+    status: 'complete',
+    kind: 'rules_based',
+    format: 'seat-bullets-v1',
+    text: {
+      summary: [
+        'Key changes:',
+        ...lines,
+        '- Statewide vote shares changed.',
+      ].join('\n'),
+      developments: [
+        {seats: ['Alpha'], text: ['In {seat:Alpha}:', ...lines].join('\n')},
+      ],
+    },
+  };
+  render(
+    <MemoryRouter>
+      <Commentary item={item} seatLink={() => '/'} code="2024qld" />
+    </MemoryRouter>
+  );
+  const [summary, detail] = screen.getAllByRole('list');
+  const headlines = within(summary).getAllByRole('listitem');
+  expect(headlines).toHaveLength(11);
+  expect(headlines[9]).toHaveTextContent('Update 10');
+  expect(headlines[10]).toHaveTextContent('Statewide vote shares changed.');
+  expect(within(detail).getAllByRole('listitem')).toHaveLength(12);
+});
+
+test('live commentary displays the One Nation badge for the forecast code ONP', () => {
+  const token = '{candidate:Keppel:4}';
+  const item = {
+    status: 'complete',
+    entities: {
+      [token]: {
+        kind: 'candidate',
+        seat: 'Keppel',
+        party: 'ONP',
+        label: 'James Ashby',
+      },
+    },
+    text: {summary: token + ' gained ground.'},
+  };
+  render(
+    <MemoryRouter>
+      <Commentary item={item} seatLink={() => '/'} code="2024qld" />
+    </MemoryRouter>
+  );
+  expect(screen.getByText('ON').closest('p')).toHaveTextContent(
+    'James Ashby ON'
+  );
+});
+
 test('the rules note follows the selected writer for standalone and paired editions', () => {
-  const rules = {status: 'complete', source: 'local', kind: 'rules_based', text: {summary: 'Rules text'}};
-  const show = item => <MemoryRouter><Commentary item={item} seatLink={() => '/'} code="2022vic" /></MemoryRouter>;
+  const rules = {
+    status: 'complete',
+    source: 'local',
+    kind: 'rules_based',
+    text: {summary: 'Rules text'},
+  };
+  const show = item => (
+    <MemoryRouter>
+      <Commentary item={item} seatLink={() => '/'} code="2022vic" />
+    </MemoryRouter>
+  );
   const page = render(show(rules));
   expect(screen.getByText(/use fixed rules/)).toBeInTheDocument();
-  page.rerender(show({status: 'complete', text: {summary: 'AI text', developments: [
-    {seats: [], text: '[[AEF_RULE_BASED_COMMENTARY_V1]]\nRules text'},
-  ]}}));
+  page.rerender(
+    show({
+      status: 'complete',
+      text: {
+        summary: 'AI text',
+        developments: [
+          {seats: [], text: '[[AEF_RULE_BASED_COMMENTARY_V1]]\nRules text'},
+        ],
+      },
+    })
+  );
   expect(screen.queryByText(/use fixed rules/)).toBeNull();
   fireEvent.click(screen.getByRole('button', {name: 'Rule-based commentary'}));
   expect(screen.getByText(/use fixed rules/)).toBeInTheDocument();

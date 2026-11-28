@@ -1,3 +1,4 @@
+import {displayPartyCode} from './partyAliases';
 import {jsonMap} from './jsonmap.js';
 
 const isKnownParty = party => {
@@ -36,6 +37,7 @@ export const partyCategory = party => {
 
 export const standardiseParty = (party, forecast) => {
   if (typeof party !== 'string') party = jsonMap(forecast.partyAbbr, party);
+  party = displayPartyCode(party);
   if (!isKnownParty(party)) party = 'oth';
   return party.toLowerCase();
 };
